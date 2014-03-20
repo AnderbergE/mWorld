@@ -1,0 +1,85 @@
+/**
+* jsHint file for maintaining code standard.
+* For more information:
+* http://www.jshint.com/docs/options/
+*/
+{
+	// Accepted globals
+	"globals"       : {
+		"Phaser": false
+	},
+
+	// Enforcing options
+	// true means more warnings
+	"bitwise"       : false,
+	"camelcase"     : true,
+	"curly"         : true,
+	"eqeqeq"        : true,
+	"es3"           : false,
+	"forin"         : false,
+	"freeze"        : true,
+	"immed"         : true,
+	"indent"        : false,
+	"latedef"       : false,
+	"newcap"        : true,
+	"noarg"         : true,
+	"noempty"       : true,
+	"nonew"         : true,
+	"plusplus"      : false,
+	"quotmark"      : "single",
+	"undef"         : true,
+	"unused"        : true,
+	"strict"        : false,
+	"trailing"      : true,
+	// "maxparams"     : false,
+	// "maxdepth"      : false,
+	// "maxstatements" : false,
+	// "maxcomplexity" : false,
+	// "maxlen"        : false,
+
+	// Relaxing options
+	// true means less warnings
+	"asi"           : false,
+	"boss"          : false,
+	"debug"         : false,
+	"eqnull"        : true,
+	"esnext"        : false,
+	"evil"          : false,
+	"expr"          : false,
+	"funcscope"     : false,
+	"gcl"           : false,
+	"globalstrict"  : false,
+	"iterator"      : false,
+	"lastsemic"     : false,
+	"laxbreak"      : false,
+	"laxcomma"      : false,
+	"loopfunc"      : false,
+	// "maxerr"        : 50,
+	"moz"           : false,
+	"multistr"      : true,
+	"notypeof"      : false,
+	"proto"         : false,
+	"scripturl"     : false,
+	"smarttabs"     : false,
+	"shadow"        : false,
+	"sub"           : false,
+	"supernew"      : false,
+	"validthis"     : false,
+	"noyield"       : false,
+
+	// Environments
+	"browser"       : true,
+	"couch"         : false,
+	"devel"         : true,
+	"dojo"          : false,
+	"jquery"        : false,
+	"mootools"      : false,
+	"node"          : false,
+	"nonstandard"   : false,
+	"phantom"       : false,
+	"prototypejs"   : false,
+	"rhino"         : false,
+	"worker"        : false,
+	"wsh"           : false,
+	"yui"           : false
+}

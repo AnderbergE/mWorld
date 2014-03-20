@@ -1,0 +1,25 @@
+{
+  "name": "mWorld",
+  "version": "0.0.1",
+  "author": {
+    "name": "Erik Anderberg",
+    "email": "Anderberg.E@gmail.com"
+  },
+  "description": "Lund University Cognitive Science research - Learning by teaching using games",
+  "repository": {
+    "type": "git",
+    "url": "TODO"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-less": "~0.10.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-watch": "~0.6.0",
+    "grunt-autoprefixer": "~0.7.2",
+    "grunt-contrib-connect": "~0.7.1",
+    "grunt-contrib-imagemin": "^0.5.0",
+    "grunt-contrib-jshint": "^0.9.2",
+    "grunt-contrib-concat": "^0.3.0"
+  }
+}
