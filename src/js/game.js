@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
 var backend = new Backend();
 var viewHandler = new ViewHandler();
 
@@ -22,7 +22,10 @@ function preload() {
 	//  Load the Google WebFont Loader script
 	game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
+	game.load.image('jungle', 'assets/images/jungle.png');
 	game.load.image('panders', 'assets/images/panders.png');
+
+	game.load.audio('yeah', ['assets/audio/yeah.mp3', 'assets/audio/yeah.ogg']);
 }
 
 function create() {

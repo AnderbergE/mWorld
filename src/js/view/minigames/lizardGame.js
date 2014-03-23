@@ -6,9 +6,8 @@
 	MinigameView.call(this, representation, amount); // Call parent constructor.
 	this.niceName = 'LizardGame';
 
-	var panda = game.add.sprite(100, 0, 'panders');
+	var panda = game.add.sprite(100, 0, 'panders', null, this.group);
 	panda.scale.setTo(0.2, 0.2);
-	this.group.add(panda);
 
 	return this;
 }

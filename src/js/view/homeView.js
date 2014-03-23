@@ -6,15 +6,12 @@ function HomeView () {
 	View.call(this); // Call parent constructor.
 	this.niceName = 'Garden';
 
-	var panda = game.add.sprite(100, 0, 'panders');
+	var panda = game.add.sprite(100, 0, 'panders', null, this.group);
 	panda.inputEnabled = true;
-	panda.events.onInputDown.add(function () { startMinigame(); }, this);
-	this.group.add(panda);
-
-	function startMinigame () {
+	panda.events.onInputDown.add(function () {
 		var next = backend.nextGame();
 		publish('viewChange', next);
-	}
+	}, this);
 
 	return this;
 }
