@@ -18,13 +18,13 @@ module.exports = function(grunt) {
 		// Javascript
 		jshint: {
 			options: { jshintrc: '.jshintrc' },
-			files: ['Gruntfile.js', source + '**/*.js']
+			files: ['Gruntfile.js', '<%= concat.dist.dest %>']
 		},
 		concat: {
-			dist: { src: source + '**/*.js', dest: build + 'script.js' }
+			dist: { src: source + '**/*.js', dest: build + 'game.js' }
 		},
 		uglify: {
-			dist: { files: { 'build/script.min.js': '<%= concat.dist.dest %>' } }
+			dist: { files: { 'build/game.min.js': '<%= concat.dist.dest %>' } }
 		},
 
 		// CSS
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 			less: { files: [source + 'style/*.less'], tasks: ['less', 'autoprefixer'] },
 			livereload: {
 				options: { livereload: true },
-				files: [source + '**/*'], tasks: ['jshint', 'concat', 'uglify', 'copy']
+				files: [source + '**/*'], tasks: ['concat', 'jshint', 'uglify', 'copy']
 			}
 		},
 	});
@@ -87,7 +87,7 @@ module.exports = function(grunt) {
 
 	// Default task.
 	grunt.registerTask('default', [
-		'jshint', 'concat', 'uglify',
+		'concat', 'jshint', 'uglify',
 		'less', 'autoprefixer',
 		'copy', 'connect', 'watch'
 	]);

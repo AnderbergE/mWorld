@@ -6,7 +6,10 @@
 {
 	// Accepted globals
 	"globals"       : {
-		"Phaser": false
+		"Phaser": false,
+		"subscribe": false,
+		"unsubscribe": false,
+		"publish": false
 	},
 
 	// Enforcing options
