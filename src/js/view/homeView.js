@@ -4,13 +4,12 @@
  */
 function HomeView () {
 	View.call(this); // Call parent constructor.
-	this.niceName = 'Garden';
 
 	var panda = game.add.sprite(100, 0, 'panders', null, this.group);
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
 		var next = backend.nextGame();
-		publish('viewChange', next);
+		publish(GLOBAL.EVENT.viewChange, next);
 	}, this);
 
 	return this;
@@ -19,7 +18,4 @@ function HomeView () {
 // inheritance
 HomeView.prototype = new View();
 HomeView.prototype.constructor = HomeView;
-
-HomeView.prototype.update = function () {
-	console.log('HomeView update');
-};
+HomeView.prototype.toString = function () { return 'HomeView'; };

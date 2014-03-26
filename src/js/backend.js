@@ -9,7 +9,7 @@ function Backend () {
 	Backend.prototype.singleton = this;
 
 	this.nextGame = function () {
-		return [2, 1, 6];
+		return [2, 0, 6];
 	};
 
 	return this;

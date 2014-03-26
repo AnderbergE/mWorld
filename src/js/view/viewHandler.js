@@ -23,24 +23,13 @@ function ViewHandler () {
 		4: 'Bird hero'
 	};
 
-	/*
-	 * Constant with all the number representations that are available.
-	 * The key is the unique identifier that is recieved from the backend.
-	 * The value is the name of the representation.
-	 */
-	var NUMBER_REPRESENTATION = {
-		1: 'dots',
-		2: 'fingers',
-		3: 'numbers'
-	};
-
-	subscribe('viewChange', function (id, representation, amount) {
+	subscribe(GLOBAL.EVENT.viewChange, function (id, representation, amount) {
 		_this.currentView.destroy();
-		_this.currentView = new VIEWS[id](NUMBER_REPRESENTATION[representation], amount);
+		_this.currentView = new VIEWS[id](representation, amount);
 		if (id === 0) {
-			publish('menuHide');
+			publish(GLOBAL.EVENT.menuHide);
 		} else {
-			publish('menuShow');
+			publish(GLOBAL.EVENT.menuShow);
 		}
 	});
 
