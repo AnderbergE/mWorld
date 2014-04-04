@@ -1,15 +1,10 @@
-/*
- * Inherits View
- * Holds shared logic for the different minigames.
- */
-function MinigameView (representation, amount, mode) {
-	View.call(this); // Call parent constructor.
-	this.gameGroup = game.add.group(this.group);
-	this.hudGroup = game.add.group(this.group);
+/* Holds shared logic for minigames */
+function Minigame () {}
 
-	this.representation = representation;
-	this.amount = amount;
-	this.mode = mode || [
+Minigame.prototype.init = function (options) {
+	this.representation = options.representation;
+	this.amount = options.amount;
+	this.mode = options.mode || [
 		GLOBAL.MODE.intro,
 		GLOBAL.MODE.playerOnly,
 		GLOBAL.MODE.agentWatch,
@@ -17,45 +12,53 @@ function MinigameView (representation, amount, mode) {
 		GLOBAL.MODE.agentOnly,
 		GLOBAL.MODE.outro
 	];
-	this.numbersPerMode = 3;
+
+	this.numbersPerMode = options.roundsPerMode || 3;
 	this.numbersLeft = this.numbersPerMode;
 	this.currentMode = -1;
+	this.nextRound = null;
 	this.currentNumber = null;
 	this.introduceMode = true;
 	this.currentTries = 0;
 	this.totalTries = 0;
 
+	this.events = [];
+
+	this.gameGroup = game.add.group();
+	this.hudGroup = game.add.group();
+
 	this.agent = user.agent;
 	this.agent.gfx.visible = false;
 	this.gameGroup.add(this.agent.gfx);
-
-	this.nextRound = null;
-
-	return this;
-}
-
-// inheritance
-MinigameView.prototype = new View();
-MinigameView.prototype.constructor = MinigameView;
-MinigameView.prototype.toString = function () { return 'MinigameView'; };
-
-MinigameView.prototype.modeIntro = function () { this.nextMode(); };
-MinigameView.prototype.modePlayerOnly = function () { this.nextMode(); };
-MinigameView.prototype.modeAgentWatch = function () { this.nextMode(); };
-MinigameView.prototype.modeAgentTrying = function () { this.nextMode(); };
-MinigameView.prototype.modeAgentOnly = function () { this.nextMode(); };
-MinigameView.prototype.modeOutro = function () { this.nextMode(); };
-
-MinigameView.prototype.startGame = function () {
-	this.nextMode();
-	this.nextRound();
 };
 
-MinigameView.prototype.getMode = function () {
-	return this.mode[this.currentMode];
+Minigame.prototype.shutdown = function () {
+	for (var i = 0; i < this.events.length; i++) {
+		unsubscribe(this.events[i]);
+	}
 };
 
-MinigameView.prototype.decideMode = function (mode) {
+Minigame.prototype.addEvent = function (ev, func) {
+	this.events.push(subscribe(ev, func));
+};
+
+Minigame.prototype.removeEvent = function (ev) {
+	for (var i = 0; i < this.events.length; i++) {
+		if (this.events[i] === ev) {
+			unsubscribe(this.events[i]);
+			break;
+		}
+	}
+};
+
+Minigame.prototype.modeIntro = function () { this.nextMode(); };
+Minigame.prototype.modePlayerOnly = function () { this.nextMode(); };
+Minigame.prototype.modeAgentWatch = function () { this.nextMode(); };
+Minigame.prototype.modeAgentTrying = function () { this.nextMode(); };
+Minigame.prototype.modeAgentOnly = function () { this.nextMode(); };
+Minigame.prototype.modeOutro = function () { this.nextMode(); };
+
+Minigame.prototype.decideMode = function (mode) {
 	if (mode === GLOBAL.MODE.intro) {
 		this.nextRound = this.modeIntro;
 	} else if (mode === GLOBAL.MODE.playerOnly) {
@@ -71,7 +74,7 @@ MinigameView.prototype.decideMode = function (mode) {
 	}
 };
 
-MinigameView.prototype.nextMode = function () {
+Minigame.prototype.nextMode = function () {
 	this.currentMode++;
 	this.numbersLeft = this.numbersPerMode;
 	this.nextNumber();
@@ -82,7 +85,7 @@ MinigameView.prototype.nextMode = function () {
 	publish(GLOBAL.EVENT.modeChange, [newMode]);
 };
 
-MinigameView.prototype.nextNumber = function () {
+Minigame.prototype.nextNumber = function () {
 	// Should we allow the same number again?
 	this.totalTries += this.currentTries;
 	this.currentTries = 0;
@@ -91,7 +94,7 @@ MinigameView.prototype.nextNumber = function () {
 	return this.currentNumber;
 };
 
-MinigameView.prototype.tryNumber = function (number) {
+Minigame.prototype.tryNumber = function (number) {
 	this.currentTries++;
 	this.introduceMode = false;
 	var correct = number === this.currentNumber;
@@ -104,4 +107,10 @@ MinigameView.prototype.tryNumber = function (number) {
 		}
 	}
 	return correct;
+};
+
+Minigame.prototype.startGame = function () {
+	menu(this);
+	this.nextMode();
+	this.nextRound();
 };

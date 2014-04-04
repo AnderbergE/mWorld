@@ -1,11 +1,14 @@
 var GLOBAL = {
 
 	VIEW: {
-		entry: 0,
-		home: 1,
-		lizard: 2,
-		mountain: 3,
-		birdhero: 4
+		entry: 'Entry',
+		garden: 'Garden',
+		1: 'Lizard',
+		lizardGame: 'Lizard',
+		2: 'Mountain',
+		mountainGame: 'Mountain',
+		3: 'Birdhero',
+		birdheroGame: 'Birdhero'
 	},
 
 	AGENT: {

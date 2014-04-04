@@ -1,10 +1,8 @@
 /*
  * Main menu of the game.
  */
-function menu () {
-	/* Create a container for the menu, we add this to the world. */
+function menu (game) {
 	var container = game.add.group();
-	container.visible = false;
 
 	var button = game.add.text(0, 0, GLOBAL.TEXT.menu, {
 		font: '20pt The Girl Next Door',
@@ -45,28 +43,10 @@ function menu () {
 	quit.anchor.setTo(0.5);
 	quit.inputEnabled = true;
 	quit.events.onInputDown.add(function () {
-		showMenu(false);
-		publish(GLOBAL.EVENT.viewChange, [GLOBAL.VIEW.entry]);
+		game.state.start(GLOBAL.VIEW.entry);
 	}, this);
-
-	function showButton (value) {
-		// TODO: Not sure this is the appropriate way to put menu on top.
-		game.world.bringToTop(container);
-		container.visible = value;
-		if (!value) {
-			showMenu(false);
-		}
-	}
 
 	function showMenu (value) {
 		menuGroup.visible = value;
 	}
-
-	subscribe(GLOBAL.EVENT.menuShow, function () {
-		showButton(true);
-	});
-
-	subscribe(GLOBAL.EVENT.menuHide, function () {
-		showButton(false);
-	});
 }

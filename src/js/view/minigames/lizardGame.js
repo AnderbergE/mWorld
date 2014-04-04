@@ -1,25 +1,32 @@
-/*
- * Inherits MinigameView
- * Holds the specific logic and graphics for the Lizard game.
- */
- function LizardGame (representation, amount, mode) {
-	MinigameView.call(this, representation, amount, mode); // Call parent constructor.
+/* Lizard game. */
+LizardGame.prototype = Object.create(Minigame.prototype);
+LizardGame.prototype.constructor = LizardGame;
+
+function LizardGame () {
+	Minigame.call(this); // Call parent constructor.
+}
+
+LizardGame.prototype.preload = function () {
+	this.load.image('lizardBg', 'assets/img/minigames/lizard/bg.png');
+};
+
+LizardGame.prototype.create = function () {
 	// Subscriptions to not have access to 'this' object
 	var _this = this;
 
 	// Add main game
-	game.add.sprite(0, 0, 'lizardBg', null, this.gameGroup);
+	this.add.sprite(0, 0, 'lizardBg', null, this.gameGroup);
 	var agent = this.agent.gfx;
-	agent.x = mode*100;
+	agent.x = this.currentMode*100;
 	agent.y = 0;
 	this.gameGroup.bringToTop(agent);
 
 	// Add HUD
-	var buttons = new ButtonPanel(representation, amount,
-		0, game.world.height-100, game.world.width, 75, 'wood');
+	var buttons = new ButtonPanel(this.representation, this.amount,
+		0, this.world.height-100, this.world.width, 75, 'wood');
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(GLOBAL.NUMBER_REPRESENTATION.yesno, 2,
-		0, game.world.height-100, game.world.width, 75, 'wood');
+		0, this.world.height-100, this.world.width, 75, 'wood');
 	this.hudGroup.add(yesnos);
 	var buttonFunction = null;
 
@@ -27,7 +34,7 @@
 		if (_this.currentTries <= 0) {
 			agent.visible = true;
 			showNumbers();
-			game.add.tween(agent).to({ x: '+100' }, 1000, Phaser.Easing.Linear.None, true);
+			_this.add.tween(agent).to({ x: '+100' }, 1000, Phaser.Easing.Linear.None, true);
 		}
 	}
 
@@ -36,20 +43,20 @@
 		_this.hudGroup.visible = true;
 		buttons.visible = true;
 		yesnos.visible = false;
-		game.input.disabled = false;
+		_this.input.disabled = false;
 	}
 	function showYesnos () {
 		buttonFunction = debugYesno;
 		_this.hudGroup.visible = true;
 		buttons.visible = false;
 		yesnos.visible = true;
-		game.input.disabled = false;
+		_this.input.disabled = false;
 	}
 
 	this.modeIntro = function () {
-		game.input.disabled = true;
+		_this.input.disabled = true;
 		_this.hudGroup.visible = false;
-		game.add.text(500, 100, 'Intro!', {
+		_this.add.text(500, 100, 'Intro!', {
 			font: '20pt The Girl Next Door',
 			stroke: '#00ff00',
 			strokeWidth: 4
@@ -64,20 +71,20 @@
 	this.modeAgentWatch = function () { modePlay(); };
 	this.modeAgentTrying = function () {
 		_this.hudGroup.remove(press);
-		press = new NumberButton(parseInt(1+Math.random()*this.amount), representation, 300, 400);
+		press = new NumberButton(parseInt(1+Math.random()*_this.amount), _this.representation, 300, 400);
 		_this.hudGroup.add(press);
 		showYesnos();
 		if (_this.currentTries <= 0) {
-			game.add.tween(agent).to({ x: '+100' }, 1000, Phaser.Easing.Linear.None, true);
+			_this.add.tween(agent).to({ x: '+100' }, 1000, Phaser.Easing.Linear.None, true);
 		}
 	};
 	this.modeAgentOnly = function () { modePlay(); };
 
 	this.modeOutro = function () {
-		game.input.disabled = true;
+		_this.input.disabled = true;
 		_this.hudGroup.visible = false;
 		_this.agent.setHappy(true);
-		game.add.text(200, 100, 'Outro!', {
+		_this.add.text(200, 100, 'Outro!', {
 			font: '20pt The Girl Next Door',
 			fill: '#00ff00'
 		}, _this.gameGroup);
@@ -91,9 +98,9 @@
 	});
 
 	// TODO: Debug section begin, remove later.
-	var current = new NumberButton(this.nextNumber(), representation, 500, 400);
+	var current = new NumberButton(this.nextNumber(), this.representation, 500, 400);
 	this.hudGroup.add(current);
-	var press = new NumberButton(null, representation, 300, 400);
+	var press = new NumberButton(null, this.representation, 300, 400);
 	this.hudGroup.add(press);
 	var blabla = new NumberButton(null, GLOBAL.NUMBER_REPRESENTATION.yesno, 300, 500);
 	this.hudGroup.add(blabla);
@@ -104,11 +111,11 @@
 			_this.agent.setHappy(true);
 		}
 		_this.hudGroup.remove(press);
-		press = new NumberButton(number, representation, 300, 400);
+		press = new NumberButton(number, _this.representation, 300, 400);
 		_this.hudGroup.add(press);
 		if (_this.tryNumber(number)) {
 			_this.hudGroup.remove(current);
-			current = new NumberButton(_this.nextNumber(), representation, 500, 400);
+			current = new NumberButton(_this.nextNumber(), _this.representation, 500, 400);
 			_this.hudGroup.add(current);
 			_this.nextRound();
 		}
@@ -122,7 +129,7 @@
 		} else {
 			if (_this.tryNumber(press.number)) {
 				_this.hudGroup.remove(current);
-				current = new NumberButton(_this.nextNumber(), representation, 500, 400);
+				current = new NumberButton(_this.nextNumber(), _this.representation, 500, 400);
 				_this.hudGroup.add(current);
 				_this.nextRound();
 			} else {
@@ -134,11 +141,4 @@
 
 	// Start up!
 	this.startGame();
-	return this;
-}
-
-// inheritance
-LizardGame.prototype = Object.create(MinigameView.prototype);
-LizardGame.prototype.constructor = LizardGame;
-LizardGame.prototype.toString = function () { return 'LizardGame'; };
-
+};

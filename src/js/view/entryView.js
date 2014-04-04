@@ -1,37 +1,36 @@
-/*
- * Inherits View
- * The view that you start the game with.
- */
-function EntryView () {
-	View.call(this); // Call parent constructor.
+/* The first state of the game. */
+function EntryState () {}
 
+/* Entry state assets are loaded in the boot section */
+
+EntryState.prototype.create = function () {
 	// Add background
-	game.add.image(0, 0, 'jungle', null, this.group);
+	this.add.image(0, 0, 'entryJungle');
 
-	var title = game.add.text(game.world.centerX, game.world.centerY/2, GLOBAL.TEXT.title, {
+	var title = this.add.text(this.world.centerX, this.world.centerY/2, GLOBAL.TEXT.title, {
 		font: '50pt The Girl Next Door',
 		fill: '#ffff00',
 		stroke: '#000000',
 		strokeThickness: 5
-	}, this.group);
+	});
 	title.anchor.setTo(0.5);
 
-	var text = game.add.text(game.world.centerX, game.world.centerY, GLOBAL.TEXT.start, {
+	var text = this.add.text(this.world.centerX, this.world.centerY, GLOBAL.TEXT.start, {
 		font: '50pt The Girl Next Door',
 		fill: '#dd00dd'
-	}, this.group);
+	});
 	text.anchor.setTo(0.5);
 	text.inputEnabled = true;
 	text.events.onInputDown.add(function () {
 		user.login('debug', 'debug');
-		//game.add.audio('yeah').play();
-		publish(GLOBAL.EVENT.viewChange, [GLOBAL.VIEW.home]);
+		//this.add.audio('yeah').play();
+		this.state.start(GLOBAL.VIEW.garden);
 	}, this);
 
-	var credits = game.add.text(game.world.centerX, game.world.centerY/0.75, GLOBAL.TEXT.credits, {
+	var credits = this.add.text(this.world.centerX, this.world.centerY/0.75, GLOBAL.TEXT.credits, {
 		font: '50pt The Girl Next Door',
 		fill: '#000000'
-	}, this.group);
+	});
 	credits.anchor.setTo(0.5);
 	credits.inputEnabled = true;
 	credits.events.onInputDown.add(function () {
@@ -40,7 +39,7 @@ function EntryView () {
 		allCredits.visible = true;
 	}, this);
 
-	var allCredits = game.add.text(game.world.centerX, game.world.centerY/2+50,
+	var allCredits = this.add.text(this.world.centerX, this.world.centerY/2+50,
 		'This game was made at Lund University\n\n' +
 		'Game development:\nAgneta Gulz, Magnus Haake, Layla Husein, Erik Anderberg\n' +
 		'Programming:\nErik Anderberg, Marcus Malmberg\n' +
@@ -49,7 +48,7 @@ function EntryView () {
 		font: '15pt The Girl Next Door',
 		fill: '#000000',
 		align: 'center'
-	}, this.group);
+	});
 	allCredits.anchor.setTo(0.5, 0);
 	allCredits.visible = false;
 	allCredits.inputEnabled = true;
@@ -58,11 +57,4 @@ function EntryView () {
 		credits.visible = true;
 		text.visible = true;
 	}, this);
-
-	return this;
-}
-
-// inheritance
-EntryView.prototype = new View();
-EntryView.prototype.constructor = EntryView;
-EntryView.prototype.toString = function () { return 'EntryView'; };
+};

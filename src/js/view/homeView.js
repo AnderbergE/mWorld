@@ -1,21 +1,17 @@
-/*
- * Inherits View
- * The view where you choose game, aka the Garden.
- */
-function HomeView () {
-	View.call(this); // Call parent constructor.
+/* The garden */
+function GardenState () {}
 
-	var panda = game.add.sprite(100, 0, 'panda', null, this.group);
+GardenState.prototype.preload = function() {
+	
+};
+
+GardenState.prototype.create = function () {
+	var panda = this.add.sprite(100, 0, 'panda', null, this.group);
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
-		var next = backend.nextGame();
-		publish(GLOBAL.EVENT.viewChange, next);
+		var info = backend.nextGame();
+		this.state.start(GLOBAL.VIEW[info.type], true, false, info);
 	}, this);
 
-	return this;
-}
-
-// inheritance
-HomeView.prototype = new View();
-HomeView.prototype.constructor = HomeView;
-HomeView.prototype.toString = function () { return 'HomeView'; };
+	menu(this);
+};
