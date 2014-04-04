@@ -1,12 +1,4 @@
 var GLOBAL = {
-	EVENT: {
-		viewChange: 'viewChange',  // [number]
-		menuShow: 'menuShow',
-		menuHide: 'menuHide',
-		numberPress: 'numberPress', // [number]
-		modeChange: 'modeChange',
-		numberChange: 'numberChange' // [number]
-	},
 
 	VIEW: {
 		entry: 0,
@@ -14,6 +6,10 @@ var GLOBAL = {
 		lizard: 2,
 		mountain: 3,
 		birdhero: 4
+	},
+
+	AGENT: {
+		0: Panda
 	},
 
 	MODE: {
@@ -25,19 +21,26 @@ var GLOBAL = {
 		outro: 5,
 	},
 
-	/*
-	 * The key is the unique identifier that is recieved from the backend.
-	 * The value is the name of the representation.
-	 */
 	NUMBER_REPRESENTATION: {
 		dots: 0,
 		fingers: 1,
-		numbers: 2
+		numbers: 2,
+		yesno: 3
+	},
+
+	EVENT: {
+		viewChange: 'viewChange',  // [number]
+		menuShow: 'menuShow',
+		menuHide: 'menuHide',
+		numberPress: 'numberPress', // [number]
+		modeChange: 'modeChange',
+		numberChange: 'numberChange' // [number]
 	},
 
 	TEXT: {
 		title: 'BOOM shackalack!',
 		start: 'Start',
+		credits: 'Credits',
 		resume: 'Resume',
 		quit: 'Quit',
 		menu: 'MENU'

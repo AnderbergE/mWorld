@@ -9,7 +9,11 @@ function Backend () {
 	Backend.prototype.singleton = this;
 
 	this.nextGame = function () {
-		return [2, 0, 6];
+		return [4, 0, 4];
+	};
+
+	this.login = function (name, pass) {
+		return [0, name === pass];
 	};
 
 	return this;

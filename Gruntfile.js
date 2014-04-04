@@ -47,11 +47,13 @@ module.exports = function(grunt) {
 				files: [
 					{
 						expand: true, flatten: true, filter: 'isFile',
-						src: [source + '*.html'], dest: build
+						src: [source + '*.html'],
+						dest: build
 					},
 					{
 						expand: true,
-						src: [assets + '**/*'], dest: build,
+						src: [assets + '**/*'],
+						dest: build
 					}
 				]
 			}
@@ -69,7 +71,8 @@ module.exports = function(grunt) {
 			less: { files: [source + 'style/*.less'], tasks: ['less', 'autoprefixer'] },
 			livereload: {
 				options: { livereload: true },
-				files: [source + '**/*'], tasks: ['concat', 'jshint', 'uglify', 'copy']
+				files: [source + '**/*'],
+				tasks: ['concat', 'jshint', 'uglify', 'copy',]
 			}
 		},
 	});
@@ -82,7 +85,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-connect');
-	grunt.loadNpmTasks('grunt-contrib-imagemin');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
 	// Default task.

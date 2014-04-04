@@ -20,7 +20,7 @@ function ViewHandler () {
 		1: HomeView,
 		2: LizardGame,
 		3: 'Mountain',
-		4: 'Bird hero'
+		4: BirdHeroGame
 	};
 
 	subscribe(GLOBAL.EVENT.viewChange, function (id, representation, amount) {

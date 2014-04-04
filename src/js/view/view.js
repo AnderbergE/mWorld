@@ -23,10 +23,6 @@ View.prototype.destroy = function () {
 	}
 };
 
-View.prototype.update = function () {
-	console.log(this + ' update');
-};
-
 View.prototype.addEvent = function (ev, func) {
 	this.events.push(subscribe(ev, func));
 };
@@ -38,4 +34,8 @@ View.prototype.removeEvent = function (ev) {
 			break;
 		}
 	}
+};
+
+View.prototype.update = function () {
+	console.log(this + ' update');
 };

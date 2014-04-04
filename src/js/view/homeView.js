@@ -5,7 +5,7 @@
 function HomeView () {
 	View.call(this); // Call parent constructor.
 
-	var panda = game.add.sprite(100, 0, 'panders', null, this.group);
+	var panda = game.add.sprite(100, 0, 'panda', null, this.group);
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
 		var next = backend.nextGame();

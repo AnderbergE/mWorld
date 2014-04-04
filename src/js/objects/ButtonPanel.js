@@ -21,14 +21,19 @@ function ButtonPanel (representation, amount, x, y, length, maxSize, background,
 	var i = 1;
 	if (vertical) {
 		for (; i <= amount; i++) {
-			this.add(new NumberButton(i, representation,
+			this.add(new NumberButton(
+				// If Yes/No case: alternate between them.
+				(representation === GLOBAL.NUMBER_REPRESENTATION.yesno) ? (i%2 === 1) : i,
+				representation,
 				x,
 				y + margin + (paddingSize+buttonSize)*(i-1),
 				buttonSize, background, noEvent));
 		}
 	} else {
 		for (; i <= amount; i++) {
-			this.add(new NumberButton(i, representation,
+			this.add(new NumberButton(
+				(representation === GLOBAL.NUMBER_REPRESENTATION.yesno) ? (i%2 === 1) : i,
+				representation,
 				x + margin + (paddingSize+buttonSize)*(i-1),
 				y, //-buttonSize*1.3
 				buttonSize, background, noEvent));

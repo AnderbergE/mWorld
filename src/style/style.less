@@ -1,3 +1,8 @@
+/* VARS */
+@bg-color: black;
+@fg-color: difference(@bg-color, #fff);
+@load-animation-time: 1.5s;
+
 /* GENERAL  GENERAL GENERAL GENERAL GENERAL GENERAL GENERAL  GENERAL  GENERAL */
 *, *:after, *::before {
 	box-sizing: border-box;
@@ -6,7 +11,7 @@ html, body, #main, #game {
 	height: 100%;
 	width: 100%;
 	margin: 0;
-	background: black;
+	background: @bg-color;
 }
 input {
 	display: none
@@ -17,4 +22,41 @@ label {
 
 canvas {
 	margin: auto;
+}
+
+#game {
+	position: relative;
+}
+
+.loading {
+	position: absolute;
+	left: 0;
+	top: 0;
+	text-align: center;
+	font-size: 2vmin;
+	color: @fg-color;
+}
+.loader {
+	position: relative;
+	margin: 0.5em;
+	width: 3em;
+	height: 3em;
+	border-radius: 50%;
+	background-color: lighten(@bg-color, 30);
+}
+.loader:before {
+	content: '';
+	position: absolute;
+	left: 25%;
+	top: 50%;
+	width: 50%;
+	height: 50%;
+	border-radius: 50%;
+	background-color: @fg-color;
+	transform-origin: 50% 0%;
+	animation: loader @load-animation-time infinite linear;
+}
+@keyframes loader {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }

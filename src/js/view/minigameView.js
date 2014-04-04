@@ -21,8 +21,13 @@ function MinigameView (representation, amount, mode) {
 	this.numbersLeft = this.numbersPerMode;
 	this.currentMode = -1;
 	this.currentNumber = null;
+	this.introduceMode = true;
 	this.currentTries = 0;
 	this.totalTries = 0;
+
+	this.agent = user.agent;
+	this.agent.gfx.visible = false;
+	this.gameGroup.add(this.agent.gfx);
 
 	this.nextRound = null;
 
@@ -68,17 +73,19 @@ MinigameView.prototype.decideMode = function (mode) {
 
 MinigameView.prototype.nextMode = function () {
 	this.currentMode++;
-	this.totalTries += this.currentTries;
-	this.currentTries = 0;
 	this.numbersLeft = this.numbersPerMode;
+	this.nextNumber();
 
 	var newMode = this.mode[this.currentMode];
 	this.decideMode(newMode);
+	this.introduceMode = true;
 	publish(GLOBAL.EVENT.modeChange, [newMode]);
 };
 
 MinigameView.prototype.nextNumber = function () {
 	// Should we allow the same number again?
+	this.totalTries += this.currentTries;
+	this.currentTries = 0;
 	this.currentNumber = parseInt(1+Math.random()*this.amount);
 	publish(GLOBAL.EVENT.numberChange, [this.currentNumber]);
 	return this.currentNumber;
@@ -86,12 +93,15 @@ MinigameView.prototype.nextNumber = function () {
 
 MinigameView.prototype.tryNumber = function (number) {
 	this.currentTries++;
-	var result = number === this.currentNumber;
-	if (result) {
+	this.introduceMode = false;
+	var correct = number === this.currentNumber;
+	if (correct) {
 		this.numbersLeft--;
 		if (this.numbersLeft <= 0) {
 			this.nextMode();
+		} else {
+			this.nextNumber();
 		}
 	}
-	return result;
+	return correct;
 };
