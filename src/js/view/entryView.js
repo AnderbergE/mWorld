@@ -41,7 +41,7 @@ EntryState.prototype.create = function () {
 
 	var allCredits = this.add.text(this.world.centerX, this.world.centerY/2+50,
 		'This game was made at Lund University\n\n' +
-		'Game development:\nAgneta Gulz, Magnus Haake, Layla Husein, Erik Anderberg\n' +
+		'Game development:\nAgneta Gulz, Magnus Haake, Layla Husain, Erik Anderberg\n' +
 		'Programming:\nErik Anderberg, Marcus Malmberg\n' +
 		'Graphics:\n Sebastian Gulz Haake\n' +
 		'Special Thanks:\nAnton Axelsson, Sanne Bengtsson, Maja Håkansson, Lisa Lindberg', {
