@@ -1,13 +1,7 @@
 /*
- * Singleton
  * Handles the communication with the backend.
  */
-function Backend () {
-	if (Backend.prototype.singleton) {
-		return Backend.prototype.singleton;
-	}
-	Backend.prototype.singleton = this;
-
+var Backend = (function () {
 	this.nextGame = function () {
 		return {
 			type: 3,
@@ -21,4 +15,4 @@ function Backend () {
 	};
 
 	return this;
-}
+})();

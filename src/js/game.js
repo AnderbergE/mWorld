@@ -1,4 +1,3 @@
-var backend = new Backend();
 var user = new User();
 var game;
 window.onload = function () {
