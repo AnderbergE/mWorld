@@ -68,11 +68,17 @@ module.exports = function(grunt) {
 			}
 		},
 		watch: {
-			less: { files: [source + 'style/*.less'], tasks: ['less', 'autoprefixer'] },
-			livereload: {
-				options: { livereload: true },
-				files: [source + '**/*'],
-				tasks: ['concat', 'jshint', 'uglify', 'copy',]
+			scripts: {
+				files: ['<%= concat.dist.src %>'],
+				tasks: ['concat', 'jshint', 'uglify']
+			},
+			less: {
+				files: [source + 'style/*.less'],
+				tasks: ['less', 'autoprefixer']
+			},
+			assets: {
+				files: [source + '*.html', assets + '**/*'],
+				tasks: ['copy']
 			}
 		},
 	});
