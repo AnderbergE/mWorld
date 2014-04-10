@@ -1,3 +1,6 @@
+NumberButton.prototype = Object.create(Phaser.Group.prototype);
+NumberButton.prototype.constructor = NumberButton;
+
 /*
  * Inherits Phaser.Group
  * A NumberButton is used in the minigames to interact with.
@@ -46,7 +49,3 @@ function NumberButton (number, representation, x, y, size, background, color, no
 
 	return this;
 }
-
-// inheritance
-NumberButton.prototype = Object.create(Phaser.Group.prototype);
-NumberButton.prototype.constructor = NumberButton;

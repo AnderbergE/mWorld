@@ -226,7 +226,6 @@ BirdheroGame.prototype.create = function () {
 			_this.nextRound();
 		}, 1000);
 	};
-
 	this.modePlayerOnly = function () {
 		_this.input.disabled = true;
 		if (_this.introduceMode) {
@@ -263,24 +262,19 @@ BirdheroGame.prototype.create = function () {
 		else { agentGuess(); }
 	};
 	this.modeAgentOnly = function () {
-		_this.input.disabled = true;
 		_this.hudGroup.visible = false;
-		buttons.visible = false;
-		yesnos.visible = false;
 
 		if (_this.introduceMode || _this.currentTries <= 0) {
 			newBird(function () { pushNumber(_this.agent.guessNumber(_this.currentNumber, 1, _this.amount)); });
 		}
 		else { pushNumber(_this.agent.guessNumber(_this.currentNumber, 1, _this.amount)); }
 	};
-
 	this.modeOutro = function () {
-		_this.input.disabled = true;
 		_this.hudGroup.visible = false;
 		_this.agent.setHappy(true);
 		setTimeout(function () {
 			bgMusic.stop();
-			publish(GLOBAL.EVENT.viewChange, [GLOBAL.VIEW.home]);
+			game.state.start(GLOBAL.VIEW.home);
 		}, 1000);
 	};
 

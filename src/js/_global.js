@@ -1,5 +1,15 @@
 var GLOBAL = {
 
+	EVENT: {
+		viewChange: 'viewChange',     // [number]
+		menuShow: 'menuShow',
+		menuHide: 'menuHide',
+		numberPress: 'numberPress',   // [number]
+		modeChange: 'modeChange',
+		numberChange: 'numberChange', // [number]
+		plantPress: 'plantPress'      // [number]
+	},
+
 	VIEW: {
 		entry: 'Entry',
 		garden: 'Garden',
@@ -31,21 +41,13 @@ var GLOBAL = {
 		yesno: 3
 	},
 
-	EVENT: {
-		viewChange: 'viewChange',  // [number]
-		menuShow: 'menuShow',
-		menuHide: 'menuHide',
-		numberPress: 'numberPress', // [number]
-		modeChange: 'modeChange',
-		numberChange: 'numberChange' // [number]
-	},
-
 	TEXT: {
 		title: 'BOOM shackalack!',
 		start: 'Start',
 		credits: 'Credits',
 		resume: 'Resume',
 		quit: 'Quit',
-		menu: 'MENU'
+		menu: 'MENU',
+		maxLevel: 'MAX!'
 	}
 };

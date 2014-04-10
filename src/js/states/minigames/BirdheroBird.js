@@ -1,7 +1,6 @@
-/*
- * Inherits Phaser.Group
- * A NumberButton is used in the minigames to interact with.
- */
+BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
+BirdheroBird.prototype.constructor = BirdheroBird;
+
 function BirdheroBird () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.visible = false;
@@ -23,10 +22,6 @@ function BirdheroBird () {
 
 	return this;
 }
-
-// inheritance
-BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
-BirdheroBird.prototype.constructor = BirdheroBird;
 
 Object.defineProperty(BirdheroBird.prototype, 'tint', {
 	get: function() {

@@ -18,11 +18,9 @@ function menu (game) {
 
 	// Create a background for the menu, traps all mouse events.
 	var overlay = game.add.bitmapData(game.world.width, game.world.height);
-	overlay.ctx.beginPath();
 	overlay.ctx.fillStyle = '#ffff00';
 	overlay.ctx.globalAlpha = 0.2;
 	overlay.ctx.fillRect(0, 0, game.world.width, game.world.height);
-	overlay.ctx.closePath();
 	var menuBg = game.add.sprite(0, 0, overlay, null, menuGroup);
 	menuBg.inputEnabled = true;
 

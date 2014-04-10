@@ -19,9 +19,7 @@ var WebFontConfig = {
 		}, this);
 	},
 
-	google: {
-		families: ['The Girl Next Door']
-	}
+	google: { families: ['The Girl Next Door'] }
 };
 void(WebFontConfig); // workaround for jshint unused warning.
 
@@ -56,6 +54,7 @@ BootState.prototype.preload = function () {
 	this.load.image('pandaFlare', 'assets/img/agent/panda/flare.png');
 
 	/* Common game elements */
+	this.load.spritesheet('drop', 'assets/img/objects/drop.png', 35, 70, 2);
 	this.load.image('wood', 'assets/img/objects/wood.png');
 
 	/* Load the entry state assets as well, no need to do two loaders. */
