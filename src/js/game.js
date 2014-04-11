@@ -12,13 +12,11 @@ window.onload = function () {
 
 //  The Google WebFont Loader will look for this object, so create it before loading the script.
 var WebFontConfig = {
-	//  The Google Fonts we want to load (specify as many as you like in the array)
 	active: function() {
 		game.time.events.add(Phaser.Timer.SECOND, function () {
 			game.state.start(GLOBAL.VIEW.entry);
 		}, this);
 	},
-
 	google: { families: ['The Girl Next Door'] }
 };
 void(WebFontConfig); // workaround for jshint unused warning.
@@ -55,9 +53,9 @@ BootState.prototype.preload = function () {
 
 	/* Common game elements */
 	this.load.spritesheet('drop', 'assets/img/objects/drop.png', 35, 70, 2);
-	this.load.image('wood', 'assets/img/objects/wood.png');
+	this.load.spritesheet('wood', 'assets/img/objects/wood.png', 58, 56, 2);
 
 	/* Load the entry state assets as well, no need to do two loaders. */
-	this.load.image('entryJungle', 'assets/img/jungle.png');
+	this.load.image('entryBg', 'assets/img/jungle.png');
 	this.load.audio('yeah', ['assets/audio/yeah.mp3', 'assets/audio/yeah.ogg']);
 };

@@ -6,7 +6,8 @@ var Backend = (function () {
 		return {
 			type: 3,
 			representation: 0,
-			amount: 4
+			amount: 4,
+			roundsPerMode: 1
 		};
 	};
 

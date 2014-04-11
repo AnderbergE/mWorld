@@ -8,6 +8,15 @@ GardenState.prototype.preload = function() {
 GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
 
+	var panda = this.add.sprite(100, 50, 'panda', null, this.group);
+	panda.scale.x = 0.2;
+	panda.scale.y = 0.2;
+	panda.inputEnabled = true;
+	panda.events.onInputDown.add(function () {
+		var info = Backend.nextGame();
+		this.state.start(GLOBAL.VIEW[info.type], true, false, info);
+	}, this);
+
 	var rows = 3;
 	var columns = 5;
 	var startPos = 200;
@@ -18,15 +27,6 @@ GardenState.prototype.create = function () {
 			this.world.add(new GardenPlant(row + ' ' + column, 0, 0, column*width, startPos+row*height, width, height));
 		}
 	}
-
-	var panda = this.add.sprite(100, 50, 'panda', null, this.group);
-	panda.scale.x = 0.2;
-	panda.scale.y = 0.2;
-	panda.inputEnabled = true;
-	panda.events.onInputDown.add(function () {
-		var info = Backend.nextGame();
-		this.state.start(GLOBAL.VIEW[info.type], true, false, info);
-	}, this);
 
 	menu(this);
 };

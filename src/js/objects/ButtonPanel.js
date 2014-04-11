@@ -40,6 +40,12 @@ function ButtonPanel (representation, amount, x, y, length, maxSize, background,
 		}
 	}
 
+	this.reset = function () {
+		for (i = 0; i < this.children.length; i++) {
+			this.children[i].reset();
+		}
+	};
+
 	return this;
 }
 

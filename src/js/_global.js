@@ -1,13 +1,13 @@
 var GLOBAL = {
 
 	EVENT: {
-		viewChange: 'viewChange',     // [number]
-		menuShow: 'menuShow',
-		menuHide: 'menuHide',
-		numberPress: 'numberPress',   // [number]
-		modeChange: 'modeChange',
-		numberChange: 'numberChange', // [number]
-		plantPress: 'plantPress'      // [number]
+		viewChange:  'viewChange',  // [number]
+		menuShow:    'menuShow',
+		menuHide:    'menuHide',
+		numberPress: 'numberPress', // [number]
+		modeChange:  'modeChange',
+		tryNumber:   'tryNumber',   // [correct number, tried number]
+		plantPress:  'plantPress'   // [number]
 	},
 
 	VIEW: {

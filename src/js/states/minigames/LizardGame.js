@@ -17,7 +17,7 @@ LizardGame.prototype.create = function () {
 	// Add main game
 	this.add.sprite(0, 0, 'lizardBg', null, this.gameGroup);
 	var agent = this.agent.gfx;
-	agent.x = this.currentMode*100;
+	agent.x = 100;
 	agent.y = 0;
 	this.gameGroup.bringToTop(agent);
 
