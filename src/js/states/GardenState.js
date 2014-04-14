@@ -1,10 +1,12 @@
 /* The garden */
 function GardenState () {}
 
+/* Phaser state function */
 GardenState.prototype.preload = function() {
 	this.load.image('gardenBg',      'assets/img/garden/bg.png');
 };
 
+/* Phaser state function */
 GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
 
@@ -35,52 +37,42 @@ GardenPlant.prototype = Object.create(Phaser.Group.prototype);
 GardenPlant.prototype.constructor = GardenPlant;
 function GardenPlant (id, level, water, x, y, width, height) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	this._maxLevel = 3;
+	var _this = this;
 	this.plantId = id;
 	this.x = x;
 	this.y = y;
 	this.width = width;
 	this.height = height;
-	this.level = level;
+
+	/* TODO: Replace with actual plant. */
+	var bmd = game.add.bitmapData(this.width, this.height);
+	bmd.ctx.fillStyle = '#ffffff';
+	bmd.ctx.globalAlpha = 0.2;
+	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
+	var plant = game.add.sprite(0, 0, bmd, null, this);
+	plant.inputEnabled = true;
+	plant.events.onInputDown.add(this.down, this);
+
 	this.water = new Counter(level+1, true, water);
+	this.level = new Counter(3, false, level);
+	this.level.onAdd = function (current) {
+		game.input.disabled = true;
+		game.add.tween(plant).to(
+			{ tint:
+				current === 1 ? 0x00ffff :
+				current === 2 ? 0xff00ff :
+				current === 3 ? 0xffff00 :
+				0xffffff
+			},
+			500, Phaser.Easing.Linear.None, true)
+		.onComplete.add(function () {
+			_this.water.update();
+			game.input.disabled = false;
+		}, this);
+	};
+
 	return this;
 }
-
-Object.defineProperty(GardenPlant.prototype, 'level', {
-	get: function() {
-		return this._level; // use private variable for the level value
-	},
-	set: function(value) {
-		if (0 <= value && value <= this._maxLevel) {
-			this._level = value;
-
-			if (!this.plant) {
-				/* TODO: Replace with actual plant. */
-				var bmd = game.add.bitmapData(this.width, this.height);
-				bmd.ctx.fillStyle = '#ffffff';
-				bmd.ctx.globalAlpha = 0.2;
-				bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
-				this.plant = game.add.sprite(0, 0, bmd, null, this);
-				this.plant.inputEnabled = true;
-				this.plant.events.onInputDown.add(this.down, this);
-			} else {
-				game.input.disabled = true;
-				game.add.tween(this.plant).to(
-					{ tint:
-						this._level === 1 ? 0x00ffff :
-						this._level === 2 ? 0xff00ff :
-						this._level === 3 ? 0xffff00 :
-						0xffffff
-					},
-					500, Phaser.Easing.Linear.None, true)
-				.onComplete.add(function () {
-					this.water.update();
-					game.input.disabled = false;
-				}, this);
-			}
-		}
-	}
-});
 
 GardenPlant.prototype.down = function () {
 	var _this = this; // Events do not have access to this
@@ -118,9 +110,9 @@ GardenPlant.prototype.down = function () {
 			}
 		};
 		this.water.onMax = function () {
-			_this.level++;
-			_this.water.max = _this.level + 1;
-			if (_this.level === _this._maxLevel) {
+			_this.level.value++;
+			_this.water.max = _this.level.value + 1;
+			if (_this.level.value === _this.level.max) {
 				_this.water.onAdd = null;
 				_this.water.onMax = null;
 				waterGroup.removeAll(true);
