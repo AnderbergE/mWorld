@@ -42,7 +42,7 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	this.width = width;
 	this.height = height;
 	this.level = level;
-	this.water = water;
+	this.water = new Counter(level+1, true, water);
 	return this;
 }
 
@@ -53,7 +53,6 @@ Object.defineProperty(GardenPlant.prototype, 'level', {
 	set: function(value) {
 		if (0 <= value && value <= this._maxLevel) {
 			this._level = value;
-			this._neededWater = this._level + 1;
 
 			if (!this.plant) {
 				/* TODO: Replace with actual plant. */
@@ -75,42 +74,16 @@ Object.defineProperty(GardenPlant.prototype, 'level', {
 					},
 					500, Phaser.Easing.Linear.None, true)
 				.onComplete.add(function () {
-					this.water = 0;
+					this.water.update();
 					game.input.disabled = false;
 				}, this);
 			}
 		}
 	}
 });
-Object.defineProperty(GardenPlant.prototype, 'water', {
-	get: function() {
-		return this._water; // use private variable for the level value
-	},
-	set: function(value) {
-		this._water = value;
-
-		if (this.waterGroup) {
-			this.waterGroup.removeAll();
-			if (this._level === this._maxLevel) {
-				game.add.text(this.width/2, 50, GLOBAL.TEXT.maxLevel, {
-					font: '60pt The Girl Next Door',
-					fill: '#5555ff'
-				}, this.infoGroup).anchor.setTo(0.5);
-				this.waterButton.destroy();
-			} else {
-				for (var i = 0; i < this._neededWater; i++) {
-					game.add.sprite(5 + i*36, 15, 'drop', (i >= this._water ? 1 : 0), this.waterGroup);
-				}
-			}
-		}
-
-		if (this._water >= this._neededWater) {
-			this.level++;
-		}
-	}
-});
 
 GardenPlant.prototype.down = function () {
+	var _this = this; // Events do not have access to this
 	if (this.active) {
 		publish(GLOBAL.EVENT.plantPress, [this.plantId]);
 		return;
@@ -128,21 +101,40 @@ GardenPlant.prototype.down = function () {
 		bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
 		game.add.sprite(0, 0, bmd, null, this.infoGroup).inputEnabled = true;
 
-		this.waterButton = game.add.sprite(this.width - 90, 10, 'wood', null, this.infoGroup);
-		this.waterButton.width = 80;
-		this.waterButton.height = 80;
-		this.waterButton.inputEnabled = true;
-		this.waterButton.events.onInputDown.add(function () {
-			this.water++;
+		var waterButton = game.add.sprite(this.width - 90, 10, 'wood', null, this.infoGroup);
+		waterButton.width = 80;
+		waterButton.height = 80;
+		waterButton.inputEnabled = true;
+		waterButton.events.onInputDown.add(function () {
+			this.water.value++;
 		}, this);
 
-		this.waterGroup = game.add.group(this.infoGroup);
-		this.water = this.water; // dirty way to make the water redraw.
-
+		/* Water management */
+		var waterGroup = game.add.group(this.infoGroup);
+		this.water.onAdd = function (current, left) {
+			waterGroup.removeAll(true);
+			for (var i = 0; i < (current + left); i++) {
+				game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
+			}
+		};
+		this.water.onMax = function () {
+			_this.level++;
+			_this.water.max = _this.level + 1;
+			if (_this.level === _this._maxLevel) {
+				_this.water.onAdd = null;
+				_this.water.onMax = null;
+				waterGroup.removeAll(true);
+				waterButton.destroy();
+				game.add.text(_this.width/2, 50, GLOBAL.TEXT.maxLevel, {
+					font: '60pt The Girl Next Door',
+					fill: '#5555ff'
+				}, _this.infoGroup).anchor.setTo(0.5);
+			}
+		};
+		this.water.update();
 	}
 	this.infoGroup.visible = true;
 
-	var _this = this; // Subscriptions does not have access to this.
 	publish(GLOBAL.EVENT.plantPress, [this.plantId]);
 	this.active = subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
 };

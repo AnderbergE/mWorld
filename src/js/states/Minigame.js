@@ -29,6 +29,7 @@ function Minigame () {}
 
 /* Phaser state function */
 Minigame.prototype.init = function (options) {
+	var _this = this;
 	this.representation = options.representation;
 	this.amount = options.amount;
 	this.modes = options.mode || [
@@ -44,6 +45,9 @@ Minigame.prototype.init = function (options) {
 	this._mode = null;
 	this._first = true;
 	this._counter = new Counter(options.roundsPerMode || 3, true);
+	this._counter.onMax = function () {
+		_this.nextMode();
+	};
 	this._currentTries = 0;
 	this._totalTries = 0;
 	this._events = [];
@@ -129,9 +133,7 @@ Minigame.prototype.tryNumber = function (number) {
 	this._currentTries++;
 	var correct = number === this.currentNumber;
 	if (correct) {
-		if (this._counter.add(1)) {
-			this.nextMode();
-		}
+		this._counter.value++; // This will trigger next mode if we loop.
 		this.nextNumber();
 	}
 	publish(GLOBAL.EVENT.tryNumber, [this.currentNumber, number]);
