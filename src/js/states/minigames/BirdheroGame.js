@@ -6,6 +6,7 @@ function BirdheroGame () {
 	Minigame.call(this); // Call parent constructor.
 }
 
+/* Phaser state function */
 BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroBg',      'assets/img/minigames/birdhero/bg.png');
 	this.load.image('birdheroBird',    'assets/img/minigames/birdhero/bird.png');
@@ -24,6 +25,7 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroIntro', ['assets/audio/minigames/birdhero/bg.mp3', 'assets/audio/minigames/birdhero/bg.ogg']);
 };
 
+/* Phaser state function */
 BirdheroGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var coords = {

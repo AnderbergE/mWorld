@@ -104,7 +104,7 @@ GardenPlant.prototype.down = function () {
 		/* Water management */
 		var waterGroup = game.add.group(this.infoGroup);
 		this.water.onAdd = function (current, left) {
-			waterGroup.removeAll(true);
+			waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
 			for (var i = 0; i < (current + left); i++) {
 				game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
 			}
@@ -115,7 +115,7 @@ GardenPlant.prototype.down = function () {
 			if (_this.level.value === _this.level.max) {
 				_this.water.onAdd = null;
 				_this.water.onMax = null;
-				waterGroup.removeAll(true);
+				waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
 				waterButton.destroy();
 				game.add.text(_this.width/2, 50, GLOBAL.TEXT.maxLevel, {
 					font: '60pt The Girl Next Door',

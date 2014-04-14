@@ -3,6 +3,7 @@ function EntryState () {}
 
 /* Entry state assets are loaded in the boot section */
 
+/* Phaser state function */
 EntryState.prototype.create = function () {
 	this.add.image(0, 0, 'entryBg');
 

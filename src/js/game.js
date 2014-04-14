@@ -22,6 +22,7 @@ var WebFontConfig = {
 void(WebFontConfig); // workaround for jshint unused warning.
 
 function BootState () {}
+/* Phaser state function */
 BootState.prototype.preload = function () {
 	/* Show loading progress accordingly */
 	this.load.onFileComplete.add(function (progress) {
