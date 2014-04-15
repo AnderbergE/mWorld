@@ -1,3 +1,4 @@
+/* Holds all global constant objects. */
 var GLOBAL = {
 
 	EVENT: {

@@ -94,6 +94,7 @@ BirdheroGame.prototype.create = function () {
 	}
 	tree.bringToTop();
 
+	// Add the elevator, the bird is added to this group.
 	var elevator = this.add.group(this.gameGroup);
 	elevator.x = treeCenter - this.cache.getImage('birdheroBucket').width/2;
 	elevator.y = coords.tree.elevator;
@@ -144,14 +145,17 @@ BirdheroGame.prototype.create = function () {
 		0, this.world.height-100, this.world.width, 75, 'wood');
 	this.hudGroup.add(yesnos);
 
-	/* When pushing a button in the HUD: */
+	// When pushing a button in the HUD:
 	var buttonFunction = null;
 	this.addEvent(GLOBAL.EVENT.numberPress, function(value) {
 		buttonFunction(value);
 	});
 
+	/* Function to trigger when a number button is pushed */
 	function pushNumber (number) {
 		_this.disable(true);
+
+		// Alas, callback hell is upon us :(
 		bird.moveTo.elevator(function () {
 			bird.moveTo.peak(true, function () {
 				elevator.moveTo.branch(number, function () {
@@ -181,11 +185,13 @@ BirdheroGame.prototype.create = function () {
 			});
 		});
 	}
+	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
 		if (!value) { showNumbers(); }
 		else { pushNumber(_this.agent.lastGuess); }
 	}
 
+	/* Show the number panel, hide the yes/no panel and enable input */
 	function showNumbers () {
 		buttonFunction = pushNumber;
 		_this.hudGroup.visible = true;
@@ -194,6 +200,7 @@ BirdheroGame.prototype.create = function () {
 		yesnos.visible = false;
 		_this.disable(false);
 	}
+	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
 		buttonFunction = pushYesno;
 		_this.hudGroup.visible = true;
@@ -203,6 +210,7 @@ BirdheroGame.prototype.create = function () {
 		_this.disable(false);
 	}
 
+	/* Introduce a new bird, aka: start a new round. */
 	function newBird (onComplete) {
 		bird.x = coords.bird.start.x-elevator.x;
 		bird.y = coords.bird.start.y-elevator.y;
@@ -214,6 +222,7 @@ BirdheroGame.prototype.create = function () {
 		});
 	}
 
+	/* Have the agent guess a number */
 	function agentGuess () {
 		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
 		if (press) { _this.hudGroup.remove(press); }
@@ -222,7 +231,7 @@ BirdheroGame.prototype.create = function () {
 		showYesnos();
 	}
 
-	/* Overshadow the mode related functions */
+	/* Overshadowing of the mode related functions */
 	this.modeIntro = function () {
 		this.music.play();
 		_this.hudGroup.visible = false;
@@ -232,7 +241,8 @@ BirdheroGame.prototype.create = function () {
 			_this.nextRound();
 		}, 1000);
 	};
-	this.modePlayerOnly = function (intro, tries) {
+
+	this.modePlayerDo = function (intro, tries) {
 		_this.disable(true);
 		if (intro) {
 			_this.hudGroup.visible = false;
@@ -241,7 +251,8 @@ BirdheroGame.prototype.create = function () {
 		if (tries <= 0) { newBird(showNumbers); }
 		else { showNumbers(); }
 	};
-	this.modeAgentWatch = function (intro, tries) {
+
+	this.modePlayerShow = function (intro, tries) {
 		_this.disable(true);
 		if (intro) {
 			_this.hudGroup.visible = false;
@@ -254,7 +265,8 @@ BirdheroGame.prototype.create = function () {
 			else { showNumbers(); }
 		}
 	};
-	this.modeAgentTrying = function (intro, tries) {
+
+	this.modeAgentTry = function (intro, tries) {
 		_this.disable(true);
 		if (intro) {
 			_this.hudGroup.visible = false;
@@ -264,7 +276,8 @@ BirdheroGame.prototype.create = function () {
 		if (intro || tries <= 0) { newBird(agentGuess); }
 		else { agentGuess(); }
 	};
-	this.modeAgentOnly = function (intro, tries) {
+
+	this.modeAgentDo = function (intro, tries) {
 		_this.hudGroup.visible = false;
 
 		if (intro || tries <= 0) {
@@ -272,6 +285,7 @@ BirdheroGame.prototype.create = function () {
 		}
 		else { pushNumber(_this.agent.guessNumber(_this.currentNumber, 1, _this.amount)); }
 	};
+
 	this.modeOutro = function () {
 		_this.hudGroup.visible = false;
 		_this.agent.setHappy(true);
@@ -283,7 +297,7 @@ BirdheroGame.prototype.create = function () {
 		}, 1000);
 	};
 
-
+	// Make sure the call this when everything is set up.
 	this.startGame();
 };
 
@@ -308,6 +322,7 @@ function BirdheroBranch (x, y, tint) {
 	return this;
 }
 
+/* Returns the x, y coordinates of where the bird should stop at the nest */
 BirdheroBranch.prototype.visit = function () {
 	return {
 		x: this.nest.world.x + this.nest.width * this.scale.x,

@@ -67,9 +67,9 @@ LizardGame.prototype.create = function () {
 		}, 1000);
 	};
 
-	this.modePlayerOnly = function () { modePlay(); };
-	this.modeAgentWatch = function () { modePlay(); };
-	this.modeAgentTrying = function () {
+	this.modePlayerDo = function () { modePlay(); };
+	this.modePlayerShow = function () { modePlay(); };
+	this.modeAgentTry = function () {
 		_this.hudGroup.remove(press);
 		press = new NumberButton(parseInt(1+Math.random()*_this.amount), _this.representation, 300, 400);
 		_this.hudGroup.add(press);
@@ -78,7 +78,7 @@ LizardGame.prototype.create = function () {
 			_this.add.tween(agent).to({ x: '+100' }, 1000, Phaser.Easing.Linear.None, true);
 		}
 	};
-	this.modeAgentOnly = function () { modePlay(); };
+	this.modeAgentDo = function () { modePlay(); };
 
 	this.modeOutro = function () {
 		_this.input.disabled = true;
@@ -133,7 +133,7 @@ LizardGame.prototype.create = function () {
 				_this.hudGroup.add(current);
 				_this.nextRound();
 			} else {
-				_this.modeAgentTrying();
+				_this.modeAgentTry();
 			}
 		}
 	}

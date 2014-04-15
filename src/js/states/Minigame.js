@@ -1,13 +1,15 @@
-/* Holds shared logic for minigames */
-/* How to use:
- * Representation: this.representation
- * Amount:         this.amount
- * Current number: this.currentNumber
+/**
+ * Holds shared logic for minigames.
+ * How to use:
+ * Number amount:        this.amount
+ * Representation:       this.representation
+ * The number to answer: this.currentNumber
  *
  * Add game objects to:     this.gameGroup
  * Add buttons and HUD to:  this.hudGroup
  * Add background music to: this.music
  * Use agent with:          this.agent, (its visibility = false)
+ *
  *
  * Functions:
  * Add event subscriptions: this.addEvent
@@ -16,12 +18,21 @@
  * Run next round:          this.nextRound (this will call the appropriate mode function)
  * Try a number:            this.tryNumber
  *
+ * These function should be overshadowed by the game:
+ * modeIntro      // Introduce the game, call nextMode and nextRound to start next mode.
+ * modePlayerDo   // Player only
+ * modePlayerShow // Player is showing the TA
+ * modeAgentTry   // TA is guessing and the player is helping out
+ * modeAgentDo    // TA only
+ * modeOutro      // The game is finished, celebrate!
+ *
+ *
  * Typical game flow:
- * this.startGame();  // the first mode, intro, will be called
- * this.nextMode();   // change mode, now player only is called
+ * this.startGame();  // the first mode, this.modeIntro, will be called
+ * this.nextMode();   // change mode, now this.modePlayerDo will be called
  * this.nextRound();  // start the mode
- * this.tryNumber(x); // try a number against the current one, return true or false
- * this.nextRound();  // do this regardless if you were right or wrong,
+ * this.tryNumber(x); // try a number against the current one, returns true or false
+ * this.nextRound();  // do this regardless if right or wrong,
  *                    // it takes care of mode switching and function calls for you
  * // Do until game is done, then quit by using: this.state.start(GLOBAL.VIEW.garden);
  */
@@ -29,10 +40,9 @@ function Minigame () {}
 
 /* Phaser state function */
 Minigame.prototype.init = function (options) {
-	var _this = this;
-	this.representation = options.representation;
-	this.amount = options.amount;
-	this.modes = options.mode || [
+	/* "Private" variables */
+	var _this = this; // Event subscriptions does not have access to this
+	this._modes = options.mode || [
 		GLOBAL.MODE.intro,
 		GLOBAL.MODE.playerOnly,
 		GLOBAL.MODE.agentWatch,
@@ -40,21 +50,26 @@ Minigame.prototype.init = function (options) {
 		GLOBAL.MODE.agentOnly,
 		GLOBAL.MODE.outro
 	];
-	/* The current number to answer */
-	this.currentNumber = null;
-	/* Stores the offset of the last try, can be used to judge last try */
-	/* Ex: -1 means that last try was one less than currentNumber */
-	this.lastTry = 0;
-
 	this._mode = null;
 	this._first = true;
+	/* Keep track of how many rounds that have been played */
 	this._counter = new Counter(options.roundsPerMode || 3, true);
+	/* When enough rounds have been played, trigger a mode change */
 	this._counter.onMax = function () {
 		_this.nextMode();
 	};
 	this._currentTries = 0;
 	this._totalTries = 0;
 	this._events = [];
+
+	/* Public variables */
+	this.representation = options.representation;
+	this.amount = options.amount;
+	/* The current number to answer */
+	this.currentNumber = null;
+	/* Stores the offset of the last try, can be used to judge last try */
+	/* Ex: -1 means that last try was one less than currentNumber */
+	this.lastTry = 0;
 
 	/* Setup game objects */
 	this.gameGroup = game.add.group();
@@ -84,10 +99,20 @@ Minigame.prototype.shutdown = function () {
 	}
 };
 
-/* Always add event subscriptions in this way, so we can remove them when shutting down */
+/* Always add event subscriptions with these functions, they are then removed when shutting down */
+/**
+ * Subscribe to an event.
+ * @param {*} The name of the event
+ * @param {Function} The function to run when the event is published
+ */
 Minigame.prototype.addEvent = function (ev, func) {
 	this._events.push(subscribe(ev, func));
 };
+
+/**
+ * Unsubscribe to an event.
+ * @param {*} The name of the event
+ */
 Minigame.prototype.removeEvent = function (ev) {
 	for (var i = 0; i < this._events.length; i++) {
 		if (this._events[i] === ev) {
@@ -97,42 +122,60 @@ Minigame.prototype.removeEvent = function (ev) {
 	}
 };
 
+/**
+ * Calls the current mode function.
+ * It will be called with two parameters:
+ * 1) If it is the first time on this mode.
+ * 2) How many tries that have been made on the current number.
+ */
 Minigame.prototype.nextRound = function () {
 	this._mode(this._first, this._currentTries);
 	this._first = false;
 };
 
+/**
+ * Translate from integer to mode function
+ * @param {Number}
+ */
 Minigame.prototype.decideMode = function (mode) {
 	if (mode === GLOBAL.MODE.intro) {
 		this._mode = this.modeIntro;
 	} else if (mode === GLOBAL.MODE.playerOnly) {
-		this._mode = this.modePlayerOnly;
+		this._mode = this.modePlayerDo;
 	} else if (mode === GLOBAL.MODE.agentWatch) {
-		this._mode = this.modeAgentWatch;
+		this._mode = this.modePlayerShow;
 	} else if (mode === GLOBAL.MODE.agentTrying) {
-		this._mode = this.modeAgentTrying;
+		this._mode = this.modeAgentTry;
 	} else if (mode === GLOBAL.MODE.agentOnly) {
-		this._mode = this.modeAgentOnly;
+		this._mode = this.modeAgentDo;
 	} else { // mode === GLOBAL.MODE.outro
 		this._mode = this.modeOutro;
 	}
 };
 
+/** Change to the next mode in the queue (publishes modeChange event). */
 Minigame.prototype.nextMode = function () {
-	var newMode = this.modes.shift();
+	var newMode = this._modes.shift();
 	this.decideMode(newMode);
 	this._first = true;
 	publish(GLOBAL.EVENT.modeChange, [newMode]);
 };
 
+/** Change this.currentNumber to a new one (resets the tries). */
 Minigame.prototype.nextNumber = function () {
 	// Should we allow the same number again?
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
 	this.currentNumber = parseInt(1+Math.random()*this.amount);
-	return this.currentNumber;
 };
 
+/**
+ * Try a number against this.currentNumber (publishes tryNumber event).
+ * The offset of the last try is stored in this.lastTry.
+ *
+ * @param {Number} The number to try.
+ * @returns {Boolean} If it was correct or not.
+ */
 Minigame.prototype.tryNumber = function (number) {
 	this._currentTries++;
 	this.lastTry = number - this.currentNumber;
@@ -146,6 +189,7 @@ Minigame.prototype.tryNumber = function (number) {
 	return correct;
 };
 
+/** Start the game! */
 Minigame.prototype.startGame = function () {
 	menu(this);
 	this.nextMode();
@@ -153,11 +197,11 @@ Minigame.prototype.startGame = function () {
 	this.nextRound();
 };
 
-
-/* Extendable mode functions */
+/* Overshadowing mode functions */
+/* These functions should be overshadowed in the game object */
 Minigame.prototype.modeIntro       = function () { this.nextMode(); };
-Minigame.prototype.modePlayerOnly  = function () { this.nextMode(); };
-Minigame.prototype.modeAgentWatch  = function () { this.nextMode(); };
-Minigame.prototype.modeAgentTrying = function () { this.nextMode(); };
-Minigame.prototype.modeAgentOnly   = function () { this.nextMode(); };
+Minigame.prototype.modePlayerDo  = function () { this.nextMode(); };
+Minigame.prototype.modePlayerShow  = function () { this.nextMode(); };
+Minigame.prototype.modeAgentTry = function () { this.nextMode(); };
+Minigame.prototype.modeAgentDo   = function () { this.nextMode(); };
 Minigame.prototype.modeOutro       = function () { this.nextMode(); };

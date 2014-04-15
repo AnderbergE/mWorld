@@ -1,5 +1,20 @@
+/**
+ * The user object.
+ * Use this to do any user interaction.
+ */
 var user = new User();
+
+/**
+ * The Phaser game object.
+ * Use this to add objects to the game engine.
+ * Note: In game states, use 'this' instead.
+ */
 var game;
+
+/**
+ * Create the game when the browser has loaded everything.
+ * Note: This is where all the states should be added.
+ */
 window.onload = function () {
 	game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 	game.state.add('Boot', BootState);
@@ -14,6 +29,7 @@ window.onload = function () {
 var WebFontConfig = {
 	active: function() {
 		game.time.events.add(Phaser.Timer.SECOND, function () {
+			// TODO: What if this is loaded faster than the images?
 			game.state.start(GLOBAL.VIEW.entry);
 		}, this);
 	},
@@ -21,6 +37,11 @@ var WebFontConfig = {
 };
 void(WebFontConfig); // workaround for jshint unused warning.
 
+/**
+ * The boot state will load the first parts of the game and common game assets.
+ * Add assets that will be used by many states in this section.
+ * The next state will be called when the web font has been loaded.
+ */
 function BootState () {}
 /* Phaser state function */
 BootState.prototype.preload = function () {
