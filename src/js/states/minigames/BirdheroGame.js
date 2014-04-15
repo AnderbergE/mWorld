@@ -23,6 +23,9 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroWhat',    'assets/img/minigames/birdhero/what.png');
 	this.load.spritesheet('birdheroBeak', 'assets/img/minigames/birdhero/beak.png', 31, 33);
 	this.load.audio('birdheroIntro', ['assets/audio/minigames/birdhero/bg.mp3', 'assets/audio/minigames/birdhero/bg.ogg']);
+	this.load.audio('birdheroElevator', ['assets/audio/minigames/birdhero/elevator.mp3', 'assets/audio/minigames/birdhero/elevator.ogg']);
+	this.load.audio('birdheroElevatorArrive', ['assets/audio/minigames/birdhero/elevator_arrive.mp3', 'assets/audio/minigames/birdhero/elevator_arrive.ogg']);
+	this.load.audio('birdheroElevatorDown', ['assets/audio/minigames/birdhero/elevator_down.mp3', 'assets/audio/minigames/birdhero/elevator_down.ogg']);
 };
 
 /* Phaser state function */
@@ -73,7 +76,8 @@ BirdheroGame.prototype.create = function () {
 			bird.move({ y: (up ? '-22' : '+22') }, 500, onComplete);
 		},
 		nest: function (target, onComplete) {
-			bird.move({ x: tree.branch[target-1].nest.world.x-elevator.x, y: tree.branch[target-1].nest.world.y-elevator.y }, 1000, onComplete);
+			var pos = tree.branch[target-1].visit();
+			bird.move({ x: pos.x-elevator.x, y: pos.y-elevator.y }, 1000, onComplete);
 		}
 	};
 
@@ -84,17 +88,9 @@ BirdheroGame.prototype.create = function () {
 	var treeCenter = tree.x + 215;
 	var heightPerBranch = (tree.height - 220)/this.amount;
 	for (var i = 0; i < this.amount; i++) {
-		var branchGroup = this.add.group(this.gameGroup);
-		branchGroup.x = treeCenter;
-		branchGroup.y = (treeBottom - heightPerBranch*i);
-		tree.branch[i] = this.add.sprite(0, 0, 'birdheroBranch' + i%3, null, branchGroup);
-		tree.branch[i].x -= tree.branch[i].width;
-		tree.branch[i].nest = this.add.sprite(tree.branch[i].x + 60, tree.branch[i].y + tree.branch[i].height * 0.4, 'birdheroNest', null, branchGroup);
-		tree.branch[i].nest.bird = this.add.sprite(tree.branch[i].nest.x + tree.branch[i].nest.width/5, tree.branch[i].nest.y, 'birdheroMother', null, branchGroup);
-		tree.branch[i].nest.bird.tint = tint[i];
-		tree.branch[i].nest.bird.y -= tree.branch[i].nest.bird.height*0.7;
-		tree.branch[i].nest.bringToTop();
-		branchGroup.scale.x = i % 2 ? 1 : -1;
+		tree.branch[i] = new BirdheroBranch(treeCenter, treeBottom - heightPerBranch*i, tint[i]);
+		tree.branch[i].scale.x = i % 2 ? 1 : -1;
+		this.gameGroup.add(tree.branch[i]);
 	}
 	tree.bringToTop();
 
@@ -110,24 +106,30 @@ BirdheroGame.prototype.create = function () {
 		fill: '#ffff00'
 	}, elevator);
 	elevator.text.anchor.setTo(0.5);
+	var elevatorAudio = this.add.audio('birdheroElevator', 1);
+	var elevatorAudioArrive = this.add.audio('birdheroElevatorArrive', 1);
+	var elevatorAudioDown = this.add.audio('birdheroElevatorDown', 1);
 	elevator.moveTo = {
 		branch: function (target, onComplete) {
-			if (elevator.number === target) {
-				if (onComplete) { onComplete(); }
-				return;
-			}
-
 			var yPos;
 			if (target === 0) {
 				elevator.number = 0;
 				yPos = coords.tree.elevator;
+				elevatorAudioDown.play();
 			} else {
 				elevator.number += (elevator.number < target) ? 1 : -1;
-				yPos = tree.branch[elevator.number-1].world.y - elevator.rope.height - coords.tree.elevator;
+				yPos = tree.branch[elevator.number-1].visit().y - elevator.rope.height - coords.tree.elevator - elevator.bucket.height;
 			}
+
 			_this.add.tween(elevator).to({ y: yPos }, 1000, Phaser.Easing.Quadratic.InOut, true).onComplete.addOnce(function() {
 				elevator.text.text = elevator.number.toString();
-				elevator.moveTo.branch(target, onComplete);
+				if (elevator.number === target) {
+					if (target !== 0) { elevatorAudioArrive.play(); }
+					if (onComplete) { onComplete(); }
+				} else {
+					elevatorAudio.play();
+					elevator.moveTo.branch(target, onComplete);
+				}
 			});
 		}
 	};
@@ -164,8 +166,10 @@ BirdheroGame.prototype.create = function () {
 								bird.moveTo.elevator(function () {
 									bird.moveTo.peak(true, function () {
 										elevator.moveTo.branch(0, function () {
-											bird.moveTo.initial(function () {
-												_this.nextRound();
+											bird.moveTo.peak(false, function () {
+												bird.moveTo.initial(function () {
+													_this.nextRound();
+												});
 											});
 										});
 									});
@@ -271,6 +275,9 @@ BirdheroGame.prototype.create = function () {
 	this.modeOutro = function () {
 		_this.hudGroup.visible = false;
 		_this.agent.setHappy(true);
+		for (var i = 0; i < tree.branch.length; i++) {
+			tree.branch[i].celebrate();
+		}
 		setTimeout(function () {
 			_this.state.start(GLOBAL.VIEW.garden);
 		}, 1000);
@@ -278,4 +285,36 @@ BirdheroGame.prototype.create = function () {
 
 
 	this.startGame();
+};
+
+/* Bird Hero game objects */
+
+BirdheroBranch.prototype = Object.create(Phaser.Group.prototype);
+BirdheroBranch.prototype.constructor = BirdheroBranch;
+
+function BirdheroBranch (x, y, tint) {
+	Phaser.Group.call(this, game, null); // Parent constructor.
+	this.x = x;
+	this.y = y;
+
+	var branch = game.add.sprite(0, 0, 'birdheroBranch' + parseInt(Math.random()*3), null, this);
+	branch.x -= branch.width;
+	this.nest = game.add.sprite(branch.x + 60, branch.height * 0.4, 'birdheroNest', null, this);
+	this.mother = game.add.sprite(this.nest.x + this.nest.width/5, this.nest.y, 'birdheroMother', null, this);
+	this.mother.y -= this.mother.height*0.7;
+	this.mother.tint = tint || 0xffffff;
+	this.nest.bringToTop();
+
+	return this;
+}
+
+BirdheroBranch.prototype.visit = function () {
+	return {
+		x: this.nest.world.x + this.nest.width * this.scale.x,
+		y: this.nest.world.y
+	};
+};
+
+BirdheroBranch.prototype.celebrate = function () {
+	game.add.tween(this.mother).to({ y: this.mother.y+10 }, 200, Phaser.Easing.Linear.None, true, 0, 11, true);
 };
