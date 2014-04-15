@@ -40,7 +40,11 @@ Minigame.prototype.init = function (options) {
 		GLOBAL.MODE.agentOnly,
 		GLOBAL.MODE.outro
 	];
+	/* The current number to answer */
 	this.currentNumber = null;
+	/* Stores the offset of the last try, can be used to judge last try */
+	/* Ex: -1 means that last try was one less than currentNumber */
+	this.lastTry = 0;
 
 	this._mode = null;
 	this._first = true;
@@ -131,6 +135,8 @@ Minigame.prototype.nextNumber = function () {
 
 Minigame.prototype.tryNumber = function (number) {
 	this._currentTries++;
+	this.lastTry = number - this.currentNumber;
+
 	var correct = number === this.currentNumber;
 	if (correct) {
 		this._counter.value++; // This will trigger next mode if we loop.
