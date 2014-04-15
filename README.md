@@ -1,11 +1,11 @@
 # Magical Garden
 Magical Garden is a game for understanding numbers, aka number sense.
-The game is built with the game engine ![Phaser](http://phaser.io/).
+The game is built with the game engine [Phaser](http://phaser.io/).
 
 ## How to build:
 * Clone this repository to your computer.
 * Open the repository in a terminal.
-* Run: grunt (If you do not have grunt, go here: ![Grunt](http://gruntjs.com/))
+* Run: grunt (If you do not have grunt, go here: [Grunt](http://gruntjs.com/))
 * Play the game at http://localhost:9000/index.html
 
 Grunt generates the build catalogue in your repository and also creates a local server.
