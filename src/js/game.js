@@ -18,9 +18,9 @@ var game;
 window.onload = function () {
 	game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 	game.state.add('Boot', BootState);
-	game.state.add(GLOBAL.VIEW.entry, EntryState);
-	game.state.add(GLOBAL.VIEW.garden, GardenState);
-	game.state.add(GLOBAL.VIEW.birdheroGame, BirdheroGame);
+	game.state.add(GLOBAL.STATE.entry, EntryState);
+	game.state.add(GLOBAL.STATE.garden, GardenState);
+	game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
 
 	game.state.start('Boot');
 };
@@ -30,7 +30,7 @@ var WebFontConfig = {
 	active: function() {
 		game.time.events.add(Phaser.Timer.SECOND, function () {
 			// TODO: What if this is loaded faster than the images?
-			game.state.start(GLOBAL.VIEW.entry);
+			game.state.start(GLOBAL.STATE.entry);
 		}, this);
 	},
 	google: { families: ['The Girl Next Door'] }

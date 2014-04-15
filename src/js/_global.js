@@ -2,7 +2,6 @@
 var GLOBAL = {
 
 	EVENT: {
-		viewChange:  'viewChange',  // [number]
 		menuShow:    'menuShow',
 		menuHide:    'menuHide',
 		numberPress: 'numberPress', // [number]
@@ -11,35 +10,38 @@ var GLOBAL = {
 		plantPress:  'plantPress'   // [number]
 	},
 
-	VIEW: {
-		entry: 'Entry',
-		garden: 'Garden',
-		1: 'Lizard',
-		lizardGame: 'Lizard',
-		2: 'Mountain',
-		mountainGame: 'Mountain',
-		3: 'Birdhero',
-		birdheroGame: 'Birdhero'
-	},
-
 	AGENT: {
 		0: Panda
 	},
 
+	STATE: {
+		entry:        'Entry',
+		garden:       'Garden',
+		0:            'Lizard',
+		lizardGame:   'Lizard',
+		1:            'Mountain',
+		mountainGame: 'Mountain',
+		2:            'Birdhero',
+		birdheroGame: 'Birdhero'
+	},
+
 	MODE: {
-		intro: 0,
-		playerOnly: 1,
-		agentWatch: 2,
-		agentTrying: 3,
-		agentOnly: 4,
-		outro: 5,
+		playerDo:   0,
+		playerShow: 1,
+		agentTry:   2,
+		agentDo:    3,
+		intro:      4,
+		outro:      5,
 	},
 
 	NUMBER_REPRESENTATION: {
-		dots: 0,
+		dots:    0,
 		fingers: 1,
-		numbers: 2,
-		yesno: 3
+		strikes: 2,
+		objects: 3,
+		numbers: 4,
+		dice:    5,
+		yesno:   15 // Special representation for yes/no buttons
 	},
 
 	TEXT: {

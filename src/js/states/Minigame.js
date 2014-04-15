@@ -34,7 +34,7 @@
  * this.tryNumber(x); // try a number against the current one, returns true or false
  * this.nextRound();  // do this regardless if right or wrong,
  *                    // it takes care of mode switching and function calls for you
- * // Do until game is done, then quit by using: this.state.start(GLOBAL.VIEW.garden);
+ * // Do until game is done, then quit by using: this.state.start(GLOBAL.STATE.garden);
  */
 function Minigame () {}
 
@@ -44,10 +44,10 @@ Minigame.prototype.init = function (options) {
 	var _this = this; // Event subscriptions does not have access to this
 	this._modes = options.mode || [
 		GLOBAL.MODE.intro,
-		GLOBAL.MODE.playerOnly,
-		GLOBAL.MODE.agentWatch,
-		GLOBAL.MODE.agentTrying,
-		GLOBAL.MODE.agentOnly,
+		GLOBAL.MODE.playerDo,
+		GLOBAL.MODE.playerShow,
+		GLOBAL.MODE.agentTry,
+		GLOBAL.MODE.agentDo,
 		GLOBAL.MODE.outro
 	];
 	this._mode = null;
@@ -140,13 +140,13 @@ Minigame.prototype.nextRound = function () {
 Minigame.prototype.decideMode = function (mode) {
 	if (mode === GLOBAL.MODE.intro) {
 		this._mode = this.modeIntro;
-	} else if (mode === GLOBAL.MODE.playerOnly) {
+	} else if (mode === GLOBAL.MODE.playerDo) {
 		this._mode = this.modePlayerDo;
-	} else if (mode === GLOBAL.MODE.agentWatch) {
+	} else if (mode === GLOBAL.MODE.playerShow) {
 		this._mode = this.modePlayerShow;
-	} else if (mode === GLOBAL.MODE.agentTrying) {
+	} else if (mode === GLOBAL.MODE.agentTry) {
 		this._mode = this.modeAgentTry;
-	} else if (mode === GLOBAL.MODE.agentOnly) {
+	} else if (mode === GLOBAL.MODE.agentDo) {
 		this._mode = this.modeAgentDo;
 	} else { // mode === GLOBAL.MODE.outro
 		this._mode = this.modeOutro;

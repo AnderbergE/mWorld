@@ -89,7 +89,7 @@ LizardGame.prototype.create = function () {
 			fill: '#00ff00'
 		}, _this.gameGroup);
 		setTimeout(function () {
-			publish(GLOBAL.EVENT.viewChange, [GLOBAL.VIEW.home]);
+			publish(GLOBAL.EVENT.viewChange, [GLOBAL.STATE.home]);
 		}, 1000);
 	};
 

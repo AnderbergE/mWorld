@@ -293,7 +293,7 @@ BirdheroGame.prototype.create = function () {
 			tree.branch[i].celebrate();
 		}
 		setTimeout(function () {
-			_this.state.start(GLOBAL.VIEW.garden);
+			_this.state.start(GLOBAL.STATE.garden);
 		}, 1000);
 	};
 

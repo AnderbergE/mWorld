@@ -24,7 +24,7 @@ EntryState.prototype.create = function () {
 	text.events.onInputDown.add(function () {
 		user.login('debug', 'debug');
 		//this.add.audio('yeah').play();
-		this.state.start(GLOBAL.VIEW.garden);
+		this.state.start(GLOBAL.STATE.garden);
 	}, this);
 
 	var credits = this.add.text(this.world.centerX, this.world.centerY/0.75, GLOBAL.TEXT.credits, {

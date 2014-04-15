@@ -8,7 +8,7 @@ var Backend = (function () {
 	*/
 	this.nextGame = function () {
 		return {
-			type: 3,
+			type: 2,
 			representation: 0,
 			amount: 4,
 			roundsPerMode: 1

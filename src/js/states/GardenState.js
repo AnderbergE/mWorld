@@ -16,7 +16,7 @@ GardenState.prototype.create = function () {
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
 		var info = Backend.nextGame();
-		this.state.start(GLOBAL.VIEW[info.type], true, false, info);
+		this.state.start(GLOBAL.STATE[info.type], true, false, info);
 	}, this);
 
 	var rows = 3;

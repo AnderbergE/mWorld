@@ -41,7 +41,7 @@ function menu (game) {
 	quit.anchor.setTo(0.5);
 	quit.inputEnabled = true;
 	quit.events.onInputDown.add(function () {
-		game.state.start(GLOBAL.VIEW.entry);
+		game.state.start(GLOBAL.STATE.entry);
 	}, this);
 
 	function showMenu (value) {
