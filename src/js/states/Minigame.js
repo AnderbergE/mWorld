@@ -174,19 +174,18 @@ Minigame.prototype.nextNumber = function () {
  * The offset of the last try is stored in this.lastTry.
  *
  * @param {Number} The number to try.
- * @returns {Boolean} If it was correct or not.
+ * @returns {Boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
 Minigame.prototype.tryNumber = function (number) {
 	this._currentTries++;
 	this.lastTry = number - this.currentNumber;
 
-	var correct = number === this.currentNumber;
-	if (correct) {
+	if (!this.lastTry) {
 		this._counter.value++; // This will trigger next mode if we loop.
 		this.nextNumber();
 	}
 	publish(GLOBAL.EVENT.tryNumber, [this.currentNumber, number]);
-	return correct;
+	return this.lastTry;
 };
 
 /** Start the game! */

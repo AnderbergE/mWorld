@@ -78,6 +78,15 @@ BirdheroGame.prototype.create = function () {
 		nest: function (target, onComplete) {
 			var pos = tree.branch[target-1].visit();
 			bird.move({ x: pos.x-elevator.x, y: pos.y-elevator.y }, 1000, onComplete);
+		},
+		longElevator: function (target, onComplete) {
+			bird.moveTo.elevator(function () {
+				bird.moveTo.peak(true, function () {
+					elevator.moveTo.branch(target, function () {
+						bird.moveTo.peak(false, onComplete);
+					});
+				});
+			});
 		}
 	};
 
@@ -155,33 +164,25 @@ BirdheroGame.prototype.create = function () {
 	function pushNumber (number) {
 		_this.disable(true);
 
-		// Alas, callback hell is upon us :(
-		bird.moveTo.elevator(function () {
-			bird.moveTo.peak(true, function () {
-				elevator.moveTo.branch(number, function () {
-					bird.moveTo.peak(false, function () {
-						bird.moveTo.nest(number, function () {
-							if (_this.tryNumber(number)) {
-								bird.visible = false;
-								elevator.moveTo.branch(0, function () {
-									_this.nextRound();
-								});
-							} else {
-								bird.moveTo.elevator(function () {
-									bird.moveTo.peak(true, function () {
-										elevator.moveTo.branch(0, function () {
-											bird.moveTo.peak(false, function () {
-												bird.moveTo.initial(function () {
-													_this.nextRound();
-												});
-											});
-										});
-									});
-								});
-							}
+		bird.moveTo.longElevator(number, function () {
+			bird.moveTo.nest(number, function () {
+
+				var result = _this.tryNumber(number);
+				if (!result) { /* Correct :) */
+					bird.visible = false;
+					elevator.moveTo.branch(0, function () {
+						_this.nextRound();
+					});
+				} else { /* Incorrect :( */
+					if (result < 0) { publish('birdheroTooLow'); }
+					else { publish('birdheroTooHigh'); }
+
+					bird.moveTo.longElevator(0, function () {
+						bird.moveTo.initial(function () {
+							_this.nextRound();
 						});
 					});
-				});
+				}
 			});
 		});
 	}
