@@ -2,7 +2,7 @@
  * The user object.
  * Use this to do any user interaction.
  */
-var user = new User();
+var user;
 
 /**
  * The Phaser game object.
@@ -16,6 +16,7 @@ var game;
  * Note: This is where all the states should be added.
  */
 window.onload = function () {
+	user = new User();
 	game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 	game.state.add('Boot', BootState);
 	game.state.add(GLOBAL.STATE.entry, EntryState);
