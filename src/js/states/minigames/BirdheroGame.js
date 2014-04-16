@@ -163,13 +163,16 @@ BirdheroGame.prototype.create = function () {
 				var result = _this.tryNumber(number);
 				if (!result) { /* Correct :) */
 					bird.visible = false;
-					elevator.moveTo.branch(0, function () {
-						_this.nextRound();
+					tree.branch[number-1].celebrate(5).onComplete.add(function () {
+						elevator.moveTo.branch(0, function () {
+							_this.nextRound();
+						});
 					});
 				} else { /* Incorrect :( */
 					if (result < 0) { publish('birdheroTooLow'); }
 					else { publish('birdheroTooHigh'); }
 
+					tree.branch[number-1].confused();
 					bird.moveTo.longElevator(0, function () {
 						bird.moveTo.initial(function () {
 							_this.nextRound();
@@ -321,8 +324,32 @@ BirdheroBranch.prototype.visit = function () {
 	};
 };
 
-BirdheroBranch.prototype.celebrate = function () {
-	game.add.tween(this.mother).to({ y: this.mother.y+10 }, 200, Phaser.Easing.Linear.None, true, 0, 11, true);
+BirdheroBranch.prototype.celebrate = function (times) {
+	times = times || 11;
+	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
+	return game.add.tween(this.mother).to({ y: this.mother.y-5 }, 200, Phaser.Easing.Linear.None, true, 0, times, true);
+};
+
+BirdheroBranch.prototype.confused = function (times) {
+	if (!this.confusing) {
+		this.confusing = game.add.text(this.mother.x+10, this.mother.y-40, '?!?', {
+			font: '20pt The Girl Next Door',
+			fill: '#000',
+			stroke: '#000',
+			strokeThickness: 3
+		}, this);
+		if (this.scale.x < 0) { // Always show the text in the correct way.
+			this.confusing.x += this.confusing.width;
+			this.confusing.scale.x = -1;
+		}
+	}
+
+	times = times || 11;
+	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
+	this.confusing.visible = true;
+	var anim = game.add.tween(this.confusing).to({ y: this.confusing.y-5 }, 200, Phaser.Easing.Linear.None, true, 0, times, true);
+	anim.onComplete.add(function () { this.confusing.visible = false; }, this);
+	return anim;
 };
 
 
