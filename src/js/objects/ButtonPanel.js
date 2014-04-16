@@ -2,7 +2,7 @@
  * Inherits Phaser.Group
  * A ButtonPanel is used in the minigames to interact with.
  */
-function ButtonPanel (representation, amount, x, y, length, maxSize, background, vertical, noEvent) {
+function ButtonPanel (representation, amount, x, y, length, maxSize, background, color, vertical, onClick, noEvent) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	x = x || 0;
 	y = y || 0;
@@ -27,7 +27,11 @@ function ButtonPanel (representation, amount, x, y, length, maxSize, background,
 				representation,
 				x,
 				y + margin + (paddingSize+buttonSize)*(i-1),
-				buttonSize, background, noEvent));
+				buttonSize,
+				background,
+				color,
+				onClick,
+				noEvent));
 		}
 	} else {
 		for (; i <= amount; i++) {
@@ -36,7 +40,11 @@ function ButtonPanel (representation, amount, x, y, length, maxSize, background,
 				representation,
 				x + margin + (paddingSize+buttonSize)*(i-1),
 				y, //-buttonSize*1.3
-				buttonSize, background, noEvent));
+				buttonSize,
+				background,
+				color,
+				onClick,
+				noEvent));
 		}
 	}
 

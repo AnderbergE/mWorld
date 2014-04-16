@@ -148,17 +148,11 @@ BirdheroGame.prototype.create = function () {
 
 	// Add HUD
 	var buttons = new ButtonPanel(this.representation, this.amount,
-		0, this.world.height-100, this.world.width, 75, 'wood');
+		0, this.world.height-100, this.world.width, 75, 'wood', '#000000', false, pushNumber);
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(GLOBAL.NUMBER_REPRESENTATION.yesno, 2,
-		0, this.world.height-100, this.world.width, 75, 'wood');
+		0, this.world.height-100, this.world.width, 75, 'wood', null, false, pushYesno);
 	this.hudGroup.add(yesnos);
-
-	// When pushing a button in the HUD:
-	var buttonFunction = null;
-	this.addEvent(GLOBAL.EVENT.numberPress, function(value) {
-		buttonFunction(value);
-	});
 
 	/* Function to trigger when a number button is pushed */
 	function pushNumber (number) {
@@ -194,7 +188,6 @@ BirdheroGame.prototype.create = function () {
 
 	/* Show the number panel, hide the yes/no panel and enable input */
 	function showNumbers () {
-		buttonFunction = pushNumber;
 		_this.hudGroup.visible = true;
 		buttons.reset();
 		buttons.visible = true;
@@ -203,7 +196,6 @@ BirdheroGame.prototype.create = function () {
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
-		buttonFunction = pushYesno;
 		_this.hudGroup.visible = true;
 		buttons.visible = false;
 		yesnos.reset();

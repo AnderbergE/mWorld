@@ -5,25 +5,29 @@ NumberButton.prototype.constructor = NumberButton;
  * Inherits Phaser.Group
  * A NumberButton is used in the minigames to interact with.
  */
-function NumberButton (number, representation, x, y, size, background, color, noEvent) {
+function NumberButton (number, representation, x, y, size, background, color, onClick, noEvent) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.number = number;
 	x = x || 0;
 	y = y || 0;
 	size = size || 100;
+	color = color || '#000000';
 
 	var bg = game.add.sprite(x, y, background, 0, this);
 	bg.width = size;
 	bg.height = size;
+
 	if (!noEvent) {
 		bg.inputEnabled = true;
 		bg.events.onInputDown.add(function () {
 			if (bg.frame % 2 === 0) {
 				bg.frame++;
 			}
+			if (onClick) { onClick(number); }
 			publish(GLOBAL.EVENT.numberPress, [number, representation]);
 		}, this);
 	}
+
 	this.reset = function () {
 		if (bg.frame % 2 !== 0) {
 			bg.frame--;
