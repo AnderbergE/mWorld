@@ -1,0 +1,10 @@
+How to run experiments:
+Copy the entire example folder to the "build" directory and change the url in your browser according to the path.
+
+Example:
+Copy "tweens" to "build".
+We now have path "build/tweens" with file "ex.html" in it.
+
+Change url to:
+http://localhost:9000/tweens/ex.html
+(You need grunt running)
