@@ -11,6 +11,27 @@ var user;
  */
 var game;
 
+/* Extending Phaser objects to simplify tweening */
+/* To chain tweens easily. */
+Phaser.Tween.prototype.then = function (tween) {
+	if (this._chainedTweens.length > 0) {
+		this._chainedTweens[0].then(tween);
+	} else {
+		this._chainedTweens = [tween];
+	}
+
+	return tween; // Returning 'tween' instead of 'this' (as in .chain()).
+};
+/* To chain sounds easily. */
+Phaser.Sound.prototype.then = function (what) {
+	this.onStop.add(function () { what.start(); });
+	return what;
+};
+/* To enable tweening of both sounds and tweens. */
+Phaser.Sound.prototype.start = function () {
+	return this.play();
+};
+
 /**
  * Create the game when the browser has loaded everything.
  * Note: This is where all the states should be added.
