@@ -1,19 +1,20 @@
-/*
- * Main menu of the game.
- */
-function menu (game) {
-	var container = game.add.group();
+/* Main menu of the game */
+Menu.prototype = Object.create(Phaser.Group.prototype);
+Menu.prototype.constructor = Menu;
+
+function Menu () {
+	Phaser.Group.call(this, game, null); // Parent constructor.
 
 	var button = game.add.text(0, 0, GLOBAL.TEXT.menu, {
 		font: '20pt The Girl Next Door',
 		fill: '#ffff00'
-	}, container);
+	}, this);
 	button.inputEnabled = true;
 	button.events.onInputDown.add(function () {
 		showMenu(true);
 	}, this);
 
-	var menuGroup = game.add.group(container);
+	var menuGroup = game.add.group(this);
 	showMenu(false);
 
 	// Create a background for the menu, traps all mouse events.
@@ -47,4 +48,6 @@ function menu (game) {
 	function showMenu (value) {
 		menuGroup.visible = value;
 	}
+
+	return this;
 }

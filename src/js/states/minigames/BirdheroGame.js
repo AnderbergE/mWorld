@@ -175,9 +175,11 @@ BirdheroGame.prototype.create = function () {
 			.onComplete.addOnce(function () {
 
 				var result = _this.tryNumber(number);
+				var branch = tree.branch[number-1];
 				if (!result) { /* Correct :) */
 					bird.visible = false;
-					tree.branch[number-1].celebrate(5).onComplete.addOnce(function () {
+					branch.celebrate(11);
+					_this.addWater(branch.mother.world.x, branch.mother.world.y, function () {
 						elevator.moveTo.bottom().start().onComplete.addOnce(function () {
 							_this.nextRound();
 						});
@@ -186,7 +188,7 @@ BirdheroGame.prototype.create = function () {
 					if (result < 0) { publish('birdheroTooLow'); }
 					else { publish('birdheroTooHigh'); }
 
-					tree.branch[number-1].confused();
+					branch.confused();
 					bird.moveTo.elevator().start()
 						.then(bird.moveTo.peak(true))
 						.then(elevator.moveTo.bottom())

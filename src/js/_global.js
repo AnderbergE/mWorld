@@ -7,6 +7,7 @@ var GLOBAL = {
 		numberPress: 'numberPress', // [number]
 		modeChange:  'modeChange',
 		tryNumber:   'tryNumber',   // [correct number, tried number]
+		waterAdded:  'waterAdded',  // [total amount, added amount]
 		plantPress:  'plantPress'   // [number]
 	},
 

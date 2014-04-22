@@ -1,9 +1,20 @@
 /* User object */
 function User () {
+	this._water = 0;
 	this.logout();
 
 	return this;
 }
+Object.defineProperty(User.prototype, 'water', {
+	get: function() {
+		return this._water;
+	},
+	set: function(value) {
+		var diff = value - this._water;
+		this._water = value;
+		publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
+	}
+});
 
 /**
  * Log in a user.
@@ -13,6 +24,7 @@ function User () {
 User.prototype.login = function (name, pass) {
 	var temp = Backend.login(name, pass);
 	this.agent = new GLOBAL.AGENT[temp[0]]();
+	this.water = 2;
 };
 
 /**

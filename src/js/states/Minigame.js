@@ -6,9 +6,9 @@
  * The number to answer: this.currentNumber
  *
  * Add game objects to:     this.gameGroup
- * Add buttons and HUD to:  this.hudGroup
+ * Add buttons and HUD to:  this.hudGroup (default visibility = false)
  * Add background music to: this.music
- * Use agent with:          this.agent, (its visibility = false)
+ * Use agent with:          this.agent, (default visibility = false)
  *
  *
  * Functions:
@@ -51,6 +51,7 @@ Minigame.prototype.init = function (options) {
 		GLOBAL.MODE.outro
 	];
 	this._mode = null;
+	this._pendingMode = null;
 	this._first = true;
 	/* Keep track of how many rounds that have been played */
 	this._counter = new Counter(options.roundsPerMode || 3, true);
@@ -67,17 +68,27 @@ Minigame.prototype.init = function (options) {
 	this.amount = options.amount;
 	/* The current number to answer */
 	this.currentNumber = null;
+	/* The current mode running */
+	this.currentMode = null;
 	/* Stores the offset of the last try, can be used to judge last try */
 	/* Ex: -1 means that last try was one less than currentNumber */
 	this.lastTry = 0;
 
 	/* Setup game objects */
 	this.gameGroup = game.add.group();
-	this.hudGroup = game.add.group();
-	this.music = null;
 	this.agent = user.agent;
 	this.agent.gfx.visible = false;
 	this.gameGroup.add(this.agent.gfx);
+
+	this.hudGroup = game.add.group();
+	this.hudGroup.visible = false;
+
+	this.menuGroup = game.add.group();
+	this.waterCan = new WaterCan(this.game.width - 100, 10);
+	this.menuGroup.add(this.waterCan);
+	this.menuGroup.add(new Menu());
+
+	this.music = null;
 
 	//  TODO: Is there an easier way to disable all input, except the menu?
 	var bmd = game.add.bitmapData(game.world.width, game.world.height);
@@ -130,6 +141,7 @@ Minigame.prototype.removeEvent = function (ev) {
  */
 Minigame.prototype.nextRound = function () {
 	this._mode(this._first, this._currentTries);
+	this.currentMode = this._pendingMode;
 	this._first = false;
 };
 
@@ -157,6 +169,7 @@ Minigame.prototype.decideMode = function (mode) {
 Minigame.prototype.nextMode = function () {
 	var newMode = this._modes.shift();
 	this.decideMode(newMode);
+	this._pendingMode = newMode;
 	this._first = true;
 	publish(GLOBAL.EVENT.modeChange, [newMode]);
 };
@@ -188,9 +201,31 @@ Minigame.prototype.tryNumber = function (number) {
 	return this.lastTry;
 };
 
+Minigame.prototype.addWater = function (x, y, onComplete, force) {
+	if (this.currentMode === GLOBAL.MODE.playerShow ||
+		this.currentMode === GLOBAL.MODE.agentTry ||
+		this.currentMode === GLOBAL.MODE.agentDo ||
+		force) {
+		var drop = this.add.sprite(x, y, 'drop', 0, this.menuGroup);
+		drop.anchor.setTo(0.5);
+		drop.scale.y = 0;
+		var t = this.add.tween(drop.scale).to({ y: 1 }, 1500, Phaser.Easing.Elastic.Out).start()
+			.then(this.add.tween(drop).to({ x: this.waterCan.x + 30, y: this.waterCan.y }, 1500, Phaser.Easing.Quadratic.Out))
+			.then(this.add.tween(drop).to({ height: 0 }, 500));
+		t.onStart.add(function () {
+			user.water++;
+		});
+		t.onComplete.add(function () {
+			drop.destroy();
+			onComplete();
+		});
+	} else {
+		onComplete();
+	}
+};
+
 /** Start the game! */
 Minigame.prototype.startGame = function () {
-	menu(this);
 	this.nextMode();
 	this.nextNumber();
 	this.nextRound();
@@ -198,9 +233,9 @@ Minigame.prototype.startGame = function () {
 
 /* Overshadowing mode functions */
 /* These functions should be overshadowed in the game object */
-Minigame.prototype.modeIntro       = function () { this.nextMode(); };
-Minigame.prototype.modePlayerDo  = function () { this.nextMode(); };
-Minigame.prototype.modePlayerShow  = function () { this.nextMode(); };
-Minigame.prototype.modeAgentTry = function () { this.nextMode(); };
-Minigame.prototype.modeAgentDo   = function () { this.nextMode(); };
-Minigame.prototype.modeOutro       = function () { this.nextMode(); };
+Minigame.prototype.modeIntro      = function () { this.nextMode(); };
+Minigame.prototype.modePlayerDo   = function () { this.nextMode(); };
+Minigame.prototype.modePlayerShow = function () { this.nextMode(); };
+Minigame.prototype.modeAgentTry   = function () { this.nextMode(); };
+Minigame.prototype.modeAgentDo    = function () { this.nextMode(); };
+Minigame.prototype.modeOutro      = function () { this.nextMode(); };

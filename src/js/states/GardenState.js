@@ -30,7 +30,7 @@ GardenState.prototype.create = function () {
 		}
 	}
 
-	menu(this);
+	this.world.add(new Menu());
 };
 
 GardenPlant.prototype = Object.create(Phaser.Group.prototype);
