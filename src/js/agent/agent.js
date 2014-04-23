@@ -1,24 +1,27 @@
+Agent.prototype = Object.create(Phaser.Group.prototype);
+Agent.prototype.constructor = Agent;
+
 function Agent () {
-	var _this = this;
+	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.knowledge = 0.5;
 	this.lastGuess = null;
 	this.tweens = {};
-	this.gfx = new Phaser.Group(game, null, 'agent');
-	this.gfx.destroy = function () {
-		// Do not remove the agent if it is in a group somewhere.
-		if (this.parent) {
-			this.parent.remove(this);
-			for (var tween in _this.tweens) {
-				_this.tweens[tween].stop();
-				delete _this.tweens[tween];
-			}
-		} else {
-			Phaser.Group.prototype.destroy.call(this);
-		}
-	};
 
 	return this;
 }
+
+Agent.prototype.destroy = function () {
+	// Do not remove the agent if it is in a group somewhere.
+	if (this.parent) {
+		this.parent.remove(this);
+		for (var tween in this.tweens) {
+			this.tweens[tween].stop();
+			delete this.tweens[tween];
+		}
+	} else {
+		Phaser.Group.prototype.destroy.call(this);
+	}
+};
 
 Agent.prototype.guessNumber = function (correct, min, max) {
 	var range = (max - min);
@@ -39,13 +42,8 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 Agent.prototype.setHappy = function (on) {
 	if (on) {
 		if (!this.tweens.happy) {
-			this.tweens.happy = game.add.tween(this.gfx);
-			this.tweens.happy.to({ y: this.gfx.y + 100 }, 200, Phaser.Easing.Linear.None, true, 0, 1111, true);
-			// Make sure that we remove the tween when it is complete.
-			var _this = this;
-			this.tweens.happy.onComplete.add(function () {
-				delete _this.tweens.happy;
-			}, true);
+			this.tweens.happy = game.add.tween(this);
+			this.tweens.happy.to({ y: this.y + 100 }, 200, Phaser.Easing.Linear.None, true, 0, 1111, true);
 		}
 	} else if (this.tweens.happy) {
 		// This will stop the tween where it started and remove it from the Tween manager.
@@ -67,11 +65,11 @@ Agent.prototype._eyeFollow = function (eye, targ) {
 
 Agent.prototype.eyesFollowObject = function (targ, off) {
 	if (off) {
-		this.gfx.leftEye.update = function () {};
-		this.gfx.rightEye.update = function () {};
+		this.leftEye.update = function () {};
+		this.rightEye.update = function () {};
 	} else {
-		this._eyeFollow(this.gfx.leftEye, targ);
-		this._eyeFollow(this.gfx.rightEye, targ);
+		this._eyeFollow(this.leftEye, targ);
+		this._eyeFollow(this.rightEye, targ);
 	}
 };
 

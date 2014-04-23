@@ -56,12 +56,11 @@ BirdheroGame.prototype.create = function () {
 	this.add.sprite(0, 0, 'birdheroBg', null, this.gameGroup);
 
 	// Agent is added to the game in the superclass, so set up correct start point.
-	var agent = this.agent.gfx;
-	agent.x = coords.agent.start.x;
-	agent.y = coords.agent.start.y;
-	agent.scale.x = coords.agent.scale;
-	agent.scale.y = coords.agent.scale;
-	this.gameGroup.bringToTop(agent);
+	this.agent.x = coords.agent.start.x;
+	this.agent.y = coords.agent.start.y;
+	this.agent.scale.x = coords.agent.scale;
+	this.agent.scale.y = coords.agent.scale;
+	this.gameGroup.bringToTop(this.agent);
 	var press = null; // TODO: Debug only, remove later.
 
 	// Create bird, it is added to the elevator group below since we need it to be "in" the elevator.
@@ -258,7 +257,7 @@ BirdheroGame.prototype.create = function () {
 		_this.disable(true);
 		if (intro) {
 			_this.hudGroup.visible = false;
-			agent.visible = false;
+			_this.agent.visible = false;
 		}
 		if (tries <= 0) { newBird(showNumbers); }
 		else { showNumbers(); }
@@ -268,8 +267,8 @@ BirdheroGame.prototype.create = function () {
 		_this.disable(true);
 		if (intro) {
 			_this.hudGroup.visible = false;
-			agent.visible = true;
-			_this.add.tween(agent).to({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3000, Phaser.Easing.Quadratic.Out, true).onComplete.addOnce(function () {
+			_this.agent.visible = true;
+			_this.add.tween(_this.agent).to({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3000, Phaser.Easing.Quadratic.Out, true).onComplete.addOnce(function () {
 				newBird(showNumbers);
 			});
 		} else {
@@ -282,7 +281,7 @@ BirdheroGame.prototype.create = function () {
 		_this.disable(true);
 		if (intro) {
 			_this.hudGroup.visible = false;
-			agent.visible = true;
+			_this.agent.visible = true;
 		}
 
 		if (intro || tries <= 0) { newBird(agentGuess); }
