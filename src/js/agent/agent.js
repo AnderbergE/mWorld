@@ -1,11 +1,11 @@
+/* The super class for agent objects, see Panda for sub classing reference */
 Agent.prototype = Object.create(Phaser.Group.prototype);
 Agent.prototype.constructor = Agent;
-
 function Agent () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	this.knowledge = 0.5;
+	this._knowledge = 0.5;
+
 	this.lastGuess = null;
-	this.tweens = {};
 
 	/* Set up the following in the sub class (see Panda for reference) */
 	// this.coords
@@ -15,22 +15,29 @@ function Agent () {
 	return this;
 }
 
+/* Called from the game when a minigame ends */
 Agent.prototype.destroy = function () {
 	// Do not remove the agent if it is in a group somewhere.
 	if (this.parent) {
 		this.parent.remove(this);
-		for (var tween in this.tweens) {
-			this.tweens[tween].stop();
-			delete this.tweens[tween];
-		}
+		this.eyesFollowObject(null, false);
 	} else {
 		Phaser.Group.prototype.destroy.call(this);
 	}
 };
 
+/**
+ * Have the agent guess a number.
+ * @param {number} The correct number
+ * @param {number} Minimum value to guess
+ * @param {number} Maximum value to guess
+ * @returns {number} The guess
+ */
 Agent.prototype.guessNumber = function (correct, min, max) {
+	// TODO: How should the AI behave?
+	// TODO: Copy user's amount of right and wrongs and some randomized element.
 	var range = (max - min);
-	var errorRange = parseInt(range - range * this.knowledge);
+	var errorRange = parseInt(range - range * this._knowledge);
 	var guessRangeMin = correct - errorRange;
 	var guessRangeMax = correct + errorRange;
 	if (guessRangeMin < min) {
@@ -44,23 +51,26 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 	return this.lastGuess;
 };
 
-Agent.prototype.setHappy = function (on) {
-	if (on) {
-		if (!this.tweens.happy) {
-			this.tweens.happy = game.add.tween(this);
-			this.tweens.happy.to({ y: this.y + 100 }, 200, Phaser.Easing.Linear.None, true, 0, 1111, true);
-		}
-	} else if (this.tweens.happy) {
-		// This will stop the tween where it started and remove it from the Tween manager.
-		this.tweens.happy.repeat(this.tweens.happy._repeat%2);
-	}
+/**
+ * Make agent happy.
+ * @param {number} For how long
+ * @returns {Object} The happiness tween (not started)
+ */
+Agent.prototype.happy = function(duration) {
+	duration = duration || 3000;
+	var times = parseInt(duration / 200);
+	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
+	return game.add.tween(this).to({ y: this.y + 100 }, 200, Phaser.Easing.Linear.None, false, 0, times, true);
 };
 
+/* Private. Have an eye follow a target. */
 Agent.prototype._eyeFollow = function (eye, targ) {
 	var origin = { x: eye.x, y: eye.y };
 	var depth = this.coords.eye.depth;
 	var maxMove = this.coords.eye.maxMove;
 	var agent = this;
+
+	/* Update functions trigger on every game loop */
 	eye.update = function () {
 		if (!agent.visible) { return; }
 
@@ -73,6 +83,11 @@ Agent.prototype._eyeFollow = function (eye, targ) {
 	};
 };
 
+/**
+ * Make the agent's eyes follow an object.
+ * @param {Object} The target to follow
+ * @param {boolean} true to turn off following object
+ */
 Agent.prototype.eyesFollowObject = function (targ, off) {
 	this.leftEye.x = this.coords.eye.left.x;
 	this.leftEye.y = this.coords.eye.left.y;
@@ -88,6 +103,10 @@ Agent.prototype.eyesFollowObject = function (targ, off) {
 	}
 };
 
-Agent.prototype.eyesFollowMouse = function (off) {
+/**
+ * Make the agent's eyes follow the input pointer.
+ * @param {boolean} true to turn off following pointer
+ */
+Agent.prototype.eyesFollowPointer = function (off) {
 	this.eyesFollowObject(game.input.activePointer, off);
 };

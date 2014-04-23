@@ -214,7 +214,7 @@ BirdheroGame.prototype.create = function () {
 		buttons.visible = true;
 		yesnos.visible = false;
 		_this.disable(false);
-		_this.agent.eyesFollowMouse();
+		_this.agent.eyesFollowPointer();
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
@@ -223,7 +223,7 @@ BirdheroGame.prototype.create = function () {
 		yesnos.reset();
 		yesnos.visible = true;
 		_this.disable(false);
-		_this.agent.eyesFollowMouse();
+		_this.agent.eyesFollowPointer();
 	}
 
 	/* Introduce a new bird, aka: start a new round. */
@@ -302,9 +302,9 @@ BirdheroGame.prototype.create = function () {
 
 	this.modeOutro = function () {
 		_this.hudGroup.visible = false;
-		_this.agent.setHappy(true);
+		_this.agent.happy(1000).start();
 		for (var i = 0; i < tree.branch.length; i++) {
-			tree.branch[i].celebrate().start();
+			tree.branch[i].celebrate(1000).start();
 		}
 		setTimeout(function () {
 			_this.state.start(GLOBAL.STATE.garden);
