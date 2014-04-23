@@ -7,6 +7,11 @@ function Agent () {
 	this.lastGuess = null;
 	this.tweens = {};
 
+	/* Set up the following in the sub class (see Panda for reference) */
+	// this.coords
+	// this.leftEye
+	// this.rightEye
+
 	return this;
 }
 
@@ -53,17 +58,27 @@ Agent.prototype.setHappy = function (on) {
 
 Agent.prototype._eyeFollow = function (eye, targ) {
 	var origin = { x: eye.x, y: eye.y };
+	var depth = this.coords.eye.depth;
+	var maxMove = this.coords.eye.maxMove;
+	var agent = this;
 	eye.update = function () {
+		if (!agent.visible) { return; }
+
 		var o = this.world;
 		var a = game.physics.arcade.angleBetween(o, targ);
-		var d = game.physics.arcade.distanceBetween(o, targ)/eye.depth;
-		if (d > eye.maxMove) { d = eye.maxMove; }
+		var d = game.physics.arcade.distanceBetween(o, targ) / depth;
+		if (d > maxMove) { d = maxMove; }
 		this.x = Math.cos(a) * d + origin.x;
 		this.y = Math.sin(a) * d + origin.y;
 	};
 };
 
 Agent.prototype.eyesFollowObject = function (targ, off) {
+	this.leftEye.x = this.coords.eye.left.x;
+	this.leftEye.y = this.coords.eye.left.y;
+	this.rightEye.x = this.coords.eye.right.x;
+	this.rightEye.y = this.coords.eye.right.y;
+
 	if (off) {
 		this.leftEye.update = function () {};
 		this.rightEye.update = function () {};

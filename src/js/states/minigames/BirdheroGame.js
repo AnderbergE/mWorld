@@ -165,6 +165,7 @@ BirdheroGame.prototype.create = function () {
 	/* Function to trigger when a number button is pushed */
 	function pushNumber (number) {
 		_this.disable(true);
+		_this.agent.eyesFollowObject(bird.beak.world);
 
 		bird.moveTo.elevator().start()
 			.then(bird.moveTo.peak(true))
@@ -213,6 +214,7 @@ BirdheroGame.prototype.create = function () {
 		buttons.visible = true;
 		yesnos.visible = false;
 		_this.disable(false);
+		_this.agent.eyesFollowMouse();
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
@@ -221,6 +223,7 @@ BirdheroGame.prototype.create = function () {
 		yesnos.reset();
 		yesnos.visible = true;
 		_this.disable(false);
+		_this.agent.eyesFollowMouse();
 	}
 
 	/* Introduce a new bird, aka: start a new round. */
@@ -378,45 +381,9 @@ function BirdheroBird () {
 
 	var body = game.add.sprite(0, 0, 'birdheroBird', null, this);
 	body.anchor.setTo(0.5);
-	var beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
-	beak.anchor.setTo(0.5);
-	beak.talk = beak.animations.add('talk', null, 4, true);
-
-	this.say = function (what, onComplete) {
-		beak.talk.play();
-		var s = game.add.sound(what);
-		s.onStop = function () {
-			beak.talk.stop();
-			if (onComplete) { onComplete(); }
-		};
-		return s;
-	};
-
-	this.turn = function (direction) {
-		// Turn by manipulating the scale.
-		var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
-		return game.add.tween(this.scale).to({ x: newScale }, 200, Phaser.Easing.Linear.None);
-	};
-	this.move = function (properties, duration, scale) {
-		var t = game.add.tween(this).to(properties, duration, Phaser.Easing.Quadratic.Out);
-		
-		t.onStart.addOnce(function () {
-				if (properties.x &&                          // Check if we should turn around
-					(properties.x <= this.x && 0 < this.scale.x) || // Going left, scale should be -1
-					(this.x <= properties.x && 0 > this.scale.x)) { // Going right, scale should be 1
-					var turn = this.turn().start();
-					if (scale) {
-						turn.onComplete.add(function () {
-							game.add.tween(this.scale).to({ x: (this.scale.x < 0 ? -1 * scale : scale), y: scale }, duration - 200, Phaser.Easing.Quadratic.Out, true);
-						}, this);
-					}
-				} else if (scale) {
-					game.add.tween(this.scale).to({ x: (this.scale.x < 0 ? -1 * scale : scale), y: scale }, duration, Phaser.Easing.Quadratic.Out, true);
-				}
-		}, this);
-
-		return t;
-	};
+	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
+	this.beak.anchor.setTo(0.5);
+	this.beak.talk = this.beak.animations.add('talk', null, 4, true);
 
 	return this;
 }
@@ -428,3 +395,40 @@ Object.defineProperty(BirdheroBird.prototype, 'tint', {
 		this.setAllChildren('tint', value);
 	}
 });
+
+BirdheroBird.prototype.say = function (what, onComplete) {
+	this.beak.talk.play();
+	var s = game.add.sound(what);
+	s.onStop = function () {
+		this.beak.talk.stop();
+		if (onComplete) { onComplete(); }
+	};
+	return s;
+};
+
+BirdheroBird.prototype.turn = function (direction) {
+	// Turn by manipulating the scale.
+	var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
+	return game.add.tween(this.scale).to({ x: newScale }, 200, Phaser.Easing.Linear.None);
+};
+
+BirdheroBird.prototype.move = function (properties, duration, scale) {
+	var t = game.add.tween(this).to(properties, duration, Phaser.Easing.Quadratic.Out);
+	
+	t.onStart.addOnce(function () {
+		if (properties.x &&                          // Check if we should turn around
+			(properties.x <= this.x && 0 < this.scale.x) || // Going left, scale should be -1
+			(this.x <= properties.x && 0 > this.scale.x)) { // Going right, scale should be 1
+			var turn = this.turn().start();
+			if (scale) {
+				turn.onComplete.add(function () {
+					game.add.tween(this.scale).to({ x: (this.scale.x < 0 ? -1 * scale : scale), y: scale }, duration - 200, Phaser.Easing.Quadratic.Out, true);
+				}, this);
+			}
+		} else if (scale) {
+			game.add.tween(this.scale).to({ x: (this.scale.x < 0 ? -1 * scale : scale), y: scale }, duration, Phaser.Easing.Quadratic.Out, true);
+		}
+	}, this);
+
+	return t;
+};
