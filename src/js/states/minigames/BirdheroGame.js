@@ -178,7 +178,7 @@ BirdheroGame.prototype.create = function () {
 				var branch = tree.branch[number-1];
 				if (!result) { /* Correct :) */
 					bird.visible = false;
-					branch.celebrate(11);
+					branch.celebrate().start();
 					_this.addWater(branch.mother.world.x, branch.mother.world.y, function () {
 						elevator.moveTo.bottom().start().onComplete.addOnce(function () {
 							_this.nextRound();
@@ -188,7 +188,7 @@ BirdheroGame.prototype.create = function () {
 					if (result < 0) { publish('birdheroTooLow'); }
 					else { publish('birdheroTooHigh'); }
 
-					branch.confused();
+					branch.confused().start();
 					bird.moveTo.elevator().start()
 						.then(bird.moveTo.peak(true))
 						.then(elevator.moveTo.bottom())
@@ -304,7 +304,7 @@ BirdheroGame.prototype.create = function () {
 		_this.hudGroup.visible = false;
 		_this.agent.setHappy(true);
 		for (var i = 0; i < tree.branch.length; i++) {
-			tree.branch[i].celebrate();
+			tree.branch[i].celebrate().start();
 		}
 		setTimeout(function () {
 			_this.state.start(GLOBAL.STATE.garden);
@@ -315,8 +315,13 @@ BirdheroGame.prototype.create = function () {
 	this.startGame();
 };
 
-/* Bird Hero game objects */
 
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                          Bird Hero game objects                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
+/* A branch for the tree, holds: branch, nest, parent and chicks */
 BirdheroBranch.prototype = Object.create(Phaser.Group.prototype);
 BirdheroBranch.prototype.constructor = BirdheroBranch;
 function BirdheroBranch (x, y, tint) {
@@ -335,7 +340,7 @@ function BirdheroBranch (x, y, tint) {
 	return this;
 }
 
-/* Returns the x, y coordinates of where the bird should stop at the nest */
+/** @returns {Object} The x, y coordinates of where the bird should stop at the nest */
 BirdheroBranch.prototype.visit = function () {
 	return {
 		x: (this.nest.x + this.nest.width) * this.scale.x,
@@ -343,13 +348,24 @@ BirdheroBranch.prototype.visit = function () {
 	};
 };
 
-BirdheroBranch.prototype.celebrate = function (times) {
-	times = times || 11;
+/**
+ * When the nest goes wild!
+ * @param {number} The duration of the celebration, default: 3000
+ * @returns {Object} The celebration tween (not started)
+ */
+BirdheroBranch.prototype.celebrate = function (duration) {
+	duration = duration || 3000;
+	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
-	return game.add.tween(this.mother).to({ y: this.mother.y-5 }, 200, Phaser.Easing.Linear.None, true, 0, times, true);
+	return game.add.tween(this.mother).to({ y: this.mother.y-5 }, 200, Phaser.Easing.Linear.None, false, 0, times, true);
 };
 
-BirdheroBranch.prototype.confused = function (times) {
+/**
+ * When something strange is happening.
+ * @param {number} The duration of the confusion, default: 3000
+ * @returns {Object} The confusion tween (not started)
+ */
+BirdheroBranch.prototype.confused = function (duration) {
 	if (!this.confusing) {
 		this.confusing = game.add.text(this.mother.x+10, this.mother.y-40, '?!?', {
 			font: '20pt The Girl Next Door',
@@ -363,15 +379,17 @@ BirdheroBranch.prototype.confused = function (times) {
 		}
 	}
 
-	times = times || 11;
+	duration = duration || 3000;
+	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
+
 	this.confusing.visible = true;
-	var anim = game.add.tween(this.confusing).to({ y: this.confusing.y-5 }, 200, Phaser.Easing.Linear.None, true, 0, times, true);
+	var anim = game.add.tween(this.confusing).to({ y: this.confusing.y-5 }, 200, Phaser.Easing.Linear.None, false, 0, times, true);
 	anim.onComplete.add(function () { this.confusing.visible = false; }, this);
 	return anim;
 };
 
-
+/* The bird that you are helping home */
 BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
 function BirdheroBird () {
@@ -379,8 +397,8 @@ function BirdheroBird () {
 	this.visible = false;
 	this.number = null;
 
-	var body = game.add.sprite(0, 0, 'birdheroBird', null, this);
-	body.anchor.setTo(0.5);
+	this.body = game.add.sprite(0, 0, 'birdheroBird', null, this);
+	this.body.anchor.setTo(0.5);
 	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
 	this.beak.anchor.setTo(0.5);
 	this.beak.talk = this.beak.animations.add('talk', null, 4, true);
@@ -389,29 +407,44 @@ function BirdheroBird () {
 }
 Object.defineProperty(BirdheroBird.prototype, 'tint', {
 	get: function() {
-		return this.children[0].tint;
+		return this.body.tint;
 	},
 	set: function(value) {
-		this.setAllChildren('tint', value);
+		this.body.tint = value;
 	}
 });
 
-BirdheroBird.prototype.say = function (what, onComplete) {
+/**
+ * It's a flying, talking birdie!
+ * @param {string} The key to a sound file
+ * @returns {Object} The sound object (not started)
+ */
+BirdheroBird.prototype.say = function (what) {
 	this.beak.talk.play();
 	var s = game.add.sound(what);
-	s.onStop = function () {
-		this.beak.talk.stop();
-		if (onComplete) { onComplete(); }
-	};
+	s.onStop = function () { this.beak.talk.stop(); };
 	return s;
 };
 
+/**
+ * Turn around! Every now and then I get a little bit lonely...
+ * @param {number} -1 = left, 1 = right, default: opposite of current
+ * @returns {Object} The turning tween (not started)
+ */
 BirdheroBird.prototype.turn = function (direction) {
 	// Turn by manipulating the scale.
 	var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
 	return game.add.tween(this.scale).to({ x: newScale }, 200, Phaser.Easing.Linear.None);
 };
 
+/**
+ * Move around, turn according to move direction.
+ * NOTE: turning takes 200ms, making a new move before that might give strange results.
+ * @param {Object} Properties to tween
+ * @param {number} Duration of the move
+ * @param {number} If a scaling should happen during the move
+ * @returns {Object} The movement tween (not started)
+ */
 BirdheroBird.prototype.move = function (properties, duration, scale) {
 	var t = game.add.tween(this).to(properties, duration, Phaser.Easing.Quadratic.Out);
 	
