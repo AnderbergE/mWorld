@@ -83,13 +83,6 @@ Minigame.prototype.init = function (options) {
 	this.hudGroup = game.add.group();
 	this.hudGroup.visible = false;
 
-	this.menuGroup = game.add.group();
-	this.waterCan = new WaterCan(this.game.width - 100, 10);
-	this.menuGroup.add(this.waterCan);
-	this.menuGroup.add(new Menu());
-
-	this.music = null;
-
 	//  TODO: Is there an easier way to disable all input, except the menu?
 	var bmd = game.add.bitmapData(game.world.width, game.world.height);
 	bmd.ctx.fillRect(0, 0, game.world.width, game.world.height);
@@ -97,6 +90,13 @@ Minigame.prototype.init = function (options) {
 	disabler.alpha = 0;
 	disabler.inputEnabled = true;
 	this.disable = function (value) { disabler.visible = value; };
+
+	this.menuGroup = game.add.group();
+	this.waterCan = new WaterCan(this.game.width - 100, 10);
+	this.menuGroup.add(this.waterCan);
+	this.menuGroup.add(new Menu());
+
+	this.music = null;
 };
 
 /* Phaser state function */
