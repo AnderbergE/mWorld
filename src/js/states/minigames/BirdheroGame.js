@@ -1,8 +1,8 @@
 /* Bird Hero game */
-BirdheroGame.prototype = Object.create(Minigame.prototype);
+BirdheroGame.prototype = Object.create(Subgame.prototype);
 BirdheroGame.prototype.constructor = BirdheroGame;
 function BirdheroGame () {
-	Minigame.call(this); // Call parent constructor.
+	Subgame.call(this); // Call parent constructor.
 }
 
 /* Phaser state function */

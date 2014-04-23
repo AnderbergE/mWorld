@@ -1,5 +1,5 @@
 /**
- * Holds shared logic for minigames.
+ * Holds shared logic for subgames.
  * How to use:
  * Number amount:        this.amount
  * Representation:       this.representation
@@ -17,6 +17,7 @@
  * Go to next mode:         this.nextMode (only use this in intro-mode, the others change automatically)
  * Run next round:          this.nextRound (this will call the appropriate mode function)
  * Try a number:            this.tryNumber
+ * Add water to the can:    this.addWater
  *
  * These function should be overshadowed by the game:
  * modeIntro      // Introduce the game, call nextMode and nextRound to start next mode.
@@ -36,10 +37,10 @@
  *                    // it takes care of mode switching and function calls for you
  * // Do until game is done, then quit by using: this.state.start(GLOBAL.STATE.garden);
  */
-function Minigame () {}
+function Subgame () {}
 
 /* Phaser state function */
-Minigame.prototype.init = function (options) {
+Subgame.prototype.init = function (options) {
 	/* "Private" variables */
 	var _this = this; // Event subscriptions does not have access to this
 	this._modes = options.mode || [
@@ -100,7 +101,7 @@ Minigame.prototype.init = function (options) {
 };
 
 /* Phaser state function */
-Minigame.prototype.shutdown = function () {
+Subgame.prototype.shutdown = function () {
 	if (this.music) {
 		this.music.stop();
 	}
@@ -116,7 +117,7 @@ Minigame.prototype.shutdown = function () {
  * @param {*} The name of the event
  * @param {Function} The function to run when the event is published
  */
-Minigame.prototype.addEvent = function (ev, func) {
+Subgame.prototype.addEvent = function (ev, func) {
 	this._events.push(subscribe(ev, func));
 };
 
@@ -124,7 +125,7 @@ Minigame.prototype.addEvent = function (ev, func) {
  * Unsubscribe to an event.
  * @param {*} The name of the event
  */
-Minigame.prototype.removeEvent = function (ev) {
+Subgame.prototype.removeEvent = function (ev) {
 	for (var i = 0; i < this._events.length; i++) {
 		if (this._events[i] === ev) {
 			unsubscribe(this._events[i]);
@@ -139,7 +140,7 @@ Minigame.prototype.removeEvent = function (ev) {
  * 1) If it is the first time on this mode.
  * 2) How many tries that have been made on the current number.
  */
-Minigame.prototype.nextRound = function () {
+Subgame.prototype.nextRound = function () {
 	this._mode(this._first, this._currentTries);
 	this.currentMode = this._pendingMode;
 	this._first = false;
@@ -149,7 +150,7 @@ Minigame.prototype.nextRound = function () {
  * Translate from integer to mode function
  * @param {Number}
  */
-Minigame.prototype.decideMode = function (mode) {
+Subgame.prototype.decideMode = function (mode) {
 	if (mode === GLOBAL.MODE.intro) {
 		this._mode = this.modeIntro;
 	} else if (mode === GLOBAL.MODE.playerDo) {
@@ -166,7 +167,7 @@ Minigame.prototype.decideMode = function (mode) {
 };
 
 /** Change to the next mode in the queue (publishes modeChange event). */
-Minigame.prototype.nextMode = function () {
+Subgame.prototype.nextMode = function () {
 	var newMode = this._modes.shift();
 	this.decideMode(newMode);
 	this._pendingMode = newMode;
@@ -175,7 +176,7 @@ Minigame.prototype.nextMode = function () {
 };
 
 /** Change this.currentNumber to a new one (resets the tries). */
-Minigame.prototype.nextNumber = function () {
+Subgame.prototype.nextNumber = function () {
 	// Should we allow the same number again?
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
@@ -189,7 +190,7 @@ Minigame.prototype.nextNumber = function () {
  * @param {Number} The number to try.
  * @returns {Boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
-Minigame.prototype.tryNumber = function (number) {
+Subgame.prototype.tryNumber = function (number) {
 	this._currentTries++;
 	this.lastTry = number - this.currentNumber;
 
@@ -201,7 +202,7 @@ Minigame.prototype.tryNumber = function (number) {
 	return this.lastTry;
 };
 
-Minigame.prototype.addWater = function (x, y, onComplete, force) {
+Subgame.prototype.addWater = function (x, y, onComplete, force) {
 	if (this.currentMode === GLOBAL.MODE.playerShow ||
 		this.currentMode === GLOBAL.MODE.agentTry ||
 		this.currentMode === GLOBAL.MODE.agentDo ||
@@ -225,7 +226,7 @@ Minigame.prototype.addWater = function (x, y, onComplete, force) {
 };
 
 /** Start the game! */
-Minigame.prototype.startGame = function () {
+Subgame.prototype.startGame = function () {
 	this.nextMode();
 	this.nextNumber();
 	this.nextRound();
@@ -233,9 +234,9 @@ Minigame.prototype.startGame = function () {
 
 /* Overshadowing mode functions */
 /* These functions should be overshadowed in the game object */
-Minigame.prototype.modeIntro      = function () { this.nextMode(); };
-Minigame.prototype.modePlayerDo   = function () { this.nextMode(); };
-Minigame.prototype.modePlayerShow = function () { this.nextMode(); };
-Minigame.prototype.modeAgentTry   = function () { this.nextMode(); };
-Minigame.prototype.modeAgentDo    = function () { this.nextMode(); };
-Minigame.prototype.modeOutro      = function () { this.nextMode(); };
+Subgame.prototype.modeIntro      = function () { this.nextMode(); };
+Subgame.prototype.modePlayerDo   = function () { this.nextMode(); };
+Subgame.prototype.modePlayerShow = function () { this.nextMode(); };
+Subgame.prototype.modeAgentTry   = function () { this.nextMode(); };
+Subgame.prototype.modeAgentDo    = function () { this.nextMode(); };
+Subgame.prototype.modeOutro      = function () { this.nextMode(); };

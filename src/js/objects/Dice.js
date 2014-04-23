@@ -1,7 +1,6 @@
-/*
- * Inherits Phaser.Button
- * A NumberButton is used in the minigames to interact with.
- */
+/* The dice representation of a number. */
+Dice.prototype = Object.create(Phaser.BitmapData.prototype);
+Dice.prototype.constructor = Dice;
 function Dice (number, size, color) {
 	size = size || 100;
 	Phaser.BitmapData.call(this, game, '', size, size); // Parent constructor.
@@ -75,9 +74,4 @@ function Dice (number, size, color) {
 
 	return this;
 }
-
-// inheritance
-Dice.prototype = Object.create(Phaser.BitmapData.prototype);
-Dice.prototype.constructor = Dice;
-
 Dice.prototype.round = 2*Math.PI;

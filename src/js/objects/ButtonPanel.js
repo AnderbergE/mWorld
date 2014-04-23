@@ -1,7 +1,6 @@
-/*
- * Inherits Phaser.Group
- * A ButtonPanel is used in the minigames to interact with.
- */
+/* A panel filled with buttons. */
+ButtonPanel.prototype = Object.create(Phaser.Group.prototype);
+ButtonPanel.prototype.constructor = ButtonPanel;
 function ButtonPanel (representation, amount, x, y, length, maxSize, background, color, vertical, onClick, noEvent) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	x = x || 0;
@@ -56,7 +55,3 @@ function ButtonPanel (representation, amount, x, y, length, maxSize, background,
 
 	return this;
 }
-
-// inheritance
-ButtonPanel.prototype = Object.create(Phaser.Group.prototype);
-ButtonPanel.prototype.constructor = ButtonPanel;

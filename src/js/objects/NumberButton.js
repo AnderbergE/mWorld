@@ -1,10 +1,6 @@
+/* A button for a number with flexible representation. */
 NumberButton.prototype = Object.create(Phaser.Group.prototype);
 NumberButton.prototype.constructor = NumberButton;
-
-/*
- * Inherits Phaser.Group
- * A NumberButton is used in the minigames to interact with.
- */
 function NumberButton (number, representation, x, y, size, background, color, onClick, noEvent) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.number = number;

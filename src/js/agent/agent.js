@@ -15,7 +15,7 @@ function Agent () {
 	return this;
 }
 
-/* Called from the game when a minigame ends */
+/* Called from the game engine when a subgame ends */
 Agent.prototype.destroy = function () {
 	// Do not remove the agent if it is in a group somewhere.
 	if (this.parent) {
