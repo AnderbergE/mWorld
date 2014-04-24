@@ -41,6 +41,7 @@ window.onload = function () {
 	game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 	game.state.add('Boot', BootState);
 	game.state.add(GLOBAL.STATE.entry, EntryState);
+	game.state.add(GLOBAL.STATE.playerSetup, PlayerSetupState);
 	game.state.add(GLOBAL.STATE.garden, GardenState);
 	game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
 

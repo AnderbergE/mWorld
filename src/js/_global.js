@@ -12,11 +12,15 @@ var GLOBAL = {
 	},
 
 	AGENT: {
-		0: Panda
+		0: Panda,
+		1: Panda,
+		2: Panda,
+		3: Panda
 	},
 
 	STATE: {
 		entry:        'Entry',
+		playerSetup:  'PlayerSetup',
 		garden:       'Garden',
 		0:            'Lizard',
 		lizardGame:   'Lizard',
