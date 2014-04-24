@@ -10,6 +10,7 @@ PlayerSetupState.prototype.create = function () {
 	var current = 0;
 	var scale = 0.3;
 	var scaleActive = 0.5;
+	var slideTime = 1000;
 
 	this.add.image(0, 0, 'entryBg');
 
@@ -37,13 +38,13 @@ PlayerSetupState.prototype.create = function () {
 			return;
 		}
 
-		_this.add.tween(agents.children[current].scale).to({ x: scale, y: scale }, 500, null, true);
-		_this.add.tween(agents).to({ x: -(pos * spacing) }, 500, Phaser.Easing.Quadratic.Out, true);
-		_this.add.tween(a.scale).to({ x: scaleActive, y: scaleActive }, 500, null, true);
+		_this.add.tween(agents.children[current].scale).to({ x: scale, y: scale }, slideTime, null, true);
+		_this.add.tween(agents).to({ x: -(pos * spacing) }, slideTime, Phaser.Easing.Quadratic.Out, true);
+		_this.add.tween(a.scale).to({ x: scaleActive, y: scaleActive }, slideTime, null, true);
 		current = pos;
 	}
 
 	this.world.add(new Menu());
 
-	_this.add.tween(agents.children[current].scale).to({ x: scaleActive, y: scaleActive }, 500, null, true);
+	_this.add.tween(agents.children[current].scale).to({ x: scaleActive, y: scaleActive }, slideTime/2, null, true);
 };
