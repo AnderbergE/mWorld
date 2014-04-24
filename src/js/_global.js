@@ -50,12 +50,23 @@ var GLOBAL = {
 	},
 
 	TEXT: {
-		title: 'BOOM shackalack!',
+		/* Entry state */
+		title: 'Magical Garden',
 		start: 'Start',
 		credits: 'Credits',
+
+		/* Garden state */
+		maxLevel: 'MAX!',
+
+		/* Player setup state */
+		pickFriend: 'Who will be your friend?',
+
+		/* Menu items */
+		menu: 'MENU',
 		resume: 'Resume',
 		quit: 'Quit',
-		menu: 'MENU',
-		maxLevel: 'MAX!'
+
+		/* Agents */
+		pandaName: 'Panders'
 	}
 };

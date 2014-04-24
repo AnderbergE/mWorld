@@ -8,7 +8,9 @@ function Agent () {
 	this.lastGuess = null;
 
 	/* Set up the following in the sub class (see Panda for reference) */
+	// this.name
 	// this.coords
+	// this.body
 	// this.leftEye
 	// this.rightEye
 
