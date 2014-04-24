@@ -6,14 +6,15 @@ function Panda () {
 	Agent.call(this); // Call parent constructor.
 	this.coords = {
 		eye: {
-			left: { x: 146 + 45, y: 156 + 45 },
-			right: { x: 341 + 45, y: 161 + 45 },
+			left: { x: -96, y: -220 },
+			right: { x: 99, y: -215 },
 			depth: 20,
 			maxMove: 8
 		}
 	};
 
-	this.create(0, 0, 'panda');
+	this.body = this.create(0, 0, 'panda');
+	this.body.anchor.setTo(0.5);
 
 	this.leftEye = this.create(this.coords.eye.left.x, this.coords.eye.left.y, 'pandaEye');
 	this.leftEye.anchor.setTo(0.5);

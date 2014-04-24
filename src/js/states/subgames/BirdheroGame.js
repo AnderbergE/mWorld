@@ -37,8 +37,8 @@ BirdheroGame.prototype.create = function () {
 			elevator: -30
 		},
 		agent: {
-			start: { x: 200, y: 800 },
-			stop: { x: 290, y: 400 },
+			start: { x: 250, y: 850 },
+			stop: { x: 390, y: 500 },
 			scale: 0.25
 		},
 		bird: {

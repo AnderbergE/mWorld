@@ -15,17 +15,6 @@ function Agent () {
 	return this;
 }
 
-/* Called from the game engine when a subgame ends */
-Agent.prototype.destroy = function () {
-	// Do not remove the agent if it is in a group somewhere.
-	if (this.parent) {
-		this.parent.remove(this);
-		this.eyesFollowObject(null, false);
-	} else {
-		Phaser.Group.prototype.destroy.call(this);
-	}
-};
-
 /**
  * Have the agent guess a number.
  * @param {number} The correct number
@@ -60,7 +49,7 @@ Agent.prototype.happy = function(duration) {
 	duration = duration || 3000;
 	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
-	return game.add.tween(this).to({ y: this.y + 100 }, 200, Phaser.Easing.Linear.None, false, 0, times, true);
+	return game.add.tween(this).to({ y: this.y - 100 }, 200, Phaser.Easing.Linear.None, false, 0, times, true);
 };
 
 /* Private. Have an eye follow a target. */

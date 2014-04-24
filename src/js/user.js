@@ -23,7 +23,7 @@ Object.defineProperty(User.prototype, 'water', {
  */
 User.prototype.login = function (name, pass) {
 	var temp = Backend.login(name, pass);
-	this.agent = new GLOBAL.AGENT[temp[0]]();
+	this.agent = GLOBAL.AGENT[temp[0]];
 	this.water = 2;
 };
 

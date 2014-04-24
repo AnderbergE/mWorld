@@ -77,7 +77,7 @@ Subgame.prototype.init = function (options) {
 
 	/* Setup game objects */
 	this.gameGroup = game.add.group();
-	this.agent = user.agent;
+	this.agent = new user.agent();
 	this.agent.visible = false;
 	this.gameGroup.add(this.agent);
 
