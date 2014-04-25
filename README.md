@@ -13,4 +13,4 @@ As long as grunt is running the server will be active. If you make changes in th
 
 ## More documentation
 You can find more documentation in the source code.
-If you plan on making a new minigame, check out src/js/states/Minigame.js
+If you plan on making a new subgame, check out src/js/states/Subgame.js
