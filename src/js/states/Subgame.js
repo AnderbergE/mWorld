@@ -96,6 +96,7 @@ Subgame.prototype.init = function (options) {
 	this.waterCan = new WaterCan(this.game.width - 100, 10);
 	this.menuGroup.add(this.waterCan);
 	this.menuGroup.add(new Menu());
+	this.menuGroup.visible = false;
 
 	this.music = null;
 };
@@ -227,6 +228,7 @@ Subgame.prototype.addWater = function (x, y, onComplete, force) {
 
 /** Start the game! */
 Subgame.prototype.startGame = function () {
+	this.menuGroup.visible = true;
 	this.nextMode();
 	this.nextNumber();
 	this.nextRound();
