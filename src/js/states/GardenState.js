@@ -57,18 +57,16 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	this.level = new Counter(3, false, level);
 	this.level.onAdd = function (current) {
 		game.input.disabled = true;
-		game.add.tween(plant).to(
-			{ tint:
+		TweenMax.to(plant, 1, {
+			tint:
 				current === 1 ? 0x00ffff :
 				current === 2 ? 0xff00ff :
 				current === 3 ? 0xffff00 :
-				0xffffff
-			},
-			500, Phaser.Easing.Linear.None, true)
-		.onComplete.add(function () {
-			_this.water.update();
-			game.input.disabled = false;
-		}, this);
+				0xffffff,
+			onComplete: function () {
+				_this.water.update();
+				game.input.disabled = false;
+		}});
 	};
 
 	return this;
@@ -116,7 +114,8 @@ GardenPlant.prototype.down = function () {
 				_this.water.onAdd = null;
 				_this.water.onMax = null;
 				waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
-				waterButton.destroy();
+				_this.infoGroup.remove(waterButton); // TODO: Destroying throws exception, why?
+				//waterButton.destroy();
 				game.add.text(_this.width/2, 50, GLOBAL.TEXT.maxLevel, {
 					font: '60pt The Girl Next Door',
 					fill: '#5555ff'

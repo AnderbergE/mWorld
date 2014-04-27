@@ -22,7 +22,7 @@ function WaterCan (x, y, amount) {
 	/* Keep track of when the user's water changes */
 	this._sub = subscribe(GLOBAL.EVENT.waterAdded, function (total) {
 		var h = waterStep*total;
-		game.add.tween(water).to({ height: h, y: origin - h }, 500, null, true);
+		TweenMax.to(water, 0.5, { height: h, y: origin - h });
 	});
 
 	return this;

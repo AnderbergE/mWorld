@@ -11,27 +11,6 @@ var user;
  */
 var game;
 
-/* Extending Phaser objects to simplify tweening */
-/* To chain tweens easily. */
-Phaser.Tween.prototype.then = function (tween) {
-	if (this._chainedTweens.length > 0) {
-		this._chainedTweens[0].then(tween);
-	} else {
-		this._chainedTweens = [tween];
-	}
-
-	return tween; // Returning 'tween' instead of 'this' (as in .chain()).
-};
-/* To chain sounds easily. */
-Phaser.Sound.prototype.then = function (what) {
-	this.onStop.add(function () { what.start(); });
-	return what;
-};
-/* To enable tweening of both sounds and tweens. */
-Phaser.Sound.prototype.start = function () {
-	return this.play();
-};
-
 /**
  * Create the game when the browser has loaded everything.
  * Note: This is where all the states should be added.
@@ -39,6 +18,7 @@ Phaser.Sound.prototype.start = function () {
 window.onload = function () {
 	user = new User();
 	game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
+
 	game.state.add('Boot', BootState);
 	game.state.add(GLOBAL.STATE.entry, EntryState);
 	game.state.add(GLOBAL.STATE.playerSetup, PlayerSetupState);
@@ -68,6 +48,10 @@ void(WebFontConfig); // workaround for jshint unused warning.
 function BootState () {}
 /* Phaser state function */
 BootState.prototype.preload = function () {
+	/* Make sure tweens are stopped when pausing. */
+	game.onPause.add(function () { TweenMax.globalTimeScale(0); });
+	game.onResume.add(function () { TweenMax.globalTimeScale(1); });
+
 	/* Show loading progress accordingly */
 	this.load.onFileComplete.add(function (progress) {
 		document.querySelector('.progress').innerHTML = progress + '%';

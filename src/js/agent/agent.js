@@ -45,13 +45,13 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 /**
  * Make agent happy.
  * @param {number} For how long
- * @returns {Object} The happiness tween (not started)
+ * @returns {Object} The happiness tween
  */
 Agent.prototype.happy = function(duration) {
 	duration = duration || 3000;
 	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
-	return game.add.tween(this).to({ y: this.y - 100 }, 200, Phaser.Easing.Linear.None, false, 0, times, true);
+	return new TweenMax.to(this, 0.2, { y: this.y - 100, ease: Power0.easeInOut, repeat: times, yoyo: true });
 };
 
 /* Private. Have an eye follow a target. */

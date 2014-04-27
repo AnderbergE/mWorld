@@ -6,9 +6,9 @@ PlayerSetupState.prototype.create = function () {
 	var _this = this;
 	var spacing = 450;
 	var current = 0;
-	var scale = 0.3;
-	var scaleActive = 0.5;
-	var slideTime = 1000;
+	var scale = { x: 0.3, y: 0.3 };
+	var scaleActive = { x: 0.5, y: 0.5 };
+	var slideTime = 1;
 	var fontStyle = {
 		font: '50pt The Girl Next Door',
 		fill: '#ffff00',
@@ -26,8 +26,8 @@ PlayerSetupState.prototype.create = function () {
 		this.add.text(0, -(a.body.height/2) - 50, a.name, fontStyle, a).anchor.setTo(0.5);
 		a.x = this.world.centerX + spacing * i;
 		a.y = this.world.centerY + 50;
-		a.scale.x = scale;
-		a.scale.y = scale;
+		a.scale.x = scale.x;
+		a.scale.y = scale.y;
 		a.body.inputEnabled = true;
 		a.body.events.onInputDown.add(clickAgent, a);
 		agents.add(a);
@@ -45,13 +45,13 @@ PlayerSetupState.prototype.create = function () {
 		}
 
 		/* Move the agent group to get the sliding effect on all agents */
-		_this.add.tween(agents).to({ x: -(pos * spacing) }, slideTime, Phaser.Easing.Quadratic.Out, true);
-		_this.add.tween(agents.children[current].scale).to({ x: scale, y: scale }, slideTime, null, true);
-		_this.add.tween(a.scale).to({ x: scaleActive, y: scaleActive }, slideTime, null, true);
+		TweenMax.to(agents, slideTime, { x: -(pos * spacing), ease: Power2.easeOut });
+		TweenMax.to(agents.children[current].scale, slideTime, scale);
+		TweenMax.to(a.scale, slideTime, scaleActive);
 		current = pos;
 	}
 
 	this.world.add(new Menu());
 
-	_this.add.tween(agents.children[current].scale).to({ x: scaleActive, y: scaleActive }, slideTime/2, null, true);
+	TweenMax.to(agents.children[current].scale, slideTime/2, scaleActive);
 };

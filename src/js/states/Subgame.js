@@ -211,16 +211,22 @@ Subgame.prototype.addWater = function (x, y, onComplete, force) {
 		var drop = this.add.sprite(x, y, 'drop', 0, this.menuGroup);
 		drop.anchor.setTo(0.5);
 		drop.scale.y = 0;
-		var t = this.add.tween(drop.scale).to({ y: 1 }, 1500, Phaser.Easing.Elastic.Out).start()
-			.then(this.add.tween(drop).to({ x: this.waterCan.x + 30, y: this.waterCan.y }, 1500, Phaser.Easing.Quadratic.Out))
-			.then(this.add.tween(drop).to({ height: 0 }, 500));
-		t.onStart.add(function () {
-			user.water++;
-		});
-		t.onComplete.add(function () {
-			drop.destroy();
-			onComplete();
-		});
+
+		var t = new TimelineMax();
+		// Show drop
+		t.to(drop.scale, 1.5, { y: 1, ease:Elastic.easeOut })
+			// Move drop
+			.to(drop, 1.5, { x: this.waterCan.x + 30, y: this.waterCan.y, ease:Power2.easeOut })
+			// Hide drop and add water
+			.to(drop, 0.5, { height: 0,
+				onStart: function () {
+					user.water++;
+				},
+				onComplete: function () {
+					drop.destroy();
+					onComplete();
+				}
+			});
 	} else {
 		onComplete();
 	}
