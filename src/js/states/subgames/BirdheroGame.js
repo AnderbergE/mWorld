@@ -173,44 +173,42 @@ BirdheroGame.prototype.create = function () {
 		_this.disable(true);
 		_this.agent.eyesFollowObject(bird.beak.world);
 
+		var result = _this.tryNumber(number);
+		var branch = tree.branch[number-1];
+
 		var up = new TimelineMax();
 		up.add(bird.moveTo.elevator());
 		up.add(bird.moveTo.peak(true));
 		up.add(elevator.moveTo.branch(number));
 		up.add(bird.moveTo.peak(false));
 		up.add(bird.moveTo.nest(number));
-		up.eventCallback('onComplete', function () {
-			var result = _this.tryNumber(number);
-			var branch = tree.branch[number-1];
 
-			if (!result) { /* Correct :) */
+		if (!result) { /* Correct :) */
+			up.addCallback(function () {
 				bird.visible = false;
 				branch.celebrate();
-				_this.addWater(branch.mother.world.x, branch.mother.world.y, function () {
-					var t = elevator.moveTo.bottom();
-					var comp = t.vars.onComplete;
-					t.eventCallback('onComplete', function () {
-						comp();
-						_this.nextRound();
-					});
-				});
-			} else { /* Incorrect :( */
+			});
+			up.add(_this.addWater(branch.mother.world.x, branch.mother.world.y));
+			up.add(elevator.moveTo.bottom());
+			up.addCallback(function () {
+				_this.nextRound();
+			});
+		} else { /* Incorrect :( */
+			up.addCallback(function () {
 				if (result < 0) { publish('birdheroTooLow'); }
 				else { publish('birdheroTooHigh'); }
-
 				branch.confused();
-				var down = new TimelineMax();
-				down.add(bird.moveTo.elevator());
-				down.add(bird.moveTo.peak(true));
-				down.add(elevator.moveTo.bottom());
-				down.add(bird.moveTo.peak(false));
-				down.add(bird.moveTo.initial());
-				down.eventCallback('onComplete', function () {
-					bird.turn(1);
-					_this.nextRound();
-				});
-			}
-		});
+			});
+			up.add(bird.moveTo.elevator());
+			up.add(bird.moveTo.peak(true));
+			up.add(elevator.moveTo.bottom());
+			up.add(bird.moveTo.peak(false));
+			up.add(bird.moveTo.initial());
+			up.addCallback(function () {
+				bird.turn(1);
+				_this.nextRound();
+			});
+		}
 	}
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
@@ -460,20 +458,23 @@ BirdheroBird.prototype.turn = function (direction) {
  * @returns {Object} The movement tween
  */
 BirdheroBird.prototype.move = function (properties, duration, scale) {
-	var _this = this;
-	properties.onStart = function () {
-		if (properties.x &&                                   // Check if we should turn around
-			(properties.x <= _this.x && 0 < _this.scale.x) || // Going left, scale should be -1
-			(_this.x <= properties.x && 0 > _this.scale.x)) { // Going right, scale should be 1
-			var turn = _this.turn();
-			if (scale) {
-				turn.eventCallback('onComplete', function () {
-					TweenMax.to(_this.scale, duration - 0.2, { x: (_this.scale.x < 0 ? -1 * scale : scale), y: scale });
-				});
-			}
-		} else if (scale) {
-			TweenMax.to(_this.scale, duration, { x: (_this.scale.x < 0 ? -1 * scale : scale), y: scale });
+	var t = new TimelineMax();
+	t.addLabel('mover'); // Add a label in beginning, use it for simultaneous tweening.
+	t.to(this, duration, properties, 'mover');
+	t.addCallback(function () {
+		var dir = this.scale.x < 0;
+		if (properties.x &&                                 // Check if we should turn around
+			(properties.x <= this.x && 0 < this.scale.x) || // Going left, scale should be -1
+			(this.x <= properties.x && 0 > this.scale.x)) { // Going right, scale should be 1
+			dir = !dir;
+			t.add(this.turn(), 'mover');
 		}
-	};
-	return new TweenMax(this, duration, properties);
+		if (scale) {
+			t.to(this.scale, duration,
+				{ x: (dir ? -1 * scale : scale), y: scale },
+				'-=' + (duration - 0.2));
+		}
+	}, 'mover', null, this);
+
+	return t;
 };

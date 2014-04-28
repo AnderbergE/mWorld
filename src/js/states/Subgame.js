@@ -203,7 +203,8 @@ Subgame.prototype.tryNumber = function (number) {
 	return this.lastTry;
 };
 
-Subgame.prototype.addWater = function (x, y, onComplete, force) {
+Subgame.prototype.addWater = function (x, y, force) {
+	var t = new TimelineMax();
 	if (this.currentMode === GLOBAL.MODE.playerShow ||
 		this.currentMode === GLOBAL.MODE.agentTry ||
 		this.currentMode === GLOBAL.MODE.agentDo ||
@@ -212,24 +213,17 @@ Subgame.prototype.addWater = function (x, y, onComplete, force) {
 		drop.anchor.setTo(0.5);
 		drop.scale.y = 0;
 
-		var t = new TimelineMax();
 		// Show drop
 		t.to(drop.scale, 1.5, { y: 1, ease:Elastic.easeOut })
 			// Move drop
 			.to(drop, 1.5, { x: this.waterCan.x + 30, y: this.waterCan.y, ease:Power2.easeOut })
 			// Hide drop and add water
 			.to(drop, 0.5, { height: 0,
-				onStart: function () {
-					user.water++;
-				},
-				onComplete: function () {
-					drop.destroy();
-					onComplete();
-				}
+				onStart: function () { user.water++; },
+				onComplete: function () { drop.destroy(); }
 			});
-	} else {
-		onComplete();
 	}
+	return t;
 };
 
 /** Start the game! */
