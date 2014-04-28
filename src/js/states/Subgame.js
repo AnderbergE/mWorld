@@ -99,6 +99,10 @@ Subgame.prototype.init = function (options) {
 	this.menuGroup.visible = false;
 
 	this.music = null;
+
+	//  TODO: This should probably be removed and replaced with an ingame button.
+	this.input.keyboard.addKey(Phaser.Keyboard.O).onDown.add(function () { TweenMax.globalTimeScale(100); });
+	this.input.keyboard.addKey(Phaser.Keyboard.P).onDown.add(function () { TweenMax.globalTimeScale(1); });
 };
 
 /* Phaser state function */
