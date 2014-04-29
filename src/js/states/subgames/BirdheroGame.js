@@ -21,10 +21,21 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
 	this.load.image('birdheroWhat',    'assets/img/subgames/birdhero/what.png');
 	this.load.spritesheet('birdheroBeak', 'assets/img/subgames/birdhero/beak.png', 31, 33);
-	this.load.audio('birdheroIntro', ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
-	this.load.audio('birdheroElevator', ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
+
+	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
+	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
 	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.mp3', 'assets/audio/subgames/birdhero/elevator_arrive.ogg']);
-	this.load.audio('birdheroElevatorDown', ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
+	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
+	this.load.audio('birdheroCorrect',        ['assets/audio/subgames/birdhero/correct.mp3', 'assets/audio/subgames/birdhero/correct.ogg']);
+	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.mp3', 'assets/audio/subgames/birdhero/intro.ogg']);
+	this.load.audio('birdheroEnding',         ['assets/audio/subgames/birdhero/ending.mp3', 'assets/audio/subgames/birdhero/ending.ogg']);
+	this.load.audio('birdheroInstruction1a',  ['assets/audio/subgames/birdhero/instruction_1a.mp3', 'assets/audio/subgames/birdhero/instruction_1a.ogg']);
+	this.load.audio('birdheroInstruction1b',  ['assets/audio/subgames/birdhero/instruction_1b.mp3', 'assets/audio/subgames/birdhero/instruction_1b.ogg']);
+	this.load.audio('birdheroInstruction2',   ['assets/audio/subgames/birdhero/instruction_2.mp3', 'assets/audio/subgames/birdhero/instruction_2.ogg']);
+	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.mp3', 'assets/audio/subgames/birdhero/scream.ogg']);
+	this.load.audio('birdheroThisFloor',      ['assets/audio/subgames/birdhero/this_floor.mp3', 'assets/audio/subgames/birdhero/this_floor.ogg']);
+	this.load.audio('birdheroWrongHigher',    ['assets/audio/subgames/birdhero/wrong_higher.mp3', 'assets/audio/subgames/birdhero/wrong_higher.ogg']);
+	this.load.audio('birdheroWrongLower',     ['assets/audio/subgames/birdhero/wrong_lower.mp3', 'assets/audio/subgames/birdhero/wrong_lower.ogg']);
 };
 
 /* Phaser state function */
@@ -43,14 +54,15 @@ BirdheroGame.prototype.create = function () {
 		},
 		bird: {
 			start: { x: -100, y: 600 },
-			stop: { x: 150, y: 500 }
+			stop: { x: 150, y: 500 },
+			scale: 0.1
 		}
 	};
 	var tint = [
 		0xffffff, 0xffcccc, 0xccffcc, 0xccccff, 0xffffcc,
 		0xffccff, 0xccffff, 0x5555cc, 0x55cc55, 0xcc5555
 	];
-	this.music = this.add.audio('birdheroIntro', 1, true);
+	this.music = this.add.audio('birdheroMusic', 1, true);
 
 
 	// Add main game
@@ -125,7 +137,7 @@ BirdheroGame.prototype.create = function () {
 			return bird.move({ x: coords.bird.stop.x, y: coords.bird.stop.y }, 2, 1);
 		},
 		elevator: function () {
-			return bird.move({ x: elevator.bucket.x+elevator.bucket.width/2, y: elevator.bucket.y+elevator.bucket.height/2 }, 2, 0.1);
+			return bird.move({ x: elevator.bucket.x+elevator.bucket.width/2, y: elevator.bucket.y+elevator.bucket.height/2 }, 2, coords.bird.scale);
 		},
 		peak: function (up) {
 			return bird.move({ y: (up ? '-=22' : '+=22') }, 0.5);
@@ -254,19 +266,58 @@ BirdheroGame.prototype.create = function () {
 		showYesnos();
 	}
 
+
 	/* Overshadowing of the mode related functions */
 	this.modeIntro = function () {
-		this.music.play();
 		_this.hudGroup.visible = false;
 
-		setTimeout(function () {
+		var sound = _this.add.audio('birdheroIntro');
+		sound.play();
+		var group = _this.add.group(_this.gameGroup);
+		var starter = function (chick, branch) {
+			branch.chicks = 0;
+			chick.visible = true;
+		};
+
+		// Create a sprite for each chick that will be blown away
+		var t = null;
+		for (var i = 0; i < tree.branch.length; i++) {
+			tree.branch[i].chicks = 1;
+			var chick = new BirdheroBird(tint[i]);
+			chick.visible = false;
+			for (var j in chick.children) {
+				// Translate positions for rotation effect
+				chick.children[j].x += 300;
+				chick.children[j].y += 300;
+			}
+			var pos = tree.branch[i].chickPos();
+			chick.x = pos.x - 35; // Counter-effect translate
+			chick.y = pos.y - 20; // Counter-effect translate
+			chick.scale.x = coords.bird.scale;
+			chick.scale.y = coords.bird.scale;
+			group.add(chick);
+			t = TweenMax.to(chick, 7, {
+				x: -500,
+				y: game.world.height - Math.random()*150,
+				angle: 1080 + Math.random()*2160,
+				ease: Power0.easeIn,
+				delay: 5.5,
+				onStart: starter,
+				onStartParams: [chick, tree.branch[i]]
+			});
+		}
+		// Doing this only adds on complete for the last tween.
+		t.eventCallback('onComplete', function () {
+			sound.stop();
+			group.destroy(true);
 			_this.nextMode();
 			_this.nextRound();
-		}, 1000);
+		});
 	};
 
 	this.modePlayerDo = function (intro, tries) {
 		_this.disable(true);
+		this.music.play();
 		if (intro) {
 			_this.hudGroup.visible = false;
 			_this.agent.visible = false;
@@ -348,8 +399,39 @@ function BirdheroBranch (x, y, tint) {
 	this.mother.tint = tint || 0xffffff;
 	this.nest.bringToTop();
 
+	this._chicks = [];
+
 	return this;
 }
+
+Object.defineProperty(BirdheroBranch.prototype, 'chicks', {
+	get: function() { return this._chicks.length; },
+	set: function(value) {
+		var change = value - this._chicks.length;
+		var dir = change > 0 ? -1 : 1;
+		while (change !== 0) {
+			if (dir < 0) {
+				var chick = game.add.sprite(this.mother.x, this.nest.y, 'birdheroChick', null, this);
+				chick.x += this._chicks.length * chick.width * 0.8;
+				chick.y -= chick.height * 0.8;
+				chick.tint = this.mother.tint;
+				this._chicks.push(chick);
+			} else {
+				this._chicks.pop().destroy();
+			}
+			change += dir;
+		}
+		this.nest.bringToTop();
+	}
+});
+
+/** @returns {Object} The x, y coordinates of where the chick is */
+BirdheroBranch.prototype.chickPos = function () {
+	return {
+		x: this.x + this._chicks[0].x * this.scale.x,
+		y: this.y + this._chicks[0].y
+	};
+};
 
 /** @returns {Object} The x, y coordinates of where the bird should stop at the nest */
 BirdheroBranch.prototype.visit = function () {
@@ -368,7 +450,7 @@ BirdheroBranch.prototype.celebrate = function (duration) {
 	duration = duration || 3000;
 	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
-	return new TweenMax.to(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true });
+	return new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true });
 };
 
 /**
@@ -396,7 +478,7 @@ BirdheroBranch.prototype.confused = function (duration) {
 
 	this.confusing.visible = true;
 	var _this = this;
-	return new TweenMax.to(this.confusing, 0.2, { y: this.confusing.y - 5, repeat: times, yoyo: true,
+	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5, repeat: times, yoyo: true,
 		onComplete: function () { _this.confusing.visible = false; }
 	});
 };
@@ -404,9 +486,8 @@ BirdheroBranch.prototype.confused = function (duration) {
 /* The bird that you are helping home */
 BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
-function BirdheroBird () {
+function BirdheroBird (tint) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	this.visible = false;
 	this.number = null;
 
 	this.body = game.add.sprite(0, 0, 'birdheroBird', null, this);
@@ -415,15 +496,13 @@ function BirdheroBird () {
 	this.beak.anchor.setTo(0.5);
 	this.beak.talk = this.beak.animations.add('talk', null, 4, true);
 
+	this.tint = tint || 0xffffff;
+
 	return this;
 }
 Object.defineProperty(BirdheroBird.prototype, 'tint', {
-	get: function() {
-		return this.body.tint;
-	},
-	set: function(value) {
-		this.body.tint = value;
-	}
+	get: function() { return this.body.tint; },
+	set: function(value) { this.body.tint = value; }
 });
 
 /**

@@ -88,4 +88,5 @@ BootState.prototype.preload = function () {
 	/* Load the entry state assets as well, no need to do two loaders. */
 	this.load.image('entryBg', 'assets/img/jungle.png');
 	this.load.audio('yeah', ['assets/audio/yeah.mp3', 'assets/audio/yeah.ogg']);
+	this.load.audio('click', ['assets/audio/click.mp3', 'assets/audio/click.ogg']);
 };
