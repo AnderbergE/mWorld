@@ -16,6 +16,7 @@ function NumberButton (number, representation, x, y, size, background, color, on
 	if (!noEvent) {
 		bg.inputEnabled = true;
 		bg.events.onInputDown.add(function () {
+			game.add.audio('click');
 			if (bg.frame % 2 === 0) {
 				bg.frame++;
 			}
@@ -33,6 +34,7 @@ function NumberButton (number, representation, x, y, size, background, color, on
 	if (representation === GLOBAL.NUMBER_REPRESENTATION.dots) {
 		var offset = size/6;
 		game.add.sprite(x+offset, y+offset, new Dice(number, size-offset*2, color), null, this);
+
 	} else if (representation === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 		var half = size/2;
 		var text = new Phaser.Text(game, x+half, y+half, number.toString(), {
@@ -43,6 +45,7 @@ function NumberButton (number, representation, x, y, size, background, color, on
 		});
 		text.anchor.setTo(0.5);
 		this.add(text);
+
 	} else if (representation === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 		var h = size/2;
 		var t = new Phaser.Text(game, x+h, y+h, (number ? 'y' : 'n'), {
