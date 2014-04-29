@@ -51,6 +51,7 @@ var GLOBAL = {
 		yesno:   15 // Special representation for yes/no buttons
 	},
 
+	FONT: 'The Girl Next Door',
 	TEXT: {
 		/* Entry state */
 		title: 'Magical Garden',

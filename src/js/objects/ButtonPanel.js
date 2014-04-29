@@ -1,57 +1,45 @@
 /* A panel filled with buttons. */
 ButtonPanel.prototype = Object.create(Phaser.Group.prototype);
 ButtonPanel.prototype.constructor = ButtonPanel;
-function ButtonPanel (representation, amount, x, y, length, maxSize, background, color, vertical, onClick, noEvent) {
+/**
+ *
+ */
+function ButtonPanel (amount, representations, options) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	x = x || 0;
-	y = y || 0;
-	vertical = vertical || false;
-	length = length || vertical ? game.world.height : game.world.width;
-	maxSize = maxSize || 75;
+	this.x = options.x || 0;
+	this.y = options.y || 0;
+	options.vertical = options.vertical || false;
+	options.size = options.size || (options.vertical ? game.world.height : game.world.width);
+	options.maxButtonSize = options.maxButtonSize || 75;
 
-	// Add buttons
-	var buttonSize = length/amount;
-	if (buttonSize > maxSize) { buttonSize = maxSize; }
-	var widthLeft = length - buttonSize*amount;
+	var buttonSize = options.size/amount;
+	if (buttonSize > options.maxButtonSize) { buttonSize = options.maxButtonSize; }
+	var widthLeft = options.size - buttonSize*amount;
 	var paddingSize = widthLeft/amount;
 	if (paddingSize > buttonSize/2) { paddingSize = buttonSize/2; }
 	var margin = (game.world.width - amount*buttonSize - (amount-1)*paddingSize)/2;
 
-	var i = 1;
-	if (vertical) {
-		for (; i <= amount; i++) {
-			this.add(new NumberButton(
-				// If Yes/No case: alternate between them.
-				(representation === GLOBAL.NUMBER_REPRESENTATION.yesno) ? (i%2 === 1) : i,
-				representation,
-				x,
-				y + margin + (paddingSize+buttonSize)*(i-1),
-				buttonSize,
-				background,
-				color,
-				onClick,
-				noEvent));
-		}
-	} else {
-		for (; i <= amount; i++) {
-			this.add(new NumberButton(
-				(representation === GLOBAL.NUMBER_REPRESENTATION.yesno) ? (i%2 === 1) : i,
-				representation,
-				x + margin + (paddingSize+buttonSize)*(i-1),
-				y, //-buttonSize*1.3
-				buttonSize,
-				background,
-				color,
-				onClick,
-				noEvent));
-		}
-	}
-
-	this.reset = function () {
-		for (i = 0; i < this.children.length; i++) {
-			this.children[i].reset();
-		}
+	var buttonOptions = {
+		x: 0,
+		y: 0,
+		size: buttonSize,
+		background: options.background,
+		color: options.color,
+		onClick: options.onClick
 	};
+
+	for (var i = 1; i <= amount; i++) {
+		if (options.vertical) { buttonOptions.y = margin + (paddingSize+buttonSize)*(i-1); }
+		else { buttonOptions.x = margin + (paddingSize+buttonSize)*(i-1); }
+
+		this.add(new SingleButton(i, representations, buttonOptions));
+	}
 
 	return this;
 }
+
+ButtonPanel.prototype.reset = function () {
+	for (var i = 0; i < this.children.length; i++) {
+		this.children[i].reset();
+	}
+};
