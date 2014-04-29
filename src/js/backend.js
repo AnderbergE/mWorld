@@ -15,6 +15,16 @@ var Backend = (function () {
 		};
 	};
 
+	//For testing the mountain game specifically.
+	this.balloonGame = function () {
+		return {
+			type: 3,
+			representation: 0,
+			amount: 4,
+			roundsPerMode: 1
+		};
+	};
+
 	/**
 	* PUT the login for a specific user.
 	* TODO: Investigate if login should be made from the game or before.

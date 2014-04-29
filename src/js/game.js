@@ -24,6 +24,7 @@ window.onload = function () {
 	game.state.add(GLOBAL.STATE.playerSetup, PlayerSetupState);
 	game.state.add(GLOBAL.STATE.garden, GardenState);
 	game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
+	game.state.add(GLOBAL.STATE.balloonGame, BalloonGame);
 
 	game.state.start('Boot');
 };
@@ -84,6 +85,7 @@ BootState.prototype.preload = function () {
 	this.load.spritesheet('drop', 'assets/img/objects/drop.png', 35, 70, 2);
 	this.load.spritesheet('wood', 'assets/img/objects/wood.png', 58, 56, 2);
 	this.load.image('watercan', 'assets/img/objects/wateringcan.png');
+	this.load.image('balloon', 'assets/img/subgames/balloon/balloon.png');
 
 	/* Load the entry state assets as well, no need to do two loaders. */
 	this.load.image('entryBg', 'assets/img/jungle.png');

@@ -27,7 +27,9 @@ var GLOBAL = {
 		1:            'Mountain',
 		mountainGame: 'Mountain',
 		2:            'Birdhero',
-		birdheroGame: 'Birdhero'
+		birdheroGame: 'Birdhero',
+		3:            'Balloon',
+		balloonGame:  'Balloon'
 	},
 
 	MODE: {

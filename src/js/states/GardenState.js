@@ -19,6 +19,15 @@ GardenState.prototype.create = function () {
 		this.state.start(GLOBAL.STATE[info.type], true, false, info);
 	}, this);
 
+	var balloonButton = this.add.sprite(300, 50, 'balloon', null, this.group);
+	balloonButton.scale.x = 0.2;
+	balloonButton.scale.y = 0.2;
+	balloonButton.inputEnabled = true;
+	balloonButton.events.onInputDown.add(function () {
+		var info = Backend.balloonGame();
+		this.state.start(GLOBAL.STATE[info.type], true, false, info);
+	}, this);
+
 	var rows = 3;
 	var columns = 5;
 	var startPos = 200;
