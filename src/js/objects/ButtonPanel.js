@@ -23,6 +23,7 @@ function ButtonPanel (amount, representations, options) {
 		x: 0,
 		y: 0,
 		size: buttonSize,
+		vertical: !options.vertical,
 		background: options.background,
 		color: options.color,
 		onClick: options.onClick
@@ -32,7 +33,7 @@ function ButtonPanel (amount, representations, options) {
 		if (options.vertical) { buttonOptions.y = margin + (paddingSize+buttonSize)*(i-1); }
 		else { buttonOptions.x = margin + (paddingSize+buttonSize)*(i-1); }
 
-		this.add(new SingleButton(i, representations, buttonOptions));
+		this.add(new NumberButton(i, representations, buttonOptions));
 	}
 
 	return this;

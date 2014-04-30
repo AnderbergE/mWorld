@@ -7,9 +7,10 @@ var Backend = (function () {
 	* @returns {Object} An object with data about the next game.
 	*/
 	this.nextGame = function () {
+		// TODO: Add parser, to make sure proper format
 		return {
 			type: 2,
-			representation: 0,
+			representation: [0],
 			amount: 4,
 			roundsPerMode: 1
 		};
