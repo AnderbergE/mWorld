@@ -124,7 +124,7 @@ BirdheroGame.prototype.create = function () {
 
 	// Add HUD
 	var buttons = new ButtonPanel(this.amount, this.representation, {
-		y: this.world.height-100, background: 'wood', onClick: pushNumber
+		y: this.world.height-(this.representation.length*75)-25, background: 'wood', onClick: pushNumber
 	});
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
@@ -263,7 +263,7 @@ BirdheroGame.prototype.create = function () {
 	function agentGuess () {
 		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
 		if (press) { _this.hudGroup.remove(press); }
-		press = new SingleButton(_this.agent.lastGuess, _this.representation, { x: 200, y: 200 });
+		press = new NumberButton(_this.agent.lastGuess, _this.representation, { x: 200, y: 200 });
 		_this.hudGroup.add(press);
 		showYesnos();
 	}
