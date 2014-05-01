@@ -4,12 +4,12 @@ DiceRepresentation.prototype.constructor = DiceRepresentation;
 function DiceRepresentation (number, x, y, size, color) {
 	size = size || 100;
 	var radius = parseInt(size/8);
-	var center = parseInt(size/2-radius);
+	var center = parseInt(size/2);
 	var top = radius+1;
 	var bottom = size-radius-1;
 	var left = top;
 	var right = bottom;
-	var middle = center+radius;
+	var middle = center;
 
 	// For more information about context:
 	// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
