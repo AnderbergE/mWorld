@@ -18,12 +18,9 @@ function Menu () {
 	showMenu(false);
 
 	// Create a background for the menu, traps all mouse events.
-	var overlay = game.add.bitmapData(game.world.width, game.world.height);
-	overlay.ctx.fillStyle = '#ffff00';
-	overlay.ctx.globalAlpha = 0.2;
-	overlay.ctx.fillRect(0, 0, game.world.width, game.world.height);
-	var menuBg = game.add.sprite(0, 0, overlay, null, menuGroup);
+	var menuBg = new Cover('#ffff00', 0.2);
 	menuBg.inputEnabled = true;
+	menuGroup.add(menuBg);
 
 	var resume = game.add.text(game.world.centerX, game.world.centerY, GLOBAL.TEXT.resume, {
 		font: '40pt The Girl Next Door',

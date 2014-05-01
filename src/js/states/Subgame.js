@@ -85,11 +85,9 @@ Subgame.prototype.init = function (options) {
 	this.hudGroup.visible = false;
 
 	//  TODO: Is there an easier way to disable all input, except the menu?
-	var bmd = game.add.bitmapData(game.world.width, game.world.height);
-	bmd.ctx.fillRect(0, 0, game.world.width, game.world.height);
-	var disabler = game.add.sprite(0, 0, bmd);
-	disabler.alpha = 0;
+	var disabler = new Cover('#ffffff', 0);
 	disabler.inputEnabled = true;
+	game.world.add(disabler);
 	this.disable = function (value) { disabler.visible = value; };
 
 	this.menuGroup = game.add.group();
