@@ -276,13 +276,13 @@ BirdheroGame.prototype.create = function () {
 		var sound = _this.add.audio('birdheroIntro');
 		sound.play();
 		var group = _this.add.group(_this.gameGroup);
+		var t = new TimelineMax();
+
+		// Create each chick that will be blown away
 		var starter = function (chick, branch) {
 			branch.chicks = 0;
 			chick.visible = true;
 		};
-
-		// Create a sprite for each chick that will be blown away
-		var t = null;
 		for (var i = 0; i < tree.branch.length; i++) {
 			tree.branch[i].chicks = 1;
 			var chick = new BirdheroBird(tint[i]);
@@ -298,19 +298,46 @@ BirdheroGame.prototype.create = function () {
 			chick.scale.x = coords.bird.scale;
 			chick.scale.y = coords.bird.scale;
 			group.add(chick);
-			t = TweenMax.to(chick, 7, {
+			t.add(new TweenMax(chick, 7, {
 				x: -500,
 				y: game.world.height - Math.random()*150,
 				angle: 1080 + Math.random()*2160,
 				ease: Power0.easeIn,
-				delay: 5.5,
 				onStart: starter,
 				onStartParams: [chick, tree.branch[i]]
-			});
+			}), 5.5);
 		}
-		// Doing this only adds on complete for the last tween.
-		t.eventCallback('onComplete', function () {
+
+		var darkness = new Cover('#000077', 0);
+		t.add(new TweenMax(darkness, 1.5, { alpha: 0.3 }), 3.5);
+		t.add(new TweenMax(darkness, 1, { alpha: 0 }), 12);
+		group.add(darkness);
+
+		var emitter;
+		t.addCallback(function () {
+			// Make it rain!
+			var bmd = new Phaser.BitmapData(game, '', 6, 6);
+			var half = bmd.width/2;
+			bmd.ctx.fillStyle = '#2266cc';
+			bmd.ctx.beginPath();
+			bmd.ctx.arc(half, half, half, 0, 2*Math.PI);
+			bmd.ctx.closePath();
+			bmd.ctx.fill();
+
+			emitter = game.add.emitter(game.world.centerX, -10, 5000);
+			emitter.width = game.world.width*1.5;
+			emitter.makeParticles(bmd);
+			emitter.setScale(0.5, 1, 0.5, 1);
+			emitter.setYSpeed(500, 700);
+			emitter.setXSpeed(-300, -400);
+			emitter.setRotation(0, 0);
+			emitter.start(false, 1000, 25, 200); // It will take 200*25 to reach 5000 = 5s
+		}, 4);
+
+		t.call(function () {
 			sound.stop();
+			emitter.destroy(true);
+			darkness.destroy(true);
 			group.destroy(true);
 			_this.nextMode();
 			_this.nextRound();
