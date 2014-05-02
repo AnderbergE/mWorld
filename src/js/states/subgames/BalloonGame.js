@@ -1,4 +1,4 @@
-/* Bird Hero game */
+/* Balloon Game */
 BalloonGame.prototype = Object.create(Subgame.prototype);
 BalloonGame.prototype.constructor = BalloonGame;
 function BalloonGame () {
@@ -9,10 +9,12 @@ function BalloonGame () {
 BalloonGame.prototype.preload = function () {
 
 	this.load.image('cliffside',    'assets/img/subgames/balloon/cliffside.png');
+	this.load.image('basket',    'assets/img/subgames/balloon/basket.png');
 
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
+	/*
 	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
-	/*this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
+	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
 	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
 	this.load.image('birdheroBranch1', 'assets/img/subgames/birdhero/branch2.png');
 	this.load.image('birdheroBranch2', 'assets/img/subgames/birdhero/branch2.png');
@@ -41,12 +43,31 @@ BalloonGame.prototype.create = function () {
 
 	// Add main game
 	this.add.sprite(0, 0, 'birdheroBg', null, this.gameGroup);
+
 	for (var i = 0; i < 6; i++){
 		var cliff = this.add.sprite(1024, 718 - (this.cache.getImage('cliffside').height * scale * (i+1) * 0.8), 'cliffside', null, this.gameGroup);
 		cliff.scale.x = -scale;
 		cliff.scale.y = scale;
 	}
-	
+	var airballoon = this.add.group(this.gameGroup);
+	airballoon.basket = this.add.sprite(680, 660, 'basket', null, airballoon);
+	airballoon.basket.scale.x = 0.2;
+	airballoon.basket.scale.y = 0.2;
+
+	var balloons = this.add.group(this.gameGroup);
+	for (i = 0; i < 3; i++){
+		var balloon = this.add.sprite(50 + 100*i, 50, 'balloon', balloons);
+		balloon.scale.x = 0.2;
+		balloon.scale.y = 0.2;
+		balloon.inputEnabled = true;
+		balloon.input.enableDrag(false, true);
+	}
+
+	for (i = 0; i < 3; i++){
+		airballoon.y -= (this.cache.getImage('cliffside').height * scale * 0.8);
+	}
+
+
 
 	// Make sure the call this when everything is set up.
 	this.startGame();

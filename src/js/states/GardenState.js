@@ -6,6 +6,16 @@ GardenState.prototype.preload = function() {
 	this.load.image('gardenBg',      'assets/img/garden/bg.png');
 };
 
+	//For testing the mountain game specifically.
+this.balloonGame = function () {
+	return {
+		type: 3,
+		representation: 0,
+		amount: 4,
+		roundsPerMode: 1
+	};
+};
+
 /* Phaser state function */
 GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
