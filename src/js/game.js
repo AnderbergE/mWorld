@@ -11,6 +11,14 @@ var user;
  */
 var game;
 
+TimelineMax.prototype.addSound = function (what, who) {
+	this.addPause(null, function () {
+		var a = (!who ? game.add.audio(what) : who.say(what));
+		a.onStop.add(function () { this.resume(); }, this);
+		a.play();
+	});
+};
+
 /**
  * Create the game when the browser has loaded everything.
  * Note: This is where all the states should be added.
