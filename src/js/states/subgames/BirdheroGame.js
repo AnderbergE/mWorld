@@ -40,6 +40,8 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroThisFloor',      ['assets/audio/subgames/birdhero/this_floor.mp3', 'assets/audio/subgames/birdhero/this_floor.ogg']);
 	this.load.audio('birdheroWrongHigher',    ['assets/audio/subgames/birdhero/wrong_higher.mp3', 'assets/audio/subgames/birdhero/wrong_higher.ogg']);
 	this.load.audio('birdheroWrongLower',     ['assets/audio/subgames/birdhero/wrong_lower.mp3', 'assets/audio/subgames/birdhero/wrong_lower.ogg']);
+	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
+	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 };
 
 /* Phaser state function */
@@ -363,7 +365,7 @@ BirdheroGame.prototype.create = function () {
 			_this.hudGroup.visible = false;
 			_this.agent.visible = false;
 			newBird(function () {
-				instructionIntro().addCallback(showNumbers);
+				instructionIntro().addCallback(function () { showNumbers(); });
 			});
 		} else {
 			if (tries <= 0) { newBird(showNumbers); }
@@ -376,11 +378,10 @@ BirdheroGame.prototype.create = function () {
 		if (intro) {
 			_this.hudGroup.visible = false;
 			_this.agent.visible = true;
-			TweenMax.to(_this.agent, 3, {
-				x: coords.agent.stop.x,
-				y: coords.agent.stop.y,
-				onComplete: function () { newBird(showNumbers); }
-			});
+			var t = new TimelineMax();
+			t.add(new TweenMax(_this.agent, 3, { x: coords.agent.stop.x, y: coords.agent.stop.y }));
+			t.addSound('birdheroAgentShow', _this.agent);
+			t.addCallback(function () { newBird(showNumbers); });
 		} else {
 			if (tries <= 0) { newBird(showNumbers); }
 			else { showNumbers(); }
@@ -392,10 +393,13 @@ BirdheroGame.prototype.create = function () {
 		if (intro) {
 			_this.hudGroup.visible = false;
 			_this.agent.visible = true;
+			var t = new TimelineMax();
+			t.addSound('birdheroAgentTry', _this.agent);
+			t.addCallback(function () { newBird(agentGuess); });
+		} else {
+			if (intro || tries <= 0) { newBird(agentGuess); }
+			else { agentGuess(); }
 		}
-
-		if (intro || tries <= 0) { newBird(agentGuess); }
-		else { agentGuess(); }
 	};
 
 	this.modeAgentDo = function (intro, tries) {

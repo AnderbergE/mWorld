@@ -43,6 +43,21 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 };
 
 /**
+ * It's a flying, talking birdie!
+ * @param {string} The key to a sound file
+ * @returns {Object} The sound object (not started)
+ */
+Agent.prototype.say = function (what) {
+	// this.beak.talk.play();
+	var s = game.add.sound(what);
+	// s.onStop.add(function () {
+		// this.beak.talk.stop(true); // TODO: This should set frame to 0, but it does not.
+		// this.beak.frame = 0;
+	// }, this);
+	return s;
+};
+
+/**
  * Make agent happy.
  * @param {number} For how long
  * @returns {Object} The happiness tween
