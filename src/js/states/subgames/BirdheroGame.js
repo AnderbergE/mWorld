@@ -1,4 +1,8 @@
-/* Bird Hero game */
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                             Bird Hero game                                */
+/* Representations: All
+/* Range:           1--9
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BirdheroGame.prototype = Object.create(Subgame.prototype);
 BirdheroGame.prototype.constructor = BirdheroGame;
 function BirdheroGame () {
@@ -19,7 +23,7 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroMother',  'assets/img/subgames/birdhero/mother.png');
 	this.load.image('birdheroNest',    'assets/img/subgames/birdhero/nest.png');
 	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
-	this.load.image('birdheroWhat',    'assets/img/subgames/birdhero/what.png');
+	this.load.image('birdheroArrow',   'assets/img/subgames/birdhero/arrow.png');
 	this.load.spritesheet('birdheroBeak', 'assets/img/subgames/birdhero/beak.png', 31, 33);
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
@@ -268,6 +272,14 @@ BirdheroGame.prototype.create = function () {
 		showYesnos();
 	}
 
+	function instructionIntro () {
+		var t = new TimelineMax();
+		t.addSound('birdheroInstruction1a', bird);
+		t.add(bird.pointAtFeathers());
+		t.addSound('birdheroInstruction1b', bird);
+		return t;
+	}
+
 
 	/* Overshadowing of the mode related functions */
 	this.modeIntro = function () {
@@ -350,9 +362,13 @@ BirdheroGame.prototype.create = function () {
 		if (intro) {
 			_this.hudGroup.visible = false;
 			_this.agent.visible = false;
+			newBird(function () {
+				instructionIntro().addCallback(showNumbers);
+			});
+		} else {
+			if (tries <= 0) { newBird(showNumbers); }
+			else { showNumbers(); }
 		}
-		if (tries <= 0) { newBird(showNumbers); }
-		else { showNumbers(); }
 	};
 
 	this.modePlayerShow = function (intro, tries) {
@@ -432,7 +448,6 @@ function BirdheroBranch (x, y, tint) {
 
 	return this;
 }
-
 Object.defineProperty(BirdheroBranch.prototype, 'chicks', {
 	get: function() { return this._chicks.length; },
 	set: function(value) {
@@ -512,6 +527,7 @@ BirdheroBranch.prototype.confused = function (duration) {
 	});
 };
 
+
 /* The bird that you are helping home */
 BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
@@ -527,12 +543,28 @@ function BirdheroBird (tint) {
 
 	this.tint = tint || 0xffffff;
 
+	/* For instructions */
+	this.arrow = game.add.sprite(0, 0, 'birdheroArrow', null, this);
+	this.arrow.visible = false;
+
 	return this;
 }
 Object.defineProperty(BirdheroBird.prototype, 'tint', {
 	get: function() { return this.body.tint; },
 	set: function(value) { this.body.tint = value; }
 });
+
+BirdheroBird.prototype.featherPositions = [
+	{ x: 140, y: 0 }, // 1
+	{ x: 130, y: 10 }, // 2
+	{ x: 120, y: 20 }, // 3
+	{ x: 110, y: 30 }, // 4
+	{ x: 100, y: 40 }, // 5
+	{ x: -50,  y: 0 }, // 6
+	{ x: -40,  y: 10 }, // 7
+	{ x: -30,  y: 20 }, // 8
+	{ x: -20,  y: 30 }  // 9
+];
 
 /**
  * It's a flying, talking birdie!
@@ -542,7 +574,10 @@ Object.defineProperty(BirdheroBird.prototype, 'tint', {
 BirdheroBird.prototype.say = function (what) {
 	this.beak.talk.play();
 	var s = game.add.sound(what);
-	s.onStop = function () { this.beak.talk.stop(); };
+	s.onStop.add(function () {
+		this.beak.talk.stop(true); // TODO: This should set frame to 0, but it does not.
+		this.beak.frame = 0;
+	}, this);
 	return s;
 };
 
@@ -584,5 +619,23 @@ BirdheroBird.prototype.move = function (properties, duration, scale) {
 		}
 	}, 'mover', null, this);
 
+	return t;
+};
+
+BirdheroBird.prototype.pointAtFeathers = function () {
+	var t = new TimelineMax();
+	var arrow = this.arrow;
+	var offset = 30;
+	t.addCallback(function () { arrow.visible = true; });
+
+	arrow.x = this.featherPositions[0].x + offset; // Set start position
+	arrow.y = this.featherPositions[0].y;
+	// TODO: solve for > 5
+	for (var i = 0; i < this.number; i++) {
+		if (i !== 0) { t.add(new TweenMax(arrow, 0.3, { x: '+=' + offset, y: '+=5' })); }
+		t.add(new TweenMax(arrow, 0.7, { x: this.featherPositions[i].x, y: this.featherPositions[i].y }));
+	}
+
+	t.addCallback(function () { arrow.visible = false; });
 	return t;
 };
