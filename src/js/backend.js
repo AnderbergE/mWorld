@@ -16,6 +16,7 @@ var Backend = (function () {
 		};
 	};
 
+
 	/**
 	* PUT the login for a specific user.
 	* TODO: Investigate if login should be made from the game or before.

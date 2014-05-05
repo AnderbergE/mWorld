@@ -6,6 +6,16 @@ GardenState.prototype.preload = function() {
 	this.load.image('gardenBg',      'assets/img/garden/bg.png');
 };
 
+	//For testing the mountain game specifically.
+this.balloonGame = function () {
+	return {
+		type: 3,
+		representation: 0,
+		amount: 4,
+		roundsPerMode: 1
+	};
+};
+
 /* Phaser state function */
 GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
@@ -16,6 +26,15 @@ GardenState.prototype.create = function () {
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
 		var info = Backend.nextGame();
+		this.state.start(GLOBAL.STATE[info.type], true, false, info);
+	}, this);
+
+	var balloonButton = this.add.sprite(300, 50, 'balloon', null, this.group);
+	balloonButton.scale.x = 0.2;
+	balloonButton.scale.y = 0.2;
+	balloonButton.inputEnabled = true;
+	balloonButton.events.onInputDown.add(function () {
+		var info = Backend.balloonGame();
 		this.state.start(GLOBAL.STATE[info.type], true, false, info);
 	}, this);
 

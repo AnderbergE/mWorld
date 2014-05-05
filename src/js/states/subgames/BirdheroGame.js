@@ -481,6 +481,35 @@ BirdheroBranch.prototype.chickPos = function () {
 	};
 };
 
+Object.defineProperty(BirdheroBranch.prototype, 'chicks', {
+	get: function() { return this._chicks.length; },
+	set: function(value) {
+		var change = value - this._chicks.length;
+		var dir = change > 0 ? -1 : 1;
+		while (change !== 0) {
+			if (dir < 0) {
+				var chick = game.add.sprite(this.mother.x, this.nest.y, 'birdheroChick', null, this);
+				chick.x += this._chicks.length * chick.width * 0.8;
+				chick.y -= chick.height * 0.8;
+				chick.tint = this.mother.tint;
+				this._chicks.push(chick);
+			} else {
+				this._chicks.pop().destroy();
+			}
+			change += dir;
+		}
+		this.nest.bringToTop();
+	}
+});
+
+/** @returns {Object} The x, y coordinates of where the chick is */
+BirdheroBranch.prototype.chickPos = function () {
+	return {
+		x: this.x + this._chicks[0].x * this.scale.x,
+		y: this.y + this._chicks[0].y
+	};
+};
+
 /** @returns {Object} The x, y coordinates of where the bird should stop at the nest */
 BirdheroBranch.prototype.visit = function () {
 	return {
