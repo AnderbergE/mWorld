@@ -105,6 +105,8 @@ Subgame.prototype.init = function (options) {
 
 /* Phaser state function */
 Subgame.prototype.shutdown = function () {
+	TweenMax.killAll();
+
 	if (this.music) {
 		this.music.stop();
 	}
