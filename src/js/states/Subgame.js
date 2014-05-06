@@ -6,9 +6,9 @@
  * The number to answer: this.currentNumber
  *
  * Add game objects to:     this.gameGroup
- * Add buttons and HUD to:  this.hudGroup (default visibility = false)
+ * Add buttons and HUD to:  this.hudGroup
  * Add background music to: this.music
- * Use agent with:          this.agent, (default visibility = false)
+ * Use agent with:          this.agent (default visibility = false)
  *
  *
  * Functions:
@@ -82,7 +82,6 @@ Subgame.prototype.init = function (options) {
 	this.gameGroup.add(this.agent);
 
 	this.hudGroup = game.add.group();
-	this.hudGroup.visible = false;
 
 	//  TODO: Is there an easier way to disable all input, except the menu?
 	var disabler = new Cover('#ffffff', 0);
@@ -232,6 +231,7 @@ Subgame.prototype.addWater = function (x, y, force) {
 
 /** Start the game! */
 Subgame.prototype.startGame = function () {
+	// TODO: Should we wait for sounds to be decoded here, or are there any easier way?
 	this.menuGroup.visible = true;
 	this.nextMode();
 	this.nextNumber();
