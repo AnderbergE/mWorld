@@ -10,7 +10,7 @@ GardenState.prototype.preload = function() {
 this.balloonGame = function () {
 	return {
 		type: 3,
-		representation: 0,
+		representation: [0],
 		amount: 4,
 		roundsPerMode: 1
 	};
