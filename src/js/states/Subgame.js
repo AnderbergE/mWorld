@@ -12,6 +12,7 @@
  *
  *
  * Functions:
+ * Disable/Enable input:    this.disable (default is disabled)
  * Add event subscriptions: this.addEvent
  * Start game:              this.startGame
  * Go to next mode:         this.nextMode (only use this in intro-mode, the others change automatically)
@@ -29,12 +30,13 @@
  *
  *
  * Typical game flow:
- * this.startGame();  // the first mode, this.modeIntro, will be called
- * this.nextMode();   // change mode, now this.modePlayerDo will be called
- * this.nextRound();  // start the mode
- * this.tryNumber(x); // try a number against the current one, returns true or false
- * this.nextRound();  // do this regardless if right or wrong,
- *                    // it takes care of mode switching and function calls for you
+ * this.startGame();    // the first mode, this.modeIntro, will be called
+ * this.nextMode();     // change mode, now this.modePlayerDo will be called
+ * this.nextRound();    // start the mode
+ * this.disable(false); // Make it possible to press anything.
+ * this.tryNumber(x);   // try a number against the current one, returns true or false
+ * this.nextRound();    // do this regardless if right or wrong,
+ *                      // it takes care of mode switching and function calls for you
  * // Do until game is done, then quit by using: this.state.start(GLOBAL.STATE.garden);
  */
 function Subgame () {}
