@@ -13,6 +13,8 @@ function BirdheroGame () {
 BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroInstruction1a',  ['assets/audio/subgames/birdhero/instruction_1a.mp3', 'assets/audio/subgames/birdhero/instruction_1a.ogg']);
 	this.load.audio('birdheroInstruction1b',  ['assets/audio/subgames/birdhero/instruction_1b.mp3', 'assets/audio/subgames/birdhero/instruction_1b.ogg']);
+	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
+	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.mp3', 'assets/audio/subgames/birdhero/intro.ogg']);
 	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.mp3', 'assets/audio/subgames/birdhero/scream.ogg']);
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
@@ -23,9 +25,10 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroCorrect',        ['assets/audio/subgames/birdhero/correct.mp3', 'assets/audio/subgames/birdhero/correct.ogg']);
 	this.load.audio('birdheroWrongHigher',    ['assets/audio/subgames/birdhero/wrong_higher.mp3', 'assets/audio/subgames/birdhero/wrong_higher.ogg']);
 	this.load.audio('birdheroWrongLower',     ['assets/audio/subgames/birdhero/wrong_lower.mp3', 'assets/audio/subgames/birdhero/wrong_lower.ogg']);
-	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
-	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 	this.load.audio('birdheroInstruction2',   ['assets/audio/subgames/birdhero/instruction_2.mp3', 'assets/audio/subgames/birdhero/instruction_2.ogg']);
+	this.load.audio('birdheroAgentHmm',       ['assets/audio/agent/panda/hmm.mp3', 'assets/audio/agent/panda/hmm.ogg']);
+	this.load.audio('birdheroAgentOops',      ['assets/audio/agent/panda/oops.mp3', 'assets/audio/agent/panda/oops.ogg']);
+	this.load.audio('birdheroAgentCorrected', ['assets/audio/agent/panda/incorrect.mp3', 'assets/audio/agent/panda/incorrect.ogg']);
 	this.load.audio('birdheroEnding',         ['assets/audio/subgames/birdhero/ending.mp3', 'assets/audio/subgames/birdhero/ending.ogg']);
 
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
@@ -41,6 +44,7 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroNest',    'assets/img/subgames/birdhero/nest.png');
 	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
 	this.load.image('birdheroArrow',   'assets/img/subgames/birdhero/arrow.png');
+	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 	this.load.spritesheet('birdheroBeak', 'assets/img/subgames/birdhero/beak.png', 31, 33);
 };
 
@@ -59,7 +63,7 @@ BirdheroGame.prototype.create = function () {
 			scale: 0.25
 		},
 		bird: {
-			start: { x: -100, y: 600 },
+			start: { x: -150, y: 600 },
 			stop: { x: 150, y: 500 },
 			scale: 0.1
 		}
@@ -80,8 +84,14 @@ BirdheroGame.prototype.create = function () {
 	this.agent.scale.x = coords.agent.scale;
 	this.agent.scale.y = coords.agent.scale;
 	this.agent.visible = true;
+	// Adding thought bubble that is used in the agent try mode.
+	this.agent.thought = this.add.group(this.gameGroup);
+	this.agent.thought.x = coords.agent.stop.x - 200;
+	this.agent.thought.y = coords.agent.stop.y - 200;
+	this.agent.thought.visible = false;
+	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
+	thoughtBubble.anchor.setTo(0.5);
 	this.gameGroup.bringToTop(this.agent);
-	var press = null; // TODO: Debug only, remove later.
 
 	// Create bird, it is added to the elevator group below since we need it to be "in" the elevator.
 	// Since the bird is in the elevator group, we need to offset for that when moving it.
@@ -235,7 +245,10 @@ BirdheroGame.prototype.create = function () {
 	}
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
-		if (!value) { showNumbers(); }
+		if (!value) {
+			_this.agent.say('birdheroAgentCorrected').play();
+			showNumbers();
+		}
 		else { pushNumber(_this.agent.lastGuess); }
 	}
 
@@ -291,10 +304,25 @@ BirdheroGame.prototype.create = function () {
 	/* Have the agent guess a number */
 	function agentGuess () {
 		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
-		if (press) { _this.hudGroup.remove(press); }
-		press = new NumberButton(_this.agent.lastGuess, _this.representation, { x: 200, y: 200 });
-		_this.hudGroup.add(press);
-		showYesnos();
+
+		return TweenMax.fromTo(_this.agent.thought.scale, 1.5,
+			{ x: 0, y: 0 },
+			{ x: 1, y: 1,
+				ease: Elastic.easeOut,
+				onStart: function () {
+					_this.agent.thought.visible = true;
+					if (_this.agent.thought.guess) { _this.gameGroup.remove(_this.agent.thought.guess); }
+					_this.agent.say('birdheroAgentHmm').play();
+				},
+				onComplete: function () {
+					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
+						x: -50, y: -50, size: 100
+					});
+					_this.agent.thought.add(_this.agent.thought.guess);
+					// TODO: Agent should say something here based on how sure it is.
+					showYesnos();
+				}
+			});
 	}
 
 	function instructionIntro () {
@@ -410,29 +438,32 @@ BirdheroGame.prototype.create = function () {
 
 	this.modeAgentTry = function (intro, tries) {
 		_this.disable(true);
+		var t = new TimelineMax();
 		if (tries > 0) {
-			agentGuess();
+			// TODO: Add more specified sounds?
+			t.addSound('birdheroAgentOops', _this.agent);
+			t.add(agentGuess());
 		} else { // if intro or first try
-			var t = new TimelineMax();
 			if (intro) {
 				t.addCallback(hideButtons);
 				t.addSound('birdheroAgentTry', _this.agent);
 			}
 			t.add(newBird());
-			t.addCallback(agentGuess);
+			t.add(agentGuess());
 		}
 	};
 
 	this.modeAgentDo = function (intro, tries) {
+		// TODO: This mode is not in Agneta & Magnus thoughts right now, will not update.
 		hideButtons();
-		var guess = _this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
+		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
 
 		if (tries > 0) {
-			pushNumber(guess);
+			pushNumber(_this.agent.lastGuess);
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			t.add(newBird());
-			t.addCallback(pushNumber, null, [guess]);
+			t.addCallback(pushNumber, null, [_this.agent.lastGuess]);
 		}
 	};
 
