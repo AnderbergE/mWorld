@@ -254,11 +254,13 @@ BirdheroGame.prototype.create = function () {
 
 	/* Show the number panel, hide the yes/no panel and enable input */
 	function showNumbers () {
-		_this.disable(false);
+		_this.disable(true);
 		buttons.reset();
 		if (!buttons.visible) {
 			buttons.visible = true;
-			TweenMax.fromTo(buttons, 0.5, { alpha: 0 }, { alpha: 1 });
+			TweenMax.fromTo(buttons, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
+		} else {
+			_this.disable(false);
 		}
 		if (yesnos.visible) {
 			TweenMax.to(yesnos, 0.5, { alpha: 0, onComplete: function () { yesnos.visible = false; } });
@@ -268,14 +270,16 @@ BirdheroGame.prototype.create = function () {
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
-		_this.disable(false);
+		_this.disable(true);
 		yesnos.reset();
 		if (buttons.visible) {
 			TweenMax.to(buttons, 0.5, { alpha: 0, onComplete: function () { buttons.visible = false; } });
 		}
 		if (!yesnos.visible) {
 			yesnos.visible = true;
-			TweenMax.fromTo(yesnos, 0.5, { alpha: 0 }, { alpha: 1 });
+			TweenMax.fromTo(yesnos, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
+		} else {
+			_this.disable(false);
 		}
 
 		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
@@ -408,7 +412,6 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modePlayerDo = function (intro, tries) {
-		_this.disable(true);
 		this.music.play();
 		if (tries > 0) {
 			showNumbers();
@@ -421,7 +424,6 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modePlayerShow = function (intro, tries) {
-		_this.disable(true);
 		if (tries > 0) {
 			showNumbers();
 		} else { // if intro or first try
@@ -437,7 +439,6 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modeAgentTry = function (intro, tries) {
-		_this.disable(true);
 		var t = new TimelineMax();
 		if (tries > 0) {
 			// TODO: Add more specified sounds?
