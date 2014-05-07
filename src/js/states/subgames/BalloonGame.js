@@ -33,7 +33,7 @@ BalloonGame.prototype.preload = function () {
 	*/
 };
 
-
+var background;
 var scale = 1;
 var airballoon;
 var cliffheight;
@@ -45,14 +45,14 @@ var balloons;
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
-
+	this.disable(false);
 	
 	this.music = this.add.audio('birdheroIntro', 1, true);
 
 	cliffheight = this.cache.getImage('cliffside').height;
 
 	// Add main game
-	this.add.sprite(0, 0, 'balloonBg', null, this.gameGroup);
+	background = this.add.sprite(0, 0, 'balloonBg', null, this.gameGroup);
 
 	// Adding the platforms on the cliff wall.
 	for (var i = 0; i < 5; i++){
@@ -88,41 +88,47 @@ BalloonGame.prototype.create = function () {
 	showNumbers();
 	*/
 
+
 	function createBalloons()
 	{
 		for (i = 0; i < 6; i++){
-			var balloon = _this.add.sprite(50 + 80*i, 50, 'balloon', _this.gameGroup);
+
+			var balloon = _this.add.sprite(50 + 80*i, 50, 'balloon', null, _this.gameGroup);
 			balloon.scale.x = 0.2;
 			balloon.scale.y = 0.2;
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
-			balloon.events.onDragStop.add(attatchToBasket);
-			//balloons.add(balloon);
-			console.log('Balloons.length = ' + balloons.length);
+			//balloon.events.onDragStart.add(release, _this);
+			balloon.events.onDragStop.add(attatchToBasket, _this);
+			balloons.add(balloon);
+			airballoon.add(balloon);
+			balloons.add(balloon);
+
 		}
 	}
 
 
-	//Does not work yet because the balloons are not added to a group. If they are added to one the drag function does not work. Will work on this.
+	// Does not reset the ballons in airballoon.
 	function resetBalloons()
 	{
-		console.log(balloons.length);
-		for (i = 0; i < 6; i++){
-			var toKill = balloons.getFirstAlive();
-			console.log('1');
-			if (toKill)
-			{
-				console.log('2');
-				toKill.kill();
-			}
-		}
-		balloons.removeBetween(0, 6);
-		console.log('3');
+		//balloon.kill();
+		balloons.removeAll(true);
+		airballoon.removeBetween(1, 19, true);
 		createBalloons();
 	}
 
+	// this one throws the balloons away to x: -31 and y: -126 for some reason. Will look into it.
+	/*function release(balloon){
+		balloons.add(balloon);
+	}*/
 
 	function attatchToBasket(balloon){
+		if(airballoon.getIndex(balloon) !== -1)
+		{
+			balloons.add(balloon);
+			balloon.x = game.input.x - 20;
+			balloon.y = game.input.y - 20;
+		}
 		if(checkOverlap(balloon, airballoon))
 		{
 			airballoon.add(balloon);
