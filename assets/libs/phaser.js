@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.0.5 "Tanchico" - Built: Thu May 01 2014 13:02:44
+* v2.0.5 "Tanchico" - Built: Thu May 08 2014 20:32:07
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -9764,7 +9764,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 *
 * Phaser - http://phaser.io
 *
-* v2.0.5 "Tanchico" - Built: Thu May 01 2014 13:02:44
+* v2.0.5 "Tanchico" - Built: Thu May 08 2014 20:32:07
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -9840,6 +9840,7 @@ var Phaser = Phaser || {
     ELLIPSE: 16,
     SPRITEBATCH: 17,
     RETROFONT: 18,
+    POINTER: 19,
 
     // The various blend modes supported by pixi / phaser
     blendModes: {
@@ -9889,6 +9890,71 @@ PIXI.InteractionManager = function () {
 * @static
 */
 Phaser.Utils = {
+
+    /**
+     * Transposes the elements of the given Array.
+     *
+     * @method transposeArray
+     * @param {array} array - The array to transpose.
+     * @return {array} The transposed array.
+     */
+    transposeArray: function (array) {
+
+        var result = new Array(array[0].length);
+
+        for (var i = 0; i < array[0].length; i++)
+        {
+            result[i] = new Array(array.length - 1);
+
+            for (var j = array.length - 1; j > -1; j--)
+            {
+                result[i][j] = array[j][i];
+            }
+        }
+
+        return result;
+
+    },
+
+    /**
+     * Rotates the given array.
+     * Based on the routine from http://jsfiddle.net/MrPolywhirl/NH42z/
+     *
+     * @method Phaser.Utils.rotateArray
+     * @param {array} matrix - The array to rotate.
+     * @param {number|string} direction - The amount to rotate. Either a number: 90, -90, 270, -270, 180 or a string: 'rotateLeft', 'rotateRight' or 'rotate180'
+     * @return {array} The rotated array
+     */
+    rotateArray: function (matrix, direction) {
+
+        if (typeof direction !== 'string')
+        {
+            direction = ((direction % 360) + 360) % 360;
+        }
+
+        if (direction === 90 || direction === -270 || direction === 'rotateLeft')
+        {
+            matrix = Phaser.Utils.transposeArray(matrix);
+            matrix = matrix.reverse();
+        }
+        else if (direction === -90 || direction === 270 || direction === 'rotateRight')
+        {
+            matrix = matrix.reverse();
+            matrix = Phaser.Utils.transposeArray(matrix);
+        }
+        else if (Math.abs(direction) === 180 || direction === 'rotate180')
+        {
+            for (var i = 0; i < matrix.length; i++)
+            {
+                matrix[i].reverse();
+            }
+
+            matrix = matrix.reverse();
+        }
+
+        return matrix;
+
+    },
 
     /**
     * Get a unit dimension from a string.
@@ -10424,7 +10490,7 @@ Phaser.Circle.prototype = {
     * Returns a Point object containing the coordinates of a point on the circumference of the Circle based on the given angle.
     * @method Phaser.Circle#circumferencePoint
     * @param {number} angle - The angle in radians (unless asDegrees is true) to return the point from.
-    * @param {boolean} asDegrees - Is the given angle in radians (false) or degrees (true)?
+    * @param {boolean} [asDegrees=false] - Is the given angle in radians (false) or degrees (true)?
     * @param {Phaser.Point} [out] - An optional Point object to put the result in to. If none specified a new Point object will be created.
     * @return {Phaser.Point} The Point object holding the result.
     */
@@ -10725,7 +10791,7 @@ Phaser.Circle.intersects = function (a, b) {
 * @method Phaser.Circle.circumferencePoint
 * @param {Phaser.Circle} a - The first Circle object.
 * @param {number} angle - The angle in radians (unless asDegrees is true) to return the point from.
-* @param {boolean} asDegrees - Is the given angle in radians (false) or degrees (true)?
+* @param {boolean} [asDegrees=false] - Is the given angle in radians (false) or degrees (true)?
 * @param {Phaser.Point} [out] - An optional Point object to put the result in to. If none specified a new Point object will be created.
 * @return {Phaser.Point} The Point object holding the result.
 */
@@ -11074,11 +11140,21 @@ Phaser.Point.prototype = {
     *
     * @method Phaser.Point#angle
     * @param {Phaser.Point|any} a - The object to get the angle from this Point to.
+    * @param {boolean} [asDegrees=false] - Is the given angle in radians (false) or degrees (true)?
     * @return {number} The angle between the two objects.
     */
-    angle: function (a) {
+    angle: function (a, asDegrees) {
 
-        return Math.atan2(this.x * a.y - this.y * a.x, this.x * a.x + this.y * a.y);
+        if (typeof asDegrees === 'undefined') { asDegrees = false; }
+
+        if (asDegrees)
+        {
+            return Phaser.Math.radToDeg(Math.atan2(a.y - this.y, a.x - this.x));
+        }
+        else
+        {
+            return Math.atan2(a.y - this.y, a.x - this.x);
+        }
 
     },
 
@@ -11362,7 +11438,8 @@ Phaser.Point.equals = function (a, b) {
 */
 Phaser.Point.angle = function (a, b) {
 
-    return Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+    // return Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y);
+    return Math.atan2(a.y - b.y, a.x - b.x);
 
 };
 
@@ -12809,23 +12886,10 @@ Phaser.Line.intersectsPoints = function (a, b, e, f, asSegment, result) {
 
     if (asSegment)
     {
-        if (Math.pow((result.x - b.x) + (result.y - b.y), 2) > Math.pow((a.x - b.x) + (a.y - b.y), 2))
-        {
-            return null;
-        }
-
-        if (Math.pow((result.x - a.x) + (result.y - a.y), 2) > Math.pow((a.x - b.x) + (a.y - b.y), 2))
-        {
-            return null;
-        }
-
-        if (Math.pow((result.x - f.x) + (result.y - f.y), 2) > Math.pow((e.x - f.x) + (e.y - f.y), 2))
-        {
-            return null;
-        }
-
-        if (Math.pow((result.x - e.x) + (result.y - e.y), 2) > Math.pow((e.x - f.x) + (e.y - f.y), 2))
-        {
+        if ( result.x < Math.min(a.x, b.x) || result.x > Math.max(a.x, b.x) ||
+             result.y < Math.min(a.y, b.y) || result.y > Math.max(a.y, b.y) ||
+             result.x < Math.min(e.x, f.x) || result.x > Math.max(e.x, f.x) ||
+             result.y < Math.min(e.y, f.y) || result.y > Math.max(e.y, f.y) ) {
             return null;
         }
     }
@@ -15710,16 +15774,18 @@ Phaser.PluginManager.prototype = {
     *
     * @method Phaser.PluginManager#add
     * @param {object|Phaser.Plugin} plugin - The Plugin to add into the PluginManager. This can be a function or an existing object.
+    * @param {...*} parameter - Additional parameters that will be passed to the Plugin.init method.
     * @return {Phaser.Plugin} The Plugin that was added to the manager.
     */
     add: function (plugin) {
 
+        var args = Array.prototype.splice.call(arguments, 1);
         var result = false;
 
         //  Prototype?
         if (typeof plugin === 'function')
         {
-            plugin = new plugin(this.game, this._parent);
+            plugin = new plugin(this.game, this);
         }
         else
         {
@@ -15776,7 +15842,7 @@ Phaser.PluginManager.prototype = {
             // Allows plugins to run potentially destructive code outside of the constructor, and only if being added to the PluginManager
             if (typeof plugin['init'] === 'function')
             {
-                plugin.init();
+                plugin.init.apply(plugin, args);
             }
 
             return plugin;
@@ -16290,11 +16356,16 @@ Phaser.Stage.prototype.visibilityChange = function (event) {
 */
 Phaser.Stage.prototype.setBackgroundColor = function(backgroundColor)
 {
+    // console.log('setBackgroundColor');
     this._backgroundColor = backgroundColor || 0x000000;
     this.backgroundColorSplit = PIXI.hex2rgb(this.backgroundColor);
     var hex = this._backgroundColor.toString(16);
     hex = '000000'.substr(0, 6 - hex.length) + hex;
     this.backgroundColorString = '#' + hex;
+    // console.log(this._backgroundColor);
+    // console.log(this.backgroundColorSplit);
+    // console.log(hex);
+    // console.log(this.backgroundColorString);
 };
 
 /**
@@ -16315,7 +16386,9 @@ Object.defineProperty(Phaser.Stage.prototype, "backgroundColor", {
         {
             if (typeof color === 'string')
             {
+                // console.log(color);
                 color = Phaser.Color.hexToRGB(color);
+                // console.log(color);
             }
 
             this.setBackgroundColor(color);
@@ -20266,6 +20339,12 @@ Phaser.Input = function (game) {
     this.onHold = null;
 
     /**
+    * @property {number} minPriorityID - You can tell all Pointers to ignore any object with a priorityID lower than the minPriorityID. Useful when stacking UI layers. Set to zero to disable.
+    * @default
+    */
+    this.minPriorityID = 0;
+
+    /**
     * A list of interactive objects. Te InputHandler components add and remove themselves from this.
     * @property {Phaser.ArrayList} interactiveItems
     */
@@ -20670,18 +20749,22 @@ Phaser.Input.prototype = {
     },
 
     /**
-    * Get the Pointer object whos identified property matches the given identifier value.
+    * Get the Pointer object whos `identifier` property matches the given identifier value.
+    * The identifier property is not set until the Pointer has been used at least once, as its populated by the DOM event.
+    * Also it can change every time you press the pointer down, and is not fixed once set.
+    * Note: Not all browsers set the identifier property and it's not part of the W3C spec, so you may need getPointerFromId instead.
+    *
     * @method Phaser.Input#getPointerFromIdentifier
     * @param {number} identifier - The Pointer.identifier value to search for.
     * @return {Phaser.Pointer} A Pointer object or null if no Pointer object matches the requested identifier.
     */
     getPointerFromIdentifier: function (identifier) {
 
-        if (this.pointer1.identifier == identifier)
+        if (this.pointer1.identifier === identifier)
         {
             return this.pointer1;
         }
-        else if (this.pointer2.identifier == identifier)
+        else if (this.pointer2.identifier === identifier)
         {
             return this.pointer2;
         }
@@ -20689,7 +20772,41 @@ Phaser.Input.prototype = {
         {
             for (var i = 3; i <= 10; i++)
             {
-                if (this['pointer' + i] && this['pointer' + i].identifier == identifier)
+                if (this['pointer' + i] && this['pointer' + i].identifier === identifier)
+                {
+                    return this['pointer' + i];
+                }
+            }
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Get the Pointer object whos `pointerId` property matches the given value.
+    * The pointerId property is not set until the Pointer has been used at least once, as its populated by the DOM event.
+    * Also it can change every time you press the pointer down if the browser recycles it.
+    *
+    * @method Phaser.Input#getPointerFromId
+    * @param {number} pointerId - The Pointer.pointerId value to search for.
+    * @return {Phaser.Pointer} A Pointer object or null if no Pointer object matches the requested identifier.
+    */
+    getPointerFromId: function (pointerId) {
+
+        if (this.pointer1.pointerId === pointerId)
+        {
+            return this.pointer1;
+        }
+        else if (this.pointer2.pointerId === pointerId)
+        {
+            return this.pointer2;
+        }
+        else
+        {
+            for (var i = 3; i <= 10; i++)
+            {
+                if (this['pointer' + i] && this['pointer' + i].pointerId === pointerId)
                 {
                     return this['pointer' + i];
                 }
@@ -22248,6 +22365,42 @@ Phaser.Pointer = function (game, id) {
     this.id = id;
 
     /**
+    * @property {number} type - The const type of this object.
+    * @readonly
+    */
+    this.type = Phaser.POINTER;
+
+    /**
+    * @property {boolean} exists - A Pointer object that exists is allowed to be checked for physics collisions and overlaps.
+    * @default
+    */
+    this.exists = true;
+
+    /**
+    * @property {number} identifier - The identifier property of the Pointer as set by the DOM event when this Pointer is started.
+    * @default
+    */
+    this.identifier = 0;
+
+    /**
+    * @property {number} pointerId - The pointerId property of the Pointer as set by the DOM event when this Pointer is started. The browser can and will recycle this value.
+    * @default
+    */
+    this.pointerId = null;
+
+    /**
+    * @property {any} target - The target property of the Pointer as set by the DOM event when this Pointer is started.
+    * @default
+    */
+    this.target = null;
+
+    /**
+    * @property {any} button - The button property of the Pointer as set by the DOM event when this Pointer is started.
+    * @default
+    */
+    this.button = null;
+
+    /**
     * @property {boolean} _holdSent - Local private variable to store the status of dispatching a hold event.
     * @private
     * @default
@@ -22261,7 +22414,7 @@ Phaser.Pointer = function (game, id) {
     this._history = [];
 
     /**
-    * @property {number} _lastDrop - Local private variable storing the time at which the next history drop should occur.
+    * @property {number} _nextDrop - Local private variable storing the time at which the next history drop should occur.
     * @private
     * @default
     */
@@ -22421,9 +22574,14 @@ Phaser.Pointer.prototype = {
     /**
     * Called when the Pointer is pressed onto the touchscreen.
     * @method Phaser.Pointer#start
-    * @param {Any} event
+    * @param {any} event - The DOM event from the browser.
     */
     start: function (event) {
+
+        if (event['pointerId'])
+        {
+            this.pointerId = event.pointerId;
+        }
 
         this.identifier = event.identifier;
         this.target = event.target;
@@ -22659,6 +22817,7 @@ Phaser.Pointer.prototype = {
 
     /**
     * Called when the Pointer leaves the target area.
+    *
     * @method Phaser.Pointer#leave
     * @param {MouseEvent|PointerEvent|TouchEvent} event - The event passed up from the input handler.
     */
@@ -22671,6 +22830,7 @@ Phaser.Pointer.prototype = {
 
     /**
     * Called when the Pointer leaves the touchscreen.
+    *
     * @method Phaser.Pointer#stop
     * @param {MouseEvent|PointerEvent|TouchEvent} event - The event passed up from the input handler.
     */
@@ -22716,6 +22876,8 @@ Phaser.Pointer.prototype = {
         this.withinGame = false;
         this.isDown = false;
         this.isUp = true;
+        this.pointerId = null;
+        this.identifier = null;
         
         this.positionUp.setTo(this.x, this.y);
         
@@ -22775,6 +22937,7 @@ Phaser.Pointer.prototype = {
             this.active = false;
         }
 
+        this.pointerId = null;
         this.identifier = null;
         this.isDown = false;
         this.isUp = true;
@@ -24947,7 +25110,7 @@ Phaser.InputHandler.prototype = {
     */
     validForInput: function (highestID, highestRenderID) {
 
-        if (this.sprite.scale.x === 0 || this.sprite.scale.y === 0)
+        if (this.sprite.scale.x === 0 || this.sprite.scale.y === 0 || this.priorityID < this.game.input.minPriorityID)
         {
             return false;
         }
@@ -27156,7 +27319,7 @@ Phaser.BitmapData.prototype = {
 
                 result = callback.call(callbackContext, pixel, tx, ty);
 
-                if (result !== false && result !== null)
+                if (result !== false && result !== null && result !== undefined)
                 {
                     this.setPixel32(tx, ty, result.r, result.g, result.b, result.a, false);
                     dirty = true;
@@ -27679,9 +27842,9 @@ Phaser.BitmapData.prototype = {
     * Draws a filled Circle to the BitmapData at the given x, y coordinates and radius in size.
     *
     * @method Phaser.BitmapData#circle
-    * @param {number} x - The x coordinate to draw the Circle at.
-    * @param {number} y - The y coordinate to draw the Circle at.
-    * @param {number} radius - The radius of the Circle.
+    * @param {number} x - The x coordinate to draw the Circle at. This is the center of the circle.
+    * @param {number} y - The y coordinate to draw the Circle at. This is the center of the circle.
+    * @param {number} radius - The radius of the Circle in pixels. The radius is half the diameter.
     * @param {string} [fillStyle] - If set the context fillStyle will be set to this value before the circle is drawn.
     */
     circle: function (x, y, radius, fillStyle) {
@@ -34435,16 +34598,18 @@ Phaser.Device.prototype = {
         {
             this.safari = true;
         }
-        else if (/Silk/.test(ua))
-        {
-            this.silk = true;
-        }
         else if (/Trident\/(\d+\.\d+)(.*)rv:(\d+\.\d+)/.test(ua))
         {
             this.ie = true;
             this.trident = true;
             this.tridentVersion = parseInt(RegExp.$1, 10);
             this.ieVersion = parseInt(RegExp.$3, 10);
+        }
+
+        //Silk gets its own if clause because its ua also contains 'Safari'
+        if (/Silk/.test(ua))
+        {
+            this.silk = true;
         }
 
         // WebApp mode in iOS
@@ -36192,6 +36357,34 @@ Phaser.Math = {
     },
 
     /**
+    * Work out what percentage value a is of value b using the given base.
+    *
+    * @method Phaser.Math#percent
+    * @param {number} a - The value to work out the percentage for.
+    * @param {number} b - The value you wish to get the percentage of.
+    * @param {number} [base=0] - The base value.
+    * @return {number} The percentage a is of b, between 0 and 1.
+    */
+    percent: function (a, b, base) {
+
+        if (typeof base === 'undefined') { base = 0; }
+
+        if (a > b || base > b)
+        {
+            return 1;
+        }
+        else if (a < base || base > a)
+        {
+            return 0;
+        }
+        else
+        {
+            return (a - base) / b;
+        }
+
+    },
+
+    /**
     * Convert degrees to radians.
     *
     * @method Phaser.Math#degToRad
@@ -36796,37 +36989,46 @@ Phaser.QuadTree.prototype = {
     },
 
     /**
-    * Return all objects that could collide with the given Sprite.
+    * Return all objects that could collide with the given Sprite or Rectangle.
     *
     * @method Phaser.QuadTree#retrieve
-    * @param {Phaser.Sprite} sprite - The sprite to check against.
+    * @param {Phaser.Sprite|Phaser.Rectangle} source - The source object to check the QuadTree against. Either a Sprite or Rectangle.
     * @return {array} - Array with all detected objects.
     */
-    retrieve: function (sprite) {
+    retrieve: function (source) {
 
-        if (!sprite.body)
+        if (source instanceof Phaser.Rectangle)
         {
-            return this._empty;
+            var returnObjects = this.objects;
+
+            var index = this.getIndex(source);
         }
+        else
+        {
+            if (!source.body)
+            {
+                return this._empty;
+            }
 
-        var returnObjects = this.objects;
+            var returnObjects = this.objects;
 
-        var index = this.getIndex(sprite.body);
+            var index = this.getIndex(source.body);
+        }
 
         if (this.nodes[0])
         {
             //  If rect fits into a subnode ..
             if (index !== -1)
             {
-                returnObjects = returnObjects.concat(this.nodes[index].retrieve(sprite));
+                returnObjects = returnObjects.concat(this.nodes[index].retrieve(source));
             }
             else
             {
                 //  If rect does not fit into a subnode, check it against all subnodes (unrolled for speed)
-                returnObjects = returnObjects.concat(this.nodes[0].retrieve(sprite));
-                returnObjects = returnObjects.concat(this.nodes[1].retrieve(sprite));
-                returnObjects = returnObjects.concat(this.nodes[2].retrieve(sprite));
-                returnObjects = returnObjects.concat(this.nodes[3].retrieve(sprite));
+                returnObjects = returnObjects.concat(this.nodes[0].retrieve(source));
+                returnObjects = returnObjects.concat(this.nodes[1].retrieve(source));
+                returnObjects = returnObjects.concat(this.nodes[2].retrieve(source));
+                returnObjects = returnObjects.concat(this.nodes[3].retrieve(source));
             }
         }
 
@@ -37519,6 +37721,30 @@ Phaser.Tween.prototype = {
             return this;
         }
 
+    },
+
+    /**
+    * Configure a Reverse Tween
+    *
+    * @method Phaser.Tween#from
+    * @param {object} properties - Properties you want to tween from.
+    * @param {number} [duration=1000] - Duration of this tween in ms.
+    * @param {function} [ease=null] - Easing function. If not set it will default to Phaser.Easing.Linear.None.
+    * @param {boolean} [autoStart=false] - Whether this tween will start automatically or not.
+    * @param {number} [delay=0] - Delay before this tween will start, defaults to 0 (no delay). Value given is in ms.
+    * @param {number} [repeat=0] - Should the tween automatically restart once complete? If you want it to run forever set as Number.MAX_VALUE. This ignores any chained tweens.
+    * @param {boolean} [yoyo=false] - A tween that yoyos will reverse itself and play backwards automatically. A yoyo'd tween doesn't fire the Tween.onComplete event, so listen for Tween.onLoop instead.
+    * @return {Phaser.Tween} This Tween object.
+    */
+    from: function(properties, duration, ease, autoStart, delay, repeat, yoyo) {
+        var _cache = {};
+        for(var prop in properties) {
+            if (properties.hasOwnProperty(prop)) {
+                _cache[prop] = this._object[prop];
+                this._object[prop] = properties[prop];
+            }
+        }
+        this.to(_cache, duration, ease, autoStart, delay, repeat, yoyo);
     },
 
     /**
@@ -43006,7 +43232,8 @@ Phaser.Loader.prototype = {
 
     /**
     * Check whether asset exists with a specific key.
-    *
+    * Use Phaser.Cache to access loaded assets, e.g. Phaser.Cache#checkImageKey
+    * 
     * @method Phaser.Loader#checkKeyExists
     * @param {string} type - The type asset you want to check.
     * @param {string} key - Key of the asset you want to check.
@@ -44832,7 +45059,7 @@ Phaser.Sound.prototype = {
         if (this.isPlaying === true && forceRestart === false && this.override === false)
         {
             //  Use Restart instead
-            return;
+            return this;
         }
 
         if (this.isPlaying && this.override)
@@ -44886,7 +45113,7 @@ Phaser.Sound.prototype = {
             else
             {
                 console.warn("Phaser.Sound.play: audio marker " + marker + " doesn't exist");
-                return;
+                return this;
             }
         }
         else
@@ -45023,6 +45250,9 @@ Phaser.Sound.prototype = {
                 }
             }
         }
+
+        return this;
+        
     },
 
     /**
@@ -49176,6 +49406,53 @@ Phaser.Physics.Arcade.prototype = {
     },
 
     /**
+    * Given a Group and a Pointer this will check to see which Group children overlap with the Pointer coordinates.
+    * Each child will be sent to the given callback for further processing.
+    * Note that the children are not checked for depth order, but simply if they overlap the Pointer or not.
+    *
+    * @method Phaser.Physics.Arcade#getObjectsUnderPointer
+    * @param {Phaser.Pointer} pointer - The Pointer to check.
+    * @param {Phaser.Group} group - The Group to check.
+    * @param {function} [callback] - A callback function that is called if the object overlaps with the Pointer. The callback will be sent two parameters: the Pointer and the Object that overlapped with it.
+    * @param {object} [callbackContext] - The context in which to run the callback.
+    * @return {array} An array of the Sprites from the Group that overlapped the Pointer coordinates.
+    */
+    getObjectsUnderPointer: function (pointer, group, callback, callbackContext) {
+
+        if (group.length === 0 || !pointer.exists)
+        {
+            return;
+        }
+
+        this.quadTree.clear();
+
+        this.quadTree.reset(this.game.world.bounds.x, this.game.world.bounds.y, this.game.world.bounds.width, this.game.world.bounds.height, this.maxObjects, this.maxLevels);
+
+        this.quadTree.populate(group);
+
+        var rect = new Phaser.Rectangle(pointer.x, pointer.y, 1, 1);
+        var output = [];
+
+        this._potentials = this.quadTree.retrieve(rect);
+
+        for (var i = 0, len = this._potentials.length; i < len; i++)
+        {
+            if (this._potentials[i].hitTest(pointer.x, pointer.y))
+            {
+                if (callback)
+                {
+                    callback.call(callbackContext, pointer, this._potentials[i].sprite);
+                }
+
+                output.push(this._potentials[i].sprite);
+            }
+        }
+
+        return output;
+
+    },
+
+    /**
     * Move the given display object towards the destination object at a steady velocity.
     * If you specify a maxTime then it will adjust the speed (overwriting what you set) so it arrives at the destination in that number of seconds.
     * Timings are approximate due to the way browser timers work. Allow for a variance of +- 50ms.
@@ -51779,6 +52056,30 @@ Phaser.Tilemap.CSV = 0;
 */
 Phaser.Tilemap.TILED_JSON = 1;
 
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.NORTH = 0;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.EAST = 1;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.SOUTH = 2;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.WEST = 3;
+
 Phaser.Tilemap.prototype = {
 
     /**
@@ -52787,9 +53088,12 @@ Phaser.Tilemap.prototype = {
     * @param {number} x - X position to get the tile from (given in tile units, not pixels)
     * @param {number} y - Y position to get the tile from (given in tile units, not pixels)
     * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to get the tile from.
-    * @return {Phaser.Tile} The tile at the given coordinates.
+    * @param {boolean} [nonNull=false] - If true getTile won't return null for empty tiles, but a Tile object with an index of -1.
+    * @return {Phaser.Tile} The tile at the given coordinates or null if no tile was found or the coordinates were invalid.
     */
-    getTile: function (x, y, layer) {
+    getTile: function (x, y, layer, nonNull) {
+
+        if (typeof nonNull === 'undefined') { nonNull = false; }
 
         layer = this.getLayer(layer);
 
@@ -52797,12 +53101,23 @@ Phaser.Tilemap.prototype = {
         {
             if (this.layers[layer].data[y][x].index === -1)
             {
-                return null;
+                if (nonNull)
+                {
+                    return this.layers[layer].data[y][x];
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
                 return this.layers[layer].data[y][x];
             }
+        }
+        else
+        {
+            return null;
         }
 
     },
