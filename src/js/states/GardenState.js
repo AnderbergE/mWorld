@@ -20,7 +20,7 @@ this.balloonGame = function () {
 GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
 
-	var panda = this.add.sprite(100, 50, 'panda', null, this.group);
+	var panda = this.add.sprite(100, 50, 'pandaBody', null, this.group);
 	panda.scale.x = 0.2;
 	panda.scale.y = 0.2;
 	panda.inputEnabled = true;

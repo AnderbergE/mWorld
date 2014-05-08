@@ -87,13 +87,10 @@ BootState.prototype.preload = function () {
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	/* Agent related */
-	this.load.image('panda',      'assets/img/agent/panda/standard.png');
-	this.load.image('pandaTalk',  'assets/img/agent/panda/talking.png');
-	this.load.image('pandaWalk1', 'assets/img/agent/panda/walking1.png');
-	this.load.image('pandaWalk2', 'assets/img/agent/panda/walking2.png');
-	this.load.image('pandaWave',  'assets/img/agent/panda/waving.png');
+	this.load.image('pandaBody',  'assets/img/agent/panda/body.png');
+	this.load.image('pandaArm',   'assets/img/agent/panda/arm.png');
+	this.load.image('pandaLeg',   'assets/img/agent/panda/leg.png');
 	this.load.image('pandaEye',   'assets/img/agent/panda/eye.png');
-	this.load.image('pandaFlare', 'assets/img/agent/panda/flare.png');
 
 	/* Common game elements */
 	this.load.spritesheet('drop', 'assets/img/objects/drop.png', 35, 70, 2);

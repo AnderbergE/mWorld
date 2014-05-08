@@ -38,7 +38,7 @@ PlayerSetupState.prototype.create = function () {
 		var a = this;
 		var pos = agents.children.indexOf(a);
 		if (pos === current) {
-			a.happy(1000).start().onComplete.add(function () {
+			a.happy(1).start().onComplete.add(function () {
 				_this.state.start(GLOBAL.STATE.garden);
 			});
 			return;

@@ -469,7 +469,7 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modeOutro = function () {
-		_this.agent.happy(1000);
+		_this.agent.happy(1);
 		for (var i = 0; i < tree.branch.length; i++) {
 			tree.branch[i].celebrate(1000);
 		}

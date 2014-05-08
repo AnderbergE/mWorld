@@ -7,12 +7,34 @@ function Agent () {
 
 	this.lastGuess = null;
 
+	this.coords = {
+		anim: {
+			arm: {
+				origin: -0.8,
+				wave: { from: -0.1, to: 0.2 }
+			}
+		}
+	};
+
+	this.leftArm = game.add.group(this);
+	this.leftArm.rotation = this.coords.anim.arm.origin;
+	this.rightArm = game.add.group(this);
+	this.rightArm.rotation = -this.coords.anim.arm.origin;
+	this.leftLeg = game.add.group(this);
+	this.rightLeg = game.add.group(this);
+
+
 	/* Set up the following in the sub class (see Panda for reference) */
 	// this.name
 	// this.coords
 	// this.body
 	// this.leftEye
 	// this.rightEye
+	/* Add sprites to the following in the sub class */
+	// this.leftArm
+	// this.rightArm
+	// this.leftLeg
+	// this.rightLeg
 
 	return this;
 }
@@ -59,14 +81,38 @@ Agent.prototype.say = function (what) {
 
 /**
  * Make agent happy.
- * @param {number} For how long
+ * @param {number} For how long in seconds (default 3)
  * @returns {Object} The happiness tween
  */
 Agent.prototype.happy = function(duration) {
-	duration = duration || 3000;
-	var times = parseInt(duration / 200);
+	var dur = 0.2;
+	var times = parseInt((duration || 3) / dur);
 	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
-	return new TweenMax.to(this, 0.2, { y: this.y - 100, ease: Power0.easeInOut, repeat: times, yoyo: true });
+	return new TweenMax(this, dur, { y: this.y - 100, ease: Power0.easeInOut, repeat: times, yoyo: true });
+};
+
+/**
+ * Put you hand up in the air and wave it around like you care.
+ * @param {number} For how long in seconds (default 3)
+ * @param {boolean} If left arm should wave (default false => right arm waves)
+ * @returns {Object} The happiness tween
+ */
+Agent.prototype.wave = function(duration, waveLeftArm) {
+	var dur = 0.5;
+	var times = parseInt((duration || 3) / dur) - 2; // -2 for start and stop moves
+	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
+	var t = new TimelineMax();
+	if (waveLeftArm) {
+		t.add(new TweenMax(this.leftArm, dur, { rotation: this.coords.anim.arm.wave.from, ease: Power1.easeIn }));
+		t.add(new TweenMax(this.leftArm, dur, { rotation: this.coords.anim.arm.wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }));
+		t.add(new TweenMax(this.leftArm, dur, { rotation: this.coords.anim.arm.origin, ease: Power1.easeOut }));
+	} else {
+		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.wave.from, ease: Power1.easeIn }));
+		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }));
+		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.origin, ease: Power1.easeOut }));
+	}
+	
+	return t;
 };
 
 /* Private. Have an eye follow a target. */
