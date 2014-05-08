@@ -64,8 +64,14 @@ function BootState () {}
 /* Phaser state function */
 BootState.prototype.preload = function () {
 	/* Make sure tweens are stopped when pausing. */
-	game.onPause.add(function () { TweenMax.globalTimeScale(0); });
-	game.onResume.add(function () { TweenMax.globalTimeScale(1); });
+	game.onPause.add(function () {
+		TweenMax.globalTimeScale(0);
+		game.sound.pauseAll();
+	});
+	game.onResume.add(function () {
+		TweenMax.globalTimeScale(1);
+		game.sound.resumeAll();
+	});
 
 	/* Show loading progress accordingly */
 	this.load.onFileComplete.add(function (progress) {
