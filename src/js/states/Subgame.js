@@ -7,7 +7,6 @@
  *
  * Add game objects to:     this.gameGroup
  * Add buttons and HUD to:  this.hudGroup
- * Add background music to: this.music
  * Use agent with:          this.agent (default visibility = false)
  *
  *
@@ -97,8 +96,6 @@ Subgame.prototype.init = function (options) {
 	this.menuGroup.add(new Menu());
 	this.menuGroup.visible = false;
 
-	this.music = null;
-
 	//  TODO: This should probably be removed and replaced with an ingame button.
 	this.input.keyboard.addKey(Phaser.Keyboard.O).onDown.add(function () { TweenMax.globalTimeScale(100); });
 	this.input.keyboard.addKey(Phaser.Keyboard.P).onDown.add(function () { TweenMax.globalTimeScale(1); });
@@ -107,10 +104,7 @@ Subgame.prototype.init = function (options) {
 /* Phaser state function */
 Subgame.prototype.shutdown = function () {
 	TweenMax.killAll();
-
-	if (this.music) {
-		this.music.stop();
-	}
+	this.sound.stopAll();
 
 	for (var i = 0; i < this._events.length; i++) {
 		unsubscribe(this._events[i]);

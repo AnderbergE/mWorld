@@ -72,7 +72,7 @@ BirdheroGame.prototype.create = function () {
 		0xffffff, 0xffcccc, 0xccffcc, 0xccccff, 0xffffcc,
 		0xffccff, 0xccffff, 0x5555cc, 0x55cc55, 0xcc5555
 	];
-	this.music = this.add.audio('birdheroMusic', 1, true);
+	var bgMusic = this.add.audio('birdheroMusic', 1, true);
 
 
 	// Add main game
@@ -412,7 +412,7 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modePlayerDo = function (intro, tries) {
-		this.music.play();
+		bgMusic.play();
 		if (tries > 0) {
 			showNumbers();
 		} else { // if intro or first try
@@ -430,7 +430,7 @@ BirdheroGame.prototype.create = function () {
 			var t = new TimelineMax();
 			if (intro) {
 				t.addCallback(hideButtons);
-				t.add(new TweenMax(_this.agent, 3, { x: coords.agent.stop.x, y: coords.agent.stop.y }));
+				t.add(_this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3));
 				t.addSound('birdheroAgentShow', _this.agent);
 			}
 			t.add(newBird());
