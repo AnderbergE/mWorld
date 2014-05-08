@@ -99,7 +99,7 @@ Agent.prototype.happy = function(duration) {
  * @param {boolean} If left arm should wave (default false => right arm waves)
  * @returns {Object} The happiness timeline
  */
-Agent.prototype.wave = function(duration, waveLeftArm) {
+Agent.prototype.wave = function (duration, waveLeftArm) {
 	var dur = 0.5;
 	var times = parseInt((duration || 3) / dur) - 2; // -2 for start and stop moves
 	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
@@ -114,6 +114,24 @@ Agent.prototype.wave = function(duration, waveLeftArm) {
 		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.origin, ease: Power1.easeOut }));
 	}
 	
+	return t;
+};
+
+Agent.prototype.walk = function (duration) {
+	var dur = 0.2;
+	var times = parseInt((duration || 3) / dur);
+	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
+	var t = new TimelineMax();
+	t.add(new TweenMax(this.leftLeg, dur, { y: '-=50', repeat: times-2, yoyo: true }));
+	t.add(new TweenMax(this.rightLeg, dur, { y: '-=50', repeat: times-2, yoyo: true }), dur);
+	return t;
+};
+
+Agent.prototype.move = function (properties, duration, scale) {
+	var t = new TimelineMax();
+	t.to(this, duration, properties);
+	t.add(this.walk(duration), 0);
+	if (scale) { t.to(this.scale, duration, { x: scale, y: scale }, 0); }
 	return t;
 };
 
