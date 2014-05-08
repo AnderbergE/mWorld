@@ -1,4 +1,19 @@
-/* The super class for agent objects, see Panda for sub classing reference */
+/*
+ * The super class for agent objects, see Panda for sub classing reference
+ * 
+ * Set up the following in the sub class:
+ * this.name
+ * this.coords
+ * this.body
+ * this.leftEye
+ * this.rightEye
+ *
+ * Add sprites to the following:
+ * this.leftArm
+ * this.rightArm
+ * this.leftLeg
+ * this.rightLeg
+*/
 Agent.prototype = Object.create(Phaser.Group.prototype);
 Agent.prototype.constructor = Agent;
 function Agent () {
@@ -23,19 +38,6 @@ function Agent () {
 	this.leftLeg = game.add.group(this);
 	this.rightLeg = game.add.group(this);
 
-
-	/* Set up the following in the sub class (see Panda for reference) */
-	// this.name
-	// this.coords
-	// this.body
-	// this.leftEye
-	// this.rightEye
-	/* Add sprites to the following in the sub class */
-	// this.leftArm
-	// this.rightArm
-	// this.leftLeg
-	// this.rightLeg
-
 	return this;
 }
 
@@ -44,7 +46,7 @@ function Agent () {
  * @param {number} The correct number
  * @param {number} Minimum value to guess
  * @param {number} Maximum value to guess
- * @returns {number} The guess
+ * @returns {number} The guess (also available in this.lastGuess)
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
 	// TODO: How should the AI behave?
@@ -65,7 +67,7 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 };
 
 /**
- * It's a flying, talking birdie!
+ * It's a flying, talking agent!
  * @param {string} The key to a sound file
  * @returns {Object} The sound object (not started)
  */
@@ -95,7 +97,7 @@ Agent.prototype.happy = function(duration) {
  * Put you hand up in the air and wave it around like you care.
  * @param {number} For how long in seconds (default 3)
  * @param {boolean} If left arm should wave (default false => right arm waves)
- * @returns {Object} The happiness tween
+ * @returns {Object} The happiness timeline
  */
 Agent.prototype.wave = function(duration, waveLeftArm) {
 	var dur = 0.5;
