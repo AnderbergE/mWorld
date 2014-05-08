@@ -254,13 +254,11 @@ BirdheroGame.prototype.create = function () {
 
 	/* Show the number panel, hide the yes/no panel and enable input */
 	function showNumbers () {
-		_this.disable(true);
 		buttons.reset();
 		if (!buttons.visible) {
+			_this.disable(true);
 			buttons.visible = true;
 			TweenMax.fromTo(buttons, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
-		} else {
-			_this.disable(false);
 		}
 		if (yesnos.visible) {
 			TweenMax.to(yesnos, 0.5, { alpha: 0, onComplete: function () { yesnos.visible = false; } });
@@ -270,16 +268,14 @@ BirdheroGame.prototype.create = function () {
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
-		_this.disable(true);
 		yesnos.reset();
 		if (buttons.visible) {
 			TweenMax.to(buttons, 0.5, { alpha: 0, onComplete: function () { buttons.visible = false; } });
 		}
 		if (!yesnos.visible) {
+			_this.disable(true);
 			yesnos.visible = true;
 			TweenMax.fromTo(yesnos, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
-		} else {
-			_this.disable(false);
 		}
 
 		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
@@ -341,9 +337,8 @@ BirdheroGame.prototype.create = function () {
 	/* Overshadowing of the mode related functions */
 	this.modeIntro = function () {
 		var sound = _this.add.audio('birdheroIntro');
-		sound.play();
 		var group = _this.add.group(_this.gameGroup);
-		var t = new TimelineMax();
+		var t = new TimelineMax({ onStart: function () { sound.play(); } });
 
 		// Create each chick that will be blown away
 		var starter = function (chick, branch) {
@@ -355,7 +350,7 @@ BirdheroGame.prototype.create = function () {
 			var chick = new BirdheroBird(tint[i]);
 			chick.visible = false;
 			for (var j in chick.children) {
-				// Translate positions for rotation effect
+				// Translate sprite positions for rotation effect
 				chick.children[j].x += 300;
 				chick.children[j].y += 300;
 			}
@@ -375,33 +370,32 @@ BirdheroGame.prototype.create = function () {
 			}), 5.5);
 		}
 
+		// Make it dark!
 		var darkness = new Cover('#000077', 0);
+		group.add(darkness);
 		t.add(new TweenMax(darkness, 1.5, { alpha: 0.3 }), 3.5);
 		t.add(new TweenMax(darkness, 1, { alpha: 0 }), 12);
-		group.add(darkness);
 
-		var emitter;
+		// Make it rain!
+		var bmd = new Phaser.BitmapData(game, '', 6, 6);
+		var half = bmd.width/2;
+		bmd.ctx.fillStyle = '#2266cc';
+		bmd.ctx.beginPath();
+		bmd.ctx.arc(half, half, half, 0, 2*Math.PI);
+		bmd.ctx.closePath();
+		bmd.ctx.fill();
+		var emitter = game.add.emitter(game.world.centerX, -10, 5000);
+		emitter.width = game.world.width*1.5;
+		emitter.makeParticles(bmd);
+		emitter.setScale(0.5, 1, 0.5, 1);
+		emitter.setYSpeed(500, 700);
+		emitter.setXSpeed(-300, -400);
+		emitter.setRotation(0, 0);
 		t.addCallback(function () {
-			// Make it rain!
-			var bmd = new Phaser.BitmapData(game, '', 6, 6);
-			var half = bmd.width/2;
-			bmd.ctx.fillStyle = '#2266cc';
-			bmd.ctx.beginPath();
-			bmd.ctx.arc(half, half, half, 0, 2*Math.PI);
-			bmd.ctx.closePath();
-			bmd.ctx.fill();
-
-			emitter = game.add.emitter(game.world.centerX, -10, 5000);
-			emitter.width = game.world.width*1.5;
-			emitter.makeParticles(bmd);
-			emitter.setScale(0.5, 1, 0.5, 1);
-			emitter.setYSpeed(500, 700);
-			emitter.setXSpeed(-300, -400);
-			emitter.setRotation(0, 0);
 			emitter.start(false, 1000, 25, 200); // It will take 200*25 to reach 5000 = 5s
 		}, 4);
 
-		t.call(function () {
+		t.addCallback(function () {
 			sound.stop();
 			emitter.destroy(true);
 			darkness.destroy(true);
