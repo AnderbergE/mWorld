@@ -23,6 +23,7 @@ TimelineMax.prototype.addSound = function (what, who) {
 	});
 	/* Without this complete events are not triggered correctly */
 	this.addCallback(function () { return; }, '+=' + (game.cache.getSound(what).data.duration || 0.1));
+	return this;
 };
 
 /**
