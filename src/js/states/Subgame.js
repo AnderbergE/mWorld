@@ -95,8 +95,16 @@ Subgame.prototype.init = function (options) {
 	this.waterCan = new WaterCan(this.game.width - 100, 10);
 	this.menuGroup.add(this.waterCan);
 	this.menuGroup.add(new Menu());
-	this.skipButton = game.add.button(75, 5, 'wood', this.skip, this, 0, 0, 1, 0, this.menuGroup);
-	this.skipButton.visible = false;
+	this.skipGroup = game.add.group(this.menuGroup);
+	this.skipGroup.x = 75;
+	this.skipGroup.y = 5;
+	this.skipGroup.visible = false;
+	game.add.button(0, 0, 'wood', this.skip, this, 0, 0, 1, 0, this.skipGroup);
+	game.add.text(10, -5, '>>', {
+		font: '30pt The Girl Next Door',
+		stroke: '#000000',
+		strokeThickness: 3
+	}, this.skipGroup);
 	this.menuGroup.visible = false;
 };
 
@@ -115,12 +123,12 @@ Object.defineProperty(Subgame.prototype, 'skipper', {
 	set: function(value) {
 		this._skipper = value;
 		if (this._skipper){
-			this.skipButton.visible = true;
+			this.skipGroup.visible = true;
 			this._skipper.addCallback(function () {
 				this.skipper = null;
 			}, null, null, this);
 		} else {
-			this.skipButton.visible = false;
+			this.skipGroup.visible = false;
 		}
 	}
 });
