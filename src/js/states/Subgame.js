@@ -122,7 +122,7 @@ Object.defineProperty(Subgame.prototype, 'skipper', {
 	get: function() { return this._skipper; },
 	set: function(value) {
 		this._skipper = value;
-		if (this._skipper){
+		if (this._skipper) {
 			this.skipGroup.visible = true;
 			this._skipper.addCallback(function () {
 				this.skipper = null;
@@ -136,10 +136,11 @@ Object.defineProperty(Subgame.prototype, 'skipper', {
 /* Skip a timeline. How to:
  * Set 'this.skipper' to a timeline (a skip button will appear next to the menu)
  * When the timeline is complete, make sure to set 'this.skipper' to null.
+ * NOTE: You can not skip part of a timeline.
  */
 Subgame.prototype.skip = function () {
-	if (this.skipper) {
-		this.skipper.totalProgress(1);
+	if (this._skipper) {
+		this._skipper.totalProgress(1);
 	}
 };
 

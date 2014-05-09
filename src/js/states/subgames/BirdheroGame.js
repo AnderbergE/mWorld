@@ -209,7 +209,8 @@ BirdheroGame.prototype.create = function () {
 		var result = _this.tryNumber(number);
 		var branch = tree.branch[number-1];
 
-		var t = new TimelineMax();
+		// TODO: This should not be skippable!
+		var t = new TimelineMax({ onStart: function () { _this.skipper = t; }});
 		t.add(bird.moveTo.elevator());
 		t.add(bird.moveTo.peak(true));
 		t.add(elevator.moveTo.branch(number));
@@ -259,7 +260,7 @@ BirdheroGame.prototype.create = function () {
 			_this.disable(true);
 			buttons.visible = true;
 			TweenMax.fromTo(buttons, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
-		}
+		} else { _this.disable(false); }
 		if (yesnos.visible) {
 			TweenMax.to(yesnos, 0.5, { alpha: 0, onComplete: function () { yesnos.visible = false; } });
 		}
@@ -276,7 +277,7 @@ BirdheroGame.prototype.create = function () {
 			_this.disable(true);
 			yesnos.visible = true;
 			TweenMax.fromTo(yesnos, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
-		}
+		} else { _this.disable(false); }
 
 		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
 	}
@@ -293,12 +294,17 @@ BirdheroGame.prototype.create = function () {
 
 	/* Introduce a new bird, aka: start a new round. */
 	function newBird () {
-		bird.x = coords.bird.start.x;
-		bird.y = coords.bird.start.y;
-		bird.visible = true;
-		bird.number = _this.currentNumber;
-		bird.tint = tint[bird.number - 1];
-		return bird.moveTo.initial();
+		var t = new TimelineMax();
+		t.addCallback(function () {
+			bird.x = coords.bird.start.x;
+			bird.y = coords.bird.start.y;
+			bird.visible = true;
+			bird.number = _this.currentNumber;
+			bird.tint = tint[bird.number - 1];
+		});
+		// TODO: Why does scale f up here when skipping?
+		t.add(bird.moveTo.initial());
+		return t;
 	}
 
 	/* Have the agent guess a number */
@@ -330,6 +336,10 @@ BirdheroGame.prototype.create = function () {
 		t.addSound('birdheroInstruction1a', bird);
 		t.add(bird.pointAtFeathers());
 		t.addSound('birdheroInstruction1b', bird);
+		t.eventCallback('onComplete', function () {
+			_this.sound.removeByKey('birdheroInstruction1a');
+			_this.sound.removeByKey('birdheroInstruction1b');
+		});
 		return t;
 	}
 
@@ -417,7 +427,10 @@ BirdheroGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			t.add(newBird());
-			if (intro) { t.add(instructionIntro()); }
+			if (intro) {
+				t.eventCallback('onStart', function () { _this.skipper = t; });
+				t.add(instructionIntro());
+			}
 			t.addCallback(showNumbers);
 		}
 	};
@@ -428,9 +441,11 @@ BirdheroGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
+				t.eventCallback('onStart', function () { _this.skipper = t; });
 				t.addCallback(hideButtons);
 				t.add(_this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3));
 				t.addSound('birdheroAgentShow', _this.agent);
+				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
 			}
 			t.add(newBird());
 			t.addCallback(showNumbers);
@@ -445,8 +460,10 @@ BirdheroGame.prototype.create = function () {
 			t.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
+				t.eventCallback('onStart', function () { _this.skipper = t; });
 				t.addCallback(hideButtons);
 				t.addSound('birdheroAgentTry', _this.agent);
+				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
 			}
 			t.add(newBird());
 			t.add(agentGuess());
