@@ -64,6 +64,7 @@ Subgame.prototype.init = function (options) {
 	this._currentTries = 0;
 	this._totalTries = 0;
 	this._events = [];
+	this._skipper = null;
 
 	/* Public variables */
 	this.representation = options.representation;
@@ -94,11 +95,9 @@ Subgame.prototype.init = function (options) {
 	this.waterCan = new WaterCan(this.game.width - 100, 10);
 	this.menuGroup.add(this.waterCan);
 	this.menuGroup.add(new Menu());
+	this.skipButton = game.add.button(75, 5, 'wood', this.skip, this, 0, 0, 1, 0, this.menuGroup);
+	this.skipButton.visible = false;
 	this.menuGroup.visible = false;
-
-	//  TODO: This should probably be removed and replaced with an ingame button.
-	this.input.keyboard.addKey(Phaser.Keyboard.O).onDown.add(function () { TweenMax.globalTimeScale(100); });
-	this.input.keyboard.addKey(Phaser.Keyboard.P).onDown.add(function () { TweenMax.globalTimeScale(1); });
 };
 
 /* Phaser state function */
@@ -108,6 +107,31 @@ Subgame.prototype.shutdown = function () {
 
 	for (var i = 0; i < this._events.length; i++) {
 		unsubscribe(this._events[i]);
+	}
+};
+
+Object.defineProperty(Subgame.prototype, 'skipper', {
+	get: function() { return this._skipper; },
+	set: function(value) {
+		this._skipper = value;
+		if (this._skipper){
+			this.skipButton.visible = true;
+			this._skipper.addCallback(function () {
+				this.skipper = null;
+			}, null, null, this);
+		} else {
+			this.skipButton.visible = false;
+		}
+	}
+});
+
+/* Skip a timeline. How to:
+ * Set 'this.skipper' to a timeline (a skip button will appear next to the menu)
+ * When the timeline is complete, make sure to set 'this.skipper' to null.
+ */
+Subgame.prototype.skip = function () {
+	if (this.skipper) {
+		this.skipper.totalProgress(1);
 	}
 };
 

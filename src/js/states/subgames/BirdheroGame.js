@@ -338,7 +338,12 @@ BirdheroGame.prototype.create = function () {
 	this.modeIntro = function () {
 		var sound = _this.add.audio('birdheroIntro');
 		var group = _this.add.group(_this.gameGroup);
-		var t = new TimelineMax({ onStart: function () { sound.play(); } });
+		var t = new TimelineMax({
+			onStart: function () {
+				_this.skipper = t;
+				sound.play();
+			}
+		});
 
 		// Create each chick that will be blown away
 		var starter = function (chick, branch) {
@@ -395,7 +400,7 @@ BirdheroGame.prototype.create = function () {
 			emitter.start(false, 1000, 25, 200); // It will take 200*25 to reach 5000 = 5s
 		}, 4);
 
-		t.addCallback(function () {
+		t.eventCallback('onComplete', function () {
 			sound.stop();
 			emitter.destroy(true);
 			darkness.destroy(true);
