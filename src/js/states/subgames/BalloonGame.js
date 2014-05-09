@@ -10,8 +10,16 @@ BalloonGame.prototype.preload = function () {
 
 	this.load.image('cliffside',    'assets/img/subgames/balloon/indent.png');
 	this.load.image('basket',    'assets/img/subgames/balloon/basket.png');
+	this.load.image('cave',      'assets/img/subgames/balloon/cave.png');
+	this.load.image('emptyglass',      'assets/img/subgames/balloon/emptyglass.png');
+	this.load.image('fullglass',      'assets/img/subgames/balloon/fullglass.png');
 
 	this.load.image('balloonBg',      'assets/img/subgames/balloon/bg.png');
+	this.load.image('balloon2',      'assets/img/subgames/balloon/balloon2.png');
+	this.load.image('balloon3',      'assets/img/subgames/balloon/balloon3.png');
+	this.load.image('balloon4',      'assets/img/subgames/balloon/balloon4.png');
+	this.load.image('balloon5',      'assets/img/subgames/balloon/balloon5.png');
+	this.load.image('balloon6',      'assets/img/subgames/balloon/balloon6.png');
 	/*
 	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
@@ -38,9 +46,16 @@ var scale = 1;
 var airballoon;
 var cliffheight;
 var cliff;
+var cave;
 var liftoffButton;
 var resetButton;
+var correctAnswer = 4;
+var glass;
 var balloons;
+var balloonStack1;
+//var balloonStack2;
+var balloonStock = 6;
+
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
@@ -54,29 +69,72 @@ BalloonGame.prototype.create = function () {
 	// Add main game
 	background = this.add.sprite(0, 0, 'balloonBg', null, this.gameGroup);
 
+
 	// Adding the platforms on the cliff wall.
 	for (var i = 0; i < 5; i++){
+
+		cave = this.add.sprite(960, 635 - (cliffheight * scale * (i+1) * 2), 'cave', null, this.gameGroup);
+		cave.scale.x = -0.6;
+		cave.scale.y = 0.6;
+
 		cliff = this.add.sprite(1024, 670 - (cliffheight * scale * (i+1) * 2), 'cliffside', null, this.gameGroup);
 		cliff.scale.x = -scale;
 		cliff.scale.y = scale;
+
+		cave = this.add.sprite(1060-this.cache.getImage('cliffside').width*2.5, 635 - (cliffheight * scale * (i+1) * 2 + cliffheight), 'cave', null, this.gameGroup);
+		cave.scale.x = 0.6;
+		cave.scale.y = 0.6;
+
 		cliff = this.add.sprite(1024-this.cache.getImage('cliffside').width*2.5, 670 - (cliffheight * scale * (i+1) * 2 + cliffheight), 'cliffside', null, this.gameGroup);
 		cliff.scale.x = scale;
 		cliff.scale.y = scale;
+
 	}
+
+	/*glass = this.add.sprite(960, 635 - (cliffheight * scale * (1+1) * 2), 'fullglass', null, this.gameGroup);
+	glass.scale.x = -0.5;
+	glass.scale.y = 0.5;
+	*/
+	glass = this.add.sprite(1070-this.cache.getImage('cliffside').width*2.5, 635 - (cliffheight * scale * (1+1) * 2 + cliffheight), 'fullglass', null, this.gameGroup);
+	glass.scale.x = 0.4;
+	glass.scale.y = 0.4;
+
 	airballoon = this.add.group(this.gameGroup);
-	airballoon.x = 775;
-	airballoon.y = 600;
-	airballoon.basket = this.add.sprite(0, 0, 'basket', null, airballoon);
+	airballoon.x = 0;
+	airballoon.y = 0;
+	airballoon.basket = this.add.sprite(775, 600, 'basket', null, airballoon);
 	airballoon.basket.scale.x = 0.2;
 	airballoon.basket.scale.y = 0.2;
 
 	balloons = this.add.group(this.gameGroup);
 	balloons.x = 0;
 	balloons.y = 0;
-	createBalloons();
+
+	balloonStack1 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
+
+	var coords = {
+		balloons: {
+			x: 50, y: 50
+		},
+		basketBalloons: {
+			x: 820-balloonStack1.width/2, y: 600-balloonStack1.height
+		}
+	};
+
+	balloonStack1.x = coords.balloons.x;
+	balloonStack1.y = coords.balloons.y;
+	balloonStack1.scale.x = 0.2;
+	balloonStack1.scale.y = 0.2;
 
 
-	liftoffButton = game.add.button(game.world.centerX, 660, 'wood', move, this);
+
+	//Kills the sprites not suppose to show up at the moment and revives those who are.
+	balloonStockUpdate();
+
+	//Creates one draggable balloon at the stack.
+	//createBalloon();
+
+	liftoffButton = game.add.button(game.world.centerX, 660, 'wood', takeOff, this);
 	resetButton = game.add.button(game.world.centerX- 60, 660, 'wood', resetBalloons, this);
 	
 	/*
@@ -88,55 +146,104 @@ BalloonGame.prototype.create = function () {
 	showNumbers();
 	*/
 
-
-	function createBalloons()
+	//Creates one draggable balloon at the stack.
+	function createBalloon()
 	{
-		for (i = 0; i < 6; i++){
-
-			var balloon = _this.add.sprite(50 + 80*i, 50, 'balloon', null, _this.gameGroup);
+		if (balloons.length < 1){
+			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloon', null, _this.gameGroup);
 			balloon.scale.x = 0.2;
 			balloon.scale.y = 0.2;
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
-			//balloon.events.onDragStart.add(release, _this);
+			balloon.events.onDragStart.add(release, _this);
 			balloon.events.onDragStop.add(attatchToBasket, _this);
 			balloons.add(balloon);
-			airballoon.add(balloon);
-			balloons.add(balloon);
-
 		}
+
 	}
 
 
 	// Does not reset the ballons in airballoon.
 	function resetBalloons()
 	{
-		//balloon.kill();
+		balloonStock = 6;
 		balloons.removeAll(true);
 		airballoon.removeBetween(1, 19, true);
-		createBalloons();
+		createBalloon();
 	}
 
-	// this one throws the balloons away to x: -31 and y: -126 for some reason. Will look into it.
-	/*function release(balloon){
-		balloons.add(balloon);
-	}*/
-
-	function attatchToBasket(balloon){
-		if(airballoon.getIndex(balloon) !== -1)
+	function release(balloon) {
+		if(airballoon.getIndex(balloon) === -1)
 		{
-			balloons.add(balloon);
-			balloon.x = game.input.x - 20;
-			balloon.y = game.input.y - 20;
+			balloonStock -= 1;
 		}
+		balloonStockUpdate();
+		balloons.add(balloon);
+	}
+
+	//A little buggy still, if you move balloons in and out too fast some of them can get lost.
+	function attatchToBasket(balloon){
+
 		if(checkOverlap(balloon, airballoon))
 		{
 			airballoon.add(balloon);
+			balloon.x = 775-balloon.width/2+(airballoon.length-2)*15;
+			balloon.y = 600-balloon.height;
+			balloonStockUpdate();
+
 			console.log('# of enteties in airballoon: ' + airballoon.length);
-			balloon.x = -balloon.width/2+(airballoon.length-2)*15;
-			balloon.y = -balloon.height;
+			console.log('# of enteties in balloons: ' + balloons.length);
+
+		}
+		else
+		{
+			balloonStock += 1;
+			var tl = new TimelineMax();
+			tl.to(balloon, 1, {x: coords.balloons.x, y: coords.balloons.y});
+			tl.eventCallback('onComplete', balloonStockUpdate);
+
 		}
 	}
+
+	//Kills the sprites not suppose to show up at the moment and revives those who are.
+	function balloonStockUpdate() {
+		switch(balloonStock) {
+			case 0:
+				balloonStack1.kill();
+			break;
+			case 1:
+				balloonStack1.revive();
+				balloonStack1.loadTexture('balloon');
+				createBalloon();
+			break;
+			case 2:
+				balloonStack1.revive();
+				balloonStack1.loadTexture('balloon2');
+				createBalloon();
+			break;
+			case 3:
+				balloonStack1.revive();
+				balloonStack1.loadTexture('balloon3');
+				createBalloon();
+			break;
+			case 4:
+				balloonStack1.revive();
+				balloonStack1.loadTexture('balloon4');
+				createBalloon();
+			break;
+			case 5:
+				balloonStack1.revive();
+				balloonStack1.loadTexture('balloon5');
+				createBalloon();
+			break;
+			case 6:
+				balloonStack1.revive();
+				balloonStack1.loadTexture('balloon6');
+				createBalloon();
+			break;
+		}
+	}
+
 
 	function checkOverlap(spriteA, spriteB)
 	{
@@ -145,30 +252,31 @@ BalloonGame.prototype.create = function () {
 		return Phaser.Rectangle.intersects(boundsA, boundsB);
 	}
 
-	function move() {
+	function takeOff() {
 
 		var amount = airballoon.length-1;
 
 		var tl = new TimelineMax();
-		if (airballoon.y === 600){
-			tl.to(airballoon, 1, {x: 775, y: airballoon.y-cliffheight*amount});
+		if (airballoon.y === 0){
+			tl.to(airballoon, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+			tl.eventCallback('onComplete', winCheck);
 		}
 		else{
-			tl.to(airballoon, 1, {x: 775, y: 600});
+			tl.to(airballoon, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 		}
-
 	}
 
-	/*
-	function showNumbers () {
-		_this.hudGroup.visible = true;
-		buttons.reset();
-		buttons.visible = true;
-		//yesnos.visible = false;
-		_this.disable(false);
-		//_this.agent.eyesFollowPointer();
-	}*/
-	
+	function winCheck() {
+		if (correctAnswer === airballoon.length-1)
+		{
+			console.log('You win at math! Woo!');
+		}
+		else
+		{
+			console.log('Not quite. Try again!');
+		}
+	}
+
 
 	// Make sure the call this when everything is set up.
 	this.startGame();
