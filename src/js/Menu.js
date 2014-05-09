@@ -5,14 +5,12 @@ Menu.prototype.constructor = Menu;
 function Menu () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 
-	var button = game.add.text(0, 0, GLOBAL.TEXT.menu, {
-		font: '20pt The Girl Next Door',
-		fill: '#ffff00'
-	}, this);
-	button.inputEnabled = true;
-	button.events.onInputDown.add(function () {
-		showMenu(true);
-	}, this);
+	game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
+	game.add.text(125, 15, '=', { // These position values were set by trial and error
+		font: '70pt The Girl Next Door',
+		stroke: '#000000',
+		strokeThickness: 5
+	}, this).angle = 90;
 
 	var menuGroup = game.add.group(this);
 	showMenu(false);
