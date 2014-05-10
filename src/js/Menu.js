@@ -4,6 +4,8 @@ Menu.prototype.constructor = Menu;
 
 function Menu () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
+	var centerX = game.world.centerX;
+	var centerY = game.world.centerY;
 
 	game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
 	game.add.text(125, 15, '=', { // These position values were set by trial and error
@@ -12,16 +14,29 @@ function Menu () {
 		strokeThickness: 5
 	}, this).angle = 90;
 
+	/* The menu group will be shown when the button is clicked. */
 	var menuGroup = game.add.group(this);
 	showMenu(false);
 
-	// Create a background for the menu, traps all mouse events.
-	var menuBg = new Cover('#ffff00', 0.2);
-	menuGroup.add(menuBg);
+	// Create a background behind the menu, traps all mouse events.
+	menuGroup.add(new Cover('#056449', 0.7));
 
-	var resume = game.add.text(game.world.centerX, game.world.centerY, GLOBAL.TEXT.resume, {
-		font: '40pt The Girl Next Door',
-		fill: '#ffff00'
+	var bmd = game.add.bitmapData(parseInt(game.world.width/3), parseInt(game.world.height/2));
+	bmd.ctx.fillStyle = '#b9d384';
+	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
+	game.add.sprite(game.world.width/3, centerY - centerY/3, bmd, null, menuGroup).alpha = 0.7;
+
+	var title = game.add.text(game.world.centerX, game.world.centerY/2, GLOBAL.TEXT.title, {
+		font: '50pt The Girl Next Door',
+		fill: '#ffff00',
+		stroke: '#000000',
+		strokeThickness: 5
+	}, menuGroup);
+	title.anchor.setTo(0.5);
+
+	var resume = game.add.text(centerX, centerY, GLOBAL.TEXT.resume, {
+		font: '50pt The Girl Next Door',
+		fill: '#dd00dd'
 	}, menuGroup);
 	resume.anchor.setTo(0.5);
 	resume.inputEnabled = true;
@@ -29,9 +44,9 @@ function Menu () {
 		showMenu(false);
 	}, this);
 
-	var quit = game.add.text(game.world.centerX, 3*game.world.centerY/2, GLOBAL.TEXT.quit, {
-		font: '40pt The Girl Next Door',
-		fill: '#ffff00'
+	var quit = game.add.text(centerX, centerY/0.75, GLOBAL.TEXT.quit, {
+		font: '50pt The Girl Next Door',
+		fill: '#000000'
 	}, menuGroup);
 	quit.anchor.setTo(0.5);
 	quit.inputEnabled = true;
