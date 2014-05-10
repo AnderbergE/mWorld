@@ -10,5 +10,7 @@ function Cover (color, alpha) {
 	Phaser.Sprite.call(this, game, 0, 0, bmd); // Parent constructor.
 	this.alpha = (typeof alpha !== 'undefined') ? alpha : 1;
 
+	this.inputEnabled = true;
+
 	return this;
 }

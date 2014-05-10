@@ -17,7 +17,6 @@ function Menu () {
 
 	// Create a background for the menu, traps all mouse events.
 	var menuBg = new Cover('#ffff00', 0.2);
-	menuBg.inputEnabled = true;
 	menuGroup.add(menuBg);
 
 	var resume = game.add.text(game.world.centerX, game.world.centerY, GLOBAL.TEXT.resume, {
