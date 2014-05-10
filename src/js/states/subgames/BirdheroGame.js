@@ -294,13 +294,14 @@ BirdheroGame.prototype.create = function () {
 
 	/* Introduce a new bird, aka: start a new round. */
 	function newBird () {
+		bird.number = _this.currentNumber;
+		bird.tint = tint[bird.number - 1];
+
 		var t = new TimelineMax();
 		t.addCallback(function () {
 			bird.x = coords.bird.start.x;
 			bird.y = coords.bird.start.y;
 			bird.visible = true;
-			bird.number = _this.currentNumber;
-			bird.tint = tint[bird.number - 1];
 		});
 		// TODO: Why does scale f up here when skipping?
 		t.add(bird.moveTo.initial());
@@ -616,7 +617,6 @@ function BirdheroBird (tint) {
 	this.body.anchor.setTo(0.5);
 	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
 	this.beak.anchor.setTo(0.5);
-	this.beak.talk = this.beak.animations.add('talk', null, 4, true);
 
 	this.tint = tint || 0xffffff;
 
@@ -649,13 +649,15 @@ BirdheroBird.prototype.featherPositions = [
  * @returns {Object} The sound object (not started)
  */
 BirdheroBird.prototype.say = function (what) {
-	this.beak.talk.play();
-	var s = game.add.sound(what);
-	s.onStop.add(function () {
-		this.beak.talk.stop(true); // TODO: This should set frame to 0, but it does not.
-		this.beak.frame = 0;
-	}, this);
-	return s;
+	var dur = 0.2;
+	var times = parseInt(game.cache.getSound(what).data.duration / dur);
+	times += (times % 2 === 0) ? 1 : 0; // Tween will be strangely positioned if number is not odd.
+
+	this.beak.frame = 0;
+	return new TweenMax(this.beak, dur, {
+		frame: 1, ease: SteppedEase.config(1), repeat: times, yoyo: true,
+		onStart: function () { game.add.sound(what).play(); }
+	});
 };
 
 /**

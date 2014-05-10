@@ -72,13 +72,16 @@ Agent.prototype.guessNumber = function (correct, min, max) {
  * @returns {Object} The sound object (not started)
  */
 Agent.prototype.say = function (what) {
-	// this.beak.talk.play();
-	var s = game.add.sound(what);
-	// s.onStop.add(function () {
-		// this.beak.talk.stop(true); // TODO: This should set frame to 0, but it does not.
-		// this.beak.frame = 0;
-	// }, this);
-	return s;
+	var dur = 0.2;
+	var times = parseInt(game.cache.getSound(what).data.duration / dur);
+	times += (times % 2 === 0) ? 1 : 0; // Tween will be strangely positioned if number is not odd.
+
+	// TODO: Fix up when agent has a face.
+	// this.beak.frame = 0;
+	return TweenMax.to({}, dur, {
+		/*frame: 1,*/ ease: SteppedEase.config(1), repeat: times, yoyo: true,
+		onStart: function () { game.add.sound(what).play(); }
+	});
 };
 
 /**

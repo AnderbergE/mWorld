@@ -17,12 +17,13 @@ var game;
  * @param {Object} If someone should say it (object must have "say" function)
  */
 TimelineMax.prototype.addSound = function (what, who) {
-	this.addCallback(function () {
-		var a = (!who ? game.add.audio(what) : who.say(what));
-		a.play();
-	});
-	/* Without this complete events are not triggered correctly */
-	this.addCallback(function () { return; }, '+=' + (game.cache.getSound(what).data.duration || 0.1));
+	if (who) {
+		this.add(who.say(what));
+	} else {
+		this.addCallback(function () { game.add.audio(what).play(); });
+		/* Without this complete events are not triggered correctly */
+		this.addCallback(function () { return; }, '+=' + (game.cache.getSound(what).data.duration || 0.1));
+	}
 	return this;
 };
 

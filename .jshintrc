@@ -10,7 +10,7 @@
 
 		"TweenMax": false,
 		"TimelineMax": false,
-		"Back": false, "Bounce": false, "Elastic": false, "Power0": false, "Power1": false, "Power2": false, "Power3": false, "Power4": false, "SlowMo": false,
+		"Back": false, "Bounce": false, "Elastic": false, "Power0": false, "Power1": false, "Power2": false, "Power3": false, "Power4": false, "SlowMo": false, "SteppedEase": false,
 
 		"subscribe": false,
 		"unsubscribe": false,
