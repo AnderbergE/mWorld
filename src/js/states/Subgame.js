@@ -92,9 +92,6 @@ Subgame.prototype.init = function (options) {
 	this.disable = function (value) { disabler.visible = value; };
 
 	this.menuGroup = game.add.group();
-	this.waterCan = new WaterCan(this.game.width - 100, 10);
-	this.menuGroup.add(this.waterCan);
-	this.menuGroup.add(new Menu());
 	this.skipGroup = game.add.group(this.menuGroup);
 	this.skipGroup.x = 75;
 	this.skipGroup.y = 5;
@@ -105,6 +102,9 @@ Subgame.prototype.init = function (options) {
 		stroke: '#000000',
 		strokeThickness: 3
 	}, this.skipGroup);
+	this.waterCan = new WaterCan(this.game.width - 100, 10);
+	this.menuGroup.add(this.waterCan);
+	this.menuGroup.add(new Menu());
 	this.menuGroup.visible = false;
 };
 

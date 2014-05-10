@@ -220,19 +220,20 @@ BirdheroGame.prototype.create = function () {
 		if (!result) { /* Correct :) */
 			t.addCallback(function () {
 				bird.visible = false;
-				branch.celebrate();
 				_this.add.audio('birdheroCorrect').play();
 			});
-			t.add(_this.addWater(branch.mother.world.x, branch.mother.world.y));
+			t.add(branch.celebrate()); // 3 second celebration
+			t.add(_this.addWater(branch.mother.world.x, branch.mother.world.y), '-=3');
 			t.add(elevator.moveTo.bottom());
 			t.addCallback(function () {
 				_this.nextRound();
 			});
 		} else { /* Incorrect :( */
-			t.addCallback(function () { branch.confused(); }); // not blocking
+			t.addLabel('wrong');
 			if (result < 0) { t.addSound('birdheroWrongHigher', bird); }
 			else { t.addSound('birdheroWrongLower', bird); }
 
+			t.add(branch.confused(), 'wrong'); // 3 second confusion
 			t.add(bird.moveTo.elevator());
 			t.add(bird.moveTo.peak(true));
 			t.add(elevator.moveTo.bottom());
@@ -598,9 +599,10 @@ BirdheroBranch.prototype.confused = function (duration) {
 	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
 
-	this.confusing.visible = true;
 	var _this = this;
+	this.confusing.visible = false;
 	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5, repeat: times, yoyo: true,
+		onStart: function () { _this.confusing.visible = true; },
 		onComplete: function () { _this.confusing.visible = false; }
 	});
 };
