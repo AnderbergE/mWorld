@@ -38,6 +38,13 @@ function Agent () {
 	this.leftLeg = game.add.group(this);
 	this.rightLeg = game.add.group(this);
 
+	// TODO: Fix up when agent has a face.
+	/*
+	this.talk = TweenMax.fromTo({}, 0.2, { frame: 0 }, {
+		frame: 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+	});
+	*/
+
 	return this;
 }
 
@@ -64,24 +71,6 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 	}
 	this.lastGuess = parseInt(guessRangeMin + Math.random()*(guessRangeMax - guessRangeMin));
 	return this.lastGuess;
-};
-
-/**
- * It's a flying, talking agent!
- * @param {string} The key to a sound file
- * @returns {Object} The sound object (not started)
- */
-Agent.prototype.say = function (what) {
-	var dur = 0.2;
-	var times = parseInt(game.cache.getSound(what).data.duration / dur);
-	times += (times % 2 === 0) ? 1 : 0; // Tween will be strangely positioned if number is not odd.
-
-	// TODO: Fix up when agent has a face.
-	// this.beak.frame = 0;
-	return TweenMax.to({}, dur, {
-		/*frame: 1,*/ ease: SteppedEase.config(1), repeat: times, yoyo: true,
-		onStart: function () { game.add.sound(what).play(); }
-	});
 };
 
 /**

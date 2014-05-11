@@ -54,3 +54,23 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
 	this.closePath();
 	return this;
 };
+
+/**
+ * Utility function for when you want a sound to be said by a character.
+ * @param {Object|string} The sound file or the key to a sound file
+ * @param {Object} The speaker, needs to have a '.talk' property of TweenMax or TimelineMax
+ * @returns {Object} The sound object (not started)
+ */
+function say(what, who) {
+	var a = (typeof what === 'string') ? game.add.audio(what) : what;
+	if (who && who.talk) {
+		a.onPlay.add(function () {
+			who.talk.play();
+		});
+		a.onStop.add(function () {
+			who.talk.seek(0);
+			who.talk.pause();
+		});
+	}
+	return a;
+}

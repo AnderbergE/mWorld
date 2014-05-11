@@ -248,7 +248,7 @@ BirdheroGame.prototype.create = function () {
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
 		if (!value) {
-			_this.agent.say('birdheroAgentCorrected').play();
+			say('birdheroAgentCorrected', _this.agent).play();
 			showNumbers();
 		}
 		else { pushNumber(_this.agent.lastGuess); }
@@ -320,7 +320,7 @@ BirdheroGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.gameGroup.remove(_this.agent.thought.guess); }
-					_this.agent.say('birdheroAgentHmm').play();
+					say('birdheroAgentHmm', _this.agent).play();
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -626,6 +626,11 @@ function BirdheroBird (tint) {
 	this.arrow = game.add.sprite(0, 0, 'birdheroArrow', null, this);
 	this.arrow.visible = false;
 
+	/* Animations */
+	this.talk = TweenMax.fromTo(this.beak, 0.2, { frame: 0 }, {
+		frame: 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+	});
+
 	return this;
 }
 Object.defineProperty(BirdheroBird.prototype, 'tint', {
@@ -644,23 +649,6 @@ BirdheroBird.prototype.featherPositions = [
 	{ x: -30,  y: 20 }, // 8
 	{ x: -20,  y: 30 }  // 9
 ];
-
-/**
- * It's a flying, talking birdie!
- * @param {string} The key to a sound file
- * @returns {Object} The sound object (not started)
- */
-BirdheroBird.prototype.say = function (what) {
-	var dur = 0.2;
-	var times = parseInt(game.cache.getSound(what).data.duration / dur);
-	times += (times % 2 === 0) ? 1 : 0; // Tween will be strangely positioned if number is not odd.
-
-	this.beak.frame = 0;
-	return new TweenMax(this.beak, dur, {
-		frame: 1, ease: SteppedEase.config(1), repeat: times, yoyo: true,
-		onStart: function () { game.add.sound(what).play(); }
-	});
-};
 
 /**
  * Turn around! Every now and then I get a little bit lonely...
