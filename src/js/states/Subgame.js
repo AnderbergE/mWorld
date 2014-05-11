@@ -241,7 +241,7 @@ Subgame.prototype.addWater = function (x, y, force) {
 		this.currentMode === GLOBAL.MODE.agentDo ||
 		force) {
 		var drop = this.add.sprite(x, y, 'drop', 0, this.menuGroup);
-		drop.anchor.setTo(0.5);
+		drop.anchor.set(0.5);
 		drop.scale.y = 0;
 
 		// Show drop

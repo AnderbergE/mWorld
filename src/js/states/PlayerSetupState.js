@@ -17,13 +17,13 @@ PlayerSetupState.prototype.create = function () {
 	};
 
 	this.add.image(0, 0, 'entryBg');
-	this.add.text(this.world.centerX, 75, GLOBAL.TEXT.pickFriend, fontStyle).anchor.setTo(0.5);
+	this.add.text(this.world.centerX, 75, GLOBAL.TEXT.pickFriend, fontStyle).anchor.set(0.5);
 
 	var agents = this.add.group();
 	var i = 0;
 	for (var key in GLOBAL.AGENT) {
 		var a = new GLOBAL.AGENT[key]();
-		this.add.text(0, -(a.body.height/2) - 50, a.name, fontStyle, a).anchor.setTo(0.5);
+		this.add.text(0, -(a.body.height/2) - 50, a.name, fontStyle, a).anchor.set(0.5);
 		a.x = this.world.centerX + spacing * i;
 		a.y = this.world.centerY + 50;
 		a.scale.x = scale.x;

@@ -11,7 +11,7 @@ function NumberRepresentation (number, x, y, size, color) {
 		stroke: color,
 		strokeThickness: 3
 	}); // Parent constructor.
-	this.anchor.setTo(0.5);
+	this.anchor.set(0.5);
 
 	return this;
 }

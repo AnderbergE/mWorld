@@ -81,8 +81,7 @@ BirdheroGame.prototype.create = function () {
 	// Agent is added to the game in the superclass, so set up correct start point.
 	this.agent.x = coords.agent.start.x;
 	this.agent.y = coords.agent.start.y;
-	this.agent.scale.x = coords.agent.scale;
-	this.agent.scale.y = coords.agent.scale;
+	this.agent.scale.set(coords.agent.scale);
 	this.agent.visible = true;
 	// Adding thought bubble that is used in the agent try mode.
 	this.agent.thought = this.add.group(this.gameGroup);
@@ -90,7 +89,7 @@ BirdheroGame.prototype.create = function () {
 	this.agent.thought.y = coords.agent.stop.y - 200;
 	this.agent.thought.visible = false;
 	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
-	thoughtBubble.anchor.setTo(0.5);
+	thoughtBubble.anchor.set(0.5);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Create bird, it is added to the elevator group below since we need it to be "in" the elevator.
@@ -121,7 +120,7 @@ BirdheroGame.prototype.create = function () {
 		font: '30pt The Girl Next Door',
 		fill: '#ffff00'
 	}, elevator);
-	elevator.text.anchor.setTo(0.5);
+	elevator.text.anchor.set(0.5);
 	elevator.origin = tree.y + tree.height + coords.tree.elevator;
 	elevator.x = treeCenter - elevator.bucket.width/2;
 	elevator.y = elevator.origin;
@@ -374,8 +373,7 @@ BirdheroGame.prototype.create = function () {
 			var pos = tree.branch[i].chickPos();
 			chick.x = pos.x - 35; // Counter-effect translate
 			chick.y = pos.y - 20; // Counter-effect translate
-			chick.scale.x = coords.bird.scale;
-			chick.scale.y = coords.bird.scale;
+			chick.scale.set(coords.bird.scale);
 			group.add(chick);
 			t.add(new TweenMax(chick, 7, {
 				x: -500,
@@ -616,9 +614,9 @@ function BirdheroBird (tint) {
 	this.number = null;
 
 	this.body = game.add.sprite(0, 0, 'birdheroBird', null, this);
-	this.body.anchor.setTo(0.5);
+	this.body.anchor.set(0.5);
 	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
-	this.beak.anchor.setTo(0.5);
+	this.beak.anchor.set(0.5);
 
 	this.tint = tint || 0xffffff;
 

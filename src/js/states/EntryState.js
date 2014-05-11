@@ -13,13 +13,13 @@ EntryState.prototype.create = function () {
 		stroke: '#000000',
 		strokeThickness: 5
 	});
-	title.anchor.setTo(0.5);
+	title.anchor.set(0.5);
 
 	var text = this.add.text(this.world.centerX, this.world.centerY, GLOBAL.TEXT.start, {
 		font: '50pt The Girl Next Door',
 		fill: '#dd00dd'
 	});
-	text.anchor.setTo(0.5);
+	text.anchor.set(0.5);
 	text.inputEnabled = true;
 	text.events.onInputDown.add(function () {
 		user.login('debug', 'debug');
@@ -31,7 +31,7 @@ EntryState.prototype.create = function () {
 		font: '50pt The Girl Next Door',
 		fill: '#000000'
 	});
-	credits.anchor.setTo(0.5);
+	credits.anchor.set(0.5);
 	credits.inputEnabled = true;
 	credits.events.onInputDown.add(function () {
 		credits.visible = false;
@@ -49,7 +49,7 @@ EntryState.prototype.create = function () {
 		fill: '#000000',
 		align: 'center'
 	});
-	allCredits.anchor.setTo(0.5, 0);
+	allCredits.anchor.set(0.5, 0);
 	allCredits.visible = false;
 	allCredits.inputEnabled = true;
 	allCredits.events.onInputDown.add(function () {

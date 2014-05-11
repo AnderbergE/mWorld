@@ -32,13 +32,13 @@ function Menu () {
 		stroke: '#000000',
 		strokeThickness: 5
 	}, menuGroup);
-	title.anchor.setTo(0.5);
+	title.anchor.set(0.5);
 
 	var resume = game.add.text(centerX, centerY, GLOBAL.TEXT.resume, {
 		font: '50pt The Girl Next Door',
 		fill: '#dd00dd'
 	}, menuGroup);
-	resume.anchor.setTo(0.5);
+	resume.anchor.set(0.5);
 	resume.inputEnabled = true;
 	resume.events.onInputDown.add(function () {
 		showMenu(false);
@@ -48,7 +48,7 @@ function Menu () {
 		font: '50pt The Girl Next Door',
 		fill: '#000000'
 	}, menuGroup);
-	quit.anchor.setTo(0.5);
+	quit.anchor.set(0.5);
 	quit.inputEnabled = true;
 	quit.events.onInputDown.add(function () {
 		game.state.start(GLOBAL.STATE.entry);
