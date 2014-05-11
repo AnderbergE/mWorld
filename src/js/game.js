@@ -11,17 +11,6 @@ var user;
  */
 var game;
 
-/**
- * A function to easily add sound to a tween timeline.
- * @param {String} The name of the sound file to play
- * @param {Object} If someone should say it (object must have "say" function)
- */
-TimelineMax.prototype.addSound = function (what, who) {
-	var a = say(what, who);
-	this.addCallback(function () { a.play(); });
-	this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(what).data.duration);
-	return this;
-};
 
 /**
  * Create the game when the browser has loaded everything.

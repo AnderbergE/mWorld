@@ -41,19 +41,6 @@ Counter.prototype.update = function () {
 	if (this.onAdd) { this.onAdd(this._value, this.left); }
 };
 
-/** Adds a rounded rectangle to the built-in rendering context. */
-CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-	if (w < 2 * r) { r = w / 2; }
-	if (h < 2 * r) { r = h / 2; }
-	this.beginPath();
-	this.moveTo(x+r, y);
-	this.arcTo(x+w, y,   x+w, y+h, r);
-	this.arcTo(x+w, y+h, x,   y+h, r);
-	this.arcTo(x,   y+h, x,   y,   r);
-	this.arcTo(x,   y,   x+w, y,   r);
-	this.closePath();
-	return this;
-};
 
 /**
  * Utility function for when you want a sound to be said by a character.
@@ -74,3 +61,31 @@ function say(what, who) {
 	}
 	return a;
 }
+
+
+/**
+ * A function to easily add sound to a tween timeline.
+ * @param {String} The name of the sound file to play
+ * @param {Object} If someone should say it (object must have "say" function)
+ */
+TimelineMax.prototype.addSound = function (what, who) {
+	var a = say(what, who);
+	this.addCallback(function () { a.play(); });
+	this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(what).data.duration);
+	return this;
+};
+
+
+/** Adds a rounded rectangle to the built-in rendering context. */
+CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+	if (w < 2 * r) { r = w / 2; }
+	if (h < 2 * r) { r = h / 2; }
+	this.beginPath();
+	this.moveTo(x+r, y);
+	this.arcTo(x+w, y,   x+w, y+h, r);
+	this.arcTo(x+w, y+h, x,   y+h, r);
+	this.arcTo(x,   y+h, x,   y,   r);
+	this.arcTo(x,   y,   x+w, y,   r);
+	this.closePath();
+	return this;
+};
