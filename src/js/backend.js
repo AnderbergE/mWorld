@@ -63,22 +63,8 @@ var Backend = (function () {
 	/**
 	* PUT updates of user information.
 	*/
-	this.updateUser = function (/*water, agent*/) {
-		return true;
-	};
-
-	/**
-	* PUT updates to the garden appearance.
-	*/
-	this.updateGarden = function () {
-		return true;
-	};
-
-	/**
-	* PUT the results from a subgame.
-	*/
-	this.putResults = function () {
-		return true;
+	this.put = function (data) {
+		return JSON.stringify(data);
 	};
 
 	return this;
