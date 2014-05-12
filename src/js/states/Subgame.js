@@ -223,6 +223,7 @@ Subgame.prototype.nextNumber = function () {
  * @returns {Boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
 Subgame.prototype.tryNumber = function (number) {
+	publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
 	this._currentTries++;
 	this.lastTry = number - this.currentNumber;
 
@@ -230,7 +231,6 @@ Subgame.prototype.tryNumber = function (number) {
 		this._counter.value++; // This will trigger next mode if we loop.
 		this.nextNumber();
 	}
-	publish(GLOBAL.EVENT.tryNumber, [this.currentNumber, number]);
 	return this.lastTry;
 };
 

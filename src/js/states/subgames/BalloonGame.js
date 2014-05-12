@@ -20,6 +20,8 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('balloon4',      'assets/img/subgames/balloon/balloon4.png');
 	this.load.image('balloon5',      'assets/img/subgames/balloon/balloon5.png');
 	this.load.image('balloon6',      'assets/img/subgames/balloon/balloon6.png');
+
+	this.load.audio('birdheroIntro', ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	/*
 	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
@@ -49,18 +51,20 @@ var cliff;
 var cave;
 var liftoffButton;
 var resetButton;
-var correctAnswer = 4;
 var glass;
 var balloons;
 var balloonStack1;
 //var balloonStack2;
 var balloonStock = 6;
+var bgMusic = this.add.audio('birdheroMusic', 1, true);
 
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
-	this.disable(false);
+
+
+	_this.disable(false);
 	
 	this.music = this.add.audio('birdheroIntro', 1, true);
 
@@ -135,7 +139,7 @@ BalloonGame.prototype.create = function () {
 	//createBalloon();
 
 	liftoffButton = game.add.button(game.world.centerX, 660, 'wood', takeOff, this);
-	resetButton = game.add.button(game.world.centerX- 60, 660, 'wood', resetBalloons, this);
+	liftoffButton.visible = false;
 	
 	/*
 	var buttons = new ButtonPanel(this.amount, this.representation, {
@@ -163,14 +167,14 @@ BalloonGame.prototype.create = function () {
 	}
 
 
-	// Does not reset the ballons in airballoon.
+	/* Does not reset the ballons in airballoon.
 	function resetBalloons()
 	{
 		balloonStock = 6;
 		balloons.removeAll(true);
 		airballoon.removeBetween(1, 19, true);
 		createBalloon();
-	}
+	}*/
 
 	function release(balloon) {
 		if(airballoon.getIndex(balloon) === -1)
@@ -259,23 +263,52 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		if (airballoon.y === 0){
 			tl.to(airballoon, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
-			tl.eventCallback('onComplete', winCheck);
+			tl.eventCallback('onComplete', winCheck(airballoon.length-1));
 		}
 		else{
 			tl.to(airballoon, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 		}
 	}
 
-	function winCheck() {
-		if (correctAnswer === airballoon.length-1)
-		{
-			console.log('You win at math! Woo!');
-		}
-		else
-		{
-			console.log('Not quite. Try again!');
-		}
+	function winCheck(number) {
+
+		var result = _this.tryNumber(number);
+		var tl = new TimelineMax();
+
+		if (!result) { /* Correct :) */
+			tl.addLabel('correct');
+		} else { /* Incorrect :( */
+			tl.addLabel('wrong');
 	}
+
+	function instructionIntro () {
+		var t = new TimelineMax();
+		t.addLabel('test');
+		/*t.addSound('birdheroInstruction1a', bird);
+		t.add(bird.pointAtFeathers());
+		t.addSound('birdheroInstruction1b', bird);
+		t.eventCallback('onComplete', function () {
+			_this.sound.removeByKey('birdheroInstruction1a');
+			_this.sound.removeByKey('birdheroInstruction1b');
+		});*/
+		return t;
+	}
+
+	this.modeIntro = function () {
+		this.nextMode();
+	};
+
+	this.modePlayerDo = function (intro, tries) {
+		bgMusic.play();
+		if (tries > 0) {
+			liftoffButton.visible = true;
+		} else { // if intro or first try
+			var t = new TimelineMax();
+			if (intro) {
+				t.add(instructionIntro());
+			}
+		}
+	};
 
 
 	// Make sure the call this when everything is set up.

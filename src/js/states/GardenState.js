@@ -21,7 +21,8 @@ GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
 
 	var panda = this.add.sprite(100, 50, 'pandaBody', null, this.group);
-	panda.scale.set(0.2);
+	panda.scale.x = 0.2;
+	panda.scale.y = 0.2;
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
 		var info = Backend.nextGame();
@@ -29,7 +30,8 @@ GardenState.prototype.create = function () {
 	}, this);
 
 	var balloonButton = this.add.sprite(300, 50, 'balloon', null, this.group);
-	balloonButton.scale.set(0.2);
+	balloonButton.scale.x = 0.2;
+	balloonButton.scale.y = 0.2;
 	balloonButton.inputEnabled = true;
 	balloonButton.events.onInputDown.add(function () {
 		var info = Backend.balloonGame();
@@ -136,7 +138,7 @@ GardenPlant.prototype.down = function () {
 				game.add.text(_this.width/2, 50, GLOBAL.TEXT.maxLevel, {
 					font: '60pt The Girl Next Door',
 					fill: '#5555ff'
-				}, _this.infoGroup).anchor.set(0.5);
+				}, _this.infoGroup).anchor.setTo(0.5);
 			}
 		};
 		this.water.update();
