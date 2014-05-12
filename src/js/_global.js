@@ -4,9 +4,10 @@ var GLOBAL = {
 	EVENT: {
 		menuShow:    'menuShow',
 		menuHide:    'menuHide',
-		numberPress: 'numberPress', // [number]
-		modeChange:  'modeChange',
-		tryNumber:   'tryNumber',   // [correct number, tried number]
+		numberPress: 'numberPress', // [number, representations]
+		modeChange:  'modeChange',  // [newMode]
+		tryNumber:   'tryNumber',   // [guess, correct number]
+		agentGuess:  'agentGuess',  // [guess, correct number]
 		waterAdded:  'waterAdded',  // [total amount, added amount]
 		plantPress:  'plantPress'   // [number]
 	},
@@ -48,7 +49,7 @@ var GLOBAL = {
 		objects: 3,
 		numbers: 4,
 		dice:    5,
-		yesno:   15 // Special representation for yes/no buttons
+		yesno:   15 // Special for yes/no: odd values = yes, even values = no
 	},
 
 	FONT: 'The Girl Next Door',
