@@ -1,21 +1,53 @@
-/*
+/**
  * Handles the communication with the backend.
  */
 var Backend = (function () {
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                             GET functions                                 */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
 	/**
 	* GET the next game that should be played.
 	* @returns {Object} An object with data about the next game.
 	*/
 	this.nextGame = function () {
-		// TODO: Add parser, to make sure proper format
-		return {
+		var data = {
 			type: 2,
 			representation: [0],
-			amount: 4,
+			amount: 4, // TODO: Use range instead
+			range: [1, 4],
+			mode: [0, 1, 2],
 			roundsPerMode: 1
 		};
+		if (!Array.isArray(data.representation)) {
+			data.representation = [data.representation];
+		}
+		if (!Array.isArray(data.range)) {
+			data.range = [data.range];
+		}
+		if (!Array.isArray(data.mode)) {
+			data.mode = [data.mode];
+		}
+		// Add intro and outro for the game.
+		data.mode.unshift(GLOBAL.MODE.intro);
+		data.mode.push(GLOBAL.MODE.outro);
+
+		return data;
 	};
 
+	/**
+	* GET the garden appearance.
+	* @returns {Object} An object with data about the garden.
+	*/
+	this.getGarden = function () {
+		return [];
+	};
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                             PUT functions                                 */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 	/**
 	* PUT the login for a specific user.
@@ -26,6 +58,27 @@ var Backend = (function () {
 	*/
 	this.login = function (name, pass) {
 		return [0, name === pass];
+	};
+
+	/**
+	* PUT updates of user information.
+	*/
+	this.updateUser = function (/*water, agent*/) {
+		return true;
+	};
+
+	/**
+	* PUT updates to the garden appearance.
+	*/
+	this.updateGarden = function () {
+		return true;
+	};
+
+	/**
+	* PUT the results from a subgame.
+	*/
+	this.putResults = function () {
+		return true;
 	};
 
 	return this;
