@@ -444,7 +444,9 @@ BirdheroGame.prototype.create = function () {
 				t.eventCallback('onStart', function () { _this.skipper = t; });
 				t.addCallback(hideButtons);
 				t.add(_this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3));
+				t.addLabel('agentIntro');
 				t.addSound('birdheroAgentShow', _this.agent);
+				t.add(_this.agent.wave(3, 1), 'agentIntro');
 				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
 			}
 			t.add(newBird());
