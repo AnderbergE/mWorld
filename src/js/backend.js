@@ -17,7 +17,7 @@ var Backend = (function () {
 			representation: [0],
 			amount: 4, // TODO: Use range instead
 			range: [1, 4],
-			mode: [0, 1, 2],
+			// mode: [0, 1, 2],
 			roundsPerMode: 1
 		};
 		if (!Array.isArray(data.representation)) {
@@ -26,12 +26,15 @@ var Backend = (function () {
 		if (!Array.isArray(data.range)) {
 			data.range = [data.range];
 		}
-		if (!Array.isArray(data.mode)) {
-			data.mode = [data.mode];
+		if (data.mode) {
+			if (!Array.isArray(data.mode)) {
+				data.mode = [data.mode];
+			}
+
+			// Add intro and outro for the game.
+			data.mode.unshift(GLOBAL.MODE.intro);
+			data.mode.push(GLOBAL.MODE.outro);
 		}
-		// Add intro and outro for the game.
-		data.mode.unshift(GLOBAL.MODE.intro);
-		data.mode.push(GLOBAL.MODE.outro);
 
 		return data;
 	};
