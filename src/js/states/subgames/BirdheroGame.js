@@ -485,13 +485,13 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modeOutro = function () {
-		_this.agent.happy(1);
+		_this.agent.fistPump();
 		for (var i = 0; i < tree.branch.length; i++) {
-			tree.branch[i].celebrate(1000);
+			tree.branch[i].celebrate(3000);
 		}
 		setTimeout(function () {
 			_this.state.start(GLOBAL.STATE.garden);
-		}, 1000);
+		}, 3000);
 	};
 
 
