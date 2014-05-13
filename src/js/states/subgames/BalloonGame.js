@@ -21,7 +21,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('balloon5',      'assets/img/subgames/balloon/balloon5.png');
 	this.load.image('balloon6',      'assets/img/subgames/balloon/balloon6.png');
 
-	this.load.audio('birdheroIntro', ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
+	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	/*
 	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
@@ -45,28 +45,27 @@ BalloonGame.prototype.preload = function () {
 
 var background;
 var scale = 1;
-var airballoon;
+var airballoons;
 var cliffheight;
 var cliff;
 var cave;
 var liftoffButton;
-var resetButton;
+//var resetButton;
 var glass;
 var balloons;
 var balloonStack1;
-//var balloonStack2;
+var balloonStack2;
 var balloonStock = 6;
-var bgMusic = this.add.audio('birdheroMusic', 1, true);
+var airBalloonStock = 0;
+
 
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
-
+	var bgMusic = this.add.audio('birdheroMusic', 1, true);
 
 	_this.disable(false);
-	
-	this.music = this.add.audio('birdheroIntro', 1, true);
 
 	cliffheight = this.cache.getImage('cliffside').height;
 
@@ -103,37 +102,49 @@ BalloonGame.prototype.create = function () {
 	glass.scale.x = 0.4;
 	glass.scale.y = 0.4;
 
-	airballoon = this.add.group(this.gameGroup);
-	airballoon.x = 0;
-	airballoon.y = 0;
-	airballoon.basket = this.add.sprite(775, 600, 'basket', null, airballoon);
-	airballoon.basket.scale.x = 0.2;
-	airballoon.basket.scale.y = 0.2;
+	airballoons = this.add.group(this.gameGroup);
+	airballoons.x = 0;
+	airballoons.y = 0;
+	airballoons.basket = this.add.sprite(775, 600, 'basket', null, airballoons);
+	airballoons.basket.scale.x = 0.2;
+	airballoons.basket.scale.y = 0.2;
 
 	balloons = this.add.group(this.gameGroup);
 	balloons.x = 0;
 	balloons.y = 0;
 
 	balloonStack1 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
+	balloonStack2 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
 
 	var coords = {
 		balloons: {
 			x: 50, y: 50
 		},
 		basketBalloons: {
-			x: 820-balloonStack1.width/2, y: 600-balloonStack1.height
+			x: 775, y: 500
 		}
 	};
+
+
+	
+	airballoons.add(balloonStack2);
 
 	balloonStack1.x = coords.balloons.x;
 	balloonStack1.y = coords.balloons.y;
 	balloonStack1.scale.x = 0.2;
 	balloonStack1.scale.y = 0.2;
 
+	balloonStack2.x = coords.basketBalloons.x;
+	balloonStack2.y = coords.basketBalloons.y;
+	balloonStack2.scale.x = 0.2;
+	balloonStack2.scale.y = 0.2;
+	balloonStack2.kill();
+
 
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	balloonStockUpdate();
+	airBalloonStockUpdate();
 
 	//Creates one draggable balloon at the stack.
 	//createBalloon();
@@ -163,7 +174,20 @@ BalloonGame.prototype.create = function () {
 			balloon.events.onDragStop.add(attatchToBasket, _this);
 			balloons.add(balloon);
 		}
+	}
 
+	function createAirBalloon()
+	{
+		if (airballoons.length < 3){
+			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloon', null, _this.gameGroup);
+			balloon.scale.x = 0.2;
+			balloon.scale.y = 0.2;
+			balloon.inputEnabled = true;
+			balloon.input.enableDrag(false, true);
+			balloon.events.onDragStart.add(release, _this);
+			balloon.events.onDragStop.add(attatchToBasket, _this);
+			airballoons.add(balloon);
+		}
 	}
 
 
@@ -177,34 +201,47 @@ BalloonGame.prototype.create = function () {
 	}*/
 
 	function release(balloon) {
-		if(airballoon.getIndex(balloon) === -1)
+		if(airballoons.getIndex(balloon) === -1)
 		{
 			balloonStock -= 1;
+			balloonStockUpdate();
 		}
-		balloonStockUpdate();
-		balloons.add(balloon);
+		else
+		{
+			airBalloonStock -=1;
+			balloons.add(balloon);
+			airBalloonStockUpdate();
+		}
 	}
 
 	//A little buggy still, if you move balloons in and out too fast some of them can get lost.
 	function attatchToBasket(balloon){
-
-		if(checkOverlap(balloon, airballoon))
+		var tl = new TimelineMax();
+		if(checkOverlap(balloon, airballoons))
 		{
-			airballoon.add(balloon);
-			balloon.x = 775-balloon.width/2+(airballoon.length-2)*15;
-			balloon.y = 600-balloon.height;
+			airBalloonStock += 1;
+			airballoons.add(balloon);
+			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
+			tl.eventCallback('onComplete', airBalloonStockUpdate);
 			balloonStockUpdate();
 
-			console.log('# of enteties in airballoon: ' + airballoon.length);
+			console.log('# of enteties in airballoon: ' + airballoons.length);
 			console.log('# of enteties in balloons: ' + balloons.length);
+			console.log('# balloonstock: ' + balloonStock);
+			console.log('# airballoonstock: ' + airBalloonStock);
 
 		}
 		else
 		{
 			balloonStock += 1;
-			var tl = new TimelineMax();
 			tl.to(balloon, 1, {x: coords.balloons.x, y: coords.balloons.y});
 			tl.eventCallback('onComplete', balloonStockUpdate);
+			airBalloonStockUpdate();
+
+			console.log('# of enteties in airballoon: ' + airballoons.length);
+			console.log('# of enteties in balloons: ' + balloons.length);
+			console.log('# balloonstock: ' + balloonStock);
+			console.log('# airballoonstock: ' + airBalloonStock);
 
 		}
 	}
@@ -248,6 +285,44 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
+	function airBalloonStockUpdate() {
+		switch(airBalloonStock) {
+			case 0:
+				balloonStack2.kill();
+			break;
+			case 1:
+				balloonStack2.revive();
+				balloonStack2.loadTexture('balloon');
+				createAirBalloon();
+			break;
+			case 2:
+				balloonStack2.revive();
+				balloonStack2.loadTexture('balloon2');
+				createAirBalloon();
+			break;
+			case 3:
+				balloonStack2.revive();
+				balloonStack2.loadTexture('balloon3');
+				createAirBalloon();
+			break;
+			case 4:
+				balloonStack2.revive();
+				balloonStack2.loadTexture('balloon4');
+				createAirBalloon();
+			break;
+			case 5:
+				balloonStack2.revive();
+				balloonStack2.loadTexture('balloon5');
+				createAirBalloon();
+			break;
+			case 6:
+				balloonStack2.revive();
+				balloonStack2.loadTexture('balloon6');
+				createAirBalloon();
+			break;
+		}
+	}
+
 
 	function checkOverlap(spriteA, spriteB)
 	{
@@ -258,15 +333,17 @@ BalloonGame.prototype.create = function () {
 
 	function takeOff() {
 
-		var amount = airballoon.length-1;
+		var amount = airBalloonStock;
 
 		var tl = new TimelineMax();
-		if (airballoon.y === 0){
-			tl.to(airballoon, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
-			tl.eventCallback('onComplete', winCheck(airballoon.length-1));
+		if (airballoons.y === 0){
+			_this.disable(true);
+			tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+			tl.eventCallback('onComplete', winCheck(amount));
 		}
 		else{
-			tl.to(airballoon, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
+			_this.disable(false);
+			tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 		}
 	}
 
@@ -279,6 +356,7 @@ BalloonGame.prototype.create = function () {
 			tl.addLabel('correct');
 		} else { /* Incorrect :( */
 			tl.addLabel('wrong');
+		}
 	}
 
 	function instructionIntro () {
@@ -295,16 +373,23 @@ BalloonGame.prototype.create = function () {
 	}
 
 	this.modeIntro = function () {
-		this.nextMode();
+		console.log('1');
+		_this.nextMode();
+		_this.nextRound();
 	};
 
 	this.modePlayerDo = function (intro, tries) {
+		console.log('2');
 		bgMusic.play();
 		if (tries > 0) {
+			console.log('3');
 			liftoffButton.visible = true;
 		} else { // if intro or first try
+			console.log('4');
+			liftoffButton.visible = true;
 			var t = new TimelineMax();
 			if (intro) {
+				console.log('5');
 				t.add(instructionIntro());
 			}
 		}
