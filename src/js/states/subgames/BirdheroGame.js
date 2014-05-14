@@ -81,8 +81,7 @@ BirdheroGame.prototype.create = function () {
 	// Agent is added to the game in the superclass, so set up correct start point.
 	this.agent.x = coords.agent.start.x;
 	this.agent.y = coords.agent.start.y;
-	this.agent.scale.x = coords.agent.scale;
-	this.agent.scale.y = coords.agent.scale;
+	this.agent.scale.set(coords.agent.scale);
 	this.agent.visible = true;
 	// Adding thought bubble that is used in the agent try mode.
 	this.agent.thought = this.add.group(this.gameGroup);
@@ -90,7 +89,7 @@ BirdheroGame.prototype.create = function () {
 	this.agent.thought.y = coords.agent.stop.y - 200;
 	this.agent.thought.visible = false;
 	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
-	thoughtBubble.anchor.setTo(0.5);
+	thoughtBubble.anchor.set(0.5);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Create bird, it is added to the elevator group below since we need it to be "in" the elevator.
@@ -121,7 +120,7 @@ BirdheroGame.prototype.create = function () {
 		font: '30pt The Girl Next Door',
 		fill: '#ffff00'
 	}, elevator);
-	elevator.text.anchor.setTo(0.5);
+	elevator.text.anchor.set(0.5);
 	elevator.origin = tree.y + tree.height + coords.tree.elevator;
 	elevator.x = treeCenter - elevator.bucket.width/2;
 	elevator.y = elevator.origin;
@@ -220,19 +219,20 @@ BirdheroGame.prototype.create = function () {
 		if (!result) { /* Correct :) */
 			t.addCallback(function () {
 				bird.visible = false;
-				branch.celebrate();
 				_this.add.audio('birdheroCorrect').play();
 			});
-			t.add(_this.addWater(branch.mother.world.x, branch.mother.world.y));
+			t.add(branch.celebrate()); // 3 second celebration
+			t.add(_this.addWater(branch.mother.world.x, branch.mother.world.y), '-=3');
 			t.add(elevator.moveTo.bottom());
 			t.addCallback(function () {
 				_this.nextRound();
 			});
 		} else { /* Incorrect :( */
-			t.addCallback(function () { branch.confused(); }); // not blocking
+			t.addLabel('wrong');
 			if (result < 0) { t.addSound('birdheroWrongHigher', bird); }
 			else { t.addSound('birdheroWrongLower', bird); }
 
+			t.add(branch.confused(), 'wrong'); // 3 second confusion
 			t.add(bird.moveTo.elevator());
 			t.add(bird.moveTo.peak(true));
 			t.add(elevator.moveTo.bottom());
@@ -247,7 +247,7 @@ BirdheroGame.prototype.create = function () {
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
 		if (!value) {
-			_this.agent.say('birdheroAgentCorrected').play();
+			say('birdheroAgentCorrected', _this.agent).play();
 			showNumbers();
 		}
 		else { pushNumber(_this.agent.lastGuess); }
@@ -294,13 +294,14 @@ BirdheroGame.prototype.create = function () {
 
 	/* Introduce a new bird, aka: start a new round. */
 	function newBird () {
+		bird.number = _this.currentNumber;
+		bird.tint = tint[bird.number - 1];
+
 		var t = new TimelineMax();
 		t.addCallback(function () {
 			bird.x = coords.bird.start.x;
 			bird.y = coords.bird.start.y;
 			bird.visible = true;
-			bird.number = _this.currentNumber;
-			bird.tint = tint[bird.number - 1];
 		});
 		// TODO: Why does scale f up here when skipping?
 		t.add(bird.moveTo.initial());
@@ -318,7 +319,7 @@ BirdheroGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.gameGroup.remove(_this.agent.thought.guess); }
-					_this.agent.say('birdheroAgentHmm').play();
+					say('birdheroAgentHmm', _this.agent).play();
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -372,8 +373,7 @@ BirdheroGame.prototype.create = function () {
 			var pos = tree.branch[i].chickPos();
 			chick.x = pos.x - 35; // Counter-effect translate
 			chick.y = pos.y - 20; // Counter-effect translate
-			chick.scale.x = coords.bird.scale;
-			chick.scale.y = coords.bird.scale;
+			chick.scale.set(coords.bird.scale);
 			group.add(chick);
 			t.add(new TweenMax(chick, 7, {
 				x: -500,
@@ -599,9 +599,10 @@ BirdheroBranch.prototype.confused = function (duration) {
 	var times = parseInt(duration / 200);
 	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
 
-	this.confusing.visible = true;
 	var _this = this;
+	this.confusing.visible = false;
 	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5, repeat: times, yoyo: true,
+		onStart: function () { _this.confusing.visible = true; },
 		onComplete: function () { _this.confusing.visible = false; }
 	});
 };
@@ -615,16 +616,20 @@ function BirdheroBird (tint) {
 	this.number = null;
 
 	this.body = game.add.sprite(0, 0, 'birdheroBird', null, this);
-	this.body.anchor.setTo(0.5);
+	this.body.anchor.set(0.5);
 	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
-	this.beak.anchor.setTo(0.5);
-	this.beak.talk = this.beak.animations.add('talk', null, 4, true);
+	this.beak.anchor.set(0.5);
 
 	this.tint = tint || 0xffffff;
 
 	/* For instructions */
 	this.arrow = game.add.sprite(0, 0, 'birdheroArrow', null, this);
 	this.arrow.visible = false;
+
+	/* Animations */
+	this.talk = TweenMax.fromTo(this.beak, 0.2, { frame: 0 }, {
+		frame: 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+	});
 
 	return this;
 }
@@ -644,21 +649,6 @@ BirdheroBird.prototype.featherPositions = [
 	{ x: -30,  y: 20 }, // 8
 	{ x: -20,  y: 30 }  // 9
 ];
-
-/**
- * It's a flying, talking birdie!
- * @param {string} The key to a sound file
- * @returns {Object} The sound object (not started)
- */
-BirdheroBird.prototype.say = function (what) {
-	this.beak.talk.play();
-	var s = game.add.sound(what);
-	s.onStop.add(function () {
-		this.beak.talk.stop(true); // TODO: This should set frame to 0, but it does not.
-		this.beak.frame = 0;
-	}, this);
-	return s;
-};
 
 /**
  * Turn around! Every now and then I get a little bit lonely...
