@@ -6,34 +6,32 @@ GardenState.prototype.preload = function() {
 	this.load.image('gardenBg',      'assets/img/garden/bg.png');
 };
 
-	//For testing the mountain game specifically.
-this.balloonGame = function () {
-	return {
-		type: 3,
-		representation: [0],
-		amount: 4,
-		roundsPerMode: 1
-	};
-};
-
 /* Phaser state function */
 GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
 
-	var panda = this.add.sprite(100, 50, 'pandaBody', null, this.group);
+	// TODO: Remove eventually, for debugging Birdhero game
+	var panda = this.add.sprite(100, 50, 'pandaBody');
 	panda.scale.set(0.2);
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
-		var info = Backend.nextGame();
-		this.state.start(GLOBAL.STATE[info.type], true, false, info);
+		this.state.start(GLOBAL.STATE.birdheroGame, true, false, {
+			representation: [0],
+			amount: 4, // TODO: Use range instead
+			roundsPerMode: 1
+		});
 	}, this);
 
-	var balloonButton = this.add.sprite(300, 50, 'balloon', null, this.group);
+	// TODO: Remove eventually, for debugging Balloon game
+	var balloonButton = this.add.sprite(300, 50, 'balloon');
 	balloonButton.scale.set(0.2);
 	balloonButton.inputEnabled = true;
 	balloonButton.events.onInputDown.add(function () {
-		var info = Backend.balloonGame();
-		this.state.start(GLOBAL.STATE[info.type], true, false, info);
+		this.state.start(GLOBAL.STATE.balloonGame, true, false, {
+			representation: [0],
+			amount: 4,
+			roundsPerMode: 1
+		});
 	}, this);
 
 	var rows = 3;
