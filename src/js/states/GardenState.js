@@ -45,6 +45,8 @@ GardenState.prototype.create = function () {
 		}
 	}
 
+	this.world.add(new WaterCan(this.game.width - 100, 10));
+
 	this.world.add(new Menu());
 };
 
@@ -111,7 +113,10 @@ GardenPlant.prototype.down = function () {
 		waterButton.height = 80;
 		waterButton.inputEnabled = true;
 		waterButton.events.onInputDown.add(function () {
-			this.water.value++;
+			if (user.water > 0) {
+				user.water--;
+				this.water.value++;
+			}
 		}, this);
 
 		/* Water management */
