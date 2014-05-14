@@ -10,9 +10,11 @@ Object.defineProperty(User.prototype, 'water', {
 		return this._water;
 	},
 	set: function(value) {
-		var diff = value - this._water;
-		this._water = value;
-		publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
+		if (value >= 0) {
+			var diff = value - this._water;
+			this._water = value;
+			publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
+		}
 	}
 });
 
