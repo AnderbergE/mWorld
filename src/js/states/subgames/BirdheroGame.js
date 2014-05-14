@@ -444,7 +444,9 @@ BirdheroGame.prototype.create = function () {
 				t.eventCallback('onStart', function () { _this.skipper = t; });
 				t.addCallback(hideButtons);
 				t.add(_this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3));
+				t.addLabel('agentIntro');
 				t.addSound('birdheroAgentShow', _this.agent);
+				t.add(_this.agent.wave(3, 1), 'agentIntro');
 				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
 			}
 			t.add(newBird());
@@ -485,13 +487,13 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modeOutro = function () {
-		_this.agent.happy(1);
+		_this.agent.fistPump();
 		for (var i = 0; i < tree.branch.length; i++) {
-			tree.branch[i].celebrate(1000);
+			tree.branch[i].celebrate(3000);
 		}
 		setTimeout(function () {
 			_this.state.start(GLOBAL.STATE.garden);
-		}, 1000);
+		}, 3000);
 	};
 
 

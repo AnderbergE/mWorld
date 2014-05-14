@@ -26,7 +26,8 @@ function Agent () {
 		anim: {
 			arm: {
 				origin: -0.8,
-				wave: { from: -0.1, to: 0.2 }
+				wave: { from: -0.1, to: 0.2, durUp: 0.3, dur: 0.2 },
+				pump: { angle: 0.5, move: 50, durUp: 0.5, dur: 0.25 }
 			}
 		}
 	};
@@ -75,38 +76,64 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 };
 
 /**
- * Make agent happy.
- * @param {number} For how long in seconds (default 3)
- * @returns {Object} The happiness tween
+ * Animation: Pump it up yeah!
+ * @param {number} Duration in seconds (default 3)
+ * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0)
+ * @returns {Object} The animation timeline
  */
-Agent.prototype.happy = function(duration) {
-	var dur = 0.2;
-	var times = parseInt((duration || 3) / dur);
-	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
-	return new TweenMax(this, dur, { y: this.y - 100, ease: Power0.easeInOut, repeat: times, yoyo: true });
+Agent.prototype.fistPump = function (duration, arm) {
+	duration = duration || 3;
+	arm = arm || 0;
+
+	var origin = this.coords.anim.arm.origin;
+	var pump = this.coords.anim.arm.pump;
+	var upDown = duration / 4;
+	if (upDown > pump.durUp) { upDown = pump.durUp; }
+	var times = parseInt((duration - upDown * 2) / pump.dur);
+	times += (times % 2 === 0) ? 1 : 0; // Even numbers do not loop back to origin.
+
+	var t = new TimelineMax();
+	if (arm <= 0) {
+		t.add(new TweenMax(this.leftArm, upDown, { rotation: pump.angle, ease: Power1.easeIn }), 0);
+		t.add(new TweenMax(this.leftArm, pump.dur, { x: '+=' + pump.move, y: '+=' + pump.move, ease: Power1.easeIn, repeat: times, yoyo: true }), upDown);
+		t.add(new TweenMax(this.leftArm, upDown, { rotation: origin, ease: Power1.easeOut }), pump.dur * times + upDown);
+	}
+	if (arm >= 0) {
+		t.add(new TweenMax(this.rightArm, upDown, { rotation: -pump.angle, ease: Power1.easeIn }), 0);
+		t.add(new TweenMax(this.rightArm, pump.dur, { x: '-=' + pump.move, y: '+=' + pump.move, ease: Power1.easeIn, repeat: times, yoyo: true }), upDown);
+		t.add(new TweenMax(this.rightArm, upDown, { rotation: -origin, ease: Power1.easeOut }), pump.dur * times + upDown);
+	}
+	return t;
 };
 
 /**
- * Put you hand up in the air and wave it around like you care.
- * @param {number} For how long in seconds (default 3)
- * @param {boolean} If left arm should wave (default false => right arm waves)
- * @returns {Object} The happiness timeline
+ * Animation: Put you hand up in the air and wave it around like you care.
+ * @param {number} Duration in seconds (default 3)
+ * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0)
+ * @returns {Object} The animation timeline
  */
-Agent.prototype.wave = function (duration, waveLeftArm) {
-	var dur = 0.5;
-	var times = parseInt((duration || 3) / dur) - 2; // -2 for start and stop moves
-	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
+Agent.prototype.wave = function (duration, arm) {
+	duration = duration || 3;
+	arm = arm || 0;
+
+	var origin = this.coords.anim.arm.origin;
+	var wave = this.coords.anim.arm.wave;
+	var upDown = duration / 4;
+	if (upDown > wave.durUp) { upDown = wave.durUp; }
+	var times = parseInt((duration - upDown * 2) / wave.dur);
+	times += (times % 2 === 0) ? 1 : 0; // Even numbers do not loop back to origin.
+
 	var t = new TimelineMax();
-	if (waveLeftArm) {
-		t.add(new TweenMax(this.leftArm, dur, { rotation: this.coords.anim.arm.wave.from, ease: Power1.easeIn }));
-		t.add(new TweenMax(this.leftArm, dur, { rotation: this.coords.anim.arm.wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }));
-		t.add(new TweenMax(this.leftArm, dur, { rotation: this.coords.anim.arm.origin, ease: Power1.easeOut }));
-	} else {
-		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.wave.from, ease: Power1.easeIn }));
-		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }));
-		t.add(new TweenMax(this.rightArm, dur, { rotation: -this.coords.anim.arm.origin, ease: Power1.easeOut }));
+	if (arm <= 0) {
+		t.add(new TweenMax(this.leftArm, upDown, { rotation: wave.from, ease: Power1.easeIn }), 0);
+		t.add(new TweenMax(this.leftArm, wave.dur, { rotation: wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }), upDown);
+		t.add(new TweenMax(this.leftArm, upDown, { rotation: origin, ease: Power1.easeOut }), wave.dur * times + upDown);
 	}
-	
+	if (arm >= 0) {
+		t.add(new TweenMax(this.rightArm, upDown, { rotation: -wave.from, ease: Power1.easeIn }), 0);
+		t.add(new TweenMax(this.rightArm, wave.dur, { rotation: -wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }), upDown);
+		t.add(new TweenMax(this.rightArm, upDown, { rotation: -origin, ease: Power1.easeOut }), wave.dur * times + upDown);
+	}
 	return t;
 };
 
