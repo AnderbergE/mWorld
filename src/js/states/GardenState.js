@@ -101,6 +101,7 @@ GardenPlant.prototype.down = function () {
 		this.infoGroup = game.add.group(this);
 		this.infoGroup.x = 0;
 		this.infoGroup.y = -100;
+		this.infoGroup.visible = false;
 
 		var bmd = game.add.bitmapData(this.width, 100);
 		bmd.ctx.fillStyle = '#ffffff';
@@ -144,7 +145,8 @@ GardenPlant.prototype.down = function () {
 		};
 		this.water.update();
 	}
-	this.infoGroup.visible = true;
+
+	fade(this.infoGroup, true, 0.2);
 
 	publish(GLOBAL.EVENT.plantPress, [this.plantId]);
 	this.active = subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
@@ -152,5 +154,5 @@ GardenPlant.prototype.down = function () {
 GardenPlant.prototype.hide = function () {
 	unsubscribe(this.active);
 	this.active = null;
-	this.infoGroup.visible = false;
+	fade(this.infoGroup, false, 0.2);
 };

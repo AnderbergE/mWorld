@@ -255,41 +255,27 @@ BirdheroGame.prototype.create = function () {
 
 	/* Show the number panel, hide the yes/no panel and enable input */
 	function showNumbers () {
+		_this.disable(true);
 		buttons.reset();
-		if (!buttons.visible) {
-			_this.disable(true);
-			buttons.visible = true;
-			TweenMax.fromTo(buttons, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
-		} else { _this.disable(false); }
-		if (yesnos.visible) {
-			TweenMax.to(yesnos, 0.5, { alpha: 0, onComplete: function () { yesnos.visible = false; } });
-		}
+		fade(yesnos, false);
+		fade(buttons, true).eventCallback('onComplete', _this.disable, false, _this);
 
 		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
+		_this.disable(true);
 		yesnos.reset();
-		if (buttons.visible) {
-			TweenMax.to(buttons, 0.5, { alpha: 0, onComplete: function () { buttons.visible = false; } });
-		}
-		if (!yesnos.visible) {
-			_this.disable(true);
-			yesnos.visible = true;
-			TweenMax.fromTo(yesnos, 0.5, { alpha: 0 }, { alpha: 1, onComplete: function () { _this.disable(false); } });
-		} else { _this.disable(false); }
+		fade(buttons, false);
+		fade(yesnos, true).eventCallback('onComplete', _this.disable, false, _this);
 
 		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
 	}
 	/* Hide the number and yes/no panel */
 	function hideButtons () {
 		_this.disable(true);
-		if (buttons.visible) {
-			TweenMax.to(buttons, 0.5, { alpha: 0, onComplete: function () { buttons.visible = false; } });
-		}
-		if (yesnos.visible) {
-			TweenMax.to(yesnos, 0.5, { alpha: 0, onComplete: function () { yesnos.visible = false; } });
-		}
+		fade(buttons, false);
+		fade(yesnos, false);
 	}
 
 	/* Introduce a new bird, aka: start a new round. */

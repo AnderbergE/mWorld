@@ -43,12 +43,12 @@ Counter.prototype.update = function () {
 
 
 /**
- * Utility function for when you want a sound to be said by a character.
+ * Utility function: When you want a sound to be said by a character.
  * @param {Object|string} The sound file or the key to a sound file
  * @param {Object} The speaker, needs to have a '.talk' property of TweenMax or TimelineMax
  * @returns {Object} The sound object (not started)
  */
-function say(what, who) {
+function say (what, who) {
 	var a = (typeof what === 'string') ? game.add.audio(what) : what;
 	if (who && who.talk) {
 		a.onPlay.add(function () {
@@ -60,6 +60,33 @@ function say(what, who) {
 		});
 	}
 	return a;
+}
+
+
+/**
+ * Utility function: Fade in or out an object.
+ * @param {Object} The object to fade, needs to have an alpha property
+ * @param {boolean} Fade in = true, out = false, toggle = undefined (default: toggle)
+ *                  NOTE: When false, the returned tween has an onComplete function.
+ * @param {number} Fade duration in seconds (default: 0.5)
+ * @returns {Object} The TweenMax object
+ *                   NOTE: If the object is already in correct fade state,
+ *                         no animation will be made, an "empty" tween is returned.
+ */
+function fade (what, typ, duration) {
+	typ = (typeof typ === 'undefined' || typ === null) ? !what.visible : typ;
+	duration = duration || 0.5;
+
+	if (typ) {
+		if (!what.visible) {
+			what.visible = true;
+			return TweenMax.fromTo(what, duration, { alpha: 0 }, { alpha: 1 });
+		}
+	} else if (what.visible) {
+		return TweenMax.to(what, duration,
+			{ alpha: 0, onComplete: function () { what.visible = false; } });
+	}
+	return new TweenMax(what);
 }
 
 
