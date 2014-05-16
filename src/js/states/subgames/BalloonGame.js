@@ -374,7 +374,6 @@ BalloonGame.prototype.create = function () {
 
 	this.modeIntro = function () {
 		console.log('1');
-		_this.nextMode();
 		_this.nextRound();
 	};
 

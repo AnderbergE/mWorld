@@ -14,13 +14,12 @@
  * Disable/Enable input:    this.disable (default = disabled)
  * Add event subscriptions: this.addEvent
  * Start game:              this.startGame
- * Go to next mode:         this.nextMode (only use this in intro-mode, the others change automatically)
  * Run next round:          this.nextRound (this will call the appropriate mode function)
  * Try a number:            this.tryNumber
  * Add water to the can:    this.addWater
  *
  * These function should be overshadowed by the game:
- * modeIntro      // Introduce the game, call nextMode and nextRound to start next mode.
+ * modeIntro      // Introduce the game, call nextRound to start next mode.
  * modePlayerDo   // Player only
  * modePlayerShow // Player is showing the TA
  * modeAgentTry   // TA is guessing and the player is helping out
@@ -30,7 +29,6 @@
  *
  * Typical game flow:
  * this.startGame();    // the first mode, this.modeIntro, will be called
- * this.nextMode();     // change mode, now this.modePlayerDo will be called
  * this.nextRound();    // start the mode
  * this.disable(false); // Make it possible to press anything.
  * this.tryNumber(x);   // try a number against the current one
@@ -49,7 +47,7 @@ Subgame.prototype.init = function (options) {
 		GLOBAL.MODE.playerDo,
 		GLOBAL.MODE.playerShow,
 		GLOBAL.MODE.agentTry,
-		GLOBAL.MODE.agentDo,
+		// GLOBAL.MODE.agentDo,
 		GLOBAL.MODE.outro
 	];
 	this._mode = null;
@@ -59,7 +57,7 @@ Subgame.prototype.init = function (options) {
 	this._counter = new Counter(options.roundsPerMode || 3, true);
 	/* When enough rounds have been played, trigger a mode change */
 	this._counter.onMax = function () {
-		_this.nextMode();
+		_this._nextMode();
 	};
 	this._currentTries = 0;
 	this._totalTries = 0;
@@ -95,7 +93,7 @@ Subgame.prototype.init = function (options) {
 	this.skipGroup.x = 75;
 	this.skipGroup.y = 5;
 	this.skipGroup.visible = false;
-	game.add.button(0, 0, 'wood', this.skip, this, 0, 0, 1, 0, this.skipGroup);
+	game.add.button(0, 0, 'wood', this._skip, this, 0, 0, 1, 0, this.skipGroup);
 	game.add.text(10, -5, '>>', {
 		font: '30pt The Girl Next Door',
 		stroke: '#000000',
@@ -137,7 +135,7 @@ Object.defineProperty(Subgame.prototype, 'skipper', {
  * When the timeline is complete, make sure to set 'this.skipper' to null.
  * NOTE: You can not skip part of a timeline.
  */
-Subgame.prototype.skip = function () {
+Subgame.prototype._skip = function () {
 	if (this._skipper) {
 		this._skipper.totalProgress(1);
 	}
@@ -167,22 +165,34 @@ Subgame.prototype.removeEvent = function (ev) {
 };
 
 /**
- * Calls the current mode function.
+ * Calls the current mode function (publishes modeChange event first time mode runs).
  * It will be called with two parameters:
  * 1) If it is the first time on this mode.
  * 2) How many tries that have been made on the current number.
  */
 Subgame.prototype.nextRound = function () {
+	// Publish event when it it is the first time it runs
+	if (this._first) {
+		publish(GLOBAL.EVENT.modeChange, [this._pendingMode]);
+	}
+
+	// Run mode and update properties
 	this._mode(this._first, this._currentTries);
 	this.currentMode = this._pendingMode;
 	this._first = false;
+
+	// Special case: intro and outro only have one round
+	if (this.currentMode === GLOBAL.MODE.intro ||
+		this.currentMode === GLOBAL.MODE.outro) {
+		this._nextMode();
+	}
 };
 
 /**
  * Translate from integer to mode function
  * @param {Number}
  */
-Subgame.prototype.decideMode = function (mode) {
+Subgame.prototype._decideMode = function (mode) {
 	if (mode === GLOBAL.MODE.intro) {
 		this._mode = this.modeIntro;
 	} else if (mode === GLOBAL.MODE.playerDo) {
@@ -193,22 +203,23 @@ Subgame.prototype.decideMode = function (mode) {
 		this._mode = this.modeAgentTry;
 	} else if (mode === GLOBAL.MODE.agentDo) {
 		this._mode = this.modeAgentDo;
-	} else { // mode === GLOBAL.MODE.outro
+	} else if (mode === GLOBAL.MODE.outro) {
 		this._mode = this.modeOutro;
+	} else {
+		this._mode = this.endGame;
 	}
 };
 
-/** Change to the next mode in the queue (publishes modeChange event). */
-Subgame.prototype.nextMode = function () {
+/** Change to the next mode in the queue. */
+Subgame.prototype._nextMode = function () {
 	var newMode = this._modes.shift();
-	this.decideMode(newMode);
+	this._decideMode(newMode);
 	this._pendingMode = newMode;
 	this._first = true;
-	publish(GLOBAL.EVENT.modeChange, [newMode]);
 };
 
 /** Change this.currentNumber to a new one (resets the tries). */
-Subgame.prototype.nextNumber = function () {
+Subgame.prototype._nextNumber = function () {
 	// Should we allow the same number again?
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
@@ -229,7 +240,7 @@ Subgame.prototype.tryNumber = function (number) {
 
 	if (!this.lastTry) {
 		this._counter.value++; // This will trigger next mode if we loop.
-		this.nextNumber();
+		this._nextNumber();
 	}
 	return this.lastTry;
 };
@@ -261,16 +272,22 @@ Subgame.prototype.addWater = function (x, y, force) {
 Subgame.prototype.startGame = function () {
 	// TODO: Should we wait for sounds to be decoded here, or are there any easier way?
 	this.menuGroup.visible = true;
-	this.nextMode();
-	this.nextNumber();
+	this._nextMode();
+	this._nextNumber();
 	this.nextRound();
 };
 
+/* End the game. */
+Subgame.prototype.endGame = function () {
+	this.state.start(GLOBAL.STATE.garden);
+};
+
+
 /* Overshadowing mode functions */
 /* These functions should be overshadowed in the game object */
-Subgame.prototype.modeIntro      = function () { this.nextMode(); };
-Subgame.prototype.modePlayerDo   = function () { this.nextMode(); };
-Subgame.prototype.modePlayerShow = function () { this.nextMode(); };
-Subgame.prototype.modeAgentTry   = function () { this.nextMode(); };
-Subgame.prototype.modeAgentDo    = function () { this.nextMode(); };
-Subgame.prototype.modeOutro      = function () { this.nextMode(); };
+Subgame.prototype.modeIntro      = function () { this._nextMode(); };
+Subgame.prototype.modePlayerDo   = function () { this._nextMode(); };
+Subgame.prototype.modePlayerShow = function () { this._nextMode(); };
+Subgame.prototype.modeAgentTry   = function () { this._nextMode(); };
+Subgame.prototype.modeAgentDo    = function () { this._nextMode(); };
+Subgame.prototype.modeOutro      = function () { this._nextMode(); };

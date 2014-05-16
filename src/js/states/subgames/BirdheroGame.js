@@ -401,7 +401,6 @@ BirdheroGame.prototype.create = function () {
 			emitter.destroy(true);
 			darkness.destroy(true);
 			group.destroy(true);
-			_this.nextMode();
 			_this.nextRound();
 		});
 	};
@@ -473,13 +472,11 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modeOutro = function () {
-		_this.agent.fistPump();
 		for (var i = 0; i < tree.branch.length; i++) {
 			tree.branch[i].celebrate(3000);
 		}
-		setTimeout(function () {
-			_this.state.start(GLOBAL.STATE.garden);
-		}, 3000);
+		_this.agent.fistPump()
+			.addCallback(_this.nextRound);
 	};
 
 
