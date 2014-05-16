@@ -476,7 +476,7 @@ BirdheroGame.prototype.create = function () {
 			tree.branch[i].celebrate(3000);
 		}
 		_this.agent.fistPump()
-			.addCallback(_this.nextRound);
+			.addCallback(function () { _this.nextRound(); });
 	};
 
 
