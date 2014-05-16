@@ -216,6 +216,7 @@ BalloonGame.prototype.create = function () {
 
 	//A little buggy still, if you move balloons in and out too fast some of them can get lost.
 	function attatchToBasket(balloon){
+		
 		var tl = new TimelineMax();
 		if(checkOverlap(balloon, airballoons))
 		{
@@ -245,6 +246,7 @@ BalloonGame.prototype.create = function () {
 
 		}
 	}
+
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	function balloonStockUpdate() {
@@ -334,12 +336,13 @@ BalloonGame.prototype.create = function () {
 	function takeOff() {
 
 		var amount = airBalloonStock;
+		//Begin here tomorrow! TODO: Add fail and success states when balloon takes off. Maybe rewrite the whole thing.
+		var result = _this.tryNumber(amount);
 
 		var tl = new TimelineMax();
-		if (airballoons.y === 0){
+		if (airballoons.y === 0 && airBalloonStock > 0){
 			_this.disable(true);
 			tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
-			tl.eventCallback('onComplete', winCheck(amount));
 		}
 		else{
 			_this.disable(false);
@@ -347,17 +350,6 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-	function winCheck(number) {
-
-		var result = _this.tryNumber(number);
-		var tl = new TimelineMax();
-
-		if (!result) { /* Correct :) */
-			tl.addLabel('correct');
-		} else { /* Incorrect :( */
-			tl.addLabel('wrong');
-		}
-	}
 
 	function instructionIntro () {
 		var t = new TimelineMax();
@@ -374,7 +366,6 @@ BalloonGame.prototype.create = function () {
 
 	this.modeIntro = function () {
 		console.log('1');
-		_this.nextMode();
 		_this.nextRound();
 	};
 
