@@ -1,5 +1,6 @@
 /**
  * Holds shared logic for subgames.
+ *
  * How to use:
  * Number amount:        this.amount
  * Representation:       this.representation
@@ -9,16 +10,16 @@
  * Add buttons and HUD to:  this.hudGroup
  * Use agent with:          this.agent (default visibility = false)
  *
+ * Start game:              this.startGame()
+ * Disable/Enable input:    this.disable(true/false) - default = true = disabled
+ * Run next round:          this.nextRound() - will change mode automatically when needed
+ * Try a number:            this.tryNumber(number) - when testing a guess against this.currentNumber
+ * Add water to the can:    this.addWater(fromX, fromY) - Adds a water drop to the can
+ * Add event subscriptions: this.addEvent(string, function) - these subscriptions are removed on game shutdown
  *
- * Functions:
- * Disable/Enable input:    this.disable (default = disabled)
- * Add event subscriptions: this.addEvent
- * Start game:              this.startGame
- * Run next round:          this.nextRound (this will call the appropriate mode function)
- * Try a number:            this.tryNumber
- * Add water to the can:    this.addWater
  *
- * These function should be overshadowed by the game:
+ * These function _should_ be overshadowed by the subgame:
+ * They are called with two parameters (ifFirstTime, triesSoFars).
  * modeIntro      // Introduce the game, call nextRound to start next mode.
  * modePlayerDo   // Player only
  * modePlayerShow // Player is showing the TA
@@ -29,14 +30,29 @@
  *
  * Typical game flow:
  * this.startGame();    // the first mode, this.modeIntro, will be called
- * this.nextRound();    // start the mode
- * this.disable(false); // Make it possible to press anything.
+ * this.nextRound();    // start next round (will automatically start next mode)
+ * this.disable(false); // make it possible to interact with anything
  * this.tryNumber(x);   // try a number against the current one
  * this.nextRound();    // do this regardless if right or wrong,
  *                      // it takes care of mode switching and function calls for you
- * // Do until game is done, then quit by using: this.state.start(GLOBAL.STATE.garden);
+ * // Repeat last two functions until game is over.
  */
 function Subgame () {}
+
+Object.defineProperty(Subgame.prototype, 'skipper', {
+	get: function() { return this._skipper; },
+	set: function(value) {
+		this._skipper = value;
+		if (this._skipper) {
+			this.skipGroup.visible = true;
+			this._skipper.addCallback(function () {
+				this.skipper = null;
+			}, null, null, this);
+		} else {
+			this.skipGroup.visible = false;
+		}
+	}
+});
 
 /* Phaser state function */
 Subgame.prototype.init = function (options) {
@@ -115,20 +131,47 @@ Subgame.prototype.shutdown = function () {
 	}
 };
 
-Object.defineProperty(Subgame.prototype, 'skipper', {
-	get: function() { return this._skipper; },
-	set: function(value) {
-		this._skipper = value;
-		if (this._skipper) {
-			this.skipGroup.visible = true;
-			this._skipper.addCallback(function () {
-				this.skipper = null;
-			}, null, null, this);
-		} else {
-			this.skipGroup.visible = false;
-		}
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                            Private functions                              */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
+/** Change to the next mode in the queue. */
+Subgame.prototype._nextMode = function () {
+	var newMode = this._modes.shift();
+	this._decideMode(newMode);
+	this._pendingMode = newMode;
+	this._first = true;
+};
+
+/**
+ * Translate from integer to mode function
+ * @param {number}
+ */
+Subgame.prototype._decideMode = function (mode) {
+	if (mode === GLOBAL.MODE.intro) {
+		this._mode = this.modeIntro;
+	} else if (mode === GLOBAL.MODE.playerDo) {
+		this._mode = this.modePlayerDo;
+	} else if (mode === GLOBAL.MODE.playerShow) {
+		this._mode = this.modePlayerShow;
+	} else if (mode === GLOBAL.MODE.agentTry) {
+		this._mode = this.modeAgentTry;
+	} else if (mode === GLOBAL.MODE.agentDo) {
+		this._mode = this.modeAgentDo;
+	} else if (mode === GLOBAL.MODE.outro) {
+		this._mode = this.modeOutro;
+	} else {
+		this._mode = this.endGame;
 	}
-});
+};
+
+/** Change this.currentNumber to a new one (resets the tries). */
+Subgame.prototype._nextNumber = function () {
+	// Should we allow the same number again?
+	this._totalTries += this._currentTries;
+	this._currentTries = 0;
+	this.currentNumber = parseInt(1+Math.random()*this.amount);
+};
 
 /* Skip a timeline. How to:
  * Set 'this.skipper' to a timeline (a skip button will appear next to the menu)
@@ -141,11 +184,17 @@ Subgame.prototype._skip = function () {
 	}
 };
 
-/* Always add event subscriptions with these functions, they are then removed when shutting down */
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                            Public functions                               */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
 /**
  * Subscribe to an event.
+ * The added events will be removed on game shutdown or by using the removeEvent().
+ * Using this function instead of subscribe() avoids strange behaviours.
  * @param {*} The name of the event
- * @param {Function} The function to run when the event is published
+ * @param {function} The function to run when the event is published
  */
 Subgame.prototype.addEvent = function (ev, func) {
 	this._events.push(subscribe(ev, func));
@@ -189,49 +238,10 @@ Subgame.prototype.nextRound = function () {
 };
 
 /**
- * Translate from integer to mode function
- * @param {Number}
- */
-Subgame.prototype._decideMode = function (mode) {
-	if (mode === GLOBAL.MODE.intro) {
-		this._mode = this.modeIntro;
-	} else if (mode === GLOBAL.MODE.playerDo) {
-		this._mode = this.modePlayerDo;
-	} else if (mode === GLOBAL.MODE.playerShow) {
-		this._mode = this.modePlayerShow;
-	} else if (mode === GLOBAL.MODE.agentTry) {
-		this._mode = this.modeAgentTry;
-	} else if (mode === GLOBAL.MODE.agentDo) {
-		this._mode = this.modeAgentDo;
-	} else if (mode === GLOBAL.MODE.outro) {
-		this._mode = this.modeOutro;
-	} else {
-		this._mode = this.endGame;
-	}
-};
-
-/** Change to the next mode in the queue. */
-Subgame.prototype._nextMode = function () {
-	var newMode = this._modes.shift();
-	this._decideMode(newMode);
-	this._pendingMode = newMode;
-	this._first = true;
-};
-
-/** Change this.currentNumber to a new one (resets the tries). */
-Subgame.prototype._nextNumber = function () {
-	// Should we allow the same number again?
-	this._totalTries += this._currentTries;
-	this._currentTries = 0;
-	this.currentNumber = parseInt(1+Math.random()*this.amount);
-};
-
-/**
  * Try a number against this.currentNumber (publishes tryNumber event).
  * The offset of the last try is stored in this.lastTry.
- *
- * @param {Number} The number to try.
- * @returns {Boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
+ * @param {number} The number to try.
+ * @returns {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
 Subgame.prototype.tryNumber = function (number) {
 	publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
@@ -245,6 +255,14 @@ Subgame.prototype.tryNumber = function (number) {
 	return this.lastTry;
 };
 
+/**
+ * Adds water to the water can.
+ * Water will only be added in modes playerShow, agentTry and agentDo.
+ * @param {number} The x position where the drop will begin.
+ * @param {number} The y position where the drop will begin.
+ * @param {boolean} Override mode restrictions and force drop to be added.
+ * @returns {Object} The drop animation from x, y to water can.
+ */
 Subgame.prototype.addWater = function (x, y, force) {
 	var t = new TimelineMax();
 	if (this.currentMode === GLOBAL.MODE.playerShow ||
