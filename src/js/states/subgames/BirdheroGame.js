@@ -304,7 +304,7 @@ BirdheroGame.prototype.create = function () {
 				ease: Elastic.easeOut,
 				onStart: function () {
 					_this.agent.thought.visible = true;
-					if (_this.agent.thought.guess) { _this.gameGroup.remove(_this.agent.thought.guess); }
+					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
 					say('birdheroAgentHmm', _this.agent).play();
 				},
 				onComplete: function () {
