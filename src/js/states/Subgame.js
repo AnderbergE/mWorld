@@ -206,8 +206,9 @@ Subgame.prototype.addEvent = function (ev, func) {
  */
 Subgame.prototype.removeEvent = function (ev) {
 	for (var i = 0; i < this._events.length; i++) {
-		if (this._events[i] === ev) {
+		if (this._events[i][0] === ev) {
 			unsubscribe(this._events[i]);
+			this._events.splice(i, 1);
 			break;
 		}
 	}
