@@ -493,6 +493,8 @@ BirdheroGame.prototype.create = function () {
 		for (var i = 0; i < tree.branch.length; i++) {
 			tree.branch[i].celebrate(3000);
 		}
+
+		_this.agent.eyesFollowPointer(true);
 		_this.agent.fistPump()
 			.addCallback(function () { _this.nextRound(); });
 	};
