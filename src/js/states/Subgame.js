@@ -206,8 +206,9 @@ Subgame.prototype.addEvent = function (ev, func) {
  */
 Subgame.prototype.removeEvent = function (ev) {
 	for (var i = 0; i < this._events.length; i++) {
-		if (this._events[i] === ev) {
+		if (this._events[i][0] === ev) {
 			unsubscribe(this._events[i]);
+			this._events.splice(i, 1);
 			break;
 		}
 	}
@@ -220,21 +221,22 @@ Subgame.prototype.removeEvent = function (ev) {
  * 2) How many tries that have been made on the current number.
  */
 Subgame.prototype.nextRound = function () {
+	// Special case: intro and outro only have one round
+	if ((this.currentMode === GLOBAL.MODE.intro ||
+		this.currentMode === GLOBAL.MODE.outro) &&
+		this.currentMode === this._pendingMode) {
+		this._nextMode();
+	}
+
 	// Publish event when it it is the first time it runs
 	if (this._first) {
 		publish(GLOBAL.EVENT.modeChange, [this._pendingMode]);
 	}
 
 	// Run mode and update properties
-	this._mode(this._first, this._currentTries);
 	this.currentMode = this._pendingMode;
+	this._mode(this._first, this._currentTries);
 	this._first = false;
-
-	// Special case: intro and outro only have one round
-	if (this.currentMode === GLOBAL.MODE.intro ||
-		this.currentMode === GLOBAL.MODE.outro) {
-		this._nextMode();
-	}
 };
 
 /**

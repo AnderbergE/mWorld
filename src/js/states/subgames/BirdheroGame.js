@@ -200,6 +200,17 @@ BirdheroGame.prototype.create = function () {
 		}
 	};
 
+	this.agent.moveTo = {
+		start: function () {
+			if (_this.agent.x === coords.agent.stop.x &&
+				_this.agent.y === coords.agent.stop.y) {
+				return new TweenMax(_this.agent);
+			}
+			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
+		}
+	};
+
+
 	/* Function to trigger when a number button is pushed */
 	function pushNumber (number) {
 		_this.disable(true);
@@ -260,7 +271,7 @@ BirdheroGame.prototype.create = function () {
 		fade(yesnos, false);
 		fade(buttons, true).eventCallback('onComplete', _this.disable, false, _this);
 
-		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
+		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
 	function showYesnos () {
@@ -269,13 +280,15 @@ BirdheroGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, true).eventCallback('onComplete', _this.disable, false, _this);
 
-		_this.agent.eyesFollowPointer(); // TODO: put somewhere else
+		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 	/* Hide the number and yes/no panel */
 	function hideButtons () {
 		_this.disable(true);
 		fade(buttons, false);
 		fade(yesnos, false);
+
+		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
 	}
 
 	/* Introduce a new bird, aka: start a new round. */
@@ -304,7 +317,7 @@ BirdheroGame.prototype.create = function () {
 				ease: Elastic.easeOut,
 				onStart: function () {
 					_this.agent.thought.visible = true;
-					if (_this.agent.thought.guess) { _this.gameGroup.remove(_this.agent.thought.guess); }
+					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
 					say('birdheroAgentHmm', _this.agent).play();
 				},
 				onComplete: function () {
@@ -406,7 +419,6 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modePlayerDo = function (intro, tries) {
-		bgMusic.play();
 		if (tries > 0) {
 			showNumbers();
 		} else { // if intro or first try
@@ -426,9 +438,11 @@ BirdheroGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
-				t.eventCallback('onStart', function () { _this.skipper = t; });
-				t.addCallback(hideButtons);
-				t.add(_this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3));
+				t.eventCallback('onStart', function () {
+					_this.skipper = t;
+					hideButtons();
+				});
+				t.add(_this.agent.moveTo.start());
 				t.addLabel('agentIntro');
 				t.addSound('birdheroAgentShow', _this.agent);
 				t.add(_this.agent.wave(3, 1), 'agentIntro');
@@ -442,13 +456,17 @@ BirdheroGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var t = new TimelineMax();
 		if (tries > 0) {
+			_this.agent.eyesFollowPointer(true);
 			// TODO: Add more specified sounds?
 			t.addSound('birdheroAgentOops', _this.agent);
 			t.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
-				t.eventCallback('onStart', function () { _this.skipper = t; });
-				t.addCallback(hideButtons);
+				t.eventCallback('onStart', function () {
+					_this.skipper = t;
+					hideButtons();
+				});
+				t.add(_this.agent.moveTo.start()); // Agent should be here already.
 				t.addSound('birdheroAgentTry', _this.agent);
 				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
 			}
@@ -475,9 +493,20 @@ BirdheroGame.prototype.create = function () {
 		for (var i = 0; i < tree.branch.length; i++) {
 			tree.branch[i].celebrate(3000);
 		}
+
+		_this.agent.eyesFollowPointer(true);
 		_this.agent.fistPump()
 			.addCallback(function () { _this.nextRound(); });
 	};
+
+
+	/* Play music on the first mode that is not the intro. */
+	this.addEvent(GLOBAL.EVENT.modeChange, function (mode) {
+		if (mode !== GLOBAL.MODE.intro) {
+			bgMusic.play();
+			_this.removeEvent(GLOBAL.EVENT.modeChange);
+		}
+	});
 
 
 	// Everything is set up! Blast off!
