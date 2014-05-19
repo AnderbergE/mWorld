@@ -419,7 +419,6 @@ BirdheroGame.prototype.create = function () {
 	};
 
 	this.modePlayerDo = function (intro, tries) {
-		bgMusic.play();
 		if (tries > 0) {
 			showNumbers();
 		} else { // if intro or first try
@@ -497,6 +496,15 @@ BirdheroGame.prototype.create = function () {
 		_this.agent.fistPump()
 			.addCallback(function () { _this.nextRound(); });
 	};
+
+
+	/* Play music on the first mode that is not the intro. */
+	this.addEvent(GLOBAL.EVENT.modeChange, function (mode) {
+		if (mode !== GLOBAL.MODE.intro) {
+			bgMusic.play();
+			_this.removeEvent(GLOBAL.EVENT.modeChange);
+		}
+	});
 
 
 	// Everything is set up! Blast off!
