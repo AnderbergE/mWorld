@@ -76,7 +76,6 @@ Subgame.prototype.init = function (options) {
 	};
 	this._currentTries = 0;
 	this._totalTries = 0;
-	this._events = [];
 	this._skipper = null;
 
 	/* Public variables */
