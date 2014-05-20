@@ -13,6 +13,8 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('cave',      'assets/img/subgames/balloon/cave.png');
 	this.load.image('emptyglass',      'assets/img/subgames/balloon/emptyglass.png');
 	this.load.image('fullglass',      'assets/img/subgames/balloon/fullglass.png');
+	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
+	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
 
 	this.load.image('balloonBg',      'assets/img/subgames/balloon/bg.png');
 	this.load.image('balloon2',      'assets/img/subgames/balloon/balloon2.png');
@@ -49,9 +51,9 @@ var airballoons;
 var cliffheight;
 var cliff;
 var cave;
+var glass;
 var liftoffButton;
 //var resetButton;
-var glass;
 var balloons;
 var balloonStack1;
 var balloonStack2;
@@ -64,13 +66,41 @@ var airBalloonStock = 0;
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
-
+	
 	_this.disable(false);
+
+	var coords = {
+		balloons: {
+			x: 50, y: 50
+		},
+		agent: {
+			start: { x: 250, y: 950 },
+			stop: { x: 390, y: 500 },
+			scale: 0.25
+		},
+		basketBalloons: {
+			x: 775, y: 500
+		}
+	};
 
 	cliffheight = this.cache.getImage('cliffside').height;
 
 	// Add main game
 	background = this.add.sprite(0, 0, 'balloonBg', null, this.gameGroup);
+
+	// Agent is added to the game in the superclass, so set up correct start point.
+	this.agent.x = coords.agent.start.x;
+	this.agent.y = coords.agent.start.y;
+	this.agent.scale.set(coords.agent.scale);
+	this.agent.visible = true;
+	// Adding thought bubble that is used in the agent try mode.
+	this.agent.thought = this.add.group(this.gameGroup);
+	this.agent.thought.x = coords.agent.stop.x - 200;
+	this.agent.thought.y = coords.agent.stop.y - 200;
+	this.agent.thought.visible = false;
+	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
+	thoughtBubble.anchor.set(0.5);
+	this.gameGroup.bringToTop(this.agent);
 
 
 	// Adding the platforms on the cliff wall.
@@ -94,14 +124,9 @@ BalloonGame.prototype.create = function () {
 
 	}
 
-	/*glass = this.add.sprite(960, 635 - (cliffheight * scale * (1+1) * 2), 'fullglass', null, this.gameGroup);
-	glass.scale.x = -0.5;
-	glass.scale.y = 0.5;
-	*/
-	glass = this.add.sprite(1070-this.cache.getImage('cliffside').width*2.5, 635 - (cliffheight * scale * (1+1) * 2 + cliffheight), 'fullglass', null, this.gameGroup);
-	glass.scale.x = 0.4;
-	glass.scale.y = 0.4;
+	glass = _this.add.sprite(1200, 900, 'fullglass', null, _this.gameGroup);
 
+	// Setting up balloon related sprites and groups.
 	airballoons = this.add.group(this.gameGroup);
 	airballoons.x = 0;
 	airballoons.y = 0;
@@ -116,17 +141,6 @@ BalloonGame.prototype.create = function () {
 	balloonStack1 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
 	balloonStack2 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
 
-	var coords = {
-		balloons: {
-			x: 50, y: 50
-		},
-		basketBalloons: {
-			x: 775, y: 500
-		}
-	};
-
-
-	
 	airballoons.add(balloonStack2);
 
 	balloonStack1.x = coords.balloons.x;
@@ -141,7 +155,6 @@ BalloonGame.prototype.create = function () {
 	balloonStack2.kill();
 
 
-
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	balloonStockUpdate();
 	airBalloonStockUpdate();
@@ -151,15 +164,6 @@ BalloonGame.prototype.create = function () {
 
 	liftoffButton = game.add.button(game.world.centerX, 660, 'wood', takeOff, this);
 	liftoffButton.visible = false;
-	
-	/*
-	var buttons = new ButtonPanel(this.amount, this.representation, {
-	y: this.world.height-(this.representation.length*75)-25, background: 'balloon', onClick: move
-	});
-	this.hudGroup.add(buttons);
-
-	showNumbers();
-	*/
 
 	//Creates one draggable balloon at the stack.
 	function createBalloon()
@@ -190,16 +194,7 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-
-	/* Does not reset the ballons in airballoon.
-	function resetBalloons()
-	{
-		balloonStock = 6;
-		balloons.removeAll(true);
-		airballoon.removeBetween(1, 19, true);
-		createBalloon();
-	}*/
-
+	//release and attatchToBasket control the dragging and snapping of balloons.
 	function release(balloon) {
 		if(airballoons.getIndex(balloon) === -1)
 		{
@@ -214,8 +209,8 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-	//A little buggy still, if you move balloons in and out too fast some of them can get lost.
 	function attatchToBasket(balloon){
+		
 		var tl = new TimelineMax();
 		if(checkOverlap(balloon, airballoons))
 		{
@@ -224,12 +219,6 @@ BalloonGame.prototype.create = function () {
 			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
 			tl.eventCallback('onComplete', airBalloonStockUpdate);
 			balloonStockUpdate();
-
-			console.log('# of enteties in airballoon: ' + airballoons.length);
-			console.log('# of enteties in balloons: ' + balloons.length);
-			console.log('# balloonstock: ' + balloonStock);
-			console.log('# airballoonstock: ' + airBalloonStock);
-
 		}
 		else
 		{
@@ -237,14 +226,163 @@ BalloonGame.prototype.create = function () {
 			tl.to(balloon, 1, {x: coords.balloons.x, y: coords.balloons.y});
 			tl.eventCallback('onComplete', balloonStockUpdate);
 			airBalloonStockUpdate();
+		}
+		console.log('# balloonstock: ' + balloonStock);
+		console.log('# airballoonstock: ' + airBalloonStock);
+	}
 
-			console.log('# of enteties in airballoon: ' + airballoons.length);
-			console.log('# of enteties in balloons: ' + balloons.length);
-			console.log('# balloonstock: ' + balloonStock);
-			console.log('# airballoonstock: ' + airBalloonStock);
+	function checkOverlap(spriteA, spriteB)
+	{
+		var boundsA = spriteA.getBounds();
+		var boundsB = spriteB.getBounds();
+		return Phaser.Rectangle.intersects(boundsA, boundsB);
+	}
 
+	function takeOff() {
+
+		var amount = airBalloonStock;
+		
+		//Begin here tomorrow! TODO: Add fail and success states when balloon takes off. Maybe rewrite the whole thing.
+		//var result = _this.tryNumber(amount);
+
+		var tl = new TimelineMax();
+		if (amount <= 0)
+		{
+			console.log('No balloons!');
+			//TODO: Add a voice saying you need to attatch balloons to the basket.
+		} else {
+			var result = _this.tryNumber(amount);
+			_this.agent.eyesFollowObject(airballoons.basket);
+			_this.disable(true);
+			liftoffButton.visible = false;
+
+			if (!result)
+			{
+				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+				console.log('Correct!');
+				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
+				//TODO: Add victory animation. Next round.
+			} else if (result > 0)
+			{
+				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+				console.log('Too many!');
+				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
+				//TODO: Add animation of balloon blowing down then balloons flowing back. Next round.
+			} else
+			{
+				
+				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+				console.log('Too few!');
+				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
+				//TODO: Add animation of balloon falling down with a bounce after balloons float back. Next round.
+			}
+
+			//Possible that you could add next round in here as it might not do anything for balloongame unless you actually guess correct.
+			tl.eventCallback('onComplete', function(){
+				_this.disable(false);
+				liftoffButton.visible = true;
+				_this.agent.eyesFollowPointer();
+				_this.nextRound();
+			});
 		}
 	}
+
+	//Add more for Agent to move elsewhere.
+	this.agent.moveTo = {
+		start: function () {
+			if (_this.agent.x === coords.agent.stop.x &&
+				_this.agent.y === coords.agent.stop.y) {
+				return new TweenMax(_this.agent);
+			}
+			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
+		}
+	};
+
+
+	function instructionIntro (correctAnswer) {
+		//var t = new TimelineMax();
+		//t.addLabel('test');
+		console.log('test');
+
+		if(correctAnswer % 2 === 0)
+			{
+				glass.x = 1070-_this.cache.getImage('cliffside').width*2.5;
+				glass.y = 635 - (cliffheight * scale * (correctAnswer+1));
+			}
+		else
+			{
+				glass.x = 900;
+				glass.y = 635 - (cliffheight * scale * (correctAnswer+1));
+			}
+
+			glass.scale.x = 0.4;
+			glass.scale.y = 0.4;
+	}
+
+
+	this.modeIntro = function () {
+		console.log('ModeIntro');
+		_this.nextRound();
+	};
+
+	this.modePlayerDo = function (intro, tries) {
+		bgMusic.play();
+		if (tries > 0) {
+			liftoffButton.visible = true;
+		} else { // if intro or first try	
+			//var t = new TimelineMax();
+			if (intro) {
+				console.log('modeplayerDoIntro');
+				console.log('correct answer= ' + _this.currentNumber);
+				instructionIntro(_this.currentNumber);
+			}
+		liftoffButton.visible = true;
+		}
+	};
+
+	this.modePlayerShow = function (intro, tries) {
+		if (tries > 0) {
+			liftoffButton.visible = true;
+		} else { // if intro or first try
+			var t = new TimelineMax();
+			if (intro) {
+
+				instructionIntro(_this.currentNumber);
+				t.add(_this.agent.moveTo.start());
+				t.addLabel('agentIntro');
+				t.addSound('birdheroAgentShow', _this.agent);
+				t.add(_this.agent.wave(3, 1), 'agentIntro');
+				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
+				console.log('modeplayerShow Intro');
+			}
+		liftoffButton.visible = true;
+		}
+	};
+
+	this.modeAgentTry = function (intro, tries) {
+		//var t = new TimelineMax();
+		if (tries > 0) {
+			liftoffButton.visible = true;
+		} else { // if intro or first try
+			if (intro) {
+				console.log('modeAgentTry Intro');
+			}
+		liftoffButton.visible = true;
+		}
+	};
+
+	this.modeAgentDo = function (intro, tries) {
+		if (tries > 0) {
+			liftoffButton.visible = true;
+		} else { // if intro or first try
+			console.log('modeAgentDo Intro');
+			liftoffButton.visible = true;
+		}
+	};
+
+	this.modeOutro = function () {
+		this.nextRound();
+	};
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	function balloonStockUpdate() {
@@ -322,78 +460,6 @@ BalloonGame.prototype.create = function () {
 			break;
 		}
 	}
-
-
-	function checkOverlap(spriteA, spriteB)
-	{
-		var boundsA = spriteA.getBounds();
-		var boundsB = spriteB.getBounds();
-		return Phaser.Rectangle.intersects(boundsA, boundsB);
-	}
-
-	function takeOff() {
-
-		var amount = airBalloonStock;
-
-		var tl = new TimelineMax();
-		if (airballoons.y === 0){
-			_this.disable(true);
-			tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
-			tl.eventCallback('onComplete', winCheck(amount));
-		}
-		else{
-			_this.disable(false);
-			tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
-		}
-	}
-
-	function winCheck(number) {
-
-		var result = _this.tryNumber(number);
-		var tl = new TimelineMax();
-
-		if (!result) { /* Correct :) */
-			tl.addLabel('correct');
-		} else { /* Incorrect :( */
-			tl.addLabel('wrong');
-		}
-	}
-
-	function instructionIntro () {
-		var t = new TimelineMax();
-		t.addLabel('test');
-		/*t.addSound('birdheroInstruction1a', bird);
-		t.add(bird.pointAtFeathers());
-		t.addSound('birdheroInstruction1b', bird);
-		t.eventCallback('onComplete', function () {
-			_this.sound.removeByKey('birdheroInstruction1a');
-			_this.sound.removeByKey('birdheroInstruction1b');
-		});*/
-		return t;
-	}
-
-	this.modeIntro = function () {
-		console.log('1');
-		_this.nextRound();
-	};
-
-	this.modePlayerDo = function (intro, tries) {
-		console.log('2');
-		bgMusic.play();
-		if (tries > 0) {
-			console.log('3');
-			liftoffButton.visible = true;
-		} else { // if intro or first try
-			console.log('4');
-			liftoffButton.visible = true;
-			var t = new TimelineMax();
-			if (intro) {
-				console.log('5');
-				t.add(instructionIntro());
-			}
-		}
-	};
-
 
 	// Make sure the call this when everything is set up.
 	this.startGame();
