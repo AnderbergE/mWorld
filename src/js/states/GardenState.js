@@ -54,6 +54,10 @@ GardenState.prototype.create = function () {
 Subgame.prototype.shutdown = onShutDown;
 
 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                              Garden objects                               */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
 GardenPlant.prototype = Object.create(Phaser.Group.prototype);
 GardenPlant.prototype.constructor = GardenPlant;
 function GardenPlant (id, level, water, x, y, width, height) {
@@ -155,6 +159,7 @@ GardenPlant.prototype.down = function () {
 	Event.publish(GLOBAL.EVENT.plantPress, [this.plantId]);
 	this.active = Event.subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
 };
+
 GardenPlant.prototype.hide = function () {
 	Event.unsubscribe(this.active);
 	this.active = null;
