@@ -501,12 +501,13 @@ BirdheroGame.prototype.create = function () {
 
 
 	/* Play music on the first mode that is not the intro. */
-	this.addEvent(GLOBAL.EVENT.modeChange, function (mode) {
+	function playMusic (mode) {
 		if (mode !== GLOBAL.MODE.intro) {
 			bgMusic.play();
-			_this.removeEvent(GLOBAL.EVENT.modeChange);
+			Event.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
 		}
-	});
+	}
+	Event.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 
 
 	// Everything is set up! Blast off!

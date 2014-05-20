@@ -54,3 +54,6 @@ PlayerSetupState.prototype.create = function () {
 
 	TweenMax.to(agents.children[current].scale, slideTime/2, scaleActive);
 };
+
+/* Phaser state function */
+Subgame.prototype.shutdown = onShutDown;

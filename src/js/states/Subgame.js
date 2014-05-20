@@ -15,7 +15,6 @@
  * Run next round:          this.nextRound() - will change mode automatically when needed
  * Try a number:            this.tryNumber(number) - when testing a guess against this.currentNumber
  * Add water to the can:    this.addWater(fromX, fromY) - Adds a water drop to the can
- * Add event subscriptions: this.addEvent(string, function) - these subscriptions are removed on game shutdown
  *
  *
  * These function _should_ be overshadowed by the subgame:
@@ -122,14 +121,8 @@ Subgame.prototype.init = function (options) {
 };
 
 /* Phaser state function */
-Subgame.prototype.shutdown = function () {
-	TweenMax.killAll();
-	this.sound.stopAll();
+Subgame.prototype.shutdown = onShutDown;
 
-	for (var i = 0; i < this._events.length; i++) {
-		unsubscribe(this._events[i]);
-	}
-};
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                            Private functions                              */
@@ -190,31 +183,6 @@ Subgame.prototype._skip = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 /**
- * Subscribe to an event.
- * The added events will be removed on game shutdown or by using the removeEvent().
- * Using this function instead of subscribe() avoids strange behaviours.
- * @param {*} The name of the event
- * @param {function} The function to run when the event is published
- */
-Subgame.prototype.addEvent = function (ev, func) {
-	this._events.push(subscribe(ev, func));
-};
-
-/**
- * Unsubscribe to an event.
- * @param {*} The name of the event
- */
-Subgame.prototype.removeEvent = function (ev) {
-	for (var i = 0; i < this._events.length; i++) {
-		if (this._events[i][0] === ev) {
-			unsubscribe(this._events[i]);
-			this._events.splice(i, 1);
-			break;
-		}
-	}
-};
-
-/**
  * Calls the current mode function (publishes modeChange event first time mode runs).
  * It will be called with two parameters:
  * 1) If it is the first time on this mode.
@@ -230,7 +198,7 @@ Subgame.prototype.nextRound = function () {
 
 	// Publish event when it it is the first time it runs
 	if (this._first) {
-		publish(GLOBAL.EVENT.modeChange, [this._pendingMode]);
+		Event.publish(GLOBAL.EVENT.modeChange, [this._pendingMode]);
 	}
 
 	// Run mode and update properties
@@ -246,7 +214,7 @@ Subgame.prototype.nextRound = function () {
  * @returns {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
 Subgame.prototype.tryNumber = function (number) {
-	publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
+	Event.publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
 	this._currentTries++;
 	this.lastTry = number - this.currentNumber;
 

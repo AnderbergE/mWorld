@@ -13,7 +13,7 @@ Object.defineProperty(User.prototype, 'water', {
 		if (value >= 0) {
 			var diff = value - this._water;
 			this._water = value;
-			publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
+			Event.publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
 		}
 	}
 });

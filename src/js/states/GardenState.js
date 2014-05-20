@@ -50,6 +50,10 @@ GardenState.prototype.create = function () {
 	this.world.add(new Menu());
 };
 
+/* Phaser state function */
+Subgame.prototype.shutdown = onShutDown;
+
+
 GardenPlant.prototype = Object.create(Phaser.Group.prototype);
 GardenPlant.prototype.constructor = GardenPlant;
 function GardenPlant (id, level, water, x, y, width, height) {
@@ -92,7 +96,7 @@ function GardenPlant (id, level, water, x, y, width, height) {
 GardenPlant.prototype.down = function () {
 	var _this = this; // Events do not have access to this
 	if (this.active) {
-		publish(GLOBAL.EVENT.plantPress, [this.plantId]);
+		Event.publish(GLOBAL.EVENT.plantPress, [this.plantId]);
 		return;
 	}
 
@@ -148,11 +152,11 @@ GardenPlant.prototype.down = function () {
 
 	fade(this.infoGroup, true, 0.2);
 
-	publish(GLOBAL.EVENT.plantPress, [this.plantId]);
-	this.active = subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
+	Event.publish(GLOBAL.EVENT.plantPress, [this.plantId]);
+	this.active = Event.subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
 };
 GardenPlant.prototype.hide = function () {
-	unsubscribe(this.active);
+	Event.unsubscribe(this.active);
 	this.active = null;
 	fade(this.infoGroup, false, 0.2);
 };

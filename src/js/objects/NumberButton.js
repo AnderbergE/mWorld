@@ -38,7 +38,7 @@ function NumberButton (number, representations, options) {
 			bg.frame++;
 		}
 		if (options.onClick) { options.onClick(this.number); }
-		publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
+		Event.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
 	}, this);
 
 	this.reset = function () {

@@ -58,3 +58,6 @@ EntryState.prototype.create = function () {
 		text.visible = true;
 	}, this);
 };
+
+/* Phaser state function */
+Subgame.prototype.shutdown = onShutDown;

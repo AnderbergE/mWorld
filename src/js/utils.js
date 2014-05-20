@@ -89,6 +89,15 @@ function fade (what, typ, duration) {
 	return new TweenMax(what);
 }
 
+/**
+ * Utility function: Call this upon state shutdown.
+ */
+function onShutDown () {
+	TweenMax.killAll();
+	this.sound.stopAll();
+	Event.clear();
+}
+
 
 /**
  * A function to easily add sound to a tween timeline.

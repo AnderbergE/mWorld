@@ -71,7 +71,7 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 		guessRangeMax = max;
 	}
 	this.lastGuess = parseInt(guessRangeMin + Math.random()*(guessRangeMax - guessRangeMin));
-	publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
+	Event.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
 	return this.lastGuess;
 };
 
