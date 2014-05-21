@@ -146,7 +146,7 @@ GardenPlant.prototype.down = function () {
 				_this.infoGroup.remove(waterButton); // TODO: Destroying throws exception, why?
 				//waterButton.destroy();
 				game.add.text(_this.width/2, 50, GLOBAL.TEXT.maxLevel, {
-					font: '60pt The Girl Next Door',
+					font: '60pt' +  GLOBAL.FONT,
 					fill: '#5555ff'
 				}, _this.infoGroup).anchor.set(0.5);
 			}
