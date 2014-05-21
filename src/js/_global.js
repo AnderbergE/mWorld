@@ -52,25 +52,5 @@ var GLOBAL = {
 		yesno:   15 // Special for yes/no: odd values = yes, even values = no
 	},
 
-	FONT: 'The Girl Next Door',
-	TEXT: {
-		/* Entry state */
-		title: 'Magical Garden',
-		start: 'Start',
-		credits: 'Credits',
-
-		/* Garden state */
-		maxLevel: 'MAX!',
-
-		/* Player setup state */
-		pickFriend: 'Who will be your friend?',
-
-		/* Menu items */
-		menu: 'MENU',
-		resume: 'Resume',
-		quit: 'Quit',
-
-		/* Agents */
-		pandaName: 'Panders'
-	}
+	FONT: 'The Girl Next Door'
 };

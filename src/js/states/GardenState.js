@@ -145,8 +145,8 @@ GardenPlant.prototype.down = function () {
 				waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
 				_this.infoGroup.remove(waterButton); // TODO: Destroying throws exception, why?
 				//waterButton.destroy();
-				game.add.text(_this.width/2, 50, GLOBAL.TEXT.maxLevel, {
-					font: '60pt' +  GLOBAL.FONT,
+				game.add.text(_this.width/2, 50, LANG.TEXT.maxLevel, {
+					font: '60pt ' +  GLOBAL.FONT,
 					fill: '#5555ff'
 				}, _this.infoGroup).anchor.set(0.5);
 			}

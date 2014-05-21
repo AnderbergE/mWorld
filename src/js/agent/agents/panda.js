@@ -4,7 +4,7 @@ Panda.prototype.constructor = Panda;
 
 function Panda () {
 	Agent.call(this); // Call parent constructor.
-	this.name = GLOBAL.TEXT.pandaName;
+	this.name = LANG.TEXT.pandaName;
 	this.coords.arm = {
 		left: { x: -150, y: -20 },
 		right: { x: 150, y: -20 }
