@@ -11,24 +11,24 @@ function BirdheroGame () {
 
 /* Phaser state function */
 BirdheroGame.prototype.preload = function () {
-	this.load.audio('birdheroInstruction1a',  ['assets/audio/subgames/birdhero/instruction_1a.mp3', 'assets/audio/subgames/birdhero/instruction_1a.ogg']);
-	this.load.audio('birdheroInstruction1b',  ['assets/audio/subgames/birdhero/instruction_1b.mp3', 'assets/audio/subgames/birdhero/instruction_1b.ogg']);
-	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
-	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
+	this.load.audio('birdheroInstruction1a',  LANG.SPEECH.birdhero.instruction1a);
+	this.load.audio('birdheroInstruction1b',  LANG.SPEECH.birdhero.instruction1b);
+	this.load.audio('birdheroAgentShow',      LANG.SPEECH.AGENT.birdheroShow);
+	this.load.audio('birdheroAgentTry',       LANG.SPEECH.AGENT.birdheroTry);
 	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.mp3', 'assets/audio/subgames/birdhero/intro.ogg']);
 	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.mp3', 'assets/audio/subgames/birdhero/scream.ogg']);
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
 	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.mp3', 'assets/audio/subgames/birdhero/elevator_arrive.ogg']);
 	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
-	this.load.audio('birdheroThisFloor',      ['assets/audio/subgames/birdhero/this_floor.mp3', 'assets/audio/subgames/birdhero/this_floor.ogg']);
+	this.load.audio('birdheroThisFloor',      LANG.SPEECH.birdhero.thisFloor);
 	this.load.audio('birdheroCorrect',        ['assets/audio/subgames/birdhero/correct.mp3', 'assets/audio/subgames/birdhero/correct.ogg']);
-	this.load.audio('birdheroWrongHigher',    ['assets/audio/subgames/birdhero/wrong_higher.mp3', 'assets/audio/subgames/birdhero/wrong_higher.ogg']);
-	this.load.audio('birdheroWrongLower',     ['assets/audio/subgames/birdhero/wrong_lower.mp3', 'assets/audio/subgames/birdhero/wrong_lower.ogg']);
-	this.load.audio('birdheroInstruction2',   ['assets/audio/subgames/birdhero/instruction_2.mp3', 'assets/audio/subgames/birdhero/instruction_2.ogg']);
-	this.load.audio('birdheroAgentHmm',       ['assets/audio/agent/panda/hmm.mp3', 'assets/audio/agent/panda/hmm.ogg']);
-	this.load.audio('birdheroAgentOops',      ['assets/audio/agent/panda/oops.mp3', 'assets/audio/agent/panda/oops.ogg']);
-	this.load.audio('birdheroAgentCorrected', ['assets/audio/agent/panda/incorrect.mp3', 'assets/audio/agent/panda/incorrect.ogg']);
+	this.load.audio('birdheroWrongHigher',    LANG.SPEECH.birdhero.wrongHigher);
+	this.load.audio('birdheroWrongLower',     LANG.SPEECH.birdhero.wrongLower);
+	this.load.audio('birdheroInstruction2',   LANG.SPEECH.birdhero.instruction2);
+	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
+	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
+	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroEnding',         ['assets/audio/subgames/birdhero/ending.mp3', 'assets/audio/subgames/birdhero/ending.ogg']);
 
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
