@@ -9,7 +9,7 @@ function Menu () {
 
 	game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
 	game.add.text(125, 15, '=', { // These position values were set by trial and error
-		font: '70pt The Girl Next Door',
+		font: '70pt ' +  GLOBAL.FONT,
 		stroke: '#000000',
 		strokeThickness: 5
 	}, this).angle = 90;
@@ -27,7 +27,7 @@ function Menu () {
 	game.add.sprite(game.world.width/3, centerY - centerY/3, bmd, null, menuGroup).alpha = 0.7;
 
 	var title = game.add.text(game.world.centerX, game.world.centerY/2, GLOBAL.TEXT.title, {
-		font: '50pt The Girl Next Door',
+		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#ffff00',
 		stroke: '#000000',
 		strokeThickness: 5
@@ -35,7 +35,7 @@ function Menu () {
 	title.anchor.set(0.5);
 
 	var resume = game.add.text(centerX, centerY, GLOBAL.TEXT.resume, {
-		font: '50pt The Girl Next Door',
+		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#dd00dd'
 	}, menuGroup);
 	resume.anchor.set(0.5);
@@ -45,7 +45,7 @@ function Menu () {
 	}, this);
 
 	var quit = game.add.text(centerX, centerY/0.75, GLOBAL.TEXT.quit, {
-		font: '50pt The Girl Next Door',
+		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	}, menuGroup);
 	quit.anchor.set(0.5);

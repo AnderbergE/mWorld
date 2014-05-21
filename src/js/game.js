@@ -38,7 +38,7 @@ var WebFontConfig = {
 			game.state.start(GLOBAL.STATE.entry);
 		}, this);
 	},
-	google: { families: ['The Girl Next Door'] }
+	google: { families: [GLOBAL.FONT] }
 };
 void(WebFontConfig); // workaround for jshint unused warning.
 

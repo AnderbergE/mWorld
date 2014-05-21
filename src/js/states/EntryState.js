@@ -8,7 +8,7 @@ EntryState.prototype.create = function () {
 	this.add.image(0, 0, 'entryBg');
 
 	var title = this.add.text(this.world.centerX, this.world.centerY/2, GLOBAL.TEXT.title, {
-		font: '50pt The Girl Next Door',
+		font: '50pt' +  GLOBAL.FONT,
 		fill: '#ffff00',
 		stroke: '#000000',
 		strokeThickness: 5
@@ -16,7 +16,7 @@ EntryState.prototype.create = function () {
 	title.anchor.set(0.5);
 
 	var text = this.add.text(this.world.centerX, this.world.centerY, GLOBAL.TEXT.start, {
-		font: '50pt The Girl Next Door',
+		font: '50pt' +  GLOBAL.FONT,
 		fill: '#dd00dd'
 	});
 	text.anchor.set(0.5);
@@ -28,7 +28,7 @@ EntryState.prototype.create = function () {
 	}, this);
 
 	var credits = this.add.text(this.world.centerX, this.world.centerY/0.75, GLOBAL.TEXT.credits, {
-		font: '50pt The Girl Next Door',
+		font: '50pt' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
 	credits.anchor.set(0.5);
@@ -45,7 +45,7 @@ EntryState.prototype.create = function () {
 		'Programming:\nErik Anderberg, Marcus Malmberg\n' +
 		'Graphics:\n Sebastian Gulz Haake\n' +
 		'Special Thanks:\nAnton Axelsson, Sanne Bengtsson, Maja Håkansson, Lisa Lindberg, Björn Norrliden', {
-		font: '15pt The Girl Next Door',
+		font: '15pt' +  GLOBAL.FONT,
 		fill: '#000000',
 		align: 'center'
 	});

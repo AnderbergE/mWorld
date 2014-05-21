@@ -117,7 +117,7 @@ BirdheroGame.prototype.create = function () {
 	elevator.add(bird);
 	elevator.bucket = this.add.sprite(0, -5, 'birdheroBucket', null, elevator);
 	elevator.text = this.add.text(0 + elevator.bucket.width/2, elevator.bucket.y + elevator.bucket.height/2, '0', {
-		font: '30pt The Girl Next Door',
+		font: '30pt' +  GLOBAL.FONT,
 		fill: '#ffff00'
 	}, elevator);
 	elevator.text.anchor.set(0.5);
@@ -597,7 +597,7 @@ BirdheroBranch.prototype.celebrate = function (duration) {
 BirdheroBranch.prototype.confused = function (duration) {
 	if (!this.confusing) {
 		this.confusing = game.add.text(this.mother.x+10, this.mother.y-40, '?!?', {
-			font: '20pt The Girl Next Door',
+			font: '20pt' +  GLOBAL.FONT,
 			fill: '#000',
 			stroke: '#000',
 			strokeThickness: 3

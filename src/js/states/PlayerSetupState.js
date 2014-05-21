@@ -10,7 +10,7 @@ PlayerSetupState.prototype.create = function () {
 	var scaleActive = { x: 0.5, y: 0.5 };
 	var slideTime = 1;
 	var fontStyle = {
-		font: '50pt The Girl Next Door',
+		font: '50pt' +  GLOBAL.FONT,
 		fill: '#ffff00',
 		stroke: '#000000',
 		strokeThickness: 5
