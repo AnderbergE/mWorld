@@ -10,14 +10,14 @@ PlayerSetupState.prototype.create = function () {
 	var scaleActive = { x: 0.5, y: 0.5 };
 	var slideTime = 1;
 	var fontStyle = {
-		font: '50pt' +  GLOBAL.FONT,
+		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#ffff00',
 		stroke: '#000000',
 		strokeThickness: 5
 	};
 
 	this.add.image(0, 0, 'entryBg');
-	this.add.text(this.world.centerX, 75, GLOBAL.TEXT.pickFriend, fontStyle).anchor.set(0.5);
+	this.add.text(this.world.centerX, 75, LANG.TEXT.pickFriend, fontStyle).anchor.set(0.5);
 
 	var agents = this.add.group();
 	var i = 0;

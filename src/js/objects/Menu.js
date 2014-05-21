@@ -26,7 +26,7 @@ function Menu () {
 	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
 	game.add.sprite(game.world.width/3, centerY - centerY/3, bmd, null, menuGroup).alpha = 0.7;
 
-	var title = game.add.text(game.world.centerX, game.world.centerY/2, GLOBAL.TEXT.title, {
+	var title = game.add.text(game.world.centerX, game.world.centerY/2, LANG.TEXT.title, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#ffff00',
 		stroke: '#000000',
@@ -34,7 +34,7 @@ function Menu () {
 	}, menuGroup);
 	title.anchor.set(0.5);
 
-	var resume = game.add.text(centerX, centerY, GLOBAL.TEXT.resume, {
+	var resume = game.add.text(centerX, centerY, LANG.TEXT.resume, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#dd00dd'
 	}, menuGroup);
@@ -44,7 +44,7 @@ function Menu () {
 		showMenu(false);
 	}, this);
 
-	var quit = game.add.text(centerX, centerY/0.75, GLOBAL.TEXT.quit, {
+	var quit = game.add.text(centerX, centerY/0.75, LANG.TEXT.quit, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	}, menuGroup);

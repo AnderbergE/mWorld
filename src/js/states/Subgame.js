@@ -109,7 +109,7 @@ Subgame.prototype.init = function (options) {
 	this.skipGroup.visible = false;
 	game.add.button(0, 0, 'wood', this._skip, this, 0, 0, 1, 0, this.skipGroup);
 	game.add.text(10, -5, '>>', {
-		font: '30pt' +  GLOBAL.FONT,
+		font: '30pt ' +  GLOBAL.FONT,
 		stroke: '#000000',
 		strokeThickness: 3
 	}, this.skipGroup);
