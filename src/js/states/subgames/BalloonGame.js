@@ -217,7 +217,9 @@ BalloonGame.prototype.create = function () {
 			airBalloonStock += 1;
 			airballoons.add(balloon);
 			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
-			tl.eventCallback('onComplete', airBalloonStockUpdate);
+			tl.eventCallback('onComplete', function() {
+				airBalloonStockUpdate();
+			});
 			balloonStockUpdate();
 		}
 		else
@@ -264,16 +266,26 @@ BalloonGame.prototype.create = function () {
 				//TODO: Add victory animation. Next round.
 			} else if (result > 0)
 			{
-				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeIn});
 				console.log('Too many!');
+				tl.to(airballoons, 3, {x: -220, y: -cliffheight*amount - 150, ease:Power1.easeOut});
+				//Sound of wind blowing at the same time as line above.
+				tl.to(airballoons, amount/2, {x: -220, y: 0, ease:Bounce.easeOut});
+				tl.addCallback(function () {
+					returnBalloons();
+				});
+				//Balloons going back + fall down.
 				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 				//TODO: Add animation of balloon blowing down then balloons flowing back. Next round.
 			} else
 			{
 				
-				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
+				tl.to(airballoons, amount, {x: 0, y: -cliffheight*amount/2, ease:Power1.easeOut});
 				console.log('Too few!');
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
+				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
+				tl.addCallback(function () {
+					returnBalloons();
+				});
 				//TODO: Add animation of balloon falling down with a bounce after balloons float back. Next round.
 			}
 
@@ -285,6 +297,38 @@ BalloonGame.prototype.create = function () {
 				_this.nextRound();
 			});
 		}
+	}
+
+	//TODO: Destroy does not work and the balloons remain.
+	function returnBalloons() {
+		var tl = new TimelineMax();
+		var amount = airBalloonStock;
+		for (var i = 2; i < amount+2; i++){
+			tl.to(airballoons.getAt(i), 1, {x: balloonStack1.x, y: balloonStack1.y,
+				onStart:returnStart,
+				onComplete:deleteExcessSprite,
+				onCompleteParams:[airballoons.getAt(i)],
+				ease:Power1.easeOut});
+			/* For some reason these happen before the above animation.
+			These are different things I have tried but they all happen before the above animation which I though 'onComplete' was suppose to prevent.
+			What we want to do is delete the sprite once it finishes moving. Alternatively hide it or move it to the balloons group. Neither of which I'm capable of doing AFTER the animation ends.
+			tl.eventCallback('onComplete', airballoons.getAt(i).x = -1000);
+			tl.eventCallback('onComplete', airballoons.getAt(i).y = -1000);
+			tl.eventCallback('onComplete', airballoons.getAt(i).kill);
+			tl.eventCallback('onComplete', airballoons.remove(airballoons.getAt(i)));
+			tl.eventCallback('onComplete', balloons.add(airballoons.getAt(i)));*/
+		}
+	}
+
+	function returnStart() {
+		airBalloonStock -= 1;
+		airBalloonStockUpdate();
+	}
+
+	function deleteExcessSprite(sprite) {
+		sprite.destroy();
+		balloonStock += 1;
+		balloonStockUpdate();
 	}
 
 	//Add more for Agent to move elsewhere.
@@ -322,11 +366,11 @@ BalloonGame.prototype.create = function () {
 
 	this.modeIntro = function () {
 		console.log('ModeIntro');
+		bgMusic.play();
 		_this.nextRound();
 	};
 
 	this.modePlayerDo = function (intro, tries) {
-		bgMusic.play();
 		if (tries > 0) {
 			liftoffButton.visible = true;
 		} else { // if intro or first try	
