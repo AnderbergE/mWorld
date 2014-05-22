@@ -390,10 +390,6 @@ BalloonGame.prototype.create = function () {
 
 
 	function renderGlass (correctAnswer) {
-		//var t = new TimelineMax();
-		//t.addLabel('test');
-		console.log('test');
-
 		if(correctAnswer % 2 === 0)
 			{
 				glass.x = 1070-_this.cache.getImage('cliffside').width*2.5;
@@ -456,35 +452,41 @@ BalloonGame.prototype.create = function () {
 		if (tries > 0) {
 			showLiftoff();
 		} else { // if intro or first try
-			var t = new TimelineMax();
+			var tl = new TimelineMax();
 			if (intro) {
+				_this.disable(true);
 				renderGlass(_this.currentNumber);
-				t.add(_this.agent.moveTo.start());
-				t.addSound('birdheroAgentShow', _this.agent);
-				t.add(_this.agent.wave(3, 1), 'agentIntro');
-				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
+				tl.add(_this.agent.moveTo.start());
+				tl.addSound('birdheroAgentShow', _this.agent);
+				tl.add(_this.agent.wave(3, 1), 'agentIntro');
+				tl.eventCallback('onComplete', function () {
+					_this.sound.removeByKey('birdheroAgentShow');
+					_this.disable(false);
+				});
 				console.log('modeplayerShow Intro');
 				console.log('correct answer= ' + _this.currentNumber);
 			}
-		showLiftoff();
+		tl.addCallback(showLiftoff);
 		}
 	};
 
 	this.modeAgentTry = function (intro, tries) {
 		var tl = new TimelineMax();
 		if (tries > 0) {
-			liftoffButton.visible = true;
 			tl.addSound('birdheroAgentOops', _this.agent);
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
-				liftoffButton.visible = false;
+				_this.disable(true);
 				renderGlass(_this.currentNumber);
 				console.log('modeAgentTry Intro');
 				console.log('correct answer= ' + _this.currentNumber);
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
 				tl.addSound('birdheroAgentTry', _this.agent);
-				tl.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
+				tl.eventCallback('onComplete', function () {
+					_this.sound.removeByKey('birdheroAgentTry');
+					_this.disable(false);
+				});
 			}
 		tl.add(agentGuess());
 		}
