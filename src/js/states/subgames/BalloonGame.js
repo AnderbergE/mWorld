@@ -15,6 +15,11 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('fullglass',      'assets/img/subgames/balloon/fullglass.png');
 	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
+	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
+
+	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
+	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
+	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
 
 	this.load.image('balloonBg',      'assets/img/subgames/balloon/bg.png');
 	this.load.image('balloon2',      'assets/img/subgames/balloon/balloon2.png');
@@ -162,8 +167,48 @@ BalloonGame.prototype.create = function () {
 	//Creates one draggable balloon at the stack.
 	//createBalloon();
 
-	liftoffButton = game.add.button(game.world.centerX, 660, 'wood', takeOff, this);
+	// x = game.world.centerX
+	liftoffButton = game.add.button(100, 660, 'wood', takeOff, this);
 	liftoffButton.visible = false;
+	this.hudGroup.add(liftoffButton);
+
+	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
+		y: this.world.height-100, background: 'wood', onClick: pushYesno
+	});
+	yesnos.visible = false;
+	this.hudGroup.add(yesnos);
+
+	function showYesnos () {
+		yesnos.reset();
+		fade(liftoffButton, false);
+		fade(yesnos, true);
+
+		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
+	}
+
+	function showLiftoff () {
+		fade(liftoffButton, true);
+		fade(yesnos, false);
+
+		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
+	}
+
+	function pushYesno (value) {
+		if (!value) {
+			say('birdheroAgentCorrected', _this.agent).play();
+			showLiftoff();
+		}
+		else { agentFloatBalloons(_this.agent.lastGuess); }
+	}
+
+	function agentFloatBalloons(guess)
+	{
+		airBalloonStock = guess;
+		balloonStock = 6-guess;
+		balloonStockUpdate();
+		airBalloonStockUpdate();
+		takeOff();
+	}
 
 	//Creates one draggable balloon at the stack.
 	function createBalloon()
@@ -262,6 +307,7 @@ BalloonGame.prototype.create = function () {
 			{
 				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
 				console.log('Correct!');
+				tl.add(_this.addWater(glass.x, glass.y), '-=3');
 				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 				//TODO: Add victory animation. Next round.
 			} else if (result > 0)
@@ -270,21 +316,21 @@ BalloonGame.prototype.create = function () {
 				console.log('Too many!');
 				tl.to(airballoons, 3, {x: -220, y: -cliffheight*amount - 150, ease:Power1.easeOut});
 				//Sound of wind blowing at the same time as line above.
+				//TODO: Amount could be changed to be equal tot he time it takes for the balloons to return and then take away the bounce to make it slowly descend.
 				tl.to(airballoons, amount/2, {x: -220, y: 0, ease:Bounce.easeOut});
 				tl.addCallback(function () {
-					returnBalloons();
+					returnBalloonsFrom(-220, 0);
 				});
-				//Balloons going back + fall down.
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
+				//Balloons going back + fall down.			
 				//TODO: Add animation of balloon blowing down then balloons flowing back. Next round.
 			} else
 			{
 				
 				tl.to(airballoons, amount, {x: 0, y: -cliffheight*amount/2, ease:Power1.easeOut});
-				console.log('Too few!');
+				console.log('Too few!'); //TODO: Add sound as well.
 				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
 				tl.addCallback(function () {
-					returnBalloons();
+					returnBalloonsFrom(0, 0);
 				});
 				//TODO: Add animation of balloon falling down with a bounce after balloons float back. Next round.
 			}
@@ -292,7 +338,6 @@ BalloonGame.prototype.create = function () {
 			//Possible that you could add next round in here as it might not do anything for balloongame unless you actually guess correct.
 			tl.eventCallback('onComplete', function(){
 				_this.disable(false);
-				liftoffButton.visible = true;
 				_this.agent.eyesFollowPointer();
 				_this.nextRound();
 			});
@@ -300,11 +345,11 @@ BalloonGame.prototype.create = function () {
 	}
 
 	//TODO: Destroy does not work and the balloons remain.
-	function returnBalloons() {
+	function returnBalloonsFrom(fromX, fromY) {
 		var tl = new TimelineMax();
 		var amount = airBalloonStock;
 		for (var i = 2; i < amount+2; i++){
-			tl.to(airballoons.getAt(i), 1, {x: balloonStack1.x, y: balloonStack1.y,
+			tl.to(airballoons.getAt(i), 1, {x: balloonStack1.x-fromX, y: balloonStack1.y-fromY,
 				onStart:returnStart,
 				onComplete:deleteExcessSprite,
 				onCompleteParams:[airballoons.getAt(i)],
@@ -318,6 +363,7 @@ BalloonGame.prototype.create = function () {
 			tl.eventCallback('onComplete', airballoons.remove(airballoons.getAt(i)));
 			tl.eventCallback('onComplete', balloons.add(airballoons.getAt(i)));*/
 		}
+		tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 	}
 
 	function returnStart() {
@@ -343,7 +389,7 @@ BalloonGame.prototype.create = function () {
 	};
 
 
-	function instructionIntro (correctAnswer) {
+	function renderGlass (correctAnswer) {
 		//var t = new TimelineMax();
 		//t.addLabel('test');
 		console.log('test');
@@ -363,6 +409,28 @@ BalloonGame.prototype.create = function () {
 			glass.scale.y = 0.4;
 	}
 
+	function agentGuess () {
+		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
+
+		return TweenMax.fromTo(_this.agent.thought.scale, 1.5,
+			{ x: 0, y: 0 },
+			{ x: 1, y: 1,
+				ease: Elastic.easeOut,
+				onStart: function () {
+					_this.agent.thought.visible = true;
+					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
+					say('birdheroAgentHmm', _this.agent).play();
+				},
+				onComplete: function () {
+					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
+						x: -50, y: -50, size: 100
+					});
+					_this.agent.thought.add(_this.agent.thought.guess);
+					// TODO: Agent should say something here based on how sure it is.
+					showYesnos();
+				}
+			});
+	}
 
 	this.modeIntro = function () {
 		console.log('ModeIntro');
@@ -372,46 +440,53 @@ BalloonGame.prototype.create = function () {
 
 	this.modePlayerDo = function (intro, tries) {
 		if (tries > 0) {
-			liftoffButton.visible = true;
+			showLiftoff();
 		} else { // if intro or first try	
 			//var t = new TimelineMax();
 			if (intro) {
 				console.log('modeplayerDoIntro');
 				console.log('correct answer= ' + _this.currentNumber);
-				instructionIntro(_this.currentNumber);
+				renderGlass(_this.currentNumber);
 			}
-		liftoffButton.visible = true;
+		showLiftoff();
 		}
 	};
 
 	this.modePlayerShow = function (intro, tries) {
 		if (tries > 0) {
-			liftoffButton.visible = true;
+			showLiftoff();
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
-
-				instructionIntro(_this.currentNumber);
+				renderGlass(_this.currentNumber);
 				t.add(_this.agent.moveTo.start());
-				t.addLabel('agentIntro');
 				t.addSound('birdheroAgentShow', _this.agent);
 				t.add(_this.agent.wave(3, 1), 'agentIntro');
 				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
 				console.log('modeplayerShow Intro');
+				console.log('correct answer= ' + _this.currentNumber);
 			}
-		liftoffButton.visible = true;
+		showLiftoff();
 		}
 	};
 
 	this.modeAgentTry = function (intro, tries) {
-		//var t = new TimelineMax();
+		var tl = new TimelineMax();
 		if (tries > 0) {
 			liftoffButton.visible = true;
+			tl.addSound('birdheroAgentOops', _this.agent);
+			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
+				liftoffButton.visible = false;
+				renderGlass(_this.currentNumber);
 				console.log('modeAgentTry Intro');
+				console.log('correct answer= ' + _this.currentNumber);
+				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
+				tl.addSound('birdheroAgentTry', _this.agent);
+				tl.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
 			}
-		liftoffButton.visible = true;
+		tl.add(agentGuess());
 		}
 	};
 
@@ -425,7 +500,12 @@ BalloonGame.prototype.create = function () {
 	};
 
 	this.modeOutro = function () {
-		this.nextRound();
+		balloonStock = 6;
+		airBalloonStock = 0;
+		balloonStockUpdate();
+		airBalloonStockUpdate();
+		_this.agent.fistPump()
+			.addCallback(function () { _this.nextRound(); });
 	};
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
