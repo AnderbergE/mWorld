@@ -1,5 +1,6 @@
 /*
- * The super class for agent objects, see Panda for sub classing reference
+ * The super class for agent objects.
+ * Set up: .prototype.id = string, for reference in LANG files.
  * 
  * Set up the following in the sub class:
  * this.name
@@ -13,7 +14,10 @@
  * this.rightArm
  * this.leftLeg
  * this.rightLeg
-*/
+ *
+ *
+ * See Panda for sub classing inspiration.
+ */
 Agent.prototype = Object.create(Phaser.Group.prototype);
 Agent.prototype.constructor = Agent;
 function Agent () {

@@ -1,6 +1,7 @@
 /* The panda agent */
 Panda.prototype = Object.create(Agent.prototype);
 Panda.prototype.constructor = Panda;
+Panda.prototype.id = 'panda'; // Reference for LANG files
 
 function Panda () {
 	Agent.call(this); // Call parent constructor.
