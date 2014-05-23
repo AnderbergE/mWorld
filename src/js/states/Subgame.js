@@ -53,7 +53,7 @@ Object.defineProperty(Subgame.prototype, 'skipper', {
 	}
 });
 
-/* Phaser state function */
+/* Phaser state function. (publishes subgameStarted event) */
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
 	var _this = this; // Event subscriptions does not have access to this
@@ -117,6 +117,8 @@ Subgame.prototype.init = function (options) {
 	this.menuGroup.add(this.waterCan);
 	this.menuGroup.add(new Menu());
 	this.menuGroup.visible = false;
+
+	Event.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0]);
 };
 
 /* Phaser state function */

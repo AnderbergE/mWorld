@@ -10,6 +10,10 @@
 		result = { modes: [] };
 	};
 
+	this.subgame = function (type) {
+		result.type = type;
+	};
+
 	this.mode = function (mode) {
 		if (mode === GLOBAL.MODE.outro) {
 			Backend.put(result);
@@ -54,10 +58,11 @@
 
 	this.reset();
 	var _this = this;
-	Event.subscribe(GLOBAL.EVENT.modeChange,  function (mode) { _this.mode(mode); });
-	Event.subscribe(GLOBAL.EVENT.tryNumber,   function (guess, correct) { _this.trial(guess, correct); });
-	Event.subscribe(GLOBAL.EVENT.agentGuess,  function (guess/*, correct*/) { _this.agentGuess(guess); });
-	Event.subscribe(GLOBAL.EVENT.waterAdded,  function (current, diff) { _this.water(current, diff); });
-	Event.subscribe(GLOBAL.EVENT.numberPress, function (value, representations) { _this.numberPress(value, representations); });
+	Event.subscribe(GLOBAL.EVENT.subgameStarted, function (type) { _this.subgame(type); });
+	Event.subscribe(GLOBAL.EVENT.modeChange,     function (mode) { _this.mode(mode); });
+	Event.subscribe(GLOBAL.EVENT.tryNumber,      function (guess, correct) { _this.trial(guess, correct); });
+	Event.subscribe(GLOBAL.EVENT.agentGuess,     function (guess/*, correct*/) { _this.agentGuess(guess); });
+	Event.subscribe(GLOBAL.EVENT.waterAdded,     function (current, diff) { _this.water(current, diff); });
+	Event.subscribe(GLOBAL.EVENT.numberPress,    function (value, representations) { _this.numberPress(value, representations); });
 	/* Garden */
 })();

@@ -2,14 +2,15 @@
 var GLOBAL = {
 
 	EVENT: {
-		menuShow:    'menuShow',
-		menuHide:    'menuHide',
-		numberPress: 'numberPress', // [number, representations]
-		modeChange:  'modeChange',  // [newMode]
-		tryNumber:   'tryNumber',   // [guess, correct number]
-		agentGuess:  'agentGuess',  // [guess, correct number]
-		waterAdded:  'waterAdded',  // [total amount, added amount]
-		plantPress:  'plantPress'   // [number]
+		menuShow:       'menuShow',
+		menuHide:       'menuHide',
+		numberPress:    'numberPress',    // [number, representations]
+		subgameStarted: 'subgameStarted', // [game type]
+		modeChange:     'modeChange',     // [newMode]
+		tryNumber:      'tryNumber',      // [guess, correct number]
+		agentGuess:     'agentGuess',     // [guess, correct number]
+		waterAdded:     'waterAdded',     // [total amount, added amount]
+		plantPress:     'plantPress'      // [number]
 	},
 
 	AGENT: {
