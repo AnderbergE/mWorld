@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.0.5 "Tanchico" - Built: Mon May 19 2014 10:41:33
+* v2.0.6 "Jornhill" - Built: Fri May 23 2014 13:17:01
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -9790,7 +9790,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 *
 * Phaser - http://phaser.io
 *
-* v2.0.5 "Tanchico" - Built: Mon May 19 2014 10:41:33
+* v2.0.6 "Jornhill" - Built: Fri May 23 2014 13:17:01
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -9833,7 +9833,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 */
 var Phaser = Phaser || {
 
-	VERSION: '2.0.5',
+	VERSION: '2.0.6',
 	GAMES: [],
 
     AUTO: 0,
@@ -9920,7 +9920,7 @@ Phaser.Utils = {
     /**
      * Transposes the elements of the given Array.
      *
-     * @method transposeArray
+     * @method Phaser.Utils.transposeArray
      * @param {array} array - The array to transpose.
      * @return {array} The transposed array.
      */
@@ -16158,6 +16158,11 @@ Phaser.Stage = function (game, width, height) {
     */
     this.offset = new Phaser.Point();
 
+    /**
+    * @property {Phaser.Rectangle} bounds - The bounds of the Stage. Typically x/y = Stage.offset.x/y and the width/height match the game width and height.
+    */
+    this.bounds = new Phaser.Rectangle(0, 0, width, height);
+
     PIXI.Stage.call(this, 0x000000, false);
 
     /**
@@ -16308,6 +16313,8 @@ Phaser.Stage.prototype.postUpdate = function () {
         if (this.game.time.now > this._nextOffsetCheck)
         {
             Phaser.Canvas.getOffset(this.game.canvas, this.offset);
+            this.bounds.x = this.offset.x;
+            this.bounds.y = this.offset.y;
             this._nextOffsetCheck = this.game.time.now + this.checkOffsetInterval;
         }
     }
@@ -16376,7 +16383,7 @@ Phaser.Stage.prototype.boot = function () {
 
     Phaser.Canvas.getOffset(this.game.canvas, this.offset);
 
-    this.bounds = new Phaser.Rectangle(this.offset.x, this.offset.y, this.game.width, this.game.height);
+    this.bounds.setTo(this.offset.x, this.offset.y, this.game.width, this.game.height);
 
     var _this = this;
 
@@ -17189,19 +17196,19 @@ Phaser.Group.prototype.hasProperty = function (child, key) {
 
     var len = key.length;
 
-    if (len === 1 && child.hasOwnProperty(key[0]))
+    if (len === 1 && key[0] in child)
     {
         return true;
     }
-    else if (len === 2 && child.hasOwnProperty(key[0]) && child[key[0]].hasOwnProperty(key[1]))
+    else if (len === 2 && key[0] in child && key[1] in child[key[0]])
     {
         return true;
     }
-    else if (len === 3 && child.hasOwnProperty(key[0]) && child[key[0]].hasOwnProperty(key[1]) && child[key[0]][key[1]].hasOwnProperty(key[2]))
+    else if (len === 3 && key[0] in child && key[1] in child[key[0]] && key[2] in child[key[0]][key[1]])
     {
         return true;
     }
-    else if (len === 4 && child.hasOwnProperty(key[0]) && child[key[0]].hasOwnProperty(key[1]) && child[key[0]][key[1]].hasOwnProperty(key[2]) && child[key[0]][key[1]][key[2]].hasOwnProperty(key[3]))
+    else if (len === 4 && key[0] in child && key[1] in child[key[0]] && key[2] in child[key[0]][key[1]] && key[3] in child[key[0]][key[1]][key[2]])
     {
         return true;
     }
@@ -17242,7 +17249,7 @@ Phaser.Group.prototype.setProperty = function (child, key, value, operation, for
 
     //  We can't force a property in and the child doesn't have it, so abort.
     //  Equally we can't add, subtract, multiply or divide a property value if it doesn't exist, so abort in those cases too.
-    if (!this.hasProperty(child, key, value) && (!force || operation > 0))
+    if (!this.hasProperty(child, key) && (!force || operation > 0))
     {
         return false;
     }
@@ -18739,6 +18746,12 @@ Phaser.ScaleManager = function (game, width, height) {
     this.margin = new Phaser.Point(0, 0);
 
     /**
+    * @property {Phaser.Rectangle} bounds - The bounds of the scaled game. The x/y will match the offset of the canvas element and the width/height the scaled width and height.
+    * @readonly
+    */
+    this.bounds = new Phaser.Rectangle(0, 0, width, height);
+
+    /**
     * @property {number} aspectRatio - The aspect ratio of the scaled game.
     * @readonly
     */
@@ -19249,6 +19262,8 @@ Phaser.ScaleManager.prototype = {
         }
 
         Phaser.Canvas.getOffset(this.game.canvas, this.game.stage.offset);
+
+        this.bounds.setTo(this.game.stage.offset.x, this.game.stage.offset.y, this.width, this.height);
 
         this.aspectRatio = this.width / this.height;
 
@@ -22036,6 +22051,11 @@ Phaser.Mouse = function (game) {
     this.mouseOutCallback = null;
 
     /**
+    * @property {function} mouseOverCallback - A callback that can be fired when the mouse enters the game canvas (usually after a mouseout).
+    */
+    this.mouseOverCallback = null;
+
+    /**
     * @property {boolean} capture - If true the DOM mouse events will have event.preventDefault applied to them, if false they will propogate fully.
     */
     this.capture = false;
@@ -22099,6 +22119,12 @@ Phaser.Mouse = function (game) {
     * @private
     */
     this._onMouseOut = null;
+
+    /**
+    * @property {function} _onMouseOver - Internal event handler reference.
+    * @private
+    */
+    this._onMouseOver = null;
 
 };
 
@@ -22164,9 +22190,14 @@ Phaser.Mouse.prototype = {
             return _this.onMouseOut(event);
         };
 
+        this._onMouseOver = function (event) {
+            return _this.onMouseOver(event);
+        };
+
         this.game.canvas.addEventListener('mousedown', this._onMouseDown, true);
         this.game.canvas.addEventListener('mousemove', this._onMouseMove, true);
         this.game.canvas.addEventListener('mouseup', this._onMouseUp, true);
+        this.game.canvas.addEventListener('mouseover', this._onMouseOver, true);
         this.game.canvas.addEventListener('mouseout', this._onMouseOut, true);
 
     },
@@ -22302,6 +22333,35 @@ Phaser.Mouse.prototype = {
     },
 
     /**
+    * The internal method that handles the mouse over event from the browser.
+    *
+    * @method Phaser.Mouse#onMouseOver
+    * @param {MouseEvent} event - The native event from the browser. This gets stored in Mouse.event.
+    */
+    onMouseOver: function (event) {
+
+        this.event = event;
+
+        if (this.capture)
+        {
+            event.preventDefault();
+        }
+
+        if (this.mouseOverCallback)
+        {
+            this.mouseOverCallback.call(this.callbackContext, event);
+        }
+
+        if (this.game.input.disabled || this.disabled)
+        {
+            return;
+        }
+
+        this.game.input.mousePointer.withinGame = true;
+
+    },
+
+    /**
     * If the browser supports it you can request that the pointer be locked to the browser window.
     * This is classically known as 'FPS controls', where the pointer can't leave the browser until the user presses an exit key.
     * If the browser successfully enters a locked state the event Phaser.Mouse.pointerLock will be dispatched and the first parameter will be 'true'.
@@ -22379,6 +22439,7 @@ Phaser.Mouse.prototype = {
         this.game.canvas.removeEventListener('mousedown', this._onMouseDown, true);
         this.game.canvas.removeEventListener('mousemove', this._onMouseMove, true);
         this.game.canvas.removeEventListener('mouseup', this._onMouseUp, true);
+        this.game.canvas.removeEventListener('mouseover', this._onMouseOver, true);
         this.game.canvas.removeEventListener('mouseout', this._onMouseOut, true);
 
     }
@@ -22643,66 +22704,82 @@ Phaser.Pointer = function (game, id) {
     /**
     * @property {number} _nextDrop - Local private variable storing the time at which the next history drop should occur.
     * @private
-    * @default
     */
     this._nextDrop = 0;
 
     /**
     * @property {boolean} _stateReset - Monitor events outside of a state reset loop.
     * @private
-    * @default
     */
     this._stateReset = false;
 
     /**
-    * @property {boolean} withinGame - true if the Pointer is within the game area, otherwise false.
+    * @property {boolean} withinGame - true if the Pointer is over the game canvas, otherwise false.
     */
     this.withinGame = false;
 
     /**
-    * @property {number} clientX - The horizontal coordinate of point relative to the viewport in pixels, excluding any scroll offset.
-    * @default
+    * @property {number} clientX - The horizontal coordinate of the Pointer within the application's client area at which the event occurred (as opposed to the coordinates within the page).
     */
     this.clientX = -1;
 
     /**
-    * @property {number} clientY - The vertical coordinate of point relative to the viewport in pixels, excluding any scroll offset.
-    * @default
+    * @property {number} clientY - The vertical coordinate of the Pointer within the application's client area at which the event occurred (as opposed to the coordinates within the page).
     */
     this.clientY = -1;
 
     /**
-    * @property {number} pageX - The horizontal coordinate of point relative to the viewport in pixels, including any scroll offset.
-    * @default
+    * @property {number} pageX - The horizontal coordinate of the Pointer relative to whole document.
     */
     this.pageX = -1;
 
     /**
-    * @property {number} pageY - The vertical coordinate of point relative to the viewport in pixels, including any scroll offset.
-    * @default
+    * @property {number} pageY - The vertical coordinate of the Pointer relative to whole document.
     */
     this.pageY = -1;
 
     /**
-    * @property {number} screenX - The horizontal coordinate of point relative to the screen in pixels.
-    * @default
+    * @property {number} screenX - The horizontal coordinate of the Pointer relative to the screen.
     */
     this.screenX = -1;
 
     /**
-    * @property {number} screenY - The vertical coordinate of point relative to the screen in pixels.
-    * @default
+    * @property {number} screenY - The vertical coordinate of the Pointer relative to the screen.
     */
     this.screenY = -1;
 
     /**
-    * @property {number} x - The horizontal coordinate of point relative to the game element. This value is automatically scaled based on game size.
+    * @property {number} rawMovementX - The horizontal raw relative movement of the Pointer in pixels since last event.
+    * @default
+    */
+    this.rawMovementX = 0;
+
+    /**
+    * @property {number} rawMovementY - The vertical raw relative movement of the Pointer in pixels since last event.
+    * @default
+    */
+    this.rawMovementY = 0;
+
+    /**
+    * @property {number} movementX - The horizontal processed relative movement of the Pointer in pixels since last event.
+    * @default
+    */
+    this.movementX = 0;
+
+    /**
+    * @property {number} movementY - The vertical processed relative movement of the Pointer in pixels since last event.
+    * @default
+    */
+    this.movementY = 0;
+
+    /**
+    * @property {number} x - The horizontal coordinate of the Pointer. This value is automatically scaled based on the game scale.
     * @default
     */
     this.x = -1;
 
     /**
-    * @property {number} y - The vertical coordinate of point relative to the game element. This value is automatically scaled based on game size.
+    * @property {number} y - The vertical coordinate of the Pointer. This value is automatically scaled based on the game scale.
     * @default
     */
     this.y = -1;
@@ -22750,7 +22827,7 @@ Phaser.Pointer = function (game, id) {
     this.totalTouches = 0;
 
     /**
-    * @property {number} msSinceLastClick - The number of miliseconds since the last click.
+    * @property {number} msSinceLastClick - The number of milliseconds since the last click or touch event.
     * @default
     */
     this.msSinceLastClick = Number.MAX_VALUE;
@@ -22927,6 +23004,15 @@ Phaser.Pointer.prototype = {
         this.screenX = event.screenX;
         this.screenY = event.screenY;
 
+        if (this.isMouse && this.game.input.mouse.locked && !fromClick)
+        {
+            this.rawMovementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+            this.rawMovementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+            this.movementX += this.rawMovementX;
+            this.movementY += this.rawMovementY;
+        }
+
         this.x = (this.pageX - this.game.stage.offset.x) * this.game.input.scale.x;
         this.y = (this.pageY - this.game.stage.offset.y) * this.game.input.scale.y;
 
@@ -22934,7 +23020,7 @@ Phaser.Pointer.prototype = {
         this.circle.x = this.x;
         this.circle.y = this.y;
 
-        if (this.game.input.multiInputOverride == Phaser.Input.MOUSE_OVERRIDES_TOUCH || this.game.input.multiInputOverride == Phaser.Input.MOUSE_TOUCH_COMBINE || (this.game.input.multiInputOverride == Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.currentPointers === 0))
+        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH || this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE || (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.currentPointers === 0))
         {
             this.game.input.activePointer = this;
             this.game.input.x = this.x;
@@ -22943,6 +23029,8 @@ Phaser.Pointer.prototype = {
             this.game.input.circle.x = this.game.input.x;
             this.game.input.circle.y = this.game.input.y;
         }
+
+        this.withinGame = this.game.scale.bounds.contains(this.pageX, this.pageY);
 
         //  If the game is paused we don't process any target objects or callbacks
         if (this.game.paused)
@@ -23187,6 +23275,17 @@ Phaser.Pointer.prototype = {
         }
 
         this.targetObject = null;
+
+    },
+
+    /**
+     * Resets the movementX and movementY properties. Use in your update handler after retrieving the values.
+     * @method Phaser.Pointer#resetMovement
+     */
+    resetMovement: function() {
+
+        this.movementX = 0;
+        this.movementY = 0;
 
     }
 
@@ -23507,6 +23606,8 @@ Phaser.Touch.prototype = {
     */
     onTouchEnter: function (event) {
 
+        console.log('touch enter', event);
+
         this.event = event;
 
         if (this.touchEnterCallback)
@@ -23545,11 +23646,6 @@ Phaser.Touch.prototype = {
         {
             event.preventDefault();
         }
-
-        // for (var i = 0; i < event.changedTouches.length; i++)
-        // {
-            //this.game.input.updatePointer(event.changedTouches[i]);
-        // }
 
     },
 
@@ -28282,6 +28378,12 @@ Phaser.Sprite = function (game, x, y, key, frame) {
     * @default
     */
     this.body = null;
+
+    /**
+    * @property {boolean} alive - A useful boolean to control if the Sprite is alive or dead (in terms of your gameplay, it doesn't effect rendering). Also linked to Sprite.health and Sprite.damage.
+    * @default
+    */
+    this.alive = true;
 
     /**
     * @property {number} health - Health value. Used in combination with damage() to allow for quick killing of Sprites.
@@ -40453,7 +40555,7 @@ Phaser.AnimationManager.prototype = {
     */
     add: function (name, frames, frameRate, loop, useNumericIndex) {
 
-        if (this._frameData == null)
+        if (this._frameData === null)
         {
             console.warn('No FrameData available for Phaser.Animation ' + name);
             return;
@@ -40478,7 +40580,7 @@ Phaser.AnimationManager.prototype = {
         }
 
         //  Create the signals the AnimationManager will emit
-        if (this.sprite.events.onAnimationStart == null)
+        if (this.sprite.events.onAnimationStart === null)
         {
             this.sprite.events.onAnimationStart = new Phaser.Signal();
             this.sprite.events.onAnimationComplete = new Phaser.Signal();
@@ -42307,6 +42409,23 @@ Phaser.Cache = function (game) {
     */
     this.onSoundUnlock = new Phaser.Signal();
 
+    /**
+    * @property {array} _cacheMap - Const to cache object look-up array.
+    */
+    this._cacheMap = [];
+
+    this._cacheMap[Phaser.Cache.CANVAS] = this._canvases;
+    this._cacheMap[Phaser.Cache.IMAGE] = this._images;
+    this._cacheMap[Phaser.Cache.TEXTURE] = this._textures;
+    this._cacheMap[Phaser.Cache.SOUND] = this._sounds;
+    this._cacheMap[Phaser.Cache.TEXT] = this._text;
+    this._cacheMap[Phaser.Cache.PHYSICS] = this._physics;
+    this._cacheMap[Phaser.Cache.TILEMAP] = this._tilemaps;
+    this._cacheMap[Phaser.Cache.BINARY] = this._binary;
+    this._cacheMap[Phaser.Cache.BITMAPDATA] = this._bitmapDatas;
+    this._cacheMap[Phaser.Cache.BITMAPFONT] = this._bitmapFont;
+    this._cacheMap[Phaser.Cache.JSON] = this._json;
+
 };
 
 /**
@@ -42846,7 +42965,39 @@ Phaser.Cache.prototype = {
     },
 
     /**
-    * Checks if an image key exists.
+    * Checks if a key for the given cache object type exists.
+    *
+    * @method Phaser.Cache#checkKey
+    * @param {number} type - The Cache type to check against. I.e. Phaser.Cache.CANVAS, Phaser.Cache.IMAGE, Phaser.Cache.JSON, etc.
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkKey: function (type, key) {
+
+        if (this._cacheMap[type][key])
+        {
+            return true;
+        }
+
+        return false;
+
+    },
+
+    /**
+    * Checks if the given key exists in the Canvas Cache.
+    *
+    * @method Phaser.Cache#checkCanvasKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkCanvasKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.CANVAS, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the Image Cache. Note that this also includes Texture Atlases, Sprite Sheets and Retro Fonts.
     *
     * @method Phaser.Cache#checkImageKey
     * @param {string} key - Asset key of the image to check is in the Cache.
@@ -42854,12 +43005,124 @@ Phaser.Cache.prototype = {
     */
     checkImageKey: function (key) {
 
-        if (this._images[key])
-        {
-            return true;
-        }
+        return this.checkKey(Phaser.Cache.IMAGE, key);
 
-        return false;
+    },
+
+    /**
+    * Checks if the given key exists in the Texture Cache.
+    *
+    * @method Phaser.Cache#checkTextureKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkTextureKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.TEXTURE, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the Sound Cache.
+    *
+    * @method Phaser.Cache#checkSoundKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkSoundKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.SOUND, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the Text Cache.
+    *
+    * @method Phaser.Cache#checkTextKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkTextKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.TEXT, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the Physics Cache.
+    *
+    * @method Phaser.Cache#checkPhysicsKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkPhysicsKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.PHYSICS, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the Tilemap Cache.
+    *
+    * @method Phaser.Cache#checkTilemapKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkTilemapKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.TILEMAP, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the Binary Cache.
+    *
+    * @method Phaser.Cache#checkBinaryKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkBinaryKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.BINARY, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the BitmapData Cache.
+    *
+    * @method Phaser.Cache#checkBitmapDataKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkBitmapDataKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.BITMAPDATA, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the BitmapFont Cache.
+    *
+    * @method Phaser.Cache#checkBitmapFontKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkBitmapFontKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.BITMAPFONT, key);
+
+    },
+
+    /**
+    * Checks if the given key exists in the JSON Cache.
+    *
+    * @method Phaser.Cache#checkJSONKey
+    * @param {string} key - Asset key of the image to check is in the Cache.
+    * @return {boolean} True if the key exists, otherwise false.
+    */
+    checkJSONKey: function (key) {
+
+        return this.checkKey(Phaser.Cache.JSON, key);
 
     },
 
@@ -43585,6 +43848,7 @@ Phaser.Loader.prototype = {
     * You can set a Sprite to be a "preload" sprite by passing it to this method.
     * A "preload" sprite will have its width or height crop adjusted based on the percentage of the loader in real-time.
     * This allows you to easily make loading bars for games. Note that Sprite.visible = true will be set when calling this.
+    * Note: The Sprite should use a single image and not use a texture that is part of a Texture Atlas or Sprite Sheet.
     *
     * @method Phaser.Loader#setPreloadSprite
     * @param {Phaser.Sprite|Phaser.Image} sprite - The sprite or image that will be cropped during the load.
@@ -53376,7 +53640,7 @@ Phaser.Tilemap.prototype = {
             {
                 var tile = this.layers[layer].data[y][x];
 
-                this.layers[layer].data[y][x] = null;
+                this.layers[layer].data[y][x] = new Phaser.Tile(this.layers[layer], -1, x, y, this.tileWidth, this.tileHeight);
 
                 this.layers[layer].dirty = true;
 
@@ -74057,7 +74321,6 @@ Phaser.Physics.P2.prototype = {
             {
                 output.push(body);
             }
-
         }
 
         return output;
@@ -74082,7 +74345,7 @@ Phaser.Physics.P2.prototype = {
             map.layers[layer].bodies[i].destroy();
         }
 
-        map.layers[layer].bodies.length = [];
+        map.layers[layer].bodies.length = 0;
 
     },
 
@@ -76598,6 +76861,7 @@ Object.defineProperty(Phaser.Physics.P2.Body.prototype, "debug", {
 /**
 * A Body can be set to collide against the World bounds automatically if this is set to true. Otherwise it will leave the World.
 * Note that this only applies if your World has bounds! The response to the collision should be managed via CollisionMaterials.
+* 
 * @name Phaser.Physics.P2.Body#collideWorldBounds
 * @property {boolean} collideWorldBounds - Should the Body collide with the World bounds?
 */
