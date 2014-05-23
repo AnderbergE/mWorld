@@ -1,6 +1,7 @@
 /* User object */
 function User () {
 	this._water = 0;
+	this._agent = null;
 	this.logout();
 
 	return this;
@@ -14,6 +15,17 @@ Object.defineProperty(User.prototype, 'water', {
 			var diff = value - this._water;
 			this._water = value;
 			Event.publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
+		}
+	}
+});
+Object.defineProperty(User.prototype, 'agent', {
+	get: function() {
+		return this._agent;
+	},
+	set: function(value) {
+		this._agent = value;
+		if (this._agent && this._agent.prototype.id) {
+			LANG.setAgent(this._agent.prototype.id);
 		}
 	}
 });

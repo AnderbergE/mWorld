@@ -46,12 +46,15 @@ LANG.change = function (text, speech) {
 	}
 
 	if (user && user.agent && user.agent.prototype.id) {
-		LANG.SPEECH.AGENT = LANG.SPEECH[user.agent.prototype.id];
-	} else {
-		LANG.SPEECH.AGENT = LANG.SPEECH.panda;
+		LANG.setAgent(user.agent.prototype.id);
+	} else { // Use panda as default agent.
+		LANG.setAgent(Panda.prototype.id);
 	}
 };
 
+LANG.setAgent = function (id) {
+	LANG.SPEECH.AGENT = LANG.SPEECH[id];
+};
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                        English language (default)                         */
