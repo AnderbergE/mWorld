@@ -24,6 +24,7 @@ function NumberButton (number, representations, options) {
 	var vertical = options.vertical || true;
 	var size = options.size || 75;
 	var color = options.color || '#000000';
+	this.disabled = options.disabled || false;
 
 	var bg = game.add.sprite(0, 0, options.background, 0, this);
 	bg.width = size;
@@ -33,6 +34,8 @@ function NumberButton (number, representations, options) {
 
 	bg.inputEnabled = true;
 	bg.events.onInputDown.add(function () {
+		if (this.disabled) { return; }
+
 		game.add.audio('click');
 		if (bg.frame % 2 === 0) {
 			bg.frame++;

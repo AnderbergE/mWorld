@@ -323,7 +323,7 @@ BirdheroGame.prototype.create = function () {
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -50, y: -50, size: 100
+						x: -60, y: -30, background: 'wood', disabled: true
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.

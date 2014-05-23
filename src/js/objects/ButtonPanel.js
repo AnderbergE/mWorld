@@ -44,3 +44,9 @@ ButtonPanel.prototype.reset = function () {
 		this.children[i].reset();
 	}
 };
+
+ButtonPanel.prototype.disable = function (value) {
+	for (var i = 0; i < this.children.length; i++) {
+		this.children[i].disabled = value;
+	}
+};
