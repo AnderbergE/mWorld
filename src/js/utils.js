@@ -51,13 +51,10 @@ Counter.prototype.update = function () {
 function say (what, who) {
 	var a = (typeof what === 'string') ? game.add.audio(what) : what;
 	if (who && who.talk) {
-		a.onPlay.add(function () {
-			who.talk.play();
-		});
-		a.onStop.add(function () {
-			who.talk.seek(0);
-			who.talk.pause();
-		});
+		var play = function () { who.talk.play(); };
+		a.onPlay.add(play);
+		a.onResume.add(play);
+		a.onStop.add(function () { who.talk.pause(0); });
 	}
 	return a;
 }
