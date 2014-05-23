@@ -75,11 +75,11 @@ function fade (what, typ, duration) {
 	duration = duration || 0.5;
 
 	if (typ) {
-		if (!what.visible) {
+		if (!what.visible || what.alpha < 1) {
 			what.visible = true;
 			return TweenMax.fromTo(what, duration, { alpha: 0 }, { alpha: 1 });
 		}
-	} else if (what.visible) {
+	} else if (what.visible || what.alpha > 0) {
 		return TweenMax.to(what, duration,
 			{ alpha: 0, onComplete: function () { what.visible = false; } });
 	}
