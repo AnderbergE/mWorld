@@ -33,6 +33,7 @@ BirdheroGame.prototype.preload = function () {
 
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
 	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
+	this.load.image('birdheroFeet',    'assets/img/subgames/birdhero/feet.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
 	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
 	this.load.image('birdheroBranch1', 'assets/img/subgames/birdhero/branch2.png');
@@ -628,6 +629,8 @@ function BirdheroBird (tint) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.number = null;
 
+	this.leftLeg = game.add.sprite(-2, 104, 'birdheroFeet', null, this);
+	this.rightLeg = game.add.sprite(23, 96, 'birdheroFeet', null, this);
 	this.body = game.add.sprite(0, 0, 'birdheroBird', null, this);
 	this.body.anchor.set(0.5);
 	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
@@ -643,6 +646,9 @@ function BirdheroBird (tint) {
 	this.talk = TweenMax.fromTo(this.beak, 0.2, { frame: 0 }, {
 		frame: 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
 	});
+	this.walk = new TimelineMax({ repeat: -1, paused: true })
+		.fromTo(this.leftLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0)
+		.fromTo(this.rightLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0.2);
 
 	return this;
 }
@@ -683,7 +689,10 @@ BirdheroBird.prototype.turn = function (direction) {
  * @returns {Object} The movement tween
  */
 BirdheroBird.prototype.move = function (properties, duration, scale) {
-	var t = new TimelineMax();
+	var t = new TimelineMax({
+		onStart: function () { this.walk.play(); }, onStartScope: this,
+		onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
+	});
 	t.addLabel('mover'); // Add a label in beginning, use it for simultaneous tweening.
 	t.to(this, duration, properties, 'mover');
 	t.addCallback(function () {
