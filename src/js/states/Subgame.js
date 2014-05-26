@@ -167,7 +167,8 @@ Subgame.prototype._nextNumber = function () {
 	this.currentNumber = parseInt(1+Math.random()*this.amount);
 };
 
-/* Skip a timeline. How to:
+/**
+ * Skip a timeline. How to:
  * Set 'this.skipper' to a timeline (a skip button will appear next to the menu)
  * When the timeline is complete, make sure to set 'this.skipper' to null.
  * NOTE: You can not skip part of a timeline.
@@ -176,6 +177,12 @@ Subgame.prototype._skip = function () {
 	if (this._skipper) {
 		this._skipper.totalProgress(1);
 	}
+};
+
+/** Skip the current mode. */
+Subgame.prototype._skipMode = function () {
+	this._nextMode();
+	this.nextRound();
 };
 
 
@@ -273,10 +280,10 @@ Subgame.prototype.endGame = function () {
 
 
 /* Overshadowing mode functions */
-/* These functions should be overshadowed in the game object */
-Subgame.prototype.modeIntro      = function () { this._nextMode(); };
-Subgame.prototype.modePlayerDo   = function () { this._nextMode(); };
-Subgame.prototype.modePlayerShow = function () { this._nextMode(); };
-Subgame.prototype.modeAgentTry   = function () { this._nextMode(); };
-Subgame.prototype.modeAgentDo    = function () { this._nextMode(); };
-Subgame.prototype.modeOutro      = function () { this._nextMode(); };
+/* The following functions should be overshadowed in the game object */
+Subgame.prototype.modeIntro      = Subgame.prototype._skipMode;
+Subgame.prototype.modePlayerDo   = Subgame.prototype._skipMode;
+Subgame.prototype.modePlayerShow = Subgame.prototype._skipMode;
+Subgame.prototype.modeAgentTry   = Subgame.prototype._skipMode;
+Subgame.prototype.modeAgentDo    = Subgame.prototype._skipMode;
+Subgame.prototype.modeOutro      = Subgame.prototype._skipMode;
