@@ -11,13 +11,14 @@ function ButtonPanel (amount, representations, options) {
 	options.vertical = options.vertical || false;
 	options.size = options.size || (options.vertical ? game.world.height : game.world.width);
 	options.maxButtonSize = options.maxButtonSize || 75;
+	options.reversed = options.reversed || false;
 
 	var buttonSize = options.size/amount;
 	if (buttonSize > options.maxButtonSize) { buttonSize = options.maxButtonSize; }
 	var widthLeft = options.size - buttonSize*amount;
 	var paddingSize = widthLeft/amount;
 	if (paddingSize > buttonSize/2) { paddingSize = buttonSize/2; }
-	var margin = (game.world.width - amount*buttonSize - (amount-1)*paddingSize)/2;
+	var margin = (options.size - amount*buttonSize - (amount-1)*paddingSize)/2;
 
 	var buttonOptions = {
 		x: 0,
@@ -33,7 +34,7 @@ function ButtonPanel (amount, representations, options) {
 		if (options.vertical) { buttonOptions.y = margin + (paddingSize+buttonSize)*(i-1); }
 		else { buttonOptions.x = margin + (paddingSize+buttonSize)*(i-1); }
 
-		this.add(new NumberButton(i, representations, buttonOptions));
+		this.add(new NumberButton((options.reversed ? amount-i+1 : i), representations, buttonOptions));
 	}
 
 	return this;
