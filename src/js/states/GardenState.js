@@ -34,6 +34,18 @@ GardenState.prototype.create = function () {
 		});
 	}, this);
 
+	// TODO: Remove eventually, for debugging Lizard Jungle game
+	var lizard = this.add.sprite(500, 100, 'pandaLeg');
+	lizard.scale.set(0.2);
+	lizard.inputEnabled = true;
+	lizard.events.onInputDown.add(function () {
+		this.state.start(GLOBAL.STATE.lizardGame, true, false, {
+			representation: [0],
+			amount: 4, // TODO: Use range instead
+			roundsPerMode: 1
+		});
+	}, this);
+
 	var rows = 3;
 	var columns = 5;
 	var startPos = 200;
