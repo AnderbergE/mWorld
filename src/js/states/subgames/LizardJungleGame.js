@@ -11,6 +11,8 @@ function LizardJungleGame () {
 
 /* Phaser state function */
 LizardJungleGame.prototype.preload = function () {
+	this.load.audio('lizardPlaceholder', LANG.SPEECH.AGENT.hmm);
+
 	this.load.image('lizardBg',      'assets/img/subgames/lizardjungle/bg.jpg');
 	this.load.image('lizardBody',    'assets/img/subgames/lizardjungle/body.png');
 	this.load.image('lizardHead',    'assets/img/subgames/lizardjungle/head.png');
@@ -19,6 +21,7 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.image('lizardTree',    'assets/img/subgames/lizardjungle/tree.png');
 	this.load.image('lizardTreeTop', 'assets/img/subgames/lizardjungle/top.png');
 	this.load.image('lizardThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
+	this.load.image('lizardAnt',     'assets/img/subgames/lizardjungle/ant.png');
 };
 
 /* Phaser state function */
@@ -72,6 +75,9 @@ LizardJungleGame.prototype.create = function () {
 	var lizard = new LizardJungleLizard(575, 500);
 	this.gameGroup.add(lizard);
 
+	// The target is set up in the newFood function
+	var target;
+
 	// Add HUD
 	var buttons = new ButtonPanel(this.amount, this.representation, {
 		x: this.world.width-(this.representation.length*75)-25, y: tree.y - tree.boleHeight,
@@ -102,14 +108,20 @@ LizardJungleGame.prototype.create = function () {
 	/* Function to trigger when a number button is pushed */
 	function pushNumber (number) {
 		_this.disable(true);
+		lizard.followPointer(false);
+		_this.agent.eyesFollowObject(lizard.tounge.world);
 
 		var result = _this.tryNumber(number);
-		void(result);
 		var treePiece = tree.pieces[number-1].world;
 		var hit = { x: treePiece.x, y: treePiece.y - shootOffset };
 
 		var t = new TimelineMax();
-		t.add(lizard.shoot(hit));
+		if (!result) { // Correct :)
+			t.add(lizard.shootObject(target));
+			t.addCallback(function () { target.destroy(); });
+		} else { // Incorrect :(
+			t.add(lizard.shoot(hit));
+		}
 		t.addCallback(function () { _this.nextRound(); });
 	}
 	/* Function to trigger when a yes/no button is pushed */
@@ -127,6 +139,7 @@ LizardJungleGame.prototype.create = function () {
 		fade(yesnos, false);
 		fade(buttons, true).eventCallback('onComplete', _this.disable, false, _this);
 
+		lizard.followPointer(true);
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 	/* Show the yes/no panel, hide the number panel and enable input */
@@ -136,6 +149,7 @@ LizardJungleGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, true).eventCallback('onComplete', _this.disable, false, _this);
 
+		lizard.followPointer(true);
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 	/* Hide the number and yes/no panel */
@@ -145,6 +159,18 @@ LizardJungleGame.prototype.create = function () {
 		fade(yesnos, false);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
+	}
+
+	function newFood () {
+		var t = new TimelineMax();
+		t.addCallback(function () {
+			var pos = tree.pieces[_this.currentNumber-1].world;
+			target = _this.add.sprite(pos.x, pos.y - shootOffset, 'lizardAnt', null, _this.gameGroup);
+			target.anchor.set(0.5);
+			target.scale.set(0.25);
+			_this.gameGroup.bringToTop(lizard);
+		});
+		return t;
 	}
 
 	/* Have the agent guess a number */
@@ -171,12 +197,18 @@ LizardJungleGame.prototype.create = function () {
 			});
 	}
 
+	this.modeIntro = function () {
+		var t = new TimelineMax();
+		t.addSound('lizardPlaceholder', lizard);
+		t.addCallback(function () { _this.nextRound(); });
+	};
+
 	this.modePlayerDo = function (intro, tries) {
 		if (tries > 0) {
 			showNumbers();
 		} else { // if intro or first try
 			var t = new TimelineMax();
-			//t.add(newBird());
+			t.add(newFood());
 			if (intro) {
 				t.eventCallback('onStart', function () { _this.skipper = t; });
 				//t.add(instructionIntro());
@@ -201,7 +233,7 @@ LizardJungleGame.prototype.create = function () {
 				t.add(_this.agent.wave(3, 1), 'agentIntro');
 				//t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
 			}
-			//t.add(newBird());
+			t.add(newFood());
 			t.addCallback(showNumbers);
 		}
 	};
@@ -223,7 +255,7 @@ LizardJungleGame.prototype.create = function () {
 				//t.addSound('birdheroAgentTry', _this.agent);
 				//t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
 			}
-			//t.add(newBird());
+			t.add(newFood());
 			t.add(agentGuess());
 		}
 	};
@@ -237,7 +269,7 @@ LizardJungleGame.prototype.create = function () {
 /*                        Lizard Jungle game objects                         */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
-/* The bird that you are helping home */
+/* Camilla Chameleon, the lizard that you are helping. */
 LizardJungleLizard.prototype = Object.create(Phaser.Group.prototype);
 LizardJungleLizard.prototype.constructor = LizardJungleLizard;
 function LizardJungleLizard (x, y) {
@@ -258,6 +290,10 @@ function LizardJungleLizard (x, y) {
 	this.forehead.anchor.set(1, 1);
 	this.mouth = game.add.sprite(16, 15, 'lizardMouth', null, this.head);
 	this.mouth.anchor.set(1, 0);
+
+	this.talk = new TimelineMax({ repeat: -1, yoyo: true, paused: true });
+	this.talk.to(this.mouth, 0.2, { angle: -2 });
+	this.talk.to(this.forehead, 0.2, { angle: 4 }, 0);
 
 	this.followPointer = function (on) {
 		if (on) {
@@ -284,9 +320,19 @@ function LizardJungleLizard (x, y) {
 			width: game.physics.arcade.distanceBetween(hit, this.tounge.world),
 			height: 18
 		});
+		t.addLabel('stretched');
 		t.to(this.tounge, 0.5, { width: 1, height: 5 });
 		t.to(this.forehead, 0.2, { angle: 0 });
 		t.to(this.mouth, 0.2, { angle: 0 }, '-=0.2');
+		return t;
+	};
+
+	this.shootObject = function (obj) {
+		var pos = obj.world || obj;
+		var t = this.shoot(pos);
+		t.add(new TweenMax(obj, 0.5, {
+			x: obj.x + (this.tounge.world.x - pos.x),
+			y: obj.y + (this.tounge.world.y - pos.y) }), 'stretched');
 		return t;
 	};
 }
