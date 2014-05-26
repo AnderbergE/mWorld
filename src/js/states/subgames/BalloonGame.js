@@ -16,12 +16,13 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
 	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
+	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
 
 	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
 
-	this.load.image('balloonBg',      'assets/img/subgames/balloon/bg.png');
+	this.load.image('balloonBg',      'assets/img/subgames/balloon/balloonBg.png');
 	this.load.image('balloon2',      'assets/img/subgames/balloon/balloon2.png');
 	this.load.image('balloon3',      'assets/img/subgames/balloon/balloon3.png');
 	this.load.image('balloon4',      'assets/img/subgames/balloon/balloon4.png');
@@ -51,12 +52,12 @@ BalloonGame.prototype.preload = function () {
 };
 
 var background;
-var scale = 1;
+var scale = 0.85;
 var airballoons;
 var cliffheight;
 var cliff;
-var cave;
-var glass;
+//var cave;
+var chest;
 var liftoffButton;
 //var resetButton;
 var balloons;
@@ -76,7 +77,7 @@ BalloonGame.prototype.create = function () {
 
 	var coords = {
 		balloons: {
-			x: 50, y: 50
+			x: 50, y: 100
 		},
 		agent: {
 			start: { x: 250, y: 950 },
@@ -84,7 +85,13 @@ BalloonGame.prototype.create = function () {
 			scale: 0.25
 		},
 		basketBalloons: {
-			x: 775, y: 500
+			x: 790, y: 450
+		},
+		beetle: {
+			start: { x: 790, y: 1000 },
+			stop: { x: 640, y: 450 },
+			basketStop: { x: 785, y: 510 },
+			scale: 0.65
 		}
 	};
 
@@ -111,33 +118,32 @@ BalloonGame.prototype.create = function () {
 	// Adding the platforms on the cliff wall.
 	for (var i = 0; i < 5; i++){
 
-		cave = this.add.sprite(960, 635 - (cliffheight * scale * (i+1) * 2), 'cave', null, this.gameGroup);
-		cave.scale.x = -0.6;
-		cave.scale.y = 0.6;
-
-		cliff = this.add.sprite(1024, 670 - (cliffheight * scale * (i+1) * 2), 'cliffside', null, this.gameGroup);
+		//Right
+		cliff = this.add.sprite(1000, 450 - (cliffheight * scale * (i+1) * 2), 'spritesheet', 2, this.gameGroup);
 		cliff.scale.x = -scale;
 		cliff.scale.y = scale;
 
-		cave = this.add.sprite(1060-this.cache.getImage('cliffside').width*2.5, 635 - (cliffheight * scale * (i+1) * 2 + cliffheight), 'cave', null, this.gameGroup);
-		cave.scale.x = 0.6;
-		cave.scale.y = 0.6;
-
-		cliff = this.add.sprite(1024-this.cache.getImage('cliffside').width*2.5, 670 - (cliffheight * scale * (i+1) * 2 + cliffheight), 'cliffside', null, this.gameGroup);
+		//Left
+		cliff = this.add.sprite(1024-170*2.2, 450 - (cliffheight * scale * (i+1) * 2 + cliffheight), 'spritesheet', 2, this.gameGroup);
 		cliff.scale.x = scale;
 		cliff.scale.y = scale;
 
 	}
 
-	glass = _this.add.sprite(1200, 900, 'fullglass', null, _this.gameGroup);
+	chest = _this.add.sprite(1200, 900, 'spritesheet', 3, _this.gameGroup);
 
 	// Setting up balloon related sprites and groups.
 	airballoons = this.add.group(this.gameGroup);
 	airballoons.x = 0;
 	airballoons.y = 0;
-	airballoons.basket = this.add.sprite(775, 600, 'basket', null, airballoons);
-	airballoons.basket.scale.x = 0.2;
-	airballoons.basket.scale.y = 0.2;
+
+	var beetle = this.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'spritesheet', 4, this.gameGroup);
+	beetle.scale.set(coords.beetle.scale);
+	airballoons.add(beetle);
+
+	airballoons.basket = this.add.sprite(785, 520, 'spritesheet', 5, airballoons);
+	airballoons.basket.scale.x = 0.7;
+	airballoons.basket.scale.y = 0.7;
 
 	balloons = this.add.group(this.gameGroup);
 	balloons.x = 0;
@@ -307,31 +313,34 @@ BalloonGame.prototype.create = function () {
 			{
 				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
 				console.log('Correct!');
-				tl.add(_this.addWater(glass.x, glass.y), '-=3');
+				tl.add(_this.addWater(chest.x, chest.y), '-=3');
 				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 				//TODO: Add victory animation. Next round.
 			} else if (result > 0)
 			{
 				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount, ease:Power1.easeIn});
 				console.log('Too many!');
-				tl.to(airballoons, 3, {x: -220, y: -cliffheight*amount - 150, ease:Power1.easeOut});
-				//Sound of wind blowing at the same time as line above.
-				//TODO: Amount could be changed to be equal tot he time it takes for the balloons to return and then take away the bounce to make it slowly descend.
-				tl.to(airballoons, amount/2, {x: -220, y: 0, ease:Bounce.easeOut});
+				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
 				tl.addCallback(function () {
-					returnBalloonsFrom(-220, 0);
+					resetBalloons();
+					//returnBalloonsFrom(0,-cliffheight*amount);
 				});
-				//Balloons going back + fall down.			
-				//TODO: Add animation of balloon blowing down then balloons flowing back. Next round.
+				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
+				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
 			} else
 			{
 				
-				tl.to(airballoons, amount, {x: 0, y: -cliffheight*amount/2, ease:Power1.easeOut});
+				tl.to(airballoons, amount, {x: 0, y: -cliffheight*amount, ease:Power1.easeOut});
 				console.log('Too few!'); //TODO: Add sound as well.
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
+				//pop balloons
+				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
 				tl.addCallback(function () {
-					returnBalloonsFrom(0, 0);
+					resetBalloons();
+					//returnBalloonsFrom(0,-cliffheight*amount);
 				});
+				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
+				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
+
 				//TODO: Add animation of balloon falling down with a bounce after balloons float back. Next round.
 			}
 
@@ -344,7 +353,17 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-	//TODO: Destroy does not work and the balloons remain.
+	function resetBalloons() {
+
+		var amount = airBalloonStock;
+
+		for (var i = 0; i < amount; i++){
+			returnStart();
+			deleteExcessSprite(airballoons.getAt(3));
+		}
+	}
+/*
+	//Animation to float the balloons back. Not used anymore.
 	function returnBalloonsFrom(fromX, fromY) {
 		var tl = new TimelineMax();
 		var amount = airBalloonStock;
@@ -354,28 +373,31 @@ BalloonGame.prototype.create = function () {
 				onComplete:deleteExcessSprite,
 				onCompleteParams:[airballoons.getAt(i)],
 				ease:Power1.easeOut});
-			/* For some reason these happen before the above animation.
-			These are different things I have tried but they all happen before the above animation which I though 'onComplete' was suppose to prevent.
-			What we want to do is delete the sprite once it finishes moving. Alternatively hide it or move it to the balloons group. Neither of which I'm capable of doing AFTER the animation ends.
-			tl.eventCallback('onComplete', airballoons.getAt(i).x = -1000);
-			tl.eventCallback('onComplete', airballoons.getAt(i).y = -1000);
-			tl.eventCallback('onComplete', airballoons.getAt(i).kill);
-			tl.eventCallback('onComplete', airballoons.remove(airballoons.getAt(i)));
-			tl.eventCallback('onComplete', balloons.add(airballoons.getAt(i)));*/
+			//For some reason these happen before the above animation.
+			//These are different things I have tried but they all happen before the above animation which I though 'onComplete' was suppose to prevent.
+			//What we want to do is delete the sprite once it finishes moving. Alternatively hide it or move it to the balloons group. Neither of which I'm capable of doing AFTER the animation ends.
+			//tl.eventCallback('onComplete', airballoons.getAt(i).x = -1000);
+			//tl.eventCallback('onComplete', airballoons.getAt(i).y = -1000);
+			//tl.eventCallback('onComplete', airballoons.getAt(i).kill);
+			//tl.eventCallback('onComplete', airballoons.remove(airballoons.getAt(i)));
+			//tl.eventCallback('onComplete', balloons.add(airballoons.getAt(i)));
 		}
 		tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 	}
-
+*/
 	function returnStart() {
 		airBalloonStock -= 1;
 		airBalloonStockUpdate();
 	}
 
 	function deleteExcessSprite(sprite) {
+		console.log(sprite);
 		sprite.destroy();
 		balloonStock += 1;
 		balloonStockUpdate();
 	}
+
+
 
 	//Add more for Agent to move elsewhere.
 	this.agent.moveTo = {
@@ -389,20 +411,20 @@ BalloonGame.prototype.create = function () {
 	};
 
 
-	function renderGlass (correctAnswer) {
+	function renderChest (correctAnswer) {
+
 		if(correctAnswer % 2 === 0)
 			{
-				glass.x = 1070-_this.cache.getImage('cliffside').width*2.5;
-				glass.y = 635 - (cliffheight * scale * (correctAnswer+1));
+				chest.x = 690;
 			}
 		else
 			{
-				glass.x = 900;
-				glass.y = 635 - (cliffheight * scale * (correctAnswer+1));
+				chest.x = 890;
 			}
 
-			glass.scale.x = 0.4;
-			glass.scale.y = 0.4;
+			chest.y = 465 - (cliffheight * scale * (correctAnswer));
+			chest.scale.x = 0.4;
+			chest.scale.y = 0.4;
 	}
 
 	function agentGuess () {
@@ -430,8 +452,16 @@ BalloonGame.prototype.create = function () {
 
 	this.modeIntro = function () {
 		console.log('ModeIntro');
+		_this.disable(true);
 		bgMusic.play();
-		_this.nextRound();
+		var tl = new TimelineMax();
+		tl.to(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn});
+		tl.to(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn});
+
+		tl.eventCallback('onComplete', function () {
+			_this.disable(false);
+			_this.nextRound();
+		});
 	};
 
 	this.modePlayerDo = function (intro, tries) {
@@ -442,7 +472,7 @@ BalloonGame.prototype.create = function () {
 			if (intro) {
 				console.log('modeplayerDoIntro');
 				console.log('correct answer= ' + _this.currentNumber);
-				renderGlass(_this.currentNumber);
+				renderChest(_this.currentNumber);
 			}
 		showLiftoff();
 		}
@@ -455,7 +485,7 @@ BalloonGame.prototype.create = function () {
 			var tl = new TimelineMax();
 			if (intro) {
 				_this.disable(true);
-				renderGlass(_this.currentNumber);
+				renderChest(_this.currentNumber);
 				tl.add(_this.agent.moveTo.start());
 				tl.addSound('birdheroAgentShow', _this.agent);
 				tl.add(_this.agent.wave(3, 1), 'agentIntro');
@@ -478,7 +508,7 @@ BalloonGame.prototype.create = function () {
 		} else { // if intro or first try
 			if (intro) {
 				_this.disable(true);
-				renderGlass(_this.currentNumber);
+				renderChest(_this.currentNumber);
 				console.log('modeAgentTry Intro');
 				console.log('correct answer= ' + _this.currentNumber);
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
