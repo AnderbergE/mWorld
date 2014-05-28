@@ -29,7 +29,7 @@ GardenState.prototype.create = function () {
 	balloonButton.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.balloonGame, true, false, {
 			representation: [0],
-			amount: 4,
+			amount: 6,
 			roundsPerMode: 1
 		});
 	}, this);

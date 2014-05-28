@@ -18,6 +18,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
 	this.load.image('eyes',      'assets/img/subgames/balloon/eyes.png');
+	this.load.image('metalLoop',      'assets/img/subgames/balloon/metalloop.png');
 
 	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
@@ -52,34 +53,35 @@ BalloonGame.prototype.preload = function () {
 	*/
 };
 
-var background;
-var scale = 0.85;
-var airballoons;
-var cliffheight;
-var cliff;
-//var cave;
-var chest;
-var liftoffButton;
-//var resetButton;
-var balloons;
-var balloonStack1;
-var balloonStack2;
-var eyes;
-var balloonStock = 6;
-var airBalloonStock = 0;
-
-
+	var background;
+	var scale = 0.85;
+	var airballoons;
+	var cliffheight;
+	var cliff;
+	var metalLoop;
+	//var cave;
+	var chest;
+	var liftoffButton;
+	//var resetButton;
+	var balloons;
+	var balloonStack1;
+	var balloonStack2;
+	var eyes;
+	var balloonStock = 6;
+	var airBalloonStock = 0;
+	var direction = 'right';
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
+
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
 	
 	_this.disable(false);
 
 	var coords = {
 		balloons: {
-			x: 50, y: 100
+			x: 150, y: 500
 		},
 		agent: {
 			start: { x: 250, y: 950 },
@@ -87,7 +89,7 @@ BalloonGame.prototype.create = function () {
 			scale: 0.25
 		},
 		basketBalloons: {
-			x: 790, y: 440
+			x: 830, y: 565
 		},
 		beetle: {
 			start: { x: 790, y: 1000 },
@@ -155,18 +157,23 @@ BalloonGame.prototype.create = function () {
 
 	balloonStack1 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
 	balloonStack2 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
+	metalLoop = _this.add.sprite(0, 0, 'metalLoop', null, _this.gameGroup);
 
 	airballoons.add(balloonStack2);
 
 	balloonStack1.x = coords.balloons.x;
 	balloonStack1.y = coords.balloons.y;
-	balloonStack1.scale.x = 0.2;
-	balloonStack1.scale.y = 0.2;
+	balloonStack1.scale.set(0.2);
+	balloonStack1.anchor.setTo(0.6, 1);
+
+	metalLoop.x = coords.balloons.x-10;
+	metalLoop.y = coords.balloons.y;
+	metalLoop.scale.set(0.4);
 
 	balloonStack2.x = coords.basketBalloons.x;
 	balloonStack2.y = coords.basketBalloons.y;
-	balloonStack2.scale.x = 0.2;
-	balloonStack2.scale.y = 0.2;
+	balloonStack2.scale.set(0.2);
+	balloonStack2.anchor.setTo(0.6, 1);
 	balloonStack2.kill();
 
 
@@ -232,6 +239,7 @@ BalloonGame.prototype.create = function () {
 			balloon.events.onDragStart.add(release, _this);
 			balloon.events.onDragStop.add(attatchToBasket, _this);
 			balloons.add(balloon);
+			balloon.anchor.setTo(0.6, 1);
 		}
 	}
 
@@ -269,6 +277,7 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		if(checkOverlap(balloon, airballoons))
 		{
+			balloon.angle = 0;
 			airBalloonStock += 1;
 			airballoons.add(balloon);
 			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
@@ -643,6 +652,29 @@ BalloonGame.prototype.create = function () {
 
 	// Make sure the call this when everything is set up.
 	this.startGame();
+};
+
+BalloonGame.prototype.update = function () {
+	if (balloonStack1.angle > 7 && direction === 'right'){
+		direction = 'left';
+	} else if (balloonStack1.angle < -7 && direction === 'left'){
+		direction = 'right';
+	}
+	if (direction === 'right'){
+		balloonStack1.angle += 0.3;
+	} else {
+		balloonStack1.angle -= 0.3;
+	}
+	balloons.forEach(syncAngle, this, true);
+
+	function syncAngle(b){
+		b.angle = balloonStack1.angle;
+	}
+};
+
+
+BalloonGame.prototype.render = function () {
+	game.debug.spriteInfo(balloonStack1, 32, 32);
 };
 
 
