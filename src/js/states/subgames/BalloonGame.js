@@ -19,6 +19,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
 	this.load.image('eyes',      'assets/img/subgames/balloon/eyes.png');
 	this.load.image('metalLoop',      'assets/img/subgames/balloon/metalloop.png');
+	this.load.spritesheet('catbush',      'assets/img/subgames/balloon/catbush.png',176,111,11);
 
 	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
@@ -70,6 +71,8 @@ BalloonGame.prototype.preload = function () {
 	var balloonStock = 6;
 	var airBalloonStock = 0;
 	var direction = 'right';
+	var catBush;
+	var catBushButton;
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
@@ -103,6 +106,21 @@ BalloonGame.prototype.create = function () {
 
 	// Add main game
 	background = this.add.sprite(0, 0, 'balloonBg', null, this.gameGroup);
+
+	
+	catBush = game.add.sprite(200, 400, 'catbush', 0, this.gameGroup);
+	catBush.animations.add('catBlink');
+	catBushButton = game.add.button(200, 400, 'catbush', catBushPlay, this.gameGroup);
+
+	function catBushPlay(){
+		catBushButton.visible = false;
+		catBush.animations.play('catBlink', 8, false);
+		//TODO: Add sound.
+		catBush.events.onAnimationComplete.add(function(){
+			catBushButton.visible = true;
+			catBush.loadTexture('catbush', 0);
+		}, this);
+	}
 
 	// Agent is added to the game in the superclass, so set up correct start point.
 	this.agent.x = coords.agent.start.x;
