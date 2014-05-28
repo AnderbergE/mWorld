@@ -34,29 +34,41 @@ EntryState.prototype.create = function () {
 	credits.anchor.set(0.5);
 	credits.inputEnabled = true;
 	credits.events.onInputDown.add(function () {
-		credits.visible = false;
-		text.visible = false;
-		allCredits.visible = true;
+		fade(credits, false, 0.3);
+		fade(text, false, 0.3);
+		fade(allCredits, true);
+		rolling.restart();
+		cover.visible = true;
+		TweenMax.to(cover, 0.5, { alpha: 0.7 });
 	}, this);
 
-	var allCredits = this.add.text(this.world.centerX, this.world.centerY/2+50,
+	var cover = new Cover('#000000', 0);
+	cover.visible = false;
+	cover.inputEnabled = true;
+	cover.events.onInputDown.add(function () {
+		fade(credits, true);
+		fade(text, true);
+		fade(allCredits, false, 0.3);
+		rolling.pause();
+		TweenMax.to(cover, 0.3, { alpha: 0, onComplete: function () { cover.visible = false; } });
+	}, this);
+	this.world.add(cover);
+
+	var allCredits = this.add.text(this.world.centerX, this.world.height,
 		'This game was made at Lund University\n\n' +
 		'Game development:\nErik Anderberg, Agneta Gulz, Magnus Haake, Layla Husain\n' +
-		'Programming:\nErik Anderberg, Marcus Malmberg\n' +
-		'Graphics:\n Sebastian Gulz Haake\n' +
+		'Programming:\nErik Anderberg, Marcus Malmberg, Henrik Söllvander\n' +
+		'Graphics:\nSebastian Gulz Haake\n\n' +
 		'Special Thanks:\nAnton Axelsson, Sanne Bengtsson, Maja Håkansson, Lisa Lindberg, Björn Norrliden', {
 		font: '15pt ' +  GLOBAL.FONT,
-		fill: '#000000',
+		fill: '#ffffff',
 		align: 'center'
 	});
 	allCredits.anchor.set(0.5, 0);
 	allCredits.visible = false;
-	allCredits.inputEnabled = true;
-	allCredits.events.onInputDown.add(function () {
-		allCredits.visible = false;
-		credits.visible = true;
-		text.visible = true;
-	}, this);
+	var rolling = TweenMax.fromTo(allCredits, 15,
+		{ y: this.world.height },
+		{ y: -allCredits.height, ease: Power0.easeInOut, repeat: -1, paused: true });
 };
 
 /* Phaser state function */
