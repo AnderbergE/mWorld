@@ -162,14 +162,19 @@ LizardJungleGame.prototype.create = function () {
 	}
 
 	function newFood () {
+		var pos = tree.pieces[_this.currentNumber-1].world;
+		target = _this.add.sprite(pos.x, 750, 'lizardAnt', null, _this.gameGroup);
+		target.visible = false;
+		target.anchor.set(0.5);
+		target.scale.set(0.25);
+		_this.gameGroup.bringToTop(lizard);
+
 		var t = new TimelineMax();
-		t.addCallback(function () {
-			var pos = tree.pieces[_this.currentNumber-1].world;
-			target = _this.add.sprite(pos.x, pos.y - shootOffset, 'lizardAnt', null, _this.gameGroup);
-			target.anchor.set(0.5);
-			target.scale.set(0.25);
-			_this.gameGroup.bringToTop(lizard);
-		});
+		t.addCallback(function () { target.visible = true; });
+		t.add(new TweenMax(target, 1, { y: tree.pieces[0].world.y - shootOffset }));
+		for (var i = 1; i < _this.currentNumber; i++) {
+			t.add(new TweenMax(target, 0.8, { y: tree.pieces[i].world.y - shootOffset }));
+		}
 		return t;
 	}
 
