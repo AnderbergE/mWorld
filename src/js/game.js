@@ -35,8 +35,7 @@ window.onload = function () {
 var WebFontConfig = {
 	active: function() {
 		game.time.events.add(Phaser.Timer.SECOND, function () {
-			// TODO: What if this is loaded faster than the images?
-			game.state.start(GLOBAL.STATE.entry);
+			BootState.prototype.bootGame();
 		}, this);
 	},
 	google: { families: [GLOBAL.FONT] }
@@ -96,4 +95,22 @@ BootState.prototype.preload = function () {
 	this.load.image('entryBg', 'assets/img/jungle.png');
 	this.load.audio('yeah', ['assets/audio/yeah.mp3', 'assets/audio/yeah.ogg']);
 	this.load.audio('click', ['assets/audio/click.mp3', 'assets/audio/click.ogg']);
+};
+BootState.prototype.create = function () {
+	this.bootGame();
+};
+
+
+/**
+ * Boot needs to wait for both the google font and the loading of all assets.
+ * When one of them is loaded the "isLoaded" is set to true. The other one will then
+ * boot the real game when finished.
+ */
+BootState.prototype.isLoaded = false;
+BootState.prototype.bootGame = function () {
+	if (this.isLoaded) {
+		game.state.start(GLOBAL.STATE.entry);
+	} else {
+		BootState.prototype.isLoaded = true;
+	}
 };
