@@ -23,8 +23,7 @@ GardenState.prototype.create = function () {
 	}, this);
 
 	// TODO: Remove eventually, for debugging Balloon game
-	var balloonButton = this.add.sprite(300, 50, 'balloon');
-	balloonButton.scale.set(0.2);
+	var balloonButton = this.add.sprite(300, 50, 'balloon1');
 	balloonButton.inputEnabled = true;
 	balloonButton.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.balloonGame, true, false, {

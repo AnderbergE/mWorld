@@ -25,12 +25,15 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
 
-	this.load.image('balloonBg',      'assets/img/subgames/balloon/balloonBg.png');
-	this.load.image('balloon2',      'assets/img/subgames/balloon/balloon2.png');
-	this.load.image('balloon3',      'assets/img/subgames/balloon/balloon3.png');
-	this.load.image('balloon4',      'assets/img/subgames/balloon/balloon4.png');
-	this.load.image('balloon5',      'assets/img/subgames/balloon/balloon5.png');
-	this.load.image('balloon6',      'assets/img/subgames/balloon/balloon6.png');
+	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
+	this.load.image('background',      'assets/img/subgames/balloon/background.png');
+	this.load.image('balloon2',      'assets/img/subgames/balloon/b2.png');
+	this.load.image('balloon3',      'assets/img/subgames/balloon/b3.png');
+	this.load.image('balloon4',      'assets/img/subgames/balloon/b4.png');
+	this.load.image('balloon5',      'assets/img/subgames/balloon/b5.png');
+	this.load.image('balloon6',      'assets/img/subgames/balloon/b6.png');
+	this.load.image('cloud1',      'assets/img/subgames/balloon/cloud1.png');
+	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	/*
@@ -55,6 +58,9 @@ BalloonGame.prototype.preload = function () {
 };
 
 	var background;
+	var sky;
+	var cloud1;
+	var cloud2;
 	var scale = 0.85;
 	var airballoons;
 	var cliffheight;
@@ -105,7 +111,10 @@ BalloonGame.prototype.create = function () {
 	cliffheight = this.cache.getImage('cliffside').height;
 
 	// Add main game
-	background = this.add.sprite(0, 0, 'balloonBg', null, this.gameGroup);
+	sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
+	cloud1 = this.add.sprite(-200, 25, 'cloud1', null, this.gameGroup);
+	cloud2 = this.add.sprite(200, 200, 'cloud2', null, this.gameGroup);
+	background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
 
 	
 	catBush = game.add.sprite(200, 400, 'catbush', 0, this.gameGroup);
@@ -181,8 +190,8 @@ BalloonGame.prototype.create = function () {
 
 	balloonStack1.x = coords.balloons.x;
 	balloonStack1.y = coords.balloons.y;
-	balloonStack1.scale.set(0.2);
-	balloonStack1.anchor.setTo(0.6, 1);
+
+	balloonStack1.anchor.setTo(0.5, 1);
 
 	metalLoop.x = coords.balloons.x-10;
 	metalLoop.y = coords.balloons.y;
@@ -190,8 +199,8 @@ BalloonGame.prototype.create = function () {
 
 	balloonStack2.x = coords.basketBalloons.x;
 	balloonStack2.y = coords.basketBalloons.y;
-	balloonStack2.scale.set(0.2);
-	balloonStack2.anchor.setTo(0.6, 1);
+
+	balloonStack2.anchor.setTo(0.5, 1);
 	balloonStack2.kill();
 
 
@@ -249,24 +258,22 @@ BalloonGame.prototype.create = function () {
 	function createBalloon()
 	{
 		if (balloons.length < 1){
-			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloon', null, _this.gameGroup);
-			balloon.scale.x = 0.2;
-			balloon.scale.y = 0.2;
+			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloon'+balloonStock, null, _this.gameGroup);
+			balloon.x = coords.balloons.x;
+			balloon.y = coords.balloons.y;
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
 			balloon.events.onDragStart.add(release, _this);
 			balloon.events.onDragStop.add(attatchToBasket, _this);
 			balloons.add(balloon);
-			balloon.anchor.setTo(0.6, 1);
+			balloon.anchor.setTo(0.5, 1);
 		}
 	}
 
 	function createAirBalloon()
 	{
 		if (airballoons.length < 3){
-			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloon', null, _this.gameGroup);
-			balloon.scale.x = 0.2;
-			balloon.scale.y = 0.2;
+			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloon'+airBalloonStock, null, _this.gameGroup);
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
 			balloon.events.onDragStart.add(release, _this);
@@ -277,9 +284,11 @@ BalloonGame.prototype.create = function () {
 
 	//release and attatchToBasket control the dragging and snapping of balloons.
 	function release(balloon) {
+		balloon.loadTexture('balloon1');
 		if(airballoons.getIndex(balloon) === -1)
 		{
 			balloonStock -= 1;
+			_this.gameGroup.add(balloon);
 			balloonStockUpdate();
 		}
 		else
@@ -289,6 +298,8 @@ BalloonGame.prototype.create = function () {
 			airBalloonStockUpdate();
 		}
 	}
+
+
 
 	function attatchToBasket(balloon){
 		
@@ -301,18 +312,43 @@ BalloonGame.prototype.create = function () {
 			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
 			tl.eventCallback('onComplete', function() {
 				airBalloonStockUpdate();
+				copyAirTexture();
 			});
 			balloonStockUpdate();
 		}
 		else
 		{
 			balloonStock += 1;
+			balloons.add(balloon);
 			tl.to(balloon, 1, {x: coords.balloons.x, y: coords.balloons.y});
-			tl.eventCallback('onComplete', balloonStockUpdate);
+			tl.eventCallback('onComplete', function() {
+				balloonStockUpdate();
+				copyTexture();
+				//balloons.forEach(loadTexture, this, true, 'balloon'+balloonStock);
+			});
 			airBalloonStockUpdate();
 		}
 		console.log('# balloonstock: ' + balloonStock);
 		console.log('# airballoonstock: ' + airBalloonStock);
+	}
+
+	function copyTexture() {
+
+		var amount = balloons.length;
+
+		for (var i = 0; i < amount; i++){
+			var g = balloons.getAt(i);
+			g.loadTexture('balloon'+balloonStock);
+		}
+	}
+
+	function copyAirTexture() {
+
+		var amount = airBalloonStock;
+
+		for (var i = 0; i < amount; i++){
+			airballoons.getAt(3+i).loadTexture('balloon'+amount);
+		}
 	}
 
 	function checkOverlap(spriteA, spriteB)
@@ -599,32 +635,38 @@ BalloonGame.prototype.create = function () {
 			break;
 			case 1:
 				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon');
+				balloonStack1.loadTexture('balloon1');
+				copyTexture();
 				createBalloon();
 			break;
 			case 2:
 				balloonStack1.revive();
 				balloonStack1.loadTexture('balloon2');
+				copyTexture();
 				createBalloon();
 			break;
 			case 3:
 				balloonStack1.revive();
 				balloonStack1.loadTexture('balloon3');
+				copyTexture();
 				createBalloon();
 			break;
 			case 4:
 				balloonStack1.revive();
 				balloonStack1.loadTexture('balloon4');
+				copyTexture();
 				createBalloon();
 			break;
 			case 5:
 				balloonStack1.revive();
 				balloonStack1.loadTexture('balloon5');
+				copyTexture();
 				createBalloon();
 			break;
 			case 6:
 				balloonStack1.revive();
 				balloonStack1.loadTexture('balloon6');
+				copyTexture();
 				createBalloon();
 			break;
 		}
@@ -637,32 +679,38 @@ BalloonGame.prototype.create = function () {
 			break;
 			case 1:
 				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon');
+				balloonStack2.loadTexture('balloon1');
+				copyAirTexture();
 				createAirBalloon();
 			break;
 			case 2:
 				balloonStack2.revive();
 				balloonStack2.loadTexture('balloon2');
+				copyAirTexture();
 				createAirBalloon();
 			break;
 			case 3:
 				balloonStack2.revive();
 				balloonStack2.loadTexture('balloon3');
+				copyAirTexture();
 				createAirBalloon();
 			break;
 			case 4:
 				balloonStack2.revive();
 				balloonStack2.loadTexture('balloon4');
+				copyAirTexture();
 				createAirBalloon();
 			break;
 			case 5:
 				balloonStack2.revive();
 				balloonStack2.loadTexture('balloon5');
+				copyAirTexture();
 				createAirBalloon();
 			break;
 			case 6:
 				balloonStack2.revive();
 				balloonStack2.loadTexture('balloon6');
+				copyAirTexture();
 				createAirBalloon();
 			break;
 		}
@@ -688,11 +736,23 @@ BalloonGame.prototype.update = function () {
 	function syncAngle(b){
 		b.angle = balloonStack1.angle;
 	}
+
+	if (cloud1.x > 600){
+		cloud1.x = -cloud1.width;
+	}else{
+		cloud1.x += 0.3;
+	}
+
+	if (cloud2.x > 600){
+		cloud2.x = -cloud2.width;
+	}else{
+		cloud2.x += 0.5;
+	}
 };
 
 
 BalloonGame.prototype.render = function () {
-	game.debug.spriteInfo(balloonStack1, 32, 32);
+	//game.debug.spriteInfo(balloonStack1, 32, 100);
 };
 
 
