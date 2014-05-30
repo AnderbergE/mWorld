@@ -50,6 +50,9 @@ void(WebFontConfig); // workaround for jshint unused warning.
 function BootState () {}
 /* Phaser state function */
 BootState.prototype.preload = function () {
+  /* Allow images to be served from external sites, e.g. amazon */
+  game.load.crossOrigin = 'anonymous';
+  
 	/* Make sure tweens are stopped when pausing. */
 	game.onPause.add(function () {
 		TweenMax.globalTimeScale(0);
