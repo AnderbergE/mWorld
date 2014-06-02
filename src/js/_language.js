@@ -89,7 +89,8 @@ LANG.english.speech = {
 		instruction2:  ['assets/audio/subgames/birdhero/instruction_2.mp3',  'assets/audio/subgames/birdhero/instruction_2.ogg'],
 		thisFloor:     ['assets/audio/subgames/birdhero/this_floor.mp3',     'assets/audio/subgames/birdhero/this_floor.ogg'],
 		wrongHigher:   ['assets/audio/subgames/birdhero/wrong_higher.mp3',   'assets/audio/subgames/birdhero/wrong_higher.ogg'],
-		wrongLower:    ['assets/audio/subgames/birdhero/wrong_lower.mp3',    'assets/audio/subgames/birdhero/wrong_lower.ogg']
+		wrongLower:    ['assets/audio/subgames/birdhero/wrong_lower.mp3',    'assets/audio/subgames/birdhero/wrong_lower.ogg'],
+		sounds:        ['assets/audio/subgames/birdhero/sounds.mp3'/*,         'assets/audio/subgames/birdhero/sounds.ogg'*/]
 	},
 
 	/* Agents */
