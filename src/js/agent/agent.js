@@ -44,11 +44,9 @@ function Agent () {
 	this.rightLeg = game.add.group(this);
 
 	// TODO: Fix up when agent has a face.
-	/*
-	this.talk = TweenMax.fromTo({}, 0.2, { frame: 0 }, {
-		frame: 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+	this.talk = TweenMax.to(this, 0.2, {
+		y: '+=5', repeat: -1, yoyo: true, paused: true
 	});
-	*/
 
 	return this;
 }

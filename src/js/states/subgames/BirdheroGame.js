@@ -11,25 +11,16 @@ function BirdheroGame () {
 
 /* Phaser state function */
 BirdheroGame.prototype.preload = function () {
-	this.load.audio('birdheroInstruction1a',  LANG.SPEECH.birdhero.instruction1a);
-	this.load.audio('birdheroInstruction1b',  LANG.SPEECH.birdhero.instruction1b);
-	this.load.audio('birdheroAgentShow',      LANG.SPEECH.AGENT.birdheroShow);
-	this.load.audio('birdheroAgentTry',       LANG.SPEECH.AGENT.birdheroTry);
 	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.mp3', 'assets/audio/subgames/birdhero/intro.ogg']);
 	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.mp3', 'assets/audio/subgames/birdhero/scream.ogg']);
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
 	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.mp3', 'assets/audio/subgames/birdhero/elevator_arrive.ogg']);
 	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
-	this.load.audio('birdheroThisFloor',      LANG.SPEECH.birdhero.thisFloor);
 	this.load.audio('birdheroCorrect',        ['assets/audio/subgames/birdhero/correct.mp3', 'assets/audio/subgames/birdhero/correct.ogg']);
-	this.load.audio('birdheroWrongHigher',    LANG.SPEECH.birdhero.wrongHigher);
-	this.load.audio('birdheroWrongLower',     LANG.SPEECH.birdhero.wrongLower);
 	this.load.audio('birdheroInstruction2',   LANG.SPEECH.birdhero.instruction2);
-	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
-	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
-	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroEnding',         ['assets/audio/subgames/birdhero/ending.mp3', 'assets/audio/subgames/birdhero/ending.ogg']);
+	this.load.audio('birdheroSpeech',         LANG.SPEECH.birdhero.sounds); // audio sprite sheet
 
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
 	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
@@ -74,6 +65,22 @@ BirdheroGame.prototype.create = function () {
 		0xffccff, 0xccffff, 0x5555cc, 0x55cc55, 0xcc5555
 	];
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
+	var speech = this.add.audio('birdheroSpeech');
+	speech.addMarker('instruction1a', 1.8, 8.1);
+	speech.addMarker('instruction1b', 10.5, 2.7);
+	speech.addMarker('higher', 24.8, 2.9);
+	speech.addMarker('lower', 31.8, 3.3);
+	speech.addMarker('correct', 39.9, 2);
+	speech.addMarker('ending', 45.7, 4.4);
+	speech.addMarker('agentIntro', 53.7, 6.7);
+	speech.addMarker('agentTry', 64.7, 2.4);
+	speech.addMarker('instruction2', 81.9, 7.6);
+	speech.addMarker('agentHmm', 99.6, 1);
+	speech.addMarker('agentGuessWeak', 111.5, 1.5);
+	speech.addMarker('agentGuessNormal', 116.6, 1);
+	speech.addMarker('agentGuessStrong', 121.3, 1.7);
+	speech.addMarker('agentCorrected', 132.2, 2.6);
+	speech.addMarker('agentTryAgain', 150.8, 1.8);
 
 
 	// Add main game
@@ -231,7 +238,7 @@ BirdheroGame.prototype.create = function () {
 		if (!result) { /* Correct :) */
 			t.addCallback(function () {
 				bird.visible = false;
-				_this.add.audio('birdheroCorrect').play();
+				speech.play('correct');
 			});
 			t.add(branch.celebrate()); // 3 second celebration
 			t.add(_this.addWater(branch.mother.world.x, branch.mother.world.y), '-=3');
@@ -241,8 +248,8 @@ BirdheroGame.prototype.create = function () {
 			});
 		} else { /* Incorrect :( */
 			t.addLabel('wrong');
-			if (result < 0) { t.addSound('birdheroWrongHigher', bird); }
-			else { t.addSound('birdheroWrongLower', bird); }
+			if (result < 0) { t.addSound(speech, bird, 'higher'); }
+			else { t.addSound(speech, bird, 'lower'); }
 
 			t.add(branch.confused(), 'wrong'); // 3 second confusion
 			t.add(bird.moveTo.elevator());
@@ -259,7 +266,7 @@ BirdheroGame.prototype.create = function () {
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
 		if (!value) {
-			say('birdheroAgentCorrected', _this.agent).play();
+			say(speech, _this.agent).play('agentCorrected');
 			showNumbers();
 		}
 		else { pushNumber(_this.agent.lastGuess); }
@@ -319,7 +326,7 @@ BirdheroGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					say('birdheroAgentHmm', _this.agent).play();
+					say(speech, _this.agent).play('agentHmm');
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -334,13 +341,9 @@ BirdheroGame.prototype.create = function () {
 
 	function instructionIntro () {
 		var t = new TimelineMax();
-		t.addSound('birdheroInstruction1a', bird);
+		t.addSound(speech, bird, 'instruction1a');
 		t.add(bird.pointAtFeathers());
-		t.addSound('birdheroInstruction1b', bird);
-		t.eventCallback('onComplete', function () {
-			_this.sound.removeByKey('birdheroInstruction1a');
-			_this.sound.removeByKey('birdheroInstruction1b');
-		});
+		t.addSound(speech, bird, 'instruction1b');
 		return t;
 	}
 
@@ -445,9 +448,8 @@ BirdheroGame.prototype.create = function () {
 				});
 				t.add(_this.agent.moveTo.start());
 				t.addLabel('agentIntro');
-				t.addSound('birdheroAgentShow', _this.agent);
+				t.addSound(speech, _this.agent, 'agentIntro');
 				t.add(_this.agent.wave(3, 1), 'agentIntro');
-				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
 			}
 			t.add(newBird());
 			t.addCallback(showNumbers);
@@ -459,7 +461,7 @@ BirdheroGame.prototype.create = function () {
 		if (tries > 0) {
 			_this.agent.eyesFollowPointer(true);
 			// TODO: Add more specified sounds?
-			t.addSound('birdheroAgentOops', _this.agent);
+			t.addSound(speech, _this.agent, 'agentTryAgain');
 			t.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
@@ -468,8 +470,7 @@ BirdheroGame.prototype.create = function () {
 					hideButtons();
 				});
 				t.add(_this.agent.moveTo.start()); // Agent should be here already.
-				t.addSound('birdheroAgentTry', _this.agent);
-				t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
+				t.addSound(speech, _this.agent, 'agentTry');
 			}
 			t.add(newBird());
 			t.add(agentGuess());

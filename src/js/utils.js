@@ -46,15 +46,42 @@ Counter.prototype.update = function () {
  * Utility function: When you want a sound to be said by a character.
  * @param {Object|string} The sound file or the key to a sound file
  * @param {Object} The speaker, needs to have a '.talk' property of TweenMax or TimelineMax
+ * @param {String} If you want the speaker to only talk during a specific marker.
  * @returns {Object} The sound object (not started)
  */
-function say (what, who) {
+function say (what, who, marker) {
 	var a = (typeof what === 'string') ? game.add.audio(what) : what;
 	if (who && who.talk) {
-		var play = function () { who.talk.play(); };
+		var play = function () {
+			if (!marker || a.currentMarker === marker) {
+				who.talk.play();
+			}
+		};
+		var stop = function () {
+			if (!marker || a.currentMarker === marker) {
+				who.talk.pause(0);
+				// TODO: this is always false, framework issue:
+				// https://github.com/photonstorm/phaser/issues/868
+				if (!a.paused) {
+					a.onPlay.remove(play);
+					a.onResume.remove(play);
+					if (marker) {
+						a.onMarkerComplete.remove(stop);
+					} else {
+						a.onStop.remove(stop);
+					}
+				}
+			}
+		};
+
 		a.onPlay.add(play);
 		a.onResume.add(play);
-		a.onStop.add(function () { who.talk.pause(0); });
+		if (marker) {
+			/* We need to use this to get correct currentMarker in stop function */
+			a.onMarkerComplete.add(stop);
+		} else {
+			a.onStop.add(stop);
+		}
 	}
 	return a;
 }
@@ -98,13 +125,19 @@ function onShutDown () {
 
 /**
  * A function to easily add sound to a tween timeline.
- * @param {String} The name of the sound file to play
+ * @param {String|Object} The name of the sound file, or the sound object, to play
  * @param {Object} If someone should say it (object must have "say" function)
+ * @param {String} For playing a specific marker in a sound file
  */
-TimelineMax.prototype.addSound = function (what, who) {
-	var a = say(what, who);
-	this.addCallback(function () { a.play(); });
-	this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(what).data.duration);
+TimelineMax.prototype.addSound = function (what, who, marker) {
+	var a = say(what, who, marker);
+	if (marker) {
+		this.addCallback(function () { a.play(marker); });
+		this.addCallback(function () { a.stop(); }, '+=' + a.markers[marker].duration);
+	} else {
+		this.addCallback(function () { a.play(); });
+		this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(what).data.duration);
+	}
 	return this;
 };
 
