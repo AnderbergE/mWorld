@@ -25,6 +25,14 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
 
+	this.load.audio('beetleintro1', 'assets/audio/subgames/balloongame/beetleinstructions1_a.mp3');
+	this.load.audio('beetleintro2', 'assets/audio/subgames/balloongame/beetleinstructions1_b.mp3');
+	this.load.audio('agentintro', 'assets/audio/subgames/balloongame/agentintro.mp3');
+	this.load.audio('newtreasure', 'assets/audio/subgames/balloongame/newtreasure.mp3');
+	this.load.audio('tryless', 'assets/audio/subgames/balloongame/tryless.mp3');
+	this.load.audio('trymore', 'assets/audio/subgames/balloongame/trymore.mp3');
+	this.load.audio('success', 'assets/audio/subgames/balloongame/trymore.mp3');
+
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
 	this.load.image('balloon2',      'assets/img/subgames/balloon/b2.png');
@@ -32,6 +40,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('balloon4',      'assets/img/subgames/balloon/b4.png');
 	this.load.image('balloon5',      'assets/img/subgames/balloon/b5.png');
 	this.load.image('balloon6',      'assets/img/subgames/balloon/b6.png');
+	this.load.image('brokenballoon', 'assets/img/subgames/balloon/brokenballoon.png');
 	this.load.image('cloud1',      'assets/img/subgames/balloon/cloud1.png');
 	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
 
@@ -78,7 +87,7 @@ BalloonGame.prototype.preload = function () {
 	var airBalloonStock = 0;
 	var direction = 'right';
 	var catBush;
-	var catBushButton;
+	
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
@@ -119,14 +128,13 @@ BalloonGame.prototype.create = function () {
 	
 	catBush = game.add.sprite(200, 400, 'catbush', 0, this.gameGroup);
 	catBush.animations.add('catBlink');
-	catBushButton = game.add.button(200, 400, 'catbush', catBushPlay, this.gameGroup);
+	catBush.inputEnabled = true;
+	catBush.events.onInputDown.add(catBushPlay, this);
 
 	function catBushPlay(){
-		catBushButton.visible = false;
 		catBush.animations.play('catBlink', 8, false);
 		//TODO: Add sound.
 		catBush.events.onAnimationComplete.add(function(){
-			catBushButton.visible = true;
 			catBush.loadTexture('catbush', 0);
 		}, this);
 	}
@@ -377,6 +385,10 @@ BalloonGame.prototype.create = function () {
 			_this.disable(true);
 			liftoffButton.visible = false;
 
+			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
+				tl.to(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn});
+			}
+
 			if (!result)
 			{
 				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeOut});
@@ -386,12 +398,18 @@ BalloonGame.prototype.create = function () {
 					fade(chest, true);
 				});
 				tl.add(_this.addWater(chest.x, chest.y), '-=3');
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
-				//TODO: Add victory animation. 
+				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
+				tl.addCallback(function () {
+					resetBalloons();
+					//returnBalloonsFrom(0,-cliffheight*amount);
+				});
+				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
+				//TODO: Add victory animation.
 			} else if (result > 0)
 			{
 				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn});
 				console.log('Too many!');
+				tl.addSound('tryless', beetle);
 				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
 				tl.addCallback(function () {
 					resetBalloons();
@@ -404,6 +422,7 @@ BalloonGame.prototype.create = function () {
 				
 				tl.to(airballoons, amount, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeOut});
 				console.log('Too few!'); //TODO: Add sound as well.
+				tl.addSound('trymore', beetle);
 				//pop balloons
 				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
 				tl.addCallback(function () {
@@ -418,6 +437,7 @@ BalloonGame.prototype.create = function () {
 
 			//Possible that you could add next round in here as it might not do anything for balloongame unless you actually guess correct.
 			tl.eventCallback('onComplete', function(){
+				balloonStack2.kill();
 				_this.disable(false);
 				_this.agent.eyesFollowPointer();
 				_this.nextRound();
@@ -433,6 +453,8 @@ BalloonGame.prototype.create = function () {
 			returnStart();
 			deleteExcessSprite(airballoons.getAt(3));
 		}
+		balloonStack2.revive();
+		balloonStack2.loadTexture('brokenballoon');
 	}
 /*
 	//Animation to float the balloons back. Not used anymore.
@@ -481,7 +503,6 @@ BalloonGame.prototype.create = function () {
 			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
 		}
 	};
-
 
 	function renderChest (correctAnswer) {
 
@@ -539,8 +560,14 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		tl.eventCallback('onStart', function () { _this.skipper = tl; });
 		tl.to(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn});
-		tl.to(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn});
-
+		tl.addSound('beetleintro1', beetle);
+		tl.to(beetle, 0.2, {x: coords.beetle.stop.x, y: coords.beetle.stop.y-60, ease:Power4.easeOut});
+		tl.to(beetle, 0.2, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power4.easeIn});
+		tl.to(beetle, 0.2, {x: coords.beetle.stop.x, y: coords.beetle.stop.y-60, ease:Power4.easeOut});
+		tl.to(beetle, 0.2, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power4.easeIn});
+		tl.to(beetle, 0.2, {x: coords.beetle.stop.x, y: coords.beetle.stop.y-60, ease:Power4.easeOut});
+		tl.to(beetle, 0.2, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power4.easeIn});
+		tl.addSound('beetleintro2', beetle);
 		tl.eventCallback('onComplete', function () {
 			_this.disable(false);
 			_this.nextRound();
@@ -551,11 +578,13 @@ BalloonGame.prototype.create = function () {
 		if (tries > 0) {
 			showLiftoff();
 		} else { // if intro or first try	
-			//var t = new TimelineMax();
+			var tl = new TimelineMax();
 			if (intro) {
 				console.log('modeplayerDoIntro');
 				console.log('correct answer= ' + _this.currentNumber);
 				renderChest(_this.currentNumber);
+			} else {
+				tl.addSound('newtreasure', beetle);
 			}
 		showLiftoff();
 		}
@@ -570,7 +599,7 @@ BalloonGame.prototype.create = function () {
 				_this.disable(true);
 				tl.eventCallback('onStart', function () { _this.skipper = tl; });
 				tl.add(_this.agent.moveTo.start());
-				tl.addSound('birdheroAgentShow', _this.agent);
+				tl.addSound('agentintro', _this.agent);
 				tl.add(_this.agent.wave(3, 1), 'agentIntro');
 				tl.eventCallback('onComplete', function () {
 					_this.sound.removeByKey('birdheroAgentShow');
