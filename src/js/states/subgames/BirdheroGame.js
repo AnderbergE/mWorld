@@ -343,7 +343,11 @@ BirdheroGame.prototype.create = function () {
 		var t = new TimelineMax();
 		t.addSound(speech, bird, 'instruction1a');
 		t.add(bird.pointAtFeathers());
+		t.addLabel('useButtons');
+		t.addLabel('flashButtons', '+=0.7');
 		t.addSound(speech, bird, 'instruction1b');
+		t.add(fade(buttons, true), 'useButtons');
+		t.add(buttons.highlight(1), 'flashButtons');
 		return t;
 	}
 

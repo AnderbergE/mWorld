@@ -44,10 +44,6 @@ function NumberButton (number, representations, options) {
 		Event.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
 	}, this);
 
-	this.reset = function () {
-		bg.frame -= bg.frame % 2;
-	};
-
 	var x = 0;
 	var y = 0;
 	for (var i = 0; i < this.representations.length; i++) {
@@ -66,6 +62,17 @@ function NumberButton (number, representations, options) {
 			this.add(new YesnoRepresentation(this.number, x, y, size/2, color));
 		}
 	}
+
+	this.reset = function () {
+		bg.frame -= bg.frame % 2;
+	};
+
+	this.highlight = function (duration) {
+		duration = duration || 3;
+		var times = parseInt(duration / 0.5);
+		times += (times % 2 === 0) ? 1 : 0;
+		return TweenMax.to(this, 0.5, { alpha: 0, yoyo: true, repeat: times });
+	};
 
 	return this;
 }
