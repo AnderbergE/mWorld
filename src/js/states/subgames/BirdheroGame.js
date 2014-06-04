@@ -14,16 +14,14 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.mp3', 'assets/audio/subgames/birdhero/intro.ogg']);
 	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.mp3', 'assets/audio/subgames/birdhero/scream.ogg']);
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
+	this.load.audio('birdheroSpeech',         LANG.SPEECH.birdhero.sounds); // audio sprite sheet
 	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
 	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.mp3', 'assets/audio/subgames/birdhero/elevator_arrive.ogg']);
 	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
-	this.load.audio('birdheroCorrect',        ['assets/audio/subgames/birdhero/correct.mp3', 'assets/audio/subgames/birdhero/correct.ogg']);
-	this.load.audio('birdheroInstruction2',   LANG.SPEECH.birdhero.instruction2);
-	this.load.audio('birdheroEnding',         ['assets/audio/subgames/birdhero/ending.mp3', 'assets/audio/subgames/birdhero/ending.ogg']);
-	this.load.audio('birdheroSpeech',         LANG.SPEECH.birdhero.sounds); // audio sprite sheet
 
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
-	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
+	this.load.atlasJSONHash('birdheroBird',    'assets/img/subgames/birdhero/birdAtlas.png', 'assets/img/subgames/birdhero/birdAtlas.json');
+	this.load.image('birdheroBirdy',   'assets/img/subgames/birdhero/bird.png');
 	this.load.image('birdheroFeet',    'assets/img/subgames/birdhero/feet.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
 	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
@@ -57,7 +55,7 @@ BirdheroGame.prototype.create = function () {
 		bird: {
 			start: { x: -150, y: 600 },
 			stop: { x: 150, y: 500 },
-			scale: 0.1
+			scale: 0.7, small: 0.06
 		}
 	};
 	var tint = [
@@ -68,6 +66,7 @@ BirdheroGame.prototype.create = function () {
 	var speech = this.add.audio('birdheroSpeech');
 	speech.addMarker('instruction1a', 1.8, 8.1);
 	speech.addMarker('instruction1b', 10.5, 2.7);
+	speech.addMarker('floor', 17.3, 3.5);
 	speech.addMarker('higher', 24.8, 2.9);
 	speech.addMarker('lower', 31.8, 3.3);
 	speech.addMarker('correct', 39.9, 2);
@@ -104,6 +103,7 @@ BirdheroGame.prototype.create = function () {
 	// Since the bird is in the elevator group, we need to offset for that when moving it.
 	var bird = new BirdheroBird();
 	bird.visible = false;
+	bird.scale.set(coords.bird.scale);
 
 	// Setup tree and its branches
 	var tree = this.add.sprite(coords.tree.x, coords.tree.y, 'birdheroBole', null, this.gameGroup);
@@ -162,10 +162,10 @@ BirdheroGame.prototype.create = function () {
 	// Add Timeline/Tween functions
 	bird.moveTo = {
 		initial: function () {
-			return bird.move({ x: coords.bird.stop.x, y: coords.bird.stop.y }, 2, 1);
+			return bird.move({ x: coords.bird.stop.x, y: coords.bird.stop.y }, 2, coords.bird.scale);
 		},
 		elevator: function () {
-			return bird.move({ x: elevator.bucket.x+elevator.bucket.width/2, y: elevator.bucket.y+elevator.bucket.height/2 }, 2, coords.bird.scale);
+			return bird.move({ x: elevator.bucket.x+elevator.bucket.width/2, y: elevator.bucket.y+elevator.bucket.height/2 }, 2, coords.bird.small);
 		},
 		peak: function (up) {
 			return bird.move({ y: (up ? '-=22' : '+=22') }, 0.5);
@@ -223,6 +223,7 @@ BirdheroGame.prototype.create = function () {
 	function pushNumber (number) {
 		_this.disable(true);
 		_this.agent.eyesFollowObject(bird.beak.world);
+		bird.showWings(false);
 
 		var result = _this.tryNumber(number);
 		var branch = tree.branch[number-1];
@@ -300,7 +301,7 @@ BirdheroGame.prototype.create = function () {
 	}
 
 	/* Introduce a new bird, aka: start a new round. */
-	function newBird () {
+	function newBird (silent) {
 		bird.number = _this.currentNumber;
 		bird.tint = tint[bird.number - 1];
 
@@ -312,6 +313,10 @@ BirdheroGame.prototype.create = function () {
 		});
 		// TODO: Why does scale f up here when skipping?
 		t.add(bird.moveTo.initial());
+		if (!silent) {
+			t.addSound(speech, bird, 'floor');
+			t.addCallback(function () { bird.showWings(); }, '-=2.9');
+		}
 		return t;
 	}
 
@@ -342,8 +347,13 @@ BirdheroGame.prototype.create = function () {
 	function instructionIntro () {
 		var t = new TimelineMax();
 		t.addSound(speech, bird, 'instruction1a');
+		t.addCallback(function () { bird.showWings(); }, 5.6);
 		t.add(bird.pointAtFeathers());
+		t.addLabel('useButtons');
+		t.addLabel('flashButtons', '+=0.7');
 		t.addSound(speech, bird, 'instruction1b');
+		t.add(fade(buttons, true), 'useButtons');
+		t.add(buttons.highlight(1), 'flashButtons');
 		return t;
 	}
 
@@ -376,7 +386,7 @@ BirdheroGame.prototype.create = function () {
 			var pos = tree.branch[i].chickPos();
 			chick.x = pos.x - 35; // Counter-effect translate
 			chick.y = pos.y - 20; // Counter-effect translate
-			chick.scale.set(coords.bird.scale);
+			chick.scale.set(coords.bird.small);
 			group.add(chick);
 			t.add(new TweenMax(chick, 7, {
 				x: -500,
@@ -425,12 +435,15 @@ BirdheroGame.prototype.create = function () {
 	this.modePlayerDo = function (intro, tries) {
 		if (tries > 0) {
 			showNumbers();
+			bird.showWings();
 		} else { // if intro or first try
 			var t = new TimelineMax();
-			t.add(newBird());
 			if (intro) {
 				t.eventCallback('onStart', function () { _this.skipper = t; });
+				t.add(newBird(true));
 				t.add(instructionIntro());
+			} else {
+				t.add(newBird());
 			}
 			t.addCallback(showNumbers);
 		}
@@ -439,6 +452,7 @@ BirdheroGame.prototype.create = function () {
 	this.modePlayerShow = function (intro, tries) {
 		if (tries > 0) {
 			showNumbers();
+			bird.showWings();
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
@@ -459,6 +473,7 @@ BirdheroGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var t = new TimelineMax();
 		if (tries > 0) {
+			bird.showWings();
 			_this.agent.eyesFollowPointer(true);
 			// TODO: Add more specified sounds?
 			t.addSound(speech, _this.agent, 'agentTryAgain');
@@ -628,13 +643,23 @@ BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
 function BirdheroBird (tint) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	this.number = null;
+	this._number = null;
 
-	this.leftLeg = game.add.sprite(-2, 104, 'birdheroFeet', null, this);
-	this.rightLeg = game.add.sprite(23, 96, 'birdheroFeet', null, this);
-	this.body = game.add.sprite(0, 0, 'birdheroBird', null, this);
+	this.rightLeg = game.add.sprite(50, 160, 'birdheroBird', 'leg.png', this);
+	this.rightWing = game.add.sprite(180, -80, 'birdheroBird', 'wing5.png', this);
+	this.rightWing.visible = false;
+	this.body = game.add.sprite(0, 0, 'birdheroBird', 'body.png', this);
 	this.body.anchor.set(0.5);
-	this.beak = game.add.sprite(75, -35, 'birdheroBeak', null, this);
+	this.leftLeg = game.add.sprite(0, 175, 'birdheroBird', 'leg.png', this);
+	this.wing = game.add.sprite(75, -20, 'birdheroBird', 'wing0.png', this);
+	this.wing.anchor.set(1, 0);
+	this.leftWing = game.add.sprite(100, -90, 'birdheroBird', 'wing5.png', this);
+	this.leftWing.angle = 10;
+	this.leftWing.scale.x = -1;
+	this.leftWing.visible = false;
+	game.add.sprite(110, -160, 'birdheroBird', 'eyes.png', this);
+	game.add.sprite(118, -145, 'birdheroBird', 'pupils.png', this);
+	this.beak = game.add.sprite(190, -70, 'birdheroBird', 'beak0.png', this);
 	this.beak.anchor.set(0.5);
 
 	this.tint = tint || 0xffffff;
@@ -655,20 +680,60 @@ function BirdheroBird (tint) {
 }
 Object.defineProperty(BirdheroBird.prototype, 'tint', {
 	get: function() { return this.body.tint; },
-	set: function(value) { this.body.tint = value; }
+	set: function(value) {
+		this.body.tint = value;
+		this.wing.tint = value - 0x111111;
+		this.rightWing.tint = this.wing.tint;
+		this.leftWing.tint = this.wing.tint;
+	}
+});
+Object.defineProperty(BirdheroBird.prototype, 'number', {
+	get: function() { return this._number; },
+	set: function(value) {
+		this._number = value;
+		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value) + '.png';
+		this.leftWing.frameName = 'wing' + (value > 5 ? value - 5 : 0) + '.png';
+	}
 });
 
 BirdheroBird.prototype.featherPositions = [
-	{ x: 140, y: 0 }, // 1
-	{ x: 130, y: 10 }, // 2
-	{ x: 120, y: 20 }, // 3
-	{ x: 110, y: 30 }, // 4
-	{ x: 100, y: 40 }, // 5
+	{ x: 480, y: -90 }, // 1
+	{ x: 470, y: -60 }, // 2
+	{ x: 445, y: -20 }, // 3
+	{ x: 410, y: 15 }, // 4
+	{ x: 360, y: 40 }, // 5
 	{ x: -50,  y: 0 }, // 6
 	{ x: -40,  y: 10 }, // 7
 	{ x: -30,  y: 20 }, // 8
 	{ x: -20,  y: 30 }  // 9
 ];
+
+BirdheroBird.prototype.showWings = function (on) {
+	on = (typeof on === 'undefined' || on === null) ? true : on;
+	this.rightWing.visible = on;
+	if (this._number > 5) {
+		this.wing.visible = !on;
+		this.leftWing.visible = on;
+	}
+};
+
+BirdheroBird.prototype.pointAtFeathers = function () {
+	var t = new TimelineMax();
+	var arrow = this.arrow;
+	var offset = 30;
+	t.addCallback(function () { arrow.visible = true; });
+
+	arrow.x = this.featherPositions[0].x + offset; // Set start position
+	arrow.y = this.featherPositions[0].y;
+	// TODO: solve for > 5
+	for (var i = 0; i < this.number; i++) {
+		if (i !== 0) { t.add(new TweenMax(arrow, 0.3, { x: '+=' + offset, y: '+=5' })); }
+		t.add(new TweenMax(arrow, 0.7, { x: this.featherPositions[i].x, y: this.featherPositions[i].y }));
+	}
+
+	t.addCallback(function () { arrow.visible = false; }, '+=0.5');
+	return t;
+};
 
 /**
  * Turn around! Every now and then I get a little bit lonely...
@@ -711,23 +776,5 @@ BirdheroBird.prototype.move = function (properties, duration, scale) {
 		}
 	}, 'mover', null, this);
 
-	return t;
-};
-
-BirdheroBird.prototype.pointAtFeathers = function () {
-	var t = new TimelineMax();
-	var arrow = this.arrow;
-	var offset = 30;
-	t.addCallback(function () { arrow.visible = true; });
-
-	arrow.x = this.featherPositions[0].x + offset; // Set start position
-	arrow.y = this.featherPositions[0].y;
-	// TODO: solve for > 5
-	for (var i = 0; i < this.number; i++) {
-		if (i !== 0) { t.add(new TweenMax(arrow, 0.3, { x: '+=' + offset, y: '+=5' })); }
-		t.add(new TweenMax(arrow, 0.7, { x: this.featherPositions[i].x, y: this.featherPositions[i].y }));
-	}
-
-	t.addCallback(function () { arrow.visible = false; });
 	return t;
 };

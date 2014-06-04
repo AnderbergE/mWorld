@@ -22,11 +22,12 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.image('lizardTreeTop', 'assets/img/subgames/lizardjungle/top.png');
 	this.load.image('lizardThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 	this.load.image('lizardAnt',     'assets/img/subgames/lizardjungle/ant.png');
+	this.load.image('lizardArrow',   'assets/img/subgames/birdhero/arrow.png');
 };
 
 /* Phaser state function */
 LizardJungleGame.prototype.create = function () {
-	var _this = this; // Subscriptions to not have access to 'this' object
+	var _this = this; // Subscriptions do not have access to 'this' object
 	var coords = {
 		tree: {
 			x: 600, y: 10
@@ -162,8 +163,7 @@ LizardJungleGame.prototype.create = function () {
 	}
 
 	function newFood () {
-		var pos = tree.pieces[_this.currentNumber-1].world;
-		target = _this.add.sprite(pos.x, 750, 'lizardAnt', null, _this.gameGroup);
+		target = _this.add.sprite(tree.x, 750, 'lizardAnt', null, _this.gameGroup);
 		target.visible = false;
 		target.anchor.set(0.5);
 		target.scale.set(0.25);
@@ -202,7 +202,38 @@ LizardJungleGame.prototype.create = function () {
 			});
 	}
 
+	function pointAtBole (number) {
+		var first = tree.pieces[0];
+		var center = { x: first.width*tree.scale.x/2, y: first.height*tree.scale.y/2*1.3 }; // 1.2 is a offset
+		var start = first.world;
+		var offset = 70;
+		var arrow = game.add.sprite(start.x + center.x + offset, start.y - center.y, 'lizardArrow', null, this.gameGroup);
+		arrow.visible = false;
+
+		var t = new TimelineMax();
+		t.addCallback(function () { arrow.visible = true; });
+		for (var i = 0; i < number; i++) {
+			var pos = tree.pieces[i].world;
+			if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y - center.y })); }
+			t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
+		}
+		t.addCallback(function () { arrow.destroy(); }, '+=0.5');
+		return t;
+	}
+
+	function instructionIntro () {
+		var t = new TimelineMax();
+		//t.addSound(speech, bird, 'instruction1a');
+		t.add(pointAtBole(_this.currentNumber));
+		t.add(fade(buttons, true));
+		t.add(buttons.highlight(1));
+		//t.addSound(speech, bird, 'instruction1b');
+		return t;
+	}
+
 	this.modeIntro = function () {
+		// Most of the intro is in modePlayerDo. But we need a slight wait
+		// so that the game world can set up.
 		var t = new TimelineMax();
 		t.addSound('lizardPlaceholder', lizard);
 		t.addCallback(function () { _this.nextRound(); });
@@ -213,10 +244,18 @@ LizardJungleGame.prototype.create = function () {
 			showNumbers();
 		} else { // if intro or first try
 			var t = new TimelineMax();
-			t.add(newFood());
 			if (intro) {
+				_this.currentNumber = 3;
 				t.eventCallback('onStart', function () { _this.skipper = t; });
-				//t.add(instructionIntro());
+				t.add(newFood());
+				//t.addSound('lizardPlaceholder', lizard);
+				var hit1 = { x: tree.x, y: tree.pieces[1].world.y - shootOffset };
+				t.add(lizard.shoot(hit1));
+				var hit2 = { x: tree.x, y: tree.pieces[3].world.y- shootOffset };
+				t.add(lizard.shoot(hit2));
+				t.add(instructionIntro());
+			} else {
+				t.add(newFood());
 			}
 			t.addCallback(showNumbers);
 		}

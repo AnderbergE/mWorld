@@ -1,0 +1,103 @@
+{"frames": {
+
+"beak0.png":
+{
+	"frame": {"x":734,"y":329,"w":85,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":85,"h":60},
+	"sourceSize": {"w":85,"h":60}
+},
+"beak1.png":
+{
+	"frame": {"x":532,"y":329,"w":87,"h":83},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":87,"h":83},
+	"sourceSize": {"w":87,"h":83}
+},
+"body.png":
+{
+	"frame": {"x":2,"y":2,"w":528,"h":425},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":528,"h":425},
+	"sourceSize": {"w":530,"h":427}
+},
+"eyes.png":
+{
+	"frame": {"x":621,"y":329,"w":111,"h":74},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":111,"h":74},
+	"sourceSize": {"w":111,"h":74}
+},
+"leg.png":
+{
+	"frame": {"x":1129,"y":298,"w":141,"h":112},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":112},
+	"sourceSize": {"w":141,"h":112}
+},
+"pupils.png":
+{
+	"frame": {"x":821,"y":329,"w":94,"h":47},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":94,"h":47},
+	"sourceSize": {"w":94,"h":47}
+},
+"wing0.png":
+{
+	"frame": {"x":1129,"y":165,"w":210,"h":131},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":210,"h":131},
+	"sourceSize": {"w":212,"h":131}
+},
+"wing1.png":
+{
+	"frame": {"x":831,"y":165,"w":296,"h":161},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":296,"h":161},
+	"sourceSize": {"w":296,"h":161}
+},
+"wing2.png":
+{
+	"frame": {"x":532,"y":166,"w":297,"h":161},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":297,"h":161},
+	"sourceSize": {"w":297,"h":163}
+},
+"wing3.png":
+{
+	"frame": {"x":532,"y":2,"w":297,"h":162},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":297,"h":162},
+	"sourceSize": {"w":297,"h":162}
+},
+"wing4.png":
+{
+	"frame": {"x":1129,"y":2,"w":296,"h":161},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":296,"h":161},
+	"sourceSize": {"w":296,"h":161}
+},
+"wing5.png":
+{
+	"frame": {"x":831,"y":2,"w":296,"h":161},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":296,"h":161},
+	"sourceSize": {"w":296,"h":161}
+}},
+"meta": {
+	"image": "birdAtlas.png",
+	"size": {"w":1427,"h":429}
+}
+}

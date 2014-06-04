@@ -89,7 +89,8 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	plant.inputEnabled = true;
 	plant.events.onInputDown.add(this.down, this);
 
-	this.water = new Counter(level+1, true, water);
+	// this.water = new Counter(level+1, true, water); // For plant leveling
+	this.water = new Counter(1, true, water);
 	this.level = new Counter(3, false, level);
 	this.level.onAdd = function (current) {
 		game.input.disabled = true;
@@ -149,7 +150,7 @@ GardenPlant.prototype.down = function () {
 		};
 		this.water.onMax = function () {
 			_this.level.value++;
-			_this.water.max = _this.level.value + 1;
+			//_this.water.max = _this.level.value + 1;  // For plant leveling
 			if (_this.level.value === _this.level.max) {
 				_this.water.onAdd = null;
 				_this.water.onMax = null;

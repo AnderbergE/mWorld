@@ -46,6 +46,14 @@ ButtonPanel.prototype.reset = function () {
 	}
 };
 
+ButtonPanel.prototype.highlight = function (duration) {
+	var t = new TimelineMax();
+	for (var i = 0; i < this.children.length; i++) {
+		t.add(this.children[i].highlight(duration), 0);
+	}
+	return t;
+};
+
 ButtonPanel.prototype.disable = function (value) {
 	for (var i = 0; i < this.children.length; i++) {
 		this.children[i].disabled = value;

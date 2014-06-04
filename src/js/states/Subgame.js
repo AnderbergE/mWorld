@@ -266,11 +266,13 @@ Subgame.prototype.addWater = function (x, y, force) {
 
 /** Start the game! */
 Subgame.prototype.startGame = function () {
-	// TODO: Should we wait for sounds to be decoded here, or are there any easier way?
-	this.menuGroup.visible = true;
-	this._nextMode();
-	this._nextNumber();
-	this.nextRound();
+	var _this = this;
+	this.sound.whenSoundsDecoded(function () {
+		_this.menuGroup.visible = true;
+		_this._nextMode();
+		_this._nextNumber();
+		_this.nextRound();
+	});
 };
 
 /* End the game. */
