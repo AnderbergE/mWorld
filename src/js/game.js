@@ -17,18 +17,21 @@ var game;
  * Note: This is where all the states should be added.
  */
 window.onload = function () {
-	user = new User();
-	game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
+	if (document.querySelector('#game')) {
+		// Do not start game if the element does not exist.
+		user = new User();
+		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 
-	game.state.add('Boot', BootState);
-	game.state.add(GLOBAL.STATE.entry, EntryState);
-	game.state.add(GLOBAL.STATE.playerSetup, PlayerSetupState);
-	game.state.add(GLOBAL.STATE.garden, GardenState);
-	game.state.add(GLOBAL.STATE.lizardGame, LizardJungleGame);
-	game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
-	game.state.add(GLOBAL.STATE.balloonGame, BalloonGame);
+		game.state.add('Boot', BootState);
+		game.state.add(GLOBAL.STATE.entry, EntryState);
+		game.state.add(GLOBAL.STATE.playerSetup, PlayerSetupState);
+		game.state.add(GLOBAL.STATE.garden, GardenState);
+		game.state.add(GLOBAL.STATE.lizardGame, LizardJungleGame);
+		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
+		game.state.add(GLOBAL.STATE.balloonGame, BalloonGame);
 
-	game.state.start('Boot');
+		game.state.start('Boot');
+	}
 };
 
 //  The Google WebFont Loader will look for this object, so create it before loading the script.
