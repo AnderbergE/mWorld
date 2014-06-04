@@ -122,12 +122,52 @@ function onShutDown () {
 	Event.clear();
 }
 
+/**
+ * Check if all sound files have been decoded.
+ * Note: This will not start decoding. So if you turn off autodecode you
+ * need to start it yourself.
+ * @returns {Object} True if all sounds are decoded, otherwise false
+ */
+Phaser.SoundManager.prototype.checkSoundsDecoded = function () {
+	for (var key in this.game.cache._sounds) {
+		if (!this.game.cache.isSoundDecoded(key)) {
+			return false;
+		}
+	}
+	return true;
+};
+
+/**
+ * Run a function when all sounds have been decoded.
+ * @param {function} The function to run
+ */
+Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
+	if (this.checkSoundsDecoded()) {
+		func();
+	} else {
+		var _this = this;
+		var loader = document.querySelector('.loading').style;
+		loader.display = 'block';
+		document.querySelector('.progress').innerHTML = 'Decoding';
+
+		var c = function () {
+			loader.display = 'block';
+			if (_this.checkSoundsDecoded()) {
+				_this.onSoundDecode.remove(c);
+				func();
+				loader.display = 'none';
+			}
+		};
+		this.onSoundDecode.add(c);
+	}
+};
 
 /**
  * A function to easily add sound to a tween timeline.
  * @param {String|Object} The name of the sound file, or the sound object, to play
  * @param {Object} If someone should say it (object must have "say" function)
  * @param {String} For playing a specific marker in a sound file
+ * @returns {Object} The TimelineMax object
  */
 TimelineMax.prototype.addSound = function (what, who, marker) {
 	var a = say(what, who, marker);
@@ -142,7 +182,15 @@ TimelineMax.prototype.addSound = function (what, who, marker) {
 };
 
 
-/** Adds a rounded rectangle to the built-in rendering context. */
+/**
+ * Adds a rounded rectangle to the built-in rendering context.
+ * @param {number} The x position
+ * @param {number} The y position
+ * @param {number} The width
+ * @param {number} The height
+ * @param {number} The radius
+ * @returns {Object} The CanvasRenderingContext2D object
+ */
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
 	if (w < 2 * r) { r = w / 2; }
 	if (h < 2 * r) { r = h / 2; }
