@@ -46,13 +46,14 @@ BirdheroGame.prototype.create = function () {
 		},
 		agent: {
 			start: { x: 250, y: 950 },
-			stop: { x: 390, y: 500 },
-			scale: 0.25
+			stop: { x: 450, y: 500 },
+			scale: 0.25,
+			thought: { x: -150, y: -100, scale: 0.5 } // offset to agent
 		},
 		bird: {
 			start: { x: -150, y: 600 },
-			stop: { x: 150, y: 500 },
-			scale: 0.7, small: 0.06
+			stop: { x: 200, y: 550 },
+			scale: 0.3, small: 0.06
 		}
 	};
 	var tint = [
@@ -89,8 +90,8 @@ BirdheroGame.prototype.create = function () {
 	this.agent.visible = true;
 	// Adding thought bubble that is used in the agent try mode.
 	this.agent.thought = this.add.group(this.gameGroup);
-	this.agent.thought.x = coords.agent.stop.x - 200;
-	this.agent.thought.y = coords.agent.stop.y - 200;
+	this.agent.thought.x = coords.agent.stop.x + coords.agent.thought.x;
+	this.agent.thought.y = coords.agent.stop.y + coords.agent.thought.y;
 	this.agent.thought.visible = false;
 	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
 	thoughtBubble.anchor.set(0.5);
@@ -227,7 +228,8 @@ BirdheroGame.prototype.create = function () {
 
 		// TODO: This should not be skippable!
 		var t = new TimelineMax({ onStart: function () { _this.skipper = t; }});
-		t.add(bird.moveTo.elevator());
+		t.add(zoom(false), 0);
+		t.add(bird.moveTo.elevator(), 0);
 		t.add(bird.moveTo.peak(true));
 		t.add(elevator.moveTo.branch(number));
 		t.add(bird.moveTo.peak(false));
@@ -254,7 +256,9 @@ BirdheroGame.prototype.create = function () {
 			t.add(bird.moveTo.peak(true));
 			t.add(elevator.moveTo.bottom());
 			t.add(bird.moveTo.peak(false));
-			t.add(bird.moveTo.initial());
+			t.addLabel('initial');
+			t.add(bird.moveTo.initial(), 'initial');
+			t.add(zoom(true), 'initial');
 			t.addCallback(function () {
 				bird.turn(1);
 				_this.nextRound();
@@ -297,6 +301,18 @@ BirdheroGame.prototype.create = function () {
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
 	}
 
+	function zoom (ins) {
+		var t = new TimelineMax();
+		if (ins) {
+			t.add(TweenMax.to(_this.gameGroup, 2, { x: -160, y: -650 }), 0);
+			t.add(TweenMax.to(_this.gameGroup.scale, 2, { x: 2, y: 2 }), 0);
+		} else {
+			t.add(TweenMax.to(_this.gameGroup, 1.5, { x: 0, y: 0 }), 0);
+			t.add(TweenMax.to(_this.gameGroup.scale, 1.5, { x: 1, y: 1 }), 0);
+		}
+		return t;
+	}
+
 	/* Introduce a new bird, aka: start a new round. */
 	function newBird (silent) {
 		bird.number = _this.currentNumber;
@@ -308,8 +324,8 @@ BirdheroGame.prototype.create = function () {
 			bird.y = coords.bird.start.y;
 			bird.visible = true;
 		});
-		// TODO: Why does scale f up here when skipping?
-		t.add(bird.moveTo.initial());
+		t.add(bird.moveTo.initial(), 0); // TODO: Why does scale f up here when skipping?
+		t.add(zoom(true), 0);
 		if (!silent) {
 			t.addSound(speech, bird, 'floor');
 			t.addCallback(function () { bird.showWings(); }, '-=2.9');
@@ -323,7 +339,7 @@ BirdheroGame.prototype.create = function () {
 
 		return TweenMax.fromTo(_this.agent.thought.scale, 1.5,
 			{ x: 0, y: 0 },
-			{ x: 1, y: 1,
+			{ x: coords.agent.thought.scale, y: coords.agent.thought.scale,
 				ease: Elastic.easeOut,
 				onStart: function () {
 					_this.agent.thought.visible = true;
@@ -508,6 +524,7 @@ BirdheroGame.prototype.create = function () {
 			tree.branch[i].celebrate(3000);
 		}
 
+		_this.agent.thought.visible = false;
 		_this.agent.eyesFollowPointer(true);
 		_this.agent.fistPump()
 			.addCallback(function () { _this.nextRound(); });
