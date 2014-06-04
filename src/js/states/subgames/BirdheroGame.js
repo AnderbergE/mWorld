@@ -11,18 +11,16 @@ function BirdheroGame () {
 
 /* Phaser state function */
 BirdheroGame.prototype.preload = function () {
-	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.mp3', 'assets/audio/subgames/birdhero/intro.ogg']);
-	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.mp3', 'assets/audio/subgames/birdhero/scream.ogg']);
-	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
-	this.load.audio('birdheroSpeech',         LANG.SPEECH.birdhero.sounds); // audio sprite sheet
-	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
-	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.mp3', 'assets/audio/subgames/birdhero/elevator_arrive.ogg']);
-	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
+	this.load.audio('birdheroSpeech',         LANG.SPEECH.birdhero.speech); // audio sprite sheet
+	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.ogg',           'assets/audio/subgames/birdhero/intro.mp3']);
+	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.ogg',          'assets/audio/subgames/birdhero/scream.mp3']);
+	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.ogg',              'assets/audio/subgames/birdhero/bg.mp3']);
+	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.ogg',        'assets/audio/subgames/birdhero/elevator.mp3']);
+	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.ogg', 'assets/audio/subgames/birdhero/elevator_arrive.mp3']);
+	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.ogg',   'assets/audio/subgames/birdhero/elevator_down.mp3']);
 
-	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
 	this.load.atlasJSONHash('birdheroBird',    'assets/img/subgames/birdhero/birdAtlas.png', 'assets/img/subgames/birdhero/birdAtlas.json');
-	this.load.image('birdheroBirdy',   'assets/img/subgames/birdhero/bird.png');
-	this.load.image('birdheroFeet',    'assets/img/subgames/birdhero/feet.png');
+	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
 	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
 	this.load.image('birdheroBranch1', 'assets/img/subgames/birdhero/branch2.png');
@@ -35,7 +33,6 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
 	this.load.image('birdheroArrow',   'assets/img/subgames/birdhero/arrow.png');
 	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
-	this.load.spritesheet('birdheroBeak', 'assets/img/subgames/birdhero/beak.png', 31, 33);
 };
 
 /* Phaser state function */

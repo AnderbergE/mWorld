@@ -84,22 +84,16 @@ LANG.english.text = {
 
 LANG.english.speech = {
 	birdhero: {
-		instruction1a: ['assets/audio/subgames/birdhero/instruction_1a.mp3', 'assets/audio/subgames/birdhero/instruction_1a.ogg'],
-		instruction1b: ['assets/audio/subgames/birdhero/instruction_1b.mp3', 'assets/audio/subgames/birdhero/instruction_1b.ogg'],
-		instruction2:  ['assets/audio/subgames/birdhero/instruction_2.mp3',  'assets/audio/subgames/birdhero/instruction_2.ogg'],
-		thisFloor:     ['assets/audio/subgames/birdhero/this_floor.mp3',     'assets/audio/subgames/birdhero/this_floor.ogg'],
-		wrongHigher:   ['assets/audio/subgames/birdhero/wrong_higher.mp3',   'assets/audio/subgames/birdhero/wrong_higher.ogg'],
-		wrongLower:    ['assets/audio/subgames/birdhero/wrong_lower.mp3',    'assets/audio/subgames/birdhero/wrong_lower.ogg'],
-		sounds:        ['assets/audio/subgames/birdhero/sounds.mp3'/*,         'assets/audio/subgames/birdhero/sounds.ogg'*/]
+		speech:        ['assets/audio/subgames/birdhero/speech.ogg', 'assets/audio/subgames/birdhero/speech.mp3']
 	},
 
 	/* Agents */
 	panda: {
-		hmm:          ['assets/audio/agent/panda/hmm.mp3',       'assets/audio/agent/panda/hmm.ogg'],
-		tryAgain:     ['assets/audio/agent/panda/try_again.mp3', 'assets/audio/agent/panda/try_again.ogg'],
-		showMe:       ['assets/audio/agent/panda/show_me.mp3',   'assets/audio/agent/panda/show_me.ogg'],
-		birdheroShow: ['assets/audio/agent/panda/hello.mp3',     'assets/audio/agent/panda/hello.ogg'],
-		birdheroTry:  ['assets/audio/agent/panda/i_try.mp3',     'assets/audio/agent/panda/i_try.ogg']
+		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
+		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
+		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
+		birdheroShow: ['assets/audio/agent/panda/hello.ogg',     'assets/audio/agent/panda/hello.mp3'],
+		birdheroTry:  ['assets/audio/agent/panda/i_try.ogg',     'assets/audio/agent/panda/i_try.mp3']
 	}
 };
 
