@@ -18,57 +18,57 @@ function DiceRepresentation (number, x, y, size, color) {
 	ctx.fillStyle = color || '#000000';
 	if (number === 1) {
 		ctx.beginPath();
-		ctx.arc(middle, middle, radius, 0, this.round);
+		ctx.arc(middle, middle, radius, 0, Math.PI2);
 		ctx.closePath();
 	} else if (number === 2) {
 		ctx.beginPath();
-		ctx.arc(left, top, radius, 0, this.round);
+		ctx.arc(left, top, radius, 0, Math.PI2);
 		ctx.moveTo(right, bottom);
-		ctx.arc(right, bottom, radius, 0, this.round);
+		ctx.arc(right, bottom, radius, 0, Math.PI2);
 		ctx.closePath();
 	} else if (number === 3) {
 		ctx.beginPath();
-		ctx.arc(left, top, radius, 0, this.round);
+		ctx.arc(left, top, radius, 0, Math.PI2);
 		ctx.moveTo(middle, middle);
-		ctx.arc(middle, middle, radius, 0, this.round);
+		ctx.arc(middle, middle, radius, 0, Math.PI2);
 		ctx.moveTo(right, bottom);
-		ctx.arc(right, bottom, radius, 0, this.round);
+		ctx.arc(right, bottom, radius, 0, Math.PI2);
 		ctx.closePath();
 	} else if (number === 4) {
 		ctx.beginPath();
-		ctx.arc(left, top, radius, 0, this.round);
+		ctx.arc(left, top, radius, 0, Math.PI2);
 		ctx.moveTo(right, top);
-		ctx.arc(right, top, radius, 0, this.round);
+		ctx.arc(right, top, radius, 0, Math.PI2);
 		ctx.moveTo(left, bottom);
-		ctx.arc(left, bottom, radius, 0, this.round);
+		ctx.arc(left, bottom, radius, 0, Math.PI2);
 		ctx.moveTo(right, bottom);
-		ctx.arc(right, bottom, radius, 0, this.round);
+		ctx.arc(right, bottom, radius, 0, Math.PI2);
 		ctx.closePath();
 	} else if (number === 5) {
 		ctx.beginPath();
-		ctx.arc(left, top, radius, 0, this.round);
+		ctx.arc(left, top, radius, 0, Math.PI2);
 		ctx.moveTo(right, top);
-		ctx.arc(right, top, radius, 0, this.round);
+		ctx.arc(right, top, radius, 0, Math.PI2);
 		ctx.moveTo(middle, middle);
-		ctx.arc(middle, middle, radius, 0, this.round);
+		ctx.arc(middle, middle, radius, 0, Math.PI2);
 		ctx.moveTo(left, bottom);
-		ctx.arc(left, bottom, radius, 0, this.round);
+		ctx.arc(left, bottom, radius, 0, Math.PI2);
 		ctx.moveTo(right, bottom);
-		ctx.arc(right, bottom, radius, 0, this.round);
+		ctx.arc(right, bottom, radius, 0, Math.PI2);
 		ctx.closePath();
 	} else if (number === 6) {
 		ctx.beginPath();
-		ctx.arc(left, top, radius, 0, this.round);
+		ctx.arc(left, top, radius, 0, Math.PI2);
 		ctx.moveTo(right, top);
-		ctx.arc(right, top, radius, 0, this.round);
+		ctx.arc(right, top, radius, 0, Math.PI2);
 		ctx.moveTo(right, middle);
-		ctx.arc(right, middle, radius, 0, this.round);
+		ctx.arc(right, middle, radius, 0, Math.PI2);
 		ctx.moveTo(left, middle);
-		ctx.arc(left, middle, radius, 0, this.round);
+		ctx.arc(left, middle, radius, 0, Math.PI2);
 		ctx.moveTo(left, bottom);
-		ctx.arc(left, bottom, radius, 0, this.round);
+		ctx.arc(left, bottom, radius, 0, Math.PI2);
 		ctx.moveTo(right, bottom);
-		ctx.arc(right, bottom, radius, 0, this.round);
+		ctx.arc(right, bottom, radius, 0, Math.PI2);
 		ctx.closePath();
 	}
 	ctx.fill();
@@ -76,4 +76,3 @@ function DiceRepresentation (number, x, y, size, color) {
 	Phaser.Sprite.call(this, game, x, y, bmd); // Parent constructor.
 	return this;
 }
-DiceRepresentation.prototype.round = 2*Math.PI;

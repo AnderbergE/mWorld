@@ -203,3 +203,5 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
 	this.closePath();
 	return this;
 };
+
+Math.PI2 = Math.PI*2;
