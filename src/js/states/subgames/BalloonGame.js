@@ -32,6 +32,11 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('tryless', 'assets/audio/subgames/balloongame/tryless.mp3');
 	this.load.audio('trymore', 'assets/audio/subgames/balloongame/trymore.mp3');
 	this.load.audio('success', 'assets/audio/subgames/balloongame/trymore.mp3');
+	this.load.audio('agenthmm', 'assets/audio/subgames/balloongame/agenthmm1.mp3');
+	this.load.audio('agenttry', 'assets/audio/subgames/balloongame/agenttry.mp3');
+	this.load.audio('oops', 'assets/audio/subgames/balloongame/oops.mp3');
+	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
+	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
@@ -247,8 +252,9 @@ BalloonGame.prototype.create = function () {
 	}
 
 	function pushYesno (value) {
+		//TODO add random sounds
 		if (!value) {
-			say('birdheroAgentCorrected', _this.agent).play();
+			say('isitwrong', _this.agent).play();
 			showLiftoff();
 		}
 		else { agentFloatBalloons(_this.agent.lastGuess); }
@@ -489,9 +495,9 @@ BalloonGame.prototype.create = function () {
 		if(sprite !== -1)
 		{
 			sprite.destroy();
-			balloonStock += 1;
-			balloonStockUpdate();
 		}
+		balloonStock += 1;
+		balloonStockUpdate();
 
 	}
 
@@ -544,7 +550,8 @@ BalloonGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					say('birdheroAgentHmm', _this.agent).play();
+					//TODO: Random hmm
+					say('agenthmm', _this.agent).play();
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -552,6 +559,7 @@ BalloonGame.prototype.create = function () {
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
+					say('question', _this.agent).play();
 					showYesnos();
 				}
 			});
@@ -618,7 +626,7 @@ BalloonGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var tl = new TimelineMax();
 		if (tries > 0) {
-			tl.addSound('birdheroAgentOops', _this.agent);
+			tl.addSound('oops', _this.agent);
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
@@ -627,10 +635,10 @@ BalloonGame.prototype.create = function () {
 				console.log('modeAgentTry Intro');
 				console.log('correct answer= ' + _this.currentNumber);
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
-				tl.addSound('birdheroAgentTry', _this.agent);
+				tl.addSound('agenttry', _this.agent);
 				tl.eventCallback('onComplete', function () {
 					renderChest(_this.currentNumber);
-					_this.sound.removeByKey('birdheroAgentTry');
+					_this.sound.removeByKey('agenttry');
 					_this.disable(false);
 				});
 			}
