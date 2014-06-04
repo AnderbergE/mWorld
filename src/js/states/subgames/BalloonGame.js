@@ -25,6 +25,19 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
 
+	this.load.audio('beetleintro1', 'assets/audio/subgames/balloongame/beetleinstructions1_a.mp3');
+	this.load.audio('beetleintro2', 'assets/audio/subgames/balloongame/beetleinstructions1_b.mp3');
+	this.load.audio('agentintro', 'assets/audio/subgames/balloongame/agentintro.mp3');
+	this.load.audio('newtreasure', 'assets/audio/subgames/balloongame/newtreasure.mp3');
+	this.load.audio('tryless', 'assets/audio/subgames/balloongame/tryless.mp3');
+	this.load.audio('trymore', 'assets/audio/subgames/balloongame/trymore.mp3');
+	this.load.audio('success', 'assets/audio/subgames/balloongame/trymore.mp3');
+	this.load.audio('agenthmm', 'assets/audio/subgames/balloongame/agenthmm1.mp3');
+	this.load.audio('agenttry', 'assets/audio/subgames/balloongame/agenttry.mp3');
+	this.load.audio('oops', 'assets/audio/subgames/balloongame/oops.mp3');
+	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
+	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
+
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
 	this.load.image('balloon2',      'assets/img/subgames/balloon/b2.png');
@@ -32,6 +45,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('balloon4',      'assets/img/subgames/balloon/b4.png');
 	this.load.image('balloon5',      'assets/img/subgames/balloon/b5.png');
 	this.load.image('balloon6',      'assets/img/subgames/balloon/b6.png');
+	this.load.image('brokenballoon', 'assets/img/subgames/balloon/brokenballoon.png');
 	this.load.image('cloud1',      'assets/img/subgames/balloon/cloud1.png');
 	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
 
@@ -78,7 +92,7 @@ BalloonGame.prototype.preload = function () {
 	var airBalloonStock = 0;
 	var direction = 'right';
 	var catBush;
-	var catBushButton;
+	
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
@@ -119,32 +133,16 @@ BalloonGame.prototype.create = function () {
 	
 	catBush = game.add.sprite(200, 400, 'catbush', 0, this.gameGroup);
 	catBush.animations.add('catBlink');
-	catBushButton = game.add.button(200, 400, 'catbush', catBushPlay, this.gameGroup);
+	catBush.inputEnabled = true;
+	catBush.events.onInputDown.add(catBushPlay, this);
 
 	function catBushPlay(){
-		catBushButton.visible = false;
 		catBush.animations.play('catBlink', 8, false);
 		//TODO: Add sound.
 		catBush.events.onAnimationComplete.add(function(){
-			catBushButton.visible = true;
 			catBush.loadTexture('catbush', 0);
 		}, this);
 	}
-
-	// Agent is added to the game in the superclass, so set up correct start point.
-	this.agent.x = coords.agent.start.x;
-	this.agent.y = coords.agent.start.y;
-	this.agent.scale.set(coords.agent.scale);
-	this.agent.visible = true;
-	// Adding thought bubble that is used in the agent try mode.
-	this.agent.thought = this.add.group(this.gameGroup);
-	this.agent.thought.x = coords.agent.stop.x - 200;
-	this.agent.thought.y = coords.agent.stop.y - 200;
-	this.agent.thought.visible = false;
-	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
-	thoughtBubble.anchor.set(0.5);
-	this.gameGroup.bringToTop(this.agent);
-
 
 	// Adding the platforms on the cliff wall.
 	for (var i = 0; i < 5; i++){
@@ -203,6 +201,22 @@ BalloonGame.prototype.create = function () {
 	balloonStack2.anchor.setTo(0.5, 1);
 	balloonStack2.kill();
 
+	// Agent is added to the game in the superclass, so set up correct start point.
+	this.agent.x = coords.agent.start.x;
+	this.agent.y = coords.agent.start.y;
+	this.agent.scale.set(coords.agent.scale);
+	this.agent.visible = true;
+	// Adding thought bubble that is used in the agent try mode.
+	this.agent.thought = this.add.group(this.gameGroup);
+	this.agent.thought.x = coords.agent.stop.x + 170;
+	this.agent.thought.y = coords.agent.stop.y - 170;
+	this.agent.thought.visible = false;
+	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
+	thoughtBubble.anchor.set(0.5);
+	thoughtBubble.scale.x = -0.7;
+	thoughtBubble.scale.y = 0.7;
+	this.gameGroup.bringToTop(this.agent);
+
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	balloonStockUpdate();
@@ -238,8 +252,9 @@ BalloonGame.prototype.create = function () {
 	}
 
 	function pushYesno (value) {
+		//TODO add random sounds
 		if (!value) {
-			say('birdheroAgentCorrected', _this.agent).play();
+			say('isitwrong', _this.agent).play();
 			showLiftoff();
 		}
 		else { agentFloatBalloons(_this.agent.lastGuess); }
@@ -250,7 +265,8 @@ BalloonGame.prototype.create = function () {
 		airBalloonStock = guess;
 		balloonStock = 6-guess;
 		balloonStockUpdate();
-		airBalloonStockUpdate();
+		balloonStack2.revive();
+		balloonStack2.loadTexture('balloon'+airBalloonStock);
 		takeOff();
 	}
 
@@ -344,10 +360,10 @@ BalloonGame.prototype.create = function () {
 
 	function copyAirTexture() {
 
-		var amount = airBalloonStock;
+		var amount = airballoons.length;
 
-		for (var i = 0; i < amount; i++){
-			airballoons.getAt(3+i).loadTexture('balloon'+amount);
+		for (var i = 3; i < amount; i++){
+				airballoons.getAt(i).loadTexture('balloon'+airBalloonStock);
 		}
 	}
 
@@ -357,6 +373,9 @@ BalloonGame.prototype.create = function () {
 		var boundsB = spriteB.getBounds();
 		return Phaser.Rectangle.intersects(boundsA, boundsB);
 	}
+
+	var speech = this.add.audio('beetleintro1');
+	speech.addMarker('yippi', 1.9, 1);
 
 	function takeOff() {
 
@@ -377,47 +396,54 @@ BalloonGame.prototype.create = function () {
 			_this.disable(true);
 			liftoffButton.visible = false;
 
+			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
+				tl.add( new TweenMax(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn}));
+			}
+			//TODO Optimize if something is done in all cases.
 			if (!result)
 			{
-				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeOut});
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn}));
 				console.log('Correct!');
 				tl.addCallback(function () {
 					fade(eyes, false);
 					fade(chest, true);
 				});
+				tl.addSound(speech, beetle, 'yippi');
 				tl.add(_this.addWater(chest.x, chest.y), '-=3');
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
-				//TODO: Add victory animation. 
-			} else if (result > 0)
-			{
-				tl.to(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn});
-				console.log('Too many!');
-				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
+				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
 				tl.addCallback(function () {
 					resetBalloons();
-					//returnBalloonsFrom(0,-cliffheight*amount);
 				});
 				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
 				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
+				//TODO: Add victory animation.
+			} else if (result > 0)
+			{
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn}));
+				console.log('Too many!');
+				tl.addSound('tryless', beetle);
+				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
+				tl.addCallback(function () {
+					resetBalloons();
+				});
+				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn}));
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut}));
 			} else
 			{
 				
-				tl.to(airballoons, amount, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeOut});
-				console.log('Too few!'); //TODO: Add sound as well.
-				//pop balloons
-				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn});
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn}));
+				console.log('Too few!');
+				tl.addSound('trymore', beetle);
+				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
 				tl.addCallback(function () {
 					resetBalloons();
-					//returnBalloonsFrom(0,-cliffheight*amount);
 				});
-				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
-
-				//TODO: Add animation of balloon falling down with a bounce after balloons float back. Next round.
+				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn}));
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut}));
 			}
 
-			//Possible that you could add next round in here as it might not do anything for balloongame unless you actually guess correct.
 			tl.eventCallback('onComplete', function(){
+				balloonStack2.kill();
 				_this.disable(false);
 				_this.agent.eyesFollowPointer();
 				_this.nextRound();
@@ -433,6 +459,8 @@ BalloonGame.prototype.create = function () {
 			returnStart();
 			deleteExcessSprite(airballoons.getAt(3));
 		}
+		balloonStack2.revive();
+		balloonStack2.loadTexture('brokenballoon');
 	}
 /*
 	//Animation to float the balloons back. Not used anymore.
@@ -464,9 +492,13 @@ BalloonGame.prototype.create = function () {
 
 	function deleteExcessSprite(sprite) {
 		console.log(sprite);
-		sprite.destroy();
+		if(sprite !== -1)
+		{
+			sprite.destroy();
+		}
 		balloonStock += 1;
 		balloonStockUpdate();
+
 	}
 
 
@@ -481,7 +513,6 @@ BalloonGame.prototype.create = function () {
 			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
 		}
 	};
-
 
 	function renderChest (correctAnswer) {
 
@@ -519,7 +550,8 @@ BalloonGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					say('birdheroAgentHmm', _this.agent).play();
+					//TODO: Random hmm
+					say('agenthmm', _this.agent).play();
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -527,10 +559,15 @@ BalloonGame.prototype.create = function () {
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
+					say('question', _this.agent).play();
 					showYesnos();
 				}
 			});
 	}
+
+	/*beetle.talk = TweenMax.to(beetle, 0.2, {
+		y: '+=5', repeat: -1, yoyo: true, paused: true
+	});*/
 
 	this.modeIntro = function () {
 		console.log('ModeIntro');
@@ -538,9 +575,9 @@ BalloonGame.prototype.create = function () {
 		bgMusic.play();
 		var tl = new TimelineMax();
 		tl.eventCallback('onStart', function () { _this.skipper = tl; });
-		tl.to(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn});
-		tl.to(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn});
-
+		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
+		tl.addSound('beetleintro1', beetle);
+		tl.addSound('beetleintro2', beetle);
 		tl.eventCallback('onComplete', function () {
 			_this.disable(false);
 			_this.nextRound();
@@ -551,11 +588,13 @@ BalloonGame.prototype.create = function () {
 		if (tries > 0) {
 			showLiftoff();
 		} else { // if intro or first try	
-			//var t = new TimelineMax();
+			var tl = new TimelineMax();
 			if (intro) {
 				console.log('modeplayerDoIntro');
 				console.log('correct answer= ' + _this.currentNumber);
 				renderChest(_this.currentNumber);
+			} else {
+				tl.addSound('newtreasure', beetle);
 			}
 		showLiftoff();
 		}
@@ -570,15 +609,15 @@ BalloonGame.prototype.create = function () {
 				_this.disable(true);
 				tl.eventCallback('onStart', function () { _this.skipper = tl; });
 				tl.add(_this.agent.moveTo.start());
-				tl.addSound('birdheroAgentShow', _this.agent);
+				tl.addLabel('agentIntro');
+				tl.addSound('agentintro', _this.agent);
 				tl.add(_this.agent.wave(3, 1), 'agentIntro');
 				tl.eventCallback('onComplete', function () {
 					_this.sound.removeByKey('birdheroAgentShow');
 					renderChest(_this.currentNumber);
 					_this.disable(false);
 				});
-				console.log('modeplayerShow Intro');
-				console.log('correct answer= ' + _this.currentNumber);
+
 			}
 		tl.addCallback(showLiftoff);
 		}
@@ -587,7 +626,7 @@ BalloonGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var tl = new TimelineMax();
 		if (tries > 0) {
-			tl.addSound('birdheroAgentOops', _this.agent);
+			tl.addSound('oops', _this.agent);
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
@@ -596,10 +635,10 @@ BalloonGame.prototype.create = function () {
 				console.log('modeAgentTry Intro');
 				console.log('correct answer= ' + _this.currentNumber);
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
-				tl.addSound('birdheroAgentTry', _this.agent);
+				tl.addSound('agenttry', _this.agent);
 				tl.eventCallback('onComplete', function () {
 					renderChest(_this.currentNumber);
-					_this.sound.removeByKey('birdheroAgentTry');
+					_this.sound.removeByKey('agenttry');
 					_this.disable(false);
 				});
 			}
@@ -629,90 +668,26 @@ BalloonGame.prototype.create = function () {
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	function balloonStockUpdate() {
-		switch(balloonStock) {
-			case 0:
-				balloonStack1.kill();
-			break;
-			case 1:
-				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon1');
-				copyTexture();
-				createBalloon();
-			break;
-			case 2:
-				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon2');
-				copyTexture();
-				createBalloon();
-			break;
-			case 3:
-				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon3');
-				copyTexture();
-				createBalloon();
-			break;
-			case 4:
-				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon4');
-				copyTexture();
-				createBalloon();
-			break;
-			case 5:
-				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon5');
-				copyTexture();
-				createBalloon();
-			break;
-			case 6:
-				balloonStack1.revive();
-				balloonStack1.loadTexture('balloon6');
-				copyTexture();
-				createBalloon();
-			break;
+		if (balloonStock === 0)
+		{
+			balloonStack1.kill();
+		} else {
+			balloonStack1.revive();
+			balloonStack1.loadTexture('balloon' + balloonStock);
+			copyTexture();
+			createBalloon();
 		}
 	}
 
 	function airBalloonStockUpdate() {
-		switch(airBalloonStock) {
-			case 0:
-				balloonStack2.kill();
-			break;
-			case 1:
-				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon1');
-				copyAirTexture();
-				createAirBalloon();
-			break;
-			case 2:
-				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon2');
-				copyAirTexture();
-				createAirBalloon();
-			break;
-			case 3:
-				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon3');
-				copyAirTexture();
-				createAirBalloon();
-			break;
-			case 4:
-				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon4');
-				copyAirTexture();
-				createAirBalloon();
-			break;
-			case 5:
-				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon5');
-				copyAirTexture();
-				createAirBalloon();
-			break;
-			case 6:
-				balloonStack2.revive();
-				balloonStack2.loadTexture('balloon6');
-				copyAirTexture();
-				createAirBalloon();
-			break;
+		if (airBalloonStock === 0)
+		{
+			balloonStack2.kill();
+		} else {
+			balloonStack2.revive();
+			balloonStack2.loadTexture('balloon' + airBalloonStock);
+			copyAirTexture();
+			createAirBalloon();
 		}
 	}
 
