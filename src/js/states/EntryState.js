@@ -23,7 +23,6 @@ EntryState.prototype.create = function () {
 	text.inputEnabled = true;
 	text.events.onInputDown.add(function () {
 		user.login('debug', 'debug');
-		//this.add.audio('yeah').play();
 		this.state.start(GLOBAL.STATE.garden);
 	}, this);
 
