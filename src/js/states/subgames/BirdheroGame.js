@@ -240,8 +240,9 @@ BirdheroGame.prototype.create = function () {
 				bird.visible = false;
 				speech.play('correct');
 			});
-			t.add(branch.celebrate()); // 3 second celebration
-			t.add(_this.addWater(branch.mother.world.x, branch.mother.world.y), '-=3');
+			t.addLabel('celebrate');
+			t.add(branch.celebrate(2), 'celebrate');
+			t.add(_this.addWater(branch.x + branch.mother.x, branch.y + branch.mother.y), 'celebrate');
 			t.add(elevator.moveTo.bottom());
 			t.addCallback(function () {
 				_this.nextRound();
@@ -610,19 +611,19 @@ BirdheroBranch.prototype.visit = function () {
 
 /**
  * When the nest goes wild!
- * @param {number} The duration of the celebration, default: 3000
+ * @param {number} The duration of the celebration, default: 3
  * @returns {Object} The celebration tween
  */
 BirdheroBranch.prototype.celebrate = function (duration) {
-	duration = duration || 3000;
-	var times = parseInt(duration / 200);
+	duration = duration || 3;
+	var times = parseInt(duration / 0.2);
 	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
 	return new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true });
 };
 
 /**
  * When something strange is happening.
- * @param {number} The duration of the confusion, default: 3000
+ * @param {number} The duration of the confusion, default: 3
  * @returns {Object} The confusion tween
  */
 BirdheroBranch.prototype.confused = function (duration) {
@@ -639,8 +640,8 @@ BirdheroBranch.prototype.confused = function (duration) {
 		}
 	}
 
-	duration = duration || 3000;
-	var times = parseInt(duration / 200);
+	duration = duration || 3;
+	var times = parseInt(duration / 0.2);
 	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
 
 	var _this = this;
