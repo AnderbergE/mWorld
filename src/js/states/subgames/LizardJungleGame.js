@@ -38,6 +38,10 @@ LizardJungleGame.prototype.create = function () {
 			scale: 0.25
 		}
 	};
+	var tint = [
+		0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
+		0x0000ff, 0x555555, 0x3333cc, 0x33cc33, 0xcc3333
+	];
 
 	// Add main game
 	this.add.sprite(0, 0, 'lizardBg', null, this.gameGroup);
@@ -119,6 +123,7 @@ LizardJungleGame.prototype.create = function () {
 		var t = new TimelineMax();
 		if (!result) { // Correct :)
 			t.add(lizard.shootObject(target));
+			t.add(TweenMax.to(lizard, 1, { tint: target.tint }));
 			t.addCallback(function () { target.destroy(); });
 		} else { // Incorrect :(
 			t.add(lizard.shoot(hit));
@@ -164,6 +169,7 @@ LizardJungleGame.prototype.create = function () {
 
 	function newFood () {
 		target = _this.add.sprite(tree.x, 750, 'lizardAnt', null, _this.gameGroup);
+		target.tint = tint[_this.currentNumber];
 		target.visible = false;
 		target.anchor.set(0.5);
 		target.scale.set(0.25);
@@ -380,3 +386,11 @@ function LizardJungleLizard (x, y) {
 		return t;
 	};
 }
+Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
+	get: function() { return this.body.tint; },
+	set: function(value) {
+		this.body.tint = value;
+		this.forehead.tint = value;
+		this.mouth.tint = value;
+	}
+});
