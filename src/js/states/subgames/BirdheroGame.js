@@ -360,7 +360,7 @@ BirdheroGame.prototype.create = function () {
 	function instructionIntro () {
 		var t = new TimelineMax();
 		t.addSound(speech, bird, 'instruction1a');
-		t.addCallback(function () { bird.showWings(); }, 5.6);
+		t.addCallback(function () { bird.showWings(); }, 4.6);
 		t.add(bird.pointAtFeathers());
 		t.addLabel('useButtons');
 		t.addLabel('flashButtons', '+=0.7');
@@ -680,6 +680,7 @@ function BirdheroBird (tint) {
 
 	/* For instructions */
 	this.arrow = game.add.sprite(0, 0, 'birdheroArrow', null, this);
+	this.arrow.anchor.set(0, 0.5);
 	this.arrow.visible = false;
 
 	/* Animations */
@@ -711,17 +712,21 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 });
 
 BirdheroBird.prototype.featherPositions = [
-	{ x: 480, y: -90 }, // 1
-	{ x: 470, y: -60 }, // 2
-	{ x: 445, y: -20 }, // 3
-	{ x: 410, y: 15 }, // 4
-	{ x: 360, y: 40 }, // 5
-	{ x: -50,  y: 0 }, // 6
-	{ x: -40,  y: 10 }, // 7
-	{ x: -30,  y: 20 }, // 8
-	{ x: -20,  y: 30 }  // 9
+	{ x: 475, y: -65 },    // 1
+	{ x: 470, y: -27 },    // 2
+	{ x: 440, y: 10 },     // 3
+	{ x: 410, y: 45 },     // 4
+	{ x: 360, y: 70 },     // 5
+	{ x: -195,  y: -120 }, // 6
+	{ x: -195,  y: -80 },  // 7
+	{ x: -165,  y: -40 },  // 8
+	{ x: -145,  y: 0 }     // 9
 ];
 
+/**
+ * The bird will show its wings.
+ * @param {boolean} true = show, false = hide  (default is true)
+ */
 BirdheroBird.prototype.showWings = function (on) {
 	on = (typeof on === 'undefined' || on === null) ? true : on;
 	this.rightWing.visible = on;
@@ -731,18 +736,37 @@ BirdheroBird.prototype.showWings = function (on) {
 	}
 };
 
+/**
+ * Point at the birds feathers.
+ * @returns {Object} The animation timeline
+ */
 BirdheroBird.prototype.pointAtFeathers = function () {
-	var t = new TimelineMax();
-	var arrow = this.arrow;
+	var pos = this.featherPositions[0];
+	var next = pos;
 	var offset = 30;
-	t.addCallback(function () { arrow.visible = true; });
+	var arrow = this.arrow;
+	arrow.x = pos.x + offset; // Set start position
+	arrow.y = pos.y;
+	arrow.angle = 0;
 
-	arrow.x = this.featherPositions[0].x + offset; // Set start position
-	arrow.y = this.featherPositions[0].y;
-	// TODO: solve for > 5
+	var t = new TimelineMax();
+	t.addCallback(function () { arrow.visible = true; });
+	t.addCallback(function () {}, 0.3); // Slight pause
+	
 	for (var i = 0; i < this.number; i++) {
-		if (i !== 0) { t.add(new TweenMax(arrow, 0.3, { x: '+=' + offset, y: '+=5' })); }
-		t.add(new TweenMax(arrow, 0.7, { x: this.featherPositions[i].x, y: this.featherPositions[i].y }));
+		pos = next;
+		t.add(new TweenMax(arrow, 0.7, { x: pos.x, y: pos.y }));
+
+		if (i+1 === this.number) { break; }
+
+		next = this.featherPositions[i+1];
+		if (i < 4) {
+			t.add(new TweenMax(arrow, 0.3, { x: '+=' + offset, y: next.y }));
+		} else if (i === 4) {
+			t.add(new TweenMax(arrow, 1, { x: next.x - offset, y: next.y, angle: -180 }));
+		} else {
+			t.add(new TweenMax(arrow, 0.3, { x: '-=' + offset, y: next.y }));
+		}
 	}
 
 	t.addCallback(function () { arrow.visible = false; }, '+=0.5');
