@@ -345,46 +345,10 @@ function LizardJungleLizard (x, y) {
 	this.talk.to(this.mouth, 0.2, { angle: -2 });
 	this.talk.to(this.forehead, 0.2, { angle: 4 }, 0);
 
-	this.followPointer = function (on) {
-		if (on) {
-			var angleOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
-			var angleTo = { x: 100 };
-			this.update = function () {
-				angleTo.y = game.input.activePointer.y;
-				var a = game.physics.arcade.angleBetween(angleTo, angleOrigin);
-				this.head.rotation = a;
-			};
-		} else {
-			this.update = function () {};
-		}
-	};
-
-	this.shoot = function (pos) {
-		var hit = { x: pos.x, y: pos.y };
-		var headOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
-		var t = new TimelineMax();
-		t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, headOrigin) });
-		t.to(this.forehead, 0.5, { angle: 10 });
-		t.to(this.mouth, 0.5, { angle: -5 }, '-=0.5');
-		t.to(this.tounge, 0.5, {
-			width: game.physics.arcade.distanceBetween(hit, this.tounge.world),
-			height: 18
-		});
-		t.addLabel('stretched');
-		t.to(this.tounge, 0.5, { width: 1, height: 5 });
-		t.to(this.forehead, 0.2, { angle: 0 });
-		t.to(this.mouth, 0.2, { angle: 0 }, '-=0.2');
-		return t;
-	};
-
-	this.shootObject = function (obj) {
-		var pos = obj.world || obj;
-		var t = this.shoot(pos);
-		t.add(new TweenMax(obj, 0.5, {
-			x: obj.x + (this.tounge.world.x - pos.x),
-			y: obj.y + (this.tounge.world.y - pos.y) }), 'stretched');
-		return t;
-	};
+	this.snore = game.add.text(this.head.x, this.head.y - 100, 'zzz', {
+		font: '40pt ' +  GLOBAL.FONT,
+		fill: '#ffffff'
+	}, this);
 }
 Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
 	get: function() { return this.body.tint; },
@@ -394,3 +358,53 @@ Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
 		this.mouth.tint = value;
 	}
 });
+
+LizardJungleLizard.prototype.sleeping = function (duration) {
+	duration = duration || 3;
+	var times = parseInt(duration / 1.5);
+	var t = new TimelineMax({ repeat: times });
+	t.add(TweenMax.fromTo(this.snore, 0.8, { alpha: 0 }, { x: '+=25', y: '-=25', alpha: 1 }));
+	t.add(TweenMax.to(this.snore, 0.7, { x: '+=25', y: '-=25', alpha: 0, ease: Power1.easeIn }));
+	return t;
+};
+
+LizardJungleLizard.prototype.followPointer = function (on) {
+	if (on) {
+		var angleOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
+		var angleTo = { x: 100 };
+		this.update = function () {
+			angleTo.y = game.input.activePointer.y;
+			var a = game.physics.arcade.angleBetween(angleTo, angleOrigin);
+			this.head.rotation = a;
+		};
+	} else {
+		this.update = function () {};
+	}
+};
+
+LizardJungleLizard.prototype.shoot = function (pos) {
+	var hit = { x: pos.x, y: pos.y };
+	var headOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
+	var t = new TimelineMax();
+	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, headOrigin) });
+	t.to(this.forehead, 0.5, { angle: 10 });
+	t.to(this.mouth, 0.5, { angle: -5 }, '-=0.5');
+	t.to(this.tounge, 0.5, {
+		width: game.physics.arcade.distanceBetween(hit, this.tounge.world),
+		height: 18
+	});
+	t.addLabel('stretched');
+	t.to(this.tounge, 0.5, { width: 1, height: 5 });
+	t.to(this.forehead, 0.2, { angle: 0 });
+	t.to(this.mouth, 0.2, { angle: 0 }, '-=0.2');
+	return t;
+};
+
+LizardJungleLizard.prototype.shootObject = function (obj) {
+	var pos = obj.world || obj;
+	var t = this.shoot(pos);
+	t.add(new TweenMax(obj, 0.5, {
+		x: obj.x + (this.tounge.world.x - pos.x),
+		y: obj.y + (this.tounge.world.y - pos.y) }), 'stretched');
+	return t;
+};
