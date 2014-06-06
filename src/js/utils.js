@@ -52,36 +52,34 @@ Counter.prototype.update = function () {
 function say (what, who, marker) {
 	var a = (typeof what === 'string') ? game.add.audio(what) : what;
 	if (who && who.talk) {
+		var current;
 		var play = function () {
-			if (!marker || a.currentMarker === marker) {
+			if (a.currentMarker) {
+				current = a.currentMarker;
+			}
+			if (!marker || current === marker) {
 				who.talk.play();
 			}
 		};
-		var stop = function () {
-			if (!marker || a.currentMarker === marker) {
+		var pause = function () {
+			if (!marker || current === marker) {
 				who.talk.pause(0);
-				// TODO: this is always false, framework issue:
-				// https://github.com/photonstorm/phaser/issues/868
-				if (!a.paused) {
-					a.onPlay.remove(play);
-					a.onResume.remove(play);
-					if (marker) {
-						a.onMarkerComplete.remove(stop);
-					} else {
-						a.onStop.remove(stop);
-					}
-				}
+			}
+		};
+		var stop = function () {
+			if (!marker || current === marker) {
+				who.talk.pause(0);
+				a.onPlay.remove(play);
+				a.onResume.remove(play);
+				a.onPause.remove(pause);
+				a.onStop.remove(stop);
 			}
 		};
 
 		a.onPlay.add(play);
 		a.onResume.add(play);
-		if (marker) {
-			/* We need to use this to get correct currentMarker in stop function */
-			a.onMarkerComplete.add(stop);
-		} else {
-			a.onStop.add(stop);
-		}
+		a.onPause.add(pause);
+		a.onStop.add(stop);
 	}
 	return a;
 }
