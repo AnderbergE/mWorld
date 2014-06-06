@@ -349,6 +349,7 @@ function LizardJungleLizard (x, y) {
 		font: '40pt ' +  GLOBAL.FONT,
 		fill: '#ffffff'
 	}, this);
+	this.snore.alpha = 0; // Maybe this should be visible = false, but whatever.
 }
 Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
 	get: function() { return this.body.tint; },
