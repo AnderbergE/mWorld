@@ -48,6 +48,10 @@ function Agent () {
 		y: '+=5', repeat: -1, yoyo: true, paused: true
 	});
 
+	this.walk = new TimelineMax({ repeat: -1, paused: true })
+		.to(this.leftLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0)
+		.to(this.rightLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0.24);
+
 	return this;
 }
 
@@ -139,21 +143,14 @@ Agent.prototype.wave = function (duration, arm) {
 	return t;
 };
 
-Agent.prototype.walk = function (duration) {
-	var dur = 0.2;
-	var times = parseInt((duration || 3) / dur);
-	times += (times % 2 === 0) ? 1 : 0; // Agent will be strangely positioned if number is not odd.
-	var t = new TimelineMax();
-	t.add(new TweenMax(this.leftLeg, dur, { y: '-=50', repeat: times-2, yoyo: true }));
-	t.add(new TweenMax(this.rightLeg, dur, { y: '-=50', repeat: times-2, yoyo: true }), dur);
-	return t;
-};
-
 Agent.prototype.move = function (properties, duration, scale) {
-	var t = new TimelineMax();
+	properties.ease = properties.ease || Power1.easeInOut;
+	var t = new TimelineMax({
+		onStart: function () { this.walk.play(); }, onStartScope: this,
+		onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
+	});
 	t.to(this, duration, properties);
-	t.add(this.walk(duration), 0);
-	if (scale) { t.to(this.scale, duration, { x: scale, y: scale }, 0); }
+	if (scale) { t.to(this.scale, duration, { x: scale, y: scale, ease: properties.ease }, 0); }
 	return t;
 };
 
