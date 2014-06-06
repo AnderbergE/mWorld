@@ -56,9 +56,29 @@ GardenState.prototype.create = function () {
 		}
 	}
 
+	var agent = new user.agent();
+	agent.x = this.world.centerX;
+	agent.y = this.world.centerY;
+	agent.scale.set(0.2);
+	this.world.add(agent);
+	var currentMove = null;
+
 	this.world.add(new WaterCan(this.game.width - 100, 10));
 
 	this.world.add(new Menu());
+
+	// Move agent when we push a plant.
+	Event.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
+		var y = plant.y + plant.height/2;
+		var x = plant.x;
+		if (agent.x > plant.x) { x += plant.width; }
+		if (agent.x === x && agent.y === y ) { return; }
+
+		if (currentMove) { currentMove.kill(); }
+		currentMove = new TimelineMax();
+		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
+		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
+	});
 };
 
 /* Phaser state function */
@@ -112,7 +132,7 @@ function GardenPlant (id, level, water, x, y, width, height) {
 GardenPlant.prototype.down = function () {
 	var _this = this; // Events do not have access to this
 	if (this.active) {
-		Event.publish(GLOBAL.EVENT.plantPress, [this.plantId]);
+		Event.publish(GLOBAL.EVENT.plantPress, [this]);
 		return;
 	}
 
@@ -168,7 +188,7 @@ GardenPlant.prototype.down = function () {
 
 	fade(this.infoGroup, true, 0.2);
 
-	Event.publish(GLOBAL.EVENT.plantPress, [this.plantId]);
+	Event.publish(GLOBAL.EVENT.plantPress, [this]);
 	this.active = Event.subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
 };
 
