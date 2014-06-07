@@ -238,6 +238,7 @@ BirdheroGame.prototype.create = function () {
 		if (!result) { /* Correct :) */
 			t.addCallback(function () {
 				bird.visible = false;
+				branch.chicks++;
 				speech.play('correct');
 			});
 			t.addLabel('celebrate');
@@ -577,11 +578,11 @@ Object.defineProperty(BirdheroBranch.prototype, 'chicks', {
 	set: function(value) {
 		var change = value - this._chicks.length;
 		var dir = change > 0 ? -1 : 1;
-		while (change !== 0) {
+		while (change !== 0 && this._chicks.length < 5) {
 			if (dir < 0) {
-				var chick = game.add.sprite(this.mother.x, this.nest.y, 'birdheroChick', null, this);
+				var chick = game.add.sprite(this.mother.x - 5, this.nest.y, 'birdheroChick', null, this);
 				chick.x += this._chicks.length * chick.width * 0.8;
-				chick.y -= chick.height * 0.8;
+				chick.y -= chick.height * 0.6;
 				chick.tint = this.mother.tint;
 				this._chicks.push(chick);
 			} else {
@@ -618,7 +619,12 @@ BirdheroBranch.prototype.celebrate = function (duration) {
 	duration = duration || 3;
 	var times = parseInt(duration / 0.2);
 	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
-	return new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true });
+	var t = new TimelineMax();
+	t.add(new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true }));
+	for (var i = 0; i < this._chicks.length; i++) {
+		t.add(new TweenMax(this._chicks[i], 0.2, { y: '-=3', ease: Power0.easeInOut, repeat: times, yoyo: true }), Math.random()*0.2);
+	}
+	return t;
 };
 
 /**
