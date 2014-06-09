@@ -243,7 +243,7 @@ BirdheroGame.prototype.create = function () {
 			});
 			t.addLabel('celebrate');
 			t.add(branch.celebrate(2), 'celebrate');
-			t.add(_this.addWater(branch.x + branch.mother.x, branch.y + branch.mother.y), 'celebrate');
+			t.add(_this.addWater(branch.x + branch.mother.x * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
 			t.add(elevator.moveTo.bottom());
 			t.addCallback(function () {
 				_this.nextRound();
@@ -424,7 +424,7 @@ BirdheroGame.prototype.create = function () {
 		var half = bmd.width/2;
 		bmd.ctx.fillStyle = '#2266cc';
 		bmd.ctx.beginPath();
-		bmd.ctx.arc(half, half, half, 0, 2*Math.PI);
+		bmd.ctx.arc(half, half, half, 0, Math.PI2);
 		bmd.ctx.closePath();
 		bmd.ctx.fill();
 		var emitter = game.add.emitter(game.world.centerX, -10, 5000);
