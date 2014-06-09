@@ -60,27 +60,20 @@ BirdheroGame.prototype.create = function () {
 		0xffffff, 0xffcccc, 0xccffcc, 0xccccff, 0xffffcc,
 		0xffccff, 0xccffff, 0x5555cc, 0x55cc55, 0xcc5555
 	];
+
+	// Add music and sounds
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
+	var elevatorAudio = this.add.audio('birdheroElevator', 1);
+	var elevatorAudioArrive = this.add.audio('birdheroElevatorArrive', 1);
+	var elevatorAudioDown = this.add.audio('birdheroElevatorDown', 1);
 	var speech = this.add.audio('birdheroSpeech');
-	speech.addMarker('instruction1a', 1.8, 8.1);
-	speech.addMarker('instruction1b', 10.5, 2.7);
-	speech.addMarker('floor', 17.3, 3.5);
-	speech.addMarker('higher', 24.8, 2.9);
-	speech.addMarker('lower', 31.8, 3.3);
-	speech.addMarker('correct', 39.9, 2);
-	speech.addMarker('ending', 45.7, 4.4);
-	speech.addMarker('agentIntro', 53.7, 6.7);
-	speech.addMarker('agentTry', 64.7, 2.4);
-	speech.addMarker('instruction2', 81.9, 7.6);
-	speech.addMarker('agentHmm', 99.6, 1);
-	speech.addMarker('agentGuessWeak', 111.5, 1.5);
-	speech.addMarker('agentGuessNormal', 116.6, 1);
-	speech.addMarker('agentGuessStrong', 121.3, 1.7);
-	speech.addMarker('agentCorrected', 132.2, 2.6);
-	speech.addMarker('agentTryAgain', 150.8, 1.8);
+	var markers = LANG.SPEECH.birdhero.markers;
+	for (var marker in markers) {
+		speech.addMarker(marker, markers[marker][0], markers[marker][1]);
+	}
 
 
-	// Add main game
+	// Add background
 	this.add.sprite(0, 0, 'birdheroBg', null, this.gameGroup);
 
 	// Agent is added to the game in the superclass, so set up correct start point.
@@ -130,9 +123,6 @@ BirdheroGame.prototype.create = function () {
 	elevator.origin = tree.y + tree.height + coords.tree.elevator;
 	elevator.x = treeCenter - elevator.bucket.width/2;
 	elevator.y = elevator.origin;
-	var elevatorAudio = this.add.audio('birdheroElevator', 1);
-	var elevatorAudioArrive = this.add.audio('birdheroElevatorArrive', 1);
-	var elevatorAudioDown = this.add.audio('birdheroElevatorDown', 1);
 
 	// Calculate positions for bird based on elevator.
 	coords.bird.start.x -= elevator.x;
