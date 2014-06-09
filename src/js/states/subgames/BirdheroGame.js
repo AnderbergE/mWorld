@@ -657,14 +657,14 @@ function BirdheroBird (tint) {
 	this._number = null;
 
 	this.rightLeg = game.add.sprite(50, 160, 'birdheroBird', 'leg.png', this);
-	this.rightWing = game.add.sprite(180, -80, 'birdheroBird', 'wing5.png', this);
+	this.rightWing = game.add.sprite(160, -90, 'birdheroBird', 'wing5.png', this);
 	this.rightWing.visible = false;
 	this.body = game.add.sprite(0, 0, 'birdheroBird', 'body.png', this);
 	this.body.anchor.set(0.5);
 	this.leftLeg = game.add.sprite(0, 175, 'birdheroBird', 'leg.png', this);
 	this.wing = game.add.sprite(75, -20, 'birdheroBird', 'wing0.png', this);
 	this.wing.anchor.set(1, 0);
-	this.leftWing = game.add.sprite(100, -90, 'birdheroBird', 'wing5.png', this);
+	this.leftWing = game.add.sprite(90, -125, 'birdheroBird', 'wing5.png', this);
 	this.leftWing.angle = 10;
 	this.leftWing.scale.x = -1;
 	this.leftWing.visible = false;
@@ -709,15 +709,15 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 });
 
 BirdheroBird.prototype.featherPositions = [
-	{ x: 475, y: -65 },    // 1
-	{ x: 470, y: -27 },    // 2
-	{ x: 440, y: 10 },     // 3
-	{ x: 410, y: 45 },     // 4
-	{ x: 360, y: 70 },     // 5
-	{ x: -195,  y: -120 }, // 6
-	{ x: -195,  y: -80 },  // 7
-	{ x: -165,  y: -40 },  // 8
-	{ x: -145,  y: 0 }     // 9
+	{ x: 505,   y: -70,  angle: 0,    offsetX: 535, offsetY: -70   }, // 1
+	{ x: 500,   y: 5,    angle: 0,    offsetX: 530, offsetY: 5     }, // 2
+	{ x: 450,   y: 65,   angle: 10,   offsetX: 480, offsetY: 70    }, // 3
+	{ x: 380,   y: 95,   angle: 40,   offsetX: 410, offsetY: 120   }, // 4
+	{ x: 308,   y: 110,  angle: 70,   offsetX: 325, offsetY: 137   }, // 5
+	{ x: -250,  y: -160, angle: -160, offsetX: -275, offsetY: -170 }, // 6
+	{ x: -260,  y: -80,  angle: -180, offsetX: -290, offsetY: -80  }, // 7
+	{ x: -220,  y: -20,  angle: -200, offsetX: -250, offsetY: -10  }, // 8
+	{ x: -162,  y: 27,   angle: 140,  offsetX: -180, offsetY: 45   }  // 9
 ];
 
 /**
@@ -738,32 +738,20 @@ BirdheroBird.prototype.showWings = function (on) {
  * @returns {Object} The animation timeline
  */
 BirdheroBird.prototype.pointAtFeathers = function () {
-	var pos = this.featherPositions[0];
-	var next = pos;
-	var offset = 30;
 	var arrow = this.arrow;
-	arrow.x = pos.x + offset; // Set start position
-	arrow.y = pos.y;
-	arrow.angle = 0;
+	var pos;
 
 	var t = new TimelineMax();
 	t.addCallback(function () { arrow.visible = true; });
 	t.addCallback(function () {}, 0.3); // Slight pause
-	
+
 	for (var i = 0; i < this.number; i++) {
-		pos = next;
+		pos = this.featherPositions[i];
+
+		t.add(new TweenMax(arrow,
+			(i === 0) ? 0 : (i === 5) ? 1 : 0.3,
+			{ x: pos.offsetX, y: pos.offsetY, angle: pos.angle }));
 		t.add(new TweenMax(arrow, 0.7, { x: pos.x, y: pos.y }));
-
-		if (i+1 === this.number) { break; }
-
-		next = this.featherPositions[i+1];
-		if (i < 4) {
-			t.add(new TweenMax(arrow, 0.3, { x: '+=' + offset, y: next.y }));
-		} else if (i === 4) {
-			t.add(new TweenMax(arrow, 1, { x: next.x - offset, y: next.y, angle: -180 }));
-		} else {
-			t.add(new TweenMax(arrow, 0.3, { x: '-=' + offset, y: next.y }));
-		}
 	}
 
 	t.addCallback(function () { arrow.visible = false; }, '+=0.5');
