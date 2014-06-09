@@ -10,7 +10,8 @@ var GLOBAL = {
 		tryNumber:      'tryNumber',      // [guess, correct number]
 		agentGuess:     'agentGuess',     // [guess, correct number]
 		waterAdded:     'waterAdded',     // [total amount, added amount]
-		plantPress:     'plantPress'      // [garden plant]
+		plantPress:     'plantPress',     // [garden plant]
+		waterPlant:     'waterPlant'      // [garden plant]
 	},
 
 	AGENT: {

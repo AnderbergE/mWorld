@@ -17,7 +17,7 @@ function WaterCan (x, y, amount) {
 	water.height = waterStep*this.amount;
 	water.y -= water.height;
 
-	game.add.sprite(0, 0, 'watercan', 0, this);
+	this.can = game.add.sprite(0, 0, 'watercan', 0, this);
 
 	/* Keep track of when the user's water changes */
 	this._sub = Event.subscribe(GLOBAL.EVENT.waterAdded, function (total) {
@@ -31,4 +31,28 @@ function WaterCan (x, y, amount) {
 WaterCan.prototype.destroy = function (destroyChildren, soft) {
 	Event.unsubscribe(this._sub); // Otherwise possible memory leak.
 	Phaser.Group.prototype.destroy.call(this, destroyChildren, soft);
+};
+
+WaterCan.prototype.pour = function (duration) {
+	var bmd = new Phaser.BitmapData(game, '', 6, 6);
+	var half = bmd.width/2;
+	bmd.ctx.fillStyle = '#2266cc';
+	bmd.ctx.beginPath();
+	bmd.ctx.arc(half, half, half, 0, Math.PI2);
+	bmd.ctx.closePath();
+	bmd.ctx.fill();
+	var emitter = game.add.emitter(this.can.width, 5, 200);
+	emitter.width = 5;
+	emitter.makeParticles(bmd);
+	emitter.setScale(0.5, 1, 0.5, 1);
+	emitter.setYSpeed(100, 150);
+	emitter.setXSpeed(50, 100);
+	emitter.setRotation(0, 0);
+
+	this.can.addChild(emitter);
+
+	return new TweenMax(emitter, duration, {
+		onStart: function () { emitter.start(false, 500, 10, (duration-0.5)*50); },
+		onComplete: function () { emitter.destroy(); }
+	});
 };
