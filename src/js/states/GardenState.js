@@ -65,6 +65,10 @@ GardenState.prototype.create = function () {
 
 	this.world.add(new WaterCan(this.game.width - 100, 10));
 
+	var disabler = new Cover('#ffffff', 0);
+	game.world.add(disabler);
+	disabler.visible = false;
+
 	this.world.add(new Menu());
 
 	// Move agent when we push a plant.
@@ -78,6 +82,18 @@ GardenState.prototype.create = function () {
 		currentMove = new TimelineMax();
 		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
 		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
+	});
+	// Water plant when we push it.
+	Event.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
+		var side = ((plant.x + plant.width) <= agent.x) ? -1 : 1;
+		var t = agent.water(2, side);
+		t.addCallback(function () { disabler.visible = true; }, 0);
+		t.addCallback(function () { user.water--; }, 'watering');
+		t.addCallback(function () { plant.water.value++; });
+		t.addCallback(function () { disabler.visible = false; });
+		if (currentMove && currentMove.progress() < 1) {
+			currentMove.add(t);
+		}
 	});
 };
 
@@ -155,8 +171,8 @@ GardenPlant.prototype.down = function () {
 		waterButton.inputEnabled = true;
 		waterButton.events.onInputDown.add(function () {
 			if (user.water > 0) {
-				user.water--;
-				this.water.value++;
+				// Water is added to the plant when animation runs.
+				Event.publish(GLOBAL.EVENT.waterPlant, [this]);
 			}
 		}, this);
 

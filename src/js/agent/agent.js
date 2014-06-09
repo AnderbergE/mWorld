@@ -31,7 +31,8 @@ function Agent () {
 			arm: {
 				origin: -0.8,
 				wave: { from: -0.1, to: 0.2, durUp: 0.3, dur: 0.2 },
-				pump: { angle: 0.5, move: 50, durUp: 0.5, dur: 0.25 }
+				pump: { angle: 0.5, move: 50, durUp: 0.5, dur: 0.25 },
+				water: { angle: 0, back: -2, canAngle: -0.5, durBack: 0.2, durUp: 0.5, durCan: 0.5 }
 			}
 		}
 	};
@@ -143,6 +144,53 @@ Agent.prototype.wave = function (duration, arm) {
 	return t;
 };
 
+Agent.prototype.water = function (duration, arm) {
+	duration = duration || 3;
+	arm = arm || 0;
+
+	var origin = this.coords.anim.arm.origin;
+	var water = this.coords.anim.arm.water;
+
+	var t = new TimelineMax();
+	if (arm <= 0) {
+		var w1 = new WaterCan(-this.leftArm.children[0].width+60, -100);
+		w1.scale.set(-3, 3);
+		w1.rotation = 0;
+		w1.visible = false;
+		this.leftArm.add(w1);
+		t.add(new TweenMax(this.leftArm, water.durBack, { rotation: water.back, ease: Power1.easeIn }));
+		t.addCallback(function () { w1.visible = true; });
+		t.add(new TweenMax(this.leftArm, water.durUp, { rotation: water.angle, ease: Power1.easeOut }));
+		t.add(new TweenMax(w1, water.durCan, { rotation: water.canAngle }));
+		t.addCallback(this.eyesFollowObject, null, [w1.can], this);
+		t.addLabel('watering');
+		t.add(w1.pour(duration));
+		t.addCallback(this.eyesFollowObject, null, [null], this);
+		t.add(new TweenMax(this.leftArm, water.durUp, { rotation: water.back, ease: Power1.easeIn }));
+		t.addCallback(function () { w1.destroy(); });
+		t.add(new TweenMax(this.leftArm, water.durBack, { rotation: origin, ease: Power1.easeOut }));
+	}
+	if (arm >= 0) {
+		var w2 = new WaterCan(-this.rightArm.children[0].width-60, -100);
+		w2.scale.set(3, 3);
+		w2.rotation = 0;
+		w2.visible = false;
+		this.rightArm.add(w2);
+		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -water.back, ease: Power1.easeIn }));
+		t.addCallback(function () { w2.visible = true; });
+		t.add(new TweenMax(this.rightArm, water.durUp, { rotation: -water.angle, ease: Power1.easeOut }));
+		t.add(new TweenMax(w2, water.durCan, { rotation: -water.canAngle }));
+		t.addCallback(this.eyesFollowObject, null, [w2.can], this);
+		t.addLabel('watering');
+		t.add(w2.pour(duration));
+		t.addCallback(this.eyesFollowObject, null, [null], this);
+		t.add(new TweenMax(this.rightArm, water.durUp, { rotation: -water.back, ease: Power1.easeIn }));
+		t.addCallback(function () { w2.destroy(); });
+		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -origin, ease: Power1.easeOut }));
+	}
+	return t;
+};
+
 Agent.prototype.move = function (properties, duration, scale) {
 	properties.ease = properties.ease || Power1.easeInOut;
 	var t = new TimelineMax({
@@ -166,8 +214,8 @@ Agent.prototype._eyeFollow = function (eye, targ) {
 		if (!agent.visible) { return; }
 
 		var o = this.world;
-		var a = game.physics.arcade.angleBetween(o, targ);
-		var d = game.physics.arcade.distanceBetween(o, targ) / depth;
+		var a = game.physics.arcade.angleBetween(o, targ.world ? targ.world : targ);
+		var d = game.physics.arcade.distanceBetween(o, targ.world ? targ.world : targ) / depth;
 		if (d > maxMove) { d = maxMove; }
 		this.x = Math.cos(a) * d + origin.x;
 		this.y = Math.sin(a) * d + origin.y;
@@ -185,7 +233,7 @@ Agent.prototype.eyesFollowObject = function (targ, off) {
 	this.rightEye.x = this.coords.eye.right.x;
 	this.rightEye.y = this.coords.eye.right.y;
 
-	if (off) {
+	if (off || !targ) {
 		this.leftEye.update = function () {};
 		this.rightEye.update = function () {};
 	} else {
