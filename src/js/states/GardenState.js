@@ -65,10 +65,6 @@ GardenState.prototype.create = function () {
 
 	this.world.add(new WaterCan(this.game.width - 100, 10));
 
-	var disabler = new Cover('#ffffff', 0);
-	game.world.add(disabler);
-	disabler.visible = false;
-
 	this.world.add(new Menu());
 
 	// Move agent when we push a plant.
@@ -83,14 +79,20 @@ GardenState.prototype.create = function () {
 		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
 		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
 	});
+
 	// Water plant when we push it.
 	Event.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
 		var side = ((plant.x + plant.width) <= agent.x) ? -1 : 1;
 		var t = agent.water(2, side);
-		t.addCallback(function () { disabler.visible = true; }, 0);
-		t.addCallback(function () { user.water--; }, 'watering');
-		t.addCallback(function () { plant.water.value++; });
-		t.addCallback(function () { disabler.visible = false; });
+		t.addCallback(function () { game.input.disabled = true; }, 0);
+		t.addCallback(function () {
+			user.water--;
+			plant.water.value++;
+		}, 'watering');
+		t.addCallback(function () {
+			plant.waterButton.frame = 0;
+			game.input.disabled = false;
+		});
 		if (currentMove && currentMove.progress() < 1) {
 			currentMove.add(t);
 		}
@@ -129,17 +131,14 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	this.water = new Counter(1, true, water);
 	this.level = new Counter(3, false, level);
 	this.level.onAdd = function (current) {
-		game.input.disabled = true;
-		TweenMax.to(plant, 1, {
+		TweenMax.to(plant, 2, {
 			tint:
 				current === 1 ? 0x00ffff :
 				current === 2 ? 0xff00ff :
 				current === 3 ? 0xffff00 :
 				0xffffff,
-			onComplete: function () {
-				_this.water.update();
-				game.input.disabled = false;
-		}});
+			onComplete: function () { _this.water.update(); }
+		});
 	};
 
 	return this;
@@ -165,13 +164,14 @@ GardenPlant.prototype.down = function () {
 		bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
 		game.add.sprite(0, 0, bmd, null, this.infoGroup).inputEnabled = true;
 
-		var waterButton = game.add.sprite(this.width - 90, 10, 'wood', null, this.infoGroup);
-		waterButton.width = 80;
-		waterButton.height = 80;
-		waterButton.inputEnabled = true;
-		waterButton.events.onInputDown.add(function () {
-			if (user.water > 0) {
+		this.waterButton = game.add.sprite(this.width - 90, 10, 'wood', null, this.infoGroup);
+		this.waterButton.width = 80;
+		this.waterButton.height = 80;
+		this.waterButton.inputEnabled = true;
+		this.waterButton.events.onInputDown.add(function () {
+			if (user.water > 0 && this.waterButton.frame === 0) {
 				// Water is added to the plant when animation runs.
+				this.waterButton.frame = 1;
 				Event.publish(GLOBAL.EVENT.waterPlant, [this]);
 			}
 		}, this);
@@ -191,8 +191,8 @@ GardenPlant.prototype.down = function () {
 				_this.water.onAdd = null;
 				_this.water.onMax = null;
 				waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
-				_this.infoGroup.remove(waterButton); // TODO: Destroying throws exception, why?
-				//waterButton.destroy();
+				_this.infoGroup.remove(this.waterButton); // TODO: Destroying throws exception, why?
+				//this.waterButton.destroy();
 				game.add.text(_this.width/2, 50, LANG.TEXT.maxLevel, {
 					font: '60pt ' +  GLOBAL.FONT,
 					fill: '#5555ff'
@@ -205,7 +205,10 @@ GardenPlant.prototype.down = function () {
 	fade(this.infoGroup, true, 0.2);
 
 	Event.publish(GLOBAL.EVENT.plantPress, [this]);
-	this.active = Event.subscribe(GLOBAL.EVENT.plantPress, function () { _this.hide(); });
+	this.active = Event.subscribe(GLOBAL.EVENT.plantPress, function () {
+		_this.waterButton.frame = 0;
+		_this.hide();
+	});
 };
 
 GardenPlant.prototype.hide = function () {
