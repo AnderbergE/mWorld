@@ -53,18 +53,18 @@ var Backend = (function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 	/**
-	* PUT the login for a specific user.
+	* PUT the login for a specific player.
 	* TODO: Investigate if login should be made from the game or before.
-	* @param {string} The user id.
-	* @param {string} The user password.
-	* @returns {Object} An object with data about the user.
+	* @param {string} The player id.
+	* @param {string} The player password.
+	* @returns {Object} An object with data about the player.
 	*/
 	this.login = function (name, pass) {
 		return [0, name === pass];
 	};
 
 	/**
-	* PUT updates of user information.
+	* PUT updates of player information.
 	*/
 	this.put = function (data) {
 		return JSON.stringify(data);

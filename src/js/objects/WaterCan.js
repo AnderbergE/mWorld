@@ -6,7 +6,7 @@ function WaterCan (x, y, amount) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.x = x || 0;
 	this.y = y || 0;
-	this.amount = amount || user.water;
+	this.amount = amount || player.water;
 	var origin = 52;
 	var waterStep = 5;
 
@@ -19,7 +19,7 @@ function WaterCan (x, y, amount) {
 
 	this.can = game.add.sprite(0, 0, 'watercan', 0, this);
 
-	/* Keep track of when the user's water changes */
+	/* Keep track of when the player's water changes */
 	this._sub = Event.subscribe(GLOBAL.EVENT.waterAdded, function (total) {
 		var h = waterStep*total;
 		TweenMax.to(water, 0.5, { height: h, y: origin - h });

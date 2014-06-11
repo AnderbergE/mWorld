@@ -91,7 +91,7 @@ Subgame.prototype.init = function (options) {
 
 	/* Setup game objects */
 	this.gameGroup = game.add.group();
-	this.agent = new user.agent();
+	this.agent = new player.agent();
 	this.agent.visible = false;
 	this.gameGroup.add(this.agent);
 
@@ -257,7 +257,7 @@ Subgame.prototype.addWater = function (x, y, force) {
 			.to(drop, 1.5, { x: this.waterCan.x + 30, y: this.waterCan.y, ease:Power2.easeOut })
 			// Hide drop and add water
 			.to(drop, 0.5, { height: 0,
-				onStart: function () { user.water++; },
+				onStart: function () { player.water++; },
 				onComplete: function () { drop.destroy(); }
 			});
 	}

@@ -22,7 +22,7 @@ EntryState.prototype.create = function () {
 	text.anchor.set(0.5);
 	text.inputEnabled = true;
 	text.events.onInputDown.add(function () {
-		user.login('debug', 'debug');
+		player.login('debug', 'debug');
 		this.state.start(GLOBAL.STATE.garden);
 	}, this);
 

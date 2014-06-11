@@ -65,7 +65,7 @@ function Agent () {
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
 	// TODO: How should the AI behave?
-	// TODO: Copy user's amount of right and wrongs and some randomized element.
+	// TODO: Copy player's amount of right and wrongs and some randomized element.
 	var range = (max - min);
 	var errorRange = parseInt(range - range * this._knowledge);
 	var guessRangeMin = correct - errorRange;

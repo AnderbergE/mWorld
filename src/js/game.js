@@ -1,8 +1,8 @@
 /**
- * The user object.
- * Use this to do any user interaction.
+ * The player object.
+ * Use this to do any player interaction.
  */
-var user;
+var player;
 
 /**
  * The Phaser game object.
@@ -19,7 +19,7 @@ var game;
 window.onload = function () {
 	if (document.querySelector('#game')) {
 		// Do not start game if the element does not exist.
-		user = new User();
+		player = new Player();
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 
 		game.state.add('Boot', BootState);

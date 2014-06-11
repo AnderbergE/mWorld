@@ -45,8 +45,8 @@ LANG.change = function (text, speech) {
 		console.warn('SPEECH is missing: ' + m);
 	}
 
-	if (user && user.agent && user.agent.prototype.id) {
-		LANG.setAgent(user.agent.prototype.id);
+	if (player && player.agent && player.agent.prototype.id) {
+		LANG.setAgent(player.agent.prototype.id);
 	} else { // Use panda as default agent.
 		LANG.setAgent(Panda.prototype.id);
 	}
