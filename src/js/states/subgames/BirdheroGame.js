@@ -19,7 +19,7 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.ogg', 'assets/audio/subgames/birdhero/elevator_arrive.mp3']);
 	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.ogg',   'assets/audio/subgames/birdhero/elevator_down.mp3']);
 
-	this.load.atlasJSONHash('birdheroBird',    'assets/img/subgames/birdhero/birdAtlas.png', 'assets/img/subgames/birdhero/birdAtlas.json');
+	this.load.atlasJSONHash('birdheroBird', 'assets/img/subgames/birdhero/birdAtlas.png', 'assets/img/subgames/birdhero/birdAtlas.json');
 	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
 	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
 	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
@@ -31,7 +31,6 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroMother',  'assets/img/subgames/birdhero/mother.png');
 	this.load.image('birdheroNest',    'assets/img/subgames/birdhero/nest.png');
 	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
-	this.load.image('birdheroArrow',   'assets/img/subgames/birdhero/arrow.png');
 	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 };
 
@@ -352,8 +351,7 @@ BirdheroGame.prototype.create = function () {
 	function instructionIntro () {
 		var t = new TimelineMax();
 		t.addSound(speech, bird, 'instruction1a');
-		t.addCallback(function () { bird.showWings(); }, 4.6);
-		t.add(bird.pointAtFeathers());
+		t.add(bird.countFeathers());
 		t.addLabel('useButtons');
 		t.addLabel('flashButtons', '+=0.7');
 		t.addSound(speech, bird, 'instruction1b');
@@ -656,33 +654,28 @@ function BirdheroBird (tint) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this._number = null;
 
-	this.rightLeg = game.add.sprite(50, 160, 'birdheroBird', 'leg.png', this);
-	this.rightWing = game.add.sprite(160, -90, 'birdheroBird', 'wing5.png', this);
+	this.rightLeg = game.add.sprite(50, 160, 'birdheroBird', 'leg', this);
+	this.rightWing = game.add.sprite(160, -90, 'birdheroBird', 'wing5', this);
 	this.rightWing.visible = false;
-	this.body = game.add.sprite(0, 0, 'birdheroBird', 'body.png', this);
+	this.body = game.add.sprite(0, 0, 'birdheroBird', 'body', this);
 	this.body.anchor.set(0.5);
-	this.leftLeg = game.add.sprite(0, 175, 'birdheroBird', 'leg.png', this);
-	this.wing = game.add.sprite(75, -20, 'birdheroBird', 'wing0.png', this);
+	this.leftLeg = game.add.sprite(0, 175, 'birdheroBird', 'leg', this);
+	this.wing = game.add.sprite(75, -20, 'birdheroBird', 'wing', this);
 	this.wing.anchor.set(1, 0);
-	this.leftWing = game.add.sprite(90, -125, 'birdheroBird', 'wing5.png', this);
+	this.leftWing = game.add.sprite(90, -125, 'birdheroBird', 'wing5', this);
 	this.leftWing.angle = 10;
 	this.leftWing.scale.x = -1;
 	this.leftWing.visible = false;
-	game.add.sprite(110, -160, 'birdheroBird', 'eyes.png', this);
-	game.add.sprite(118, -145, 'birdheroBird', 'pupils.png', this);
-	this.beak = game.add.sprite(190, -70, 'birdheroBird', 'beak0.png', this);
+	game.add.sprite(110, -160, 'birdheroBird', 'eyes', this);
+	game.add.sprite(118, -145, 'birdheroBird', 'pupils', this);
+	this.beak = game.add.sprite(190, -70, 'birdheroBird', 'beak0', this);
 	this.beak.anchor.set(0.5);
 
 	this.tint = tint || 0xffffff;
 
-	/* For instructions */
-	this.arrow = game.add.sprite(0, 0, 'birdheroArrow', null, this);
-	this.arrow.anchor.set(0, 0.5);
-	this.arrow.visible = false;
-
 	/* Animations */
-	this.talk = TweenMax.fromTo(this.beak, 0.2, { frame: 0 }, {
-		frame: 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+	this.talk = TweenMax.to(this.beak, 0.2, {
+		frame: this.beak.frame+1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
 	});
 	this.walk = new TimelineMax({ repeat: -1, paused: true })
 		.fromTo(this.leftLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0)
@@ -703,22 +696,10 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 	get: function() { return this._number; },
 	set: function(value) {
 		this._number = value;
-		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value) + '.png';
-		this.leftWing.frameName = 'wing' + (value > 5 ? value - 5 : 0) + '.png';
+		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value);
+		this.leftWing.frameName = 'wing' + (value > 5 ? value - 5 : 0);
 	}
 });
-
-BirdheroBird.prototype.featherPositions = [
-	{ x: 505,   y: -70,  angle: 0,    offsetX: 535, offsetY: -70   }, // 1
-	{ x: 500,   y: 5,    angle: 0,    offsetX: 530, offsetY: 5     }, // 2
-	{ x: 450,   y: 65,   angle: 10,   offsetX: 480, offsetY: 70    }, // 3
-	{ x: 380,   y: 95,   angle: 40,   offsetX: 410, offsetY: 120   }, // 4
-	{ x: 308,   y: 110,  angle: 70,   offsetX: 325, offsetY: 137   }, // 5
-	{ x: -250,  y: -160, angle: -160, offsetX: -275, offsetY: -170 }, // 6
-	{ x: -260,  y: -80,  angle: -180, offsetX: -290, offsetY: -80  }, // 7
-	{ x: -220,  y: -20,  angle: -200, offsetX: -250, offsetY: -10  }, // 8
-	{ x: -162,  y: 27,   angle: 140,  offsetX: -180, offsetY: 45   }  // 9
-];
 
 /**
  * The bird will show its wings.
@@ -727,34 +708,26 @@ BirdheroBird.prototype.featherPositions = [
 BirdheroBird.prototype.showWings = function (on) {
 	on = (typeof on === 'undefined' || on === null) ? true : on;
 	this.rightWing.visible = on;
-	if (this._number > 5) {
-		this.wing.visible = !on;
-		this.leftWing.visible = on;
-	}
+	this.wing.visible = !on || this.number <= 5;
+	this.leftWing.visible = on && this._number > 5;
 };
 
 /**
  * Point at the birds feathers.
  * @returns {Object} The animation timeline
  */
-BirdheroBird.prototype.pointAtFeathers = function () {
-	var arrow = this.arrow;
-	var pos;
+BirdheroBird.prototype.countFeathers = function () {
+	var number = this.number;
+	var fun = function (i) {
+		this.number = i;
+		this.showWings();
+	};
 
 	var t = new TimelineMax();
-	t.addCallback(function () { arrow.visible = true; });
-	t.addCallback(function () {}, 0.3); // Slight pause
-
-	for (var i = 0; i < this.number; i++) {
-		pos = this.featherPositions[i];
-
-		t.add(new TweenMax(arrow,
-			(i === 0) ? 0 : (i === 5) ? 1 : 0.3,
-			{ x: pos.offsetX, y: pos.offsetY, angle: pos.angle }));
-		t.add(new TweenMax(arrow, 0.7, { x: pos.x, y: pos.y }));
+	for (var i = 1; i <= number; i++) {
+		t.addCallback(fun, (i-1)*1, [i], this);
 	}
-
-	t.addCallback(function () { arrow.visible = false; }, '+=0.5');
+	t.addCallback(function () {}, '+=1');
 	return t;
 };
 
