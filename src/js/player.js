@@ -1,12 +1,12 @@
-/* User object */
-function User () {
+/* Player object */
+function Player () {
 	this._water = 0;
 	this._agent = null;
 	this.logout();
 
 	return this;
 }
-Object.defineProperty(User.prototype, 'water', {
+Object.defineProperty(Player.prototype, 'water', {
 	get: function() {
 		return this._water;
 	},
@@ -18,7 +18,7 @@ Object.defineProperty(User.prototype, 'water', {
 		}
 	}
 });
-Object.defineProperty(User.prototype, 'agent', {
+Object.defineProperty(Player.prototype, 'agent', {
 	get: function() {
 		return this._agent;
 	},
@@ -31,20 +31,20 @@ Object.defineProperty(User.prototype, 'agent', {
 });
 
 /**
- * Log in a user.
- * @param {string} The user id.
- * @param {string} The user password.
+ * Log in a player.
+ * @param {string} The player id.
+ * @param {string} The player password.
  */
-User.prototype.login = function (name, pass) {
+Player.prototype.login = function (name, pass) {
 	var temp = Backend.login(name, pass);
 	this.agent = GLOBAL.AGENT[temp[0]];
 	this.water = 2;
 };
 
 /**
- * Log out the user.
+ * Log out the player.
  */
-User.prototype.logout = function () {
+Player.prototype.logout = function () {
 	this.agent = null;
 	this.water = 0;
 };

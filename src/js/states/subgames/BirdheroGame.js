@@ -130,7 +130,7 @@ BirdheroGame.prototype.create = function () {
 	coords.bird.stop.x -= elevator.x;
 	coords.bird.stop.y -= elevator.y;
 
-	// The tree crown is added last so that it is put "closest" to the user.
+	// The tree crown is added last so that it is put "closest" to the player.
 	this.add.sprite(tree.x, tree.y-100, 'birdheroCrown', null, this.gameGroup);
 
 

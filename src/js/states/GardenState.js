@@ -56,7 +56,7 @@ GardenState.prototype.create = function () {
 		}
 	}
 
-	var agent = new user.agent();
+	var agent = new player.agent();
 	agent.x = this.world.centerX;
 	agent.y = this.world.centerY;
 	agent.scale.set(0.2);
@@ -86,7 +86,7 @@ GardenState.prototype.create = function () {
 		var t = agent.water(2, side);
 		t.addCallback(function () { game.input.disabled = true; }, 0);
 		t.addCallback(function () {
-			user.water--;
+			player.water--;
 			plant.water.value++;
 		}, 'watering');
 		t.addCallback(function () {
@@ -169,7 +169,7 @@ GardenPlant.prototype.down = function () {
 		this.waterButton.height = 80;
 		this.waterButton.inputEnabled = true;
 		this.waterButton.events.onInputDown.add(function () {
-			if (user.water > 0 && this.waterButton.frame === 0) {
+			if (player.water > 0 && this.waterButton.frame === 0) {
 				// Water is added to the plant when animation runs.
 				this.waterButton.frame = 1;
 				Event.publish(GLOBAL.EVENT.waterPlant, [this]);
