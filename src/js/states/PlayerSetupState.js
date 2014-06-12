@@ -69,4 +69,4 @@ PlayerSetupState.prototype.create = function () {
 };
 
 /* Phaser state function */
-Subgame.prototype.shutdown = onShutDown;
+PlayerSetupState.prototype.shutdown = onShutDown;
