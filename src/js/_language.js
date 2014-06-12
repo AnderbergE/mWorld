@@ -83,25 +83,26 @@ LANG.english.text = {
 };
 
 LANG.english.speech = {
+	/* Subgames */
 	birdhero: {
 		speech: ['assets/audio/subgames/birdhero/speech.ogg', 'assets/audio/subgames/birdhero/speech.mp3'],
 		markers: {
-			'instruction1a':    [1.8,   8.1],
-			'instruction1b':    [10.5,  2.7],
-			'floor':            [17.3,  3.5],
-			'higher':           [24.8,  2.9],
-			'lower':            [31.8,  3.3],
-			'correct':          [39.9,  2  ],
-			'ending':           [45.7,  4.4],
-			'agentIntro':       [53.7,  6.7],
-			'agentTry':         [64.7,  2.4],
-			'instruction2':     [81.9,  7.6],
-			'agentHmm':         [99.6,  1  ],
-			'agentGuessWeak':   [111.5, 1.5],
-			'agentGuessNormal': [116.6, 1  ],
-			'agentGuessStrong': [121.3, 1.7],
-			'agentCorrected':   [132.2, 2.6],
-			'agentTryAgain':    [150.8, 1.8]
+			instruction1a:    [1.8,   8.1],
+			instruction1b:    [10.5,  2.7],
+			instruction2:     [81.9,  7.6],
+			floor:            [17.3,  3.5],
+			correct:          [39.9,  2  ],
+			higher:           [24.8,  2.9],
+			lower:            [31.8,  3.3],
+			agentIntro:       [53.7,  6.7],
+			agentTry:         [64.7,  2.4],
+			agentHmm:         [99.6,  1  ],
+			agentGuessWeak:   [111.5, 1.5],
+			agentGuessNormal: [116.6, 1  ],
+			agentGuessStrong: [121.3, 1.7],
+			agentCorrected:   [132.2, 2.6],
+			agentTryAgain:    [150.8, 1.8],
+			ending:           [45.7,  4.4]
 		}
 	},
 
