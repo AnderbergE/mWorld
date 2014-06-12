@@ -135,12 +135,17 @@ BirdheroGame.prototype.create = function () {
 
 	// Add HUD
 	var buttons = new ButtonPanel(this.amount, this.representation, {
-		y: this.world.height-(this.representation.length*75)-25, background: 'wood', onClick: pushNumber
+		method: this.method,
+		y: this.world.height-(this.representation.length*75)-25,
+		background: 'wood',
+		onClick: pushNumber
 	});
 	buttons.visible = false;
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		y: this.world.height-100, background: 'wood', onClick: pushYesno
+		y: this.world.height-100,
+		background: 'wood',
+		onClick: pushYesno
 	});
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
@@ -697,7 +702,7 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 	set: function(value) {
 		this._number = value;
 		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value);
-		this.leftWing.frameName = 'wing' + (value > 5 ? value - 5 : 0);
+		if (value > 5) { this.leftWing.frameName = 'wing' + value - 5; }
 	}
 });
 

@@ -85,14 +85,22 @@ LizardJungleGame.prototype.create = function () {
 
 	// Add HUD
 	var buttons = new ButtonPanel(this.amount, this.representation, {
-		x: this.world.width-(this.representation.length*75)-25, y: tree.y - tree.boleHeight,
-		vertical: true, size: tree.boleHeight, reversed: true,
-		background: 'wood', onClick: pushNumber
+		method: this.method,
+		x: this.world.width-(this.representation.length*75)-25,
+		y: tree.y - tree.boleHeight,
+		vertical: true,
+		size: tree.boleHeight,
+		reversed: true,
+		background: 'wood',
+		onClick: pushNumber
 	});
 	buttons.visible = false;
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		x: this.world.width-100, vertical: true, background: 'wood', onClick: pushYesno
+		x: this.world.width-100,
+		vertical: true,
+		background: 'wood',
+		onClick: pushYesno
 	});
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);

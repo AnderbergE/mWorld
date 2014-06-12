@@ -16,6 +16,7 @@ GardenState.prototype.create = function () {
 	panda.inputEnabled = true;
 	panda.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.birdheroGame, true, false, {
+			method: GLOBAL.METHOD.basicMath,
 			representation: [0],
 			amount: 4, // TODO: Use range instead
 			roundsPerMode: 1

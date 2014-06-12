@@ -79,6 +79,7 @@ Subgame.prototype.init = function (options) {
 	this._skipper = null;
 
 	/* Public variables */
+	this.method = options.method || GLOBAL.METHOD.count;
 	this.representation = options.representation;
 	this.amount = options.amount;
 	/* The current number to answer */

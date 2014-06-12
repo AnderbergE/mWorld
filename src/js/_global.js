@@ -5,6 +5,7 @@ var GLOBAL = {
 		menuShow:       'menuShow',
 		menuHide:       'menuHide',
 		numberPress:    'numberPress',    // [number, representations]
+		textPress:      'textPress',      // [text]
 		subgameStarted: 'subgameStarted', // [game type]
 		modeChange:     'modeChange',     // [newMode]
 		tryNumber:      'tryNumber',      // [guess, correct number]
@@ -52,6 +53,11 @@ var GLOBAL = {
 		numbers: 4,
 		dice:    5,
 		yesno:   15 // Special for yes/no: odd values = yes, even values = no
+	},
+
+	METHOD: {
+		count: 0,
+		basicMath: 1
 	},
 
 	FONT: 'The Girl Next Door'
