@@ -27,7 +27,7 @@ function GeneralButton (options) {
 	this.bg.events.onInputDown.add(function () {
 		if (this.disabled) { return; }
 
-		game.add.audio('click');
+		game.add.audio('click').play();
 		if (this.bg.frame % 2 === 0) { this.bg.frame++; }
 		if (this.onClick) { this.onClick(); }
 	}, this);
