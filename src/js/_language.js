@@ -83,6 +83,23 @@ LANG.english.text = {
 };
 
 LANG.english.speech = {
+	/* Garden */
+	garden: {
+		speech: ['assets/audio/garden/speech.ogg', 'assets/audio/garden/speech.mp3'],
+		markers: {
+			intro:        [7.3, 12.4],
+			ready:        [23.9, 1.6],
+			haveWater:    [29.8, 5.8],
+			whereTo:      [86.2, 1.7],
+			ok:           [39.4, 0.8],
+			growing:      [44.8, 1.3],
+			fullGrown:    [50, 3.4],
+			waterLeft:    [59.9, 3.1],
+			waterEmpty:   [74.1, 3.4],
+			waterTooFull: [112.3, 6.3]
+		}
+	},
+
 	/* Subgames */
 	birdhero: {
 		speech: ['assets/audio/subgames/birdhero/speech.ogg', 'assets/audio/subgames/birdhero/speech.mp3'],
@@ -108,6 +125,7 @@ LANG.english.speech = {
 
 	/* Agents */
 	panda: {
+		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg'/*, 'assets/audio/agent/panda/choose_me.mp3'*/],
 		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
 		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
 		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
