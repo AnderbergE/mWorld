@@ -19,7 +19,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
 	this.load.image('eyes',      'assets/img/subgames/balloon/eyes.png');
 	this.load.image('metalLoop',      'assets/img/subgames/balloon/metalloop.png');
-	this.load.spritesheet('catbush',      'assets/img/subgames/balloon/catbush.png',176,111,11);
+	this.load.spritesheet('catbush',      'assets/img/subgames/balloon/catbush2.png',191,88,10);
 
 	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
@@ -131,10 +131,11 @@ BalloonGame.prototype.create = function () {
 	background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
 
 	
-	catBush = game.add.sprite(200, 400, 'catbush', 0, this.gameGroup);
+	catBush = game.add.sprite(175, 400, 'catbush', 0, this.gameGroup);
 	catBush.animations.add('catBlink');
 	catBush.inputEnabled = true;
 	catBush.events.onInputDown.add(catBushPlay, this);
+	//catBush.scale.set(0.5);
 
 	function catBushPlay(){
 		catBush.animations.play('catBlink', 8, false);
@@ -173,8 +174,7 @@ BalloonGame.prototype.create = function () {
 	airballoons.add(beetle);
 
 	airballoons.basket = this.add.sprite(785, 510, 'spritesheet', 5, airballoons);
-	airballoons.basket.scale.x = 0.7;
-	airballoons.basket.scale.y = 0.7;
+	airballoons.basket.scale.set(0.7);
 
 	balloons = this.add.group(this.gameGroup);
 	balloons.x = 0;
@@ -263,7 +263,7 @@ BalloonGame.prototype.create = function () {
 	function agentFloatBalloons(guess)
 	{
 		airBalloonStock = guess;
-		balloonStock = 6-guess;
+		balloonStock = _this.amount-guess;
 		balloonStockUpdate();
 		balloonStack2.revive();
 		balloonStack2.loadTexture('balloon'+airBalloonStock);
