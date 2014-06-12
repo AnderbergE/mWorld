@@ -3,12 +3,21 @@ function GardenState () {}
 
 /* Phaser state function */
 GardenState.prototype.preload = function() {
-	this.load.image('gardenBg',      'assets/img/garden/bg.png');
+	this.load.audio('gardenSpeech', LANG.SPEECH.garden.speech); // audio sprite sheet
+
+	this.load.image('gardenBg', 'assets/img/garden/bg.png');
 };
 
 /* Phaser state function */
 GardenState.prototype.create = function () {
+	var firstWatering = true;
+
 	this.add.sprite(0, 0, 'gardenBg');
+	var speech = this.add.audio('gardenSpeech');
+	var markers = LANG.SPEECH.garden.markers;
+	for (var marker in markers) {
+		speech.addMarker(marker, markers[marker][0], markers[marker][1]);
+	}
 
 	// TODO: Remove eventually, for debugging Birdhero game
 	var panda = this.add.sprite(100, 50, 'pandaBody');
@@ -58,9 +67,9 @@ GardenState.prototype.create = function () {
 	}
 
 	var agent = new player.agent();
-	agent.x = this.world.centerX;
-	agent.y = this.world.centerY;
 	agent.scale.set(0.2);
+	agent.x = -100;
+	agent.y = startPos - agent.body.height * agent.scale.y/2;
 	this.world.add(agent);
 	var currentMove = null;
 
@@ -77,19 +86,34 @@ GardenState.prototype.create = function () {
 
 		if (currentMove) { currentMove.kill(); }
 		currentMove = new TimelineMax();
+		// TODO: When agent has better talk animation: currentMove.addSound(speech, agent, 'ok');
 		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
 		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
 	});
 
 	// Water plant when we push it.
 	Event.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
-		var side = ((plant.x + plant.width) <= agent.x) ? -1 : 1;
-		var t = agent.water(2, side);
+		var t;
+		if (player.water > 0) {
+			var side = ((plant.x + plant.width) <= agent.x) ? -1 : 1;
+			t = agent.water(2, side);
+			t.addCallback(function () {
+				player.water--;
+				plant.water.value++;
+				say(speech, agent).play('growing');
+			}, 'watering');
+			if (plant.water.left === 1 && plant.level.left === 1) {
+				t.addSound(speech, agent, 'fullGrown');
+			}
+			if (firstWatering && player.water > 1) {
+				firstWatering = false;
+				t.addSound(speech, agent, 'waterLeft');
+			}
+		} else {
+			t = new TimelineMax();
+			t.addSound(speech, agent, 'waterEmpty');
+		}
 		t.addCallback(function () { game.input.disabled = true; }, 0);
-		t.addCallback(function () {
-			player.water--;
-			plant.water.value++;
-		}, 'watering');
 		t.addCallback(function () {
 			plant.waterButton.frame = 0;
 			game.input.disabled = false;
@@ -98,10 +122,31 @@ GardenState.prototype.create = function () {
 			currentMove.add(t);
 		}
 	});
+
+
+	/* When the state starts: */
+	var t = new TimelineMax();
+	t.add(agent.move({ x: this.world.centerX }, 3));
+	/*
+	if (player.water > 0) {
+		// TODO: if (anything grows) {
+			t.addSound(speech, agent, 'whereTo');
+		// } else {
+			t.addSound(speech, agent, 'haveWater');
+		// }
+	} else {
+		// TODO: if (anything grows) {
+			t.addSound(speech, agent, 'welcomeBack'); // TODO: Perhaps a welcome back?
+		// } else {
+			t.addSound(speech, agent, 'intro');
+		// }
+		t.addSound(speech, agent, 'ready');
+	}
+	*/
 };
 
 /* Phaser state function */
-Subgame.prototype.shutdown = onShutDown;
+GardenState.prototype.shutdown = onShutDown;
 
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
@@ -170,7 +215,7 @@ GardenPlant.prototype.down = function () {
 		this.waterButton.height = 80;
 		this.waterButton.inputEnabled = true;
 		this.waterButton.events.onInputDown.add(function () {
-			if (player.water > 0 && this.waterButton.frame === 0) {
+			if (this.waterButton.frame === 0) {
 				// Water is added to the plant when animation runs.
 				this.waterButton.frame = 1;
 				Event.publish(GLOBAL.EVENT.waterPlant, [this]);
@@ -180,7 +225,7 @@ GardenPlant.prototype.down = function () {
 		/* Water management */
 		var waterGroup = game.add.group(this.infoGroup);
 		this.water.onAdd = function (current, left) {
-			waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
+			waterGroup.removeAll(true);
 			for (var i = 0; i < (current + left); i++) {
 				game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
 			}
@@ -191,9 +236,8 @@ GardenPlant.prototype.down = function () {
 			if (_this.level.value === _this.level.max) {
 				_this.water.onAdd = null;
 				_this.water.onMax = null;
-				waterGroup.removeAll(/*true*/); // TODO: uncomment true, 2.0.3 Phaser is broken with it.
-				_this.infoGroup.remove(this.waterButton); // TODO: Destroying throws exception, why?
-				//this.waterButton.destroy();
+				waterGroup.removeAll(true);
+				_this.waterButton.destroy();
 				game.add.text(_this.width/2, 50, LANG.TEXT.maxLevel, {
 					font: '60pt ' +  GLOBAL.FONT,
 					fill: '#5555ff'
