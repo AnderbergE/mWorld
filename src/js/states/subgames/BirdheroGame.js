@@ -702,7 +702,7 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 	set: function(value) {
 		this._number = value;
 		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value);
-		if (value > 5) { this.leftWing.frameName = 'wing' + value - 5; }
+		if (value > 5) { this.leftWing.frameName = 'wing' + (value - 5); }
 	}
 });
 
