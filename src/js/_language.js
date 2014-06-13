@@ -125,7 +125,7 @@ LANG.english.speech = {
 
 	/* Agents */
 	panda: {
-		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg'/*, 'assets/audio/agent/panda/choose_me.mp3'*/],
+		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
 		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
 		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
 		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
