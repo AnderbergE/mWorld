@@ -44,20 +44,25 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 
 		var x = 0;
 		var y = 0;
+		var offset = 0;
 		for (var i = 0; i < this.representations.length; i++) {
 			if (this.vertical) { y = this.size * i; }
 			else { x = this.size * i; }
 
 			if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
-				var offset = this.size/10;
+				offset = this.size/10;
 				this.add(new DotsRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+
+			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
+				offset = this.size/6;
+				this.add(new StrikeRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 				this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dice) {
-				var o = this.size/6;
-				this.add(new DiceRepresentation(this._number, x+o, y+o, this.size-o*2, this.color));
+				offset = this.size/6;
+				this.add(new DiceRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 				this._number = this._number % 2;

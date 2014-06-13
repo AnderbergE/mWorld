@@ -49,7 +49,7 @@ GardenState.prototype.create = function () {
 	lizard.inputEnabled = true;
 	lizard.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.lizardGame, true, false, {
-			representation: [0],
+			representation: [2],
 			amount: 4, // TODO: Use range instead
 			roundsPerMode: 1
 		});
