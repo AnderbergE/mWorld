@@ -36,6 +36,7 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 	set: function(value) {
 		if (value < this.min) { value = this.min; }
 		if (value > this.max) { value = this.max; }
+		if (value === this._number) { return; }
 		this._number = value;
 		if (this.children.length > 1) {
 			this.removeBetween(1, this.children.length-1, true);
@@ -48,11 +49,15 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 			else { x = this.size * i; }
 
 			if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
-				var offset = this.size/6;
-				this.add(new DiceRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+				var offset = this.size/10;
+				this.add(new DotsRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 				this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
+
+			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dice) {
+				var o = this.size/6;
+				this.add(new DiceRepresentation(this._number, x+o, y+o, this.size-o*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 				this._number = this._number % 2;
