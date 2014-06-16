@@ -3,10 +3,11 @@ TextButton.prototype = Object.create(GeneralButton.prototype);
 TextButton.prototype.constructor = TextButton;
 /**
  * A button with text on it (publishes textPress event on click).
- * @param {Number} The number for the button
- * @param {Number} The representations of the button (see GLOBAL.REPRESENTATION)
+ * @param {string} The text for the button
  * @param {Object} A list of options (in addition to GeneralButton):
- *		vertical: stretch button vertically, otherwise horisontally (default true)
+ *		fontSize: The size of the font
+ *		strokeThickness: The size of the stroke (default: 3)
+ *		strokeColor: The color of stroke (if any) (default: same as color)
  *		onClick: a function to run when a button is clicked
  * @returns {Object} Itself.
  */
@@ -14,18 +15,21 @@ function TextButton (text, options) {
 	GeneralButton.call(this, options); // Parent constructor.
 	this.clicker = options.onClick;
 	var half = this.size/2;
+	var fontSize = (options.fontSize || this.size*0.8);
 	this._text = game.add.text(half, half, text, {
-		font: half + 'pt ' + GLOBAL.FONT,
+		font: fontSize + 'pt ' + GLOBAL.FONT,
 		fill: this.color,
-		stroke: this.color,
-		strokeThickness: 3
+		stroke: options.strokeColor || this.color,
+		strokeThickness: options.strokeThickness || 3
 	}, this);
 	this._text.anchor.set(0.5);
 
+	// This will be called in the general button's onInputDown
 	this.onClick = function () {
 		if (this.clicker) { this.clicker(this.text); }
 		Event.publish(GLOBAL.EVENT.textPress, [this.text]);
 	};
+
 	this.bg.events.onInputUp.add(function () {
 		this.reset();
 	}, this);

@@ -18,7 +18,7 @@
  *
  *
  * These function _should_ be overshadowed by the subgame:
- * They are called with two parameters (ifFirstTime, triesSoFars).
+ * They are called with two parameters (ifFirstTime, triesSoFar).
  * modeIntro      // Introduce the game, call nextRound to start next mode.
  * modePlayerDo   // Player only
  * modePlayerShow // Player is showing the TA
@@ -43,12 +43,12 @@ Object.defineProperty(Subgame.prototype, 'skipper', {
 	set: function(value) {
 		this._skipper = value;
 		if (this._skipper) {
-			this.skipGroup.visible = true;
+			this._skipButton.visible = true;
 			this._skipper.addCallback(function () {
 				this.skipper = null;
 			}, null, null, this);
 		} else {
-			this.skipGroup.visible = false;
+			this._skipButton.visible = false;
 		}
 	}
 });
@@ -103,21 +103,22 @@ Subgame.prototype.init = function (options) {
 	game.world.add(disabler);
 	this.disable = function (value) { disabler.visible = value; };
 
-	this.menuGroup = game.add.group();
-	this.skipGroup = game.add.group(this.menuGroup);
-	this.skipGroup.x = 75;
-	this.skipGroup.y = 5;
-	this.skipGroup.visible = false;
-	game.add.button(0, 0, 'wood', this._skip, this, 0, 0, 1, 0, this.skipGroup);
-	game.add.text(10, -5, '>>', {
-		font: '30pt ' +  GLOBAL.FONT,
-		stroke: '#000000',
-		strokeThickness: 3
-	}, this.skipGroup);
+	/* Setup menu objects */
+	this._menuGroup = game.add.group();
+	this._menuGroup.visible = false;
+
 	this.waterCan = new WaterCan(this.game.width - 100, 10);
-	this.menuGroup.add(this.waterCan);
-	this.menuGroup.add(new Menu());
-	this.menuGroup.visible = false;
+	this._menuGroup.add(this.waterCan);
+
+	this._skipButton = new TextButton('>>', {
+		x: 75, y: 5, size: 56, fontSize: 30,
+		background: 'wood',
+		onClick: function () { _this._skip(); }
+	});
+	this._skipButton.visible = false;
+	this._menuGroup.add(this._skipButton);
+
+	this._menuGroup.add(new Menu());
 
 	Event.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0]);
 };
@@ -248,7 +249,7 @@ Subgame.prototype.addWater = function (x, y, force) {
 		this.currentMode === GLOBAL.MODE.agentTry ||
 		this.currentMode === GLOBAL.MODE.agentDo ||
 		force) {
-		var drop = this.add.sprite(x, y, 'drop', 0, this.menuGroup);
+		var drop = this.add.sprite(x, y, 'drop', 0, this._menuGroup);
 		drop.anchor.set(0.5);
 		drop.scale.y = 0;
 
@@ -269,7 +270,7 @@ Subgame.prototype.addWater = function (x, y, force) {
 Subgame.prototype.startGame = function () {
 	var _this = this;
 	this.sound.whenSoundsDecoded(function () {
-		_this.menuGroup.visible = true;
+		_this._menuGroup.visible = true;
 		_this._nextMode();
 		_this._nextNumber();
 		_this.nextRound();
