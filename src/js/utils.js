@@ -179,6 +179,18 @@ TimelineMax.prototype.addSound = function (what, who, marker) {
 	return this;
 };
 
+/**
+ * Skip a timeline.
+ * NOTE: You can not skip part of a timeline.
+ * NOTE: See menu object for more information about skipping.
+ */
+TimelineMax.prototype.skippable = function () {
+	this.addCallback(function () {
+		Event.publish(GLOBAL.EVENT.skippable, [this]);
+		this.addCallback(function () { Event.publish(GLOBAL.EVENT.skippable); });
+	}, 0, null, this);
+	return this;
+};
 
 /**
  * Adds a rounded rectangle to the built-in rendering context.

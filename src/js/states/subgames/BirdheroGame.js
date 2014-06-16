@@ -220,8 +220,8 @@ BirdheroGame.prototype.create = function () {
 		var result = _this.tryNumber(number);
 		var branch = tree.branch[number-1];
 
-		// TODO: This should not be skippable!
-		var t = new TimelineMax({ onStart: function () { _this.skipper = t; }});
+		var t = new TimelineMax();
+		t.skippable(); // TODO: Remove: this should not be skippable!
 		t.add(zoom(false), 0);
 		t.add(bird.moveTo.elevator(), 0);
 		t.add(bird.moveTo.peak(true));
@@ -371,11 +371,8 @@ BirdheroGame.prototype.create = function () {
 		var sound = _this.add.audio('birdheroIntro');
 		var group = _this.add.group(_this.gameGroup);
 		var t = new TimelineMax({
-			onStart: function () {
-				_this.skipper = t;
-				sound.play();
-			}
-		});
+			onStart: function () { sound.play(); }
+		}).skippable();
 
 		// Create each chick that will be blown away
 		var starter = function (chick, branch) {
@@ -447,7 +444,7 @@ BirdheroGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
-				t.eventCallback('onStart', function () { _this.skipper = t; });
+				t.skippable();
 				t.add(newBird(true));
 				t.add(instructionIntro());
 			} else {
@@ -464,10 +461,8 @@ BirdheroGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
-				t.eventCallback('onStart', function () {
-					_this.skipper = t;
-					hideButtons();
-				});
+				t.skippable();
+				t.eventCallback('onStart', function () { hideButtons(); });
 				t.add(_this.agent.moveTo.start());
 				t.addLabel('agentIntro');
 				t.addSound(speech, _this.agent, 'agentIntro');
@@ -488,10 +483,8 @@ BirdheroGame.prototype.create = function () {
 			t.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
-				t.eventCallback('onStart', function () {
-					_this.skipper = t;
-					hideButtons();
-				});
+				t.skippable();
+				t.eventCallback('onStart', function () { hideButtons(); });
 				t.add(_this.agent.moveTo.start()); // Agent should be here already.
 				t.addSound(speech, _this.agent, 'agentTry');
 			}

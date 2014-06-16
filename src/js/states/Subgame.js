@@ -38,21 +38,6 @@
  */
 function Subgame () {}
 
-Object.defineProperty(Subgame.prototype, 'skipper', {
-	get: function() { return this._skipper; },
-	set: function(value) {
-		this._skipper = value;
-		if (this._skipper) {
-			this._skipButton.visible = true;
-			this._skipper.addCallback(function () {
-				this.skipper = null;
-			}, null, null, this);
-		} else {
-			this._skipButton.visible = false;
-		}
-	}
-});
-
 /* Phaser state function. (publishes subgameStarted event) */
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
@@ -76,7 +61,6 @@ Subgame.prototype.init = function (options) {
 	};
 	this._currentTries = 0;
 	this._totalTries = 0;
-	this._skipper = null;
 
 	/* Public variables */
 	this.method = options.method || GLOBAL.METHOD.count;
@@ -109,14 +93,6 @@ Subgame.prototype.init = function (options) {
 
 	this.waterCan = new WaterCan(this.game.width - 100, 10);
 	this._menuGroup.add(this.waterCan);
-
-	this._skipButton = new TextButton('>>', {
-		x: 75, y: 5, size: 56, fontSize: 30,
-		background: 'wood',
-		onClick: function () { _this._skip(); }
-	});
-	this._skipButton.visible = false;
-	this._menuGroup.add(this._skipButton);
 
 	this._menuGroup.add(new Menu());
 
@@ -167,18 +143,6 @@ Subgame.prototype._nextNumber = function () {
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
 	this.currentNumber = parseInt(1+Math.random()*this.amount);
-};
-
-/**
- * Skip a timeline. How to:
- * Set 'this.skipper' to a timeline (a skip button will appear next to the menu)
- * When the timeline is complete, make sure to set 'this.skipper' to null.
- * NOTE: You can not skip part of a timeline.
- */
-Subgame.prototype._skip = function () {
-	if (this._skipper) {
-		this._skipper.totalProgress(1);
-	}
 };
 
 /** Skip the current mode. */

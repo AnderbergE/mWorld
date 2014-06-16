@@ -7,12 +7,35 @@ function Menu () {
 	var centerX = game.world.centerX;
 	var centerY = game.world.centerY;
 
+	/* Add menu button. */
 	game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
 	game.add.text(125, 15, '=', { // These position values were set by trial and error
 		font: '70pt ' +  GLOBAL.FONT,
 		stroke: '#000000',
 		strokeThickness: 5
 	}, this).angle = 90;
+
+
+	/* For skipping timelines */
+	var skipper = null;
+	var skipButton = new TextButton('>>', {
+		x: 75, y: 5, size: 56, fontSize: 30,
+		background: 'wood',
+		onClick: function () {
+			if (skipper) {
+				skipper.totalProgress(1);
+			}
+		}
+	});
+	skipButton.visible = false;
+	this.add(skipButton);
+
+	Event.subscribe(GLOBAL.EVENT.skippable, function (timeline) {
+		skipper = timeline;
+		skipButton.visible = !!timeline;
+	});
+
+
 
 	/* The menu group will be shown when the button is clicked. */
 	var menuGroup = game.add.group(this);
@@ -26,7 +49,7 @@ function Menu () {
 	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
 	game.add.sprite(game.world.width/3, centerY - centerY/3, bmd, null, menuGroup).alpha = 0.7;
 
-	var title = game.add.text(game.world.centerX, game.world.centerY/2, LANG.TEXT.title, {
+	var title = game.add.text(centerX, centerY/2, LANG.TEXT.title, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#ffff00',
 		stroke: '#000000',
@@ -53,6 +76,7 @@ function Menu () {
 	quit.events.onInputDown.add(function () {
 		game.state.start(GLOBAL.STATE.entry);
 	}, this);
+
 
 	function showMenu (value) {
 		menuGroup.visible = value;

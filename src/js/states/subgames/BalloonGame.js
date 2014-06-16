@@ -385,7 +385,7 @@ BalloonGame.prototype.create = function () {
 		//var result = _this.tryNumber(amount);
 
 		var tl = new TimelineMax();
-		tl.eventCallback('onStart', function () { _this.skipper = tl; });
+		tl.skippable();
 		if (amount <= 0)
 		{
 			console.log('No balloons!');
@@ -574,7 +574,7 @@ BalloonGame.prototype.create = function () {
 		_this.disable(true);
 		bgMusic.play();
 		var tl = new TimelineMax();
-		tl.eventCallback('onStart', function () { _this.skipper = tl; });
+		tl.skippable();
 		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
 		tl.addSound('beetleintro1', beetle);
 		tl.addSound('beetleintro2', beetle);
@@ -607,7 +607,7 @@ BalloonGame.prototype.create = function () {
 			var tl = new TimelineMax();
 			if (intro) {
 				_this.disable(true);
-				tl.eventCallback('onStart', function () { _this.skipper = tl; });
+				tl.skippable();
 				tl.add(_this.agent.moveTo.start());
 				tl.addLabel('agentIntro');
 				tl.addSound('agentintro', _this.agent);
@@ -631,7 +631,7 @@ BalloonGame.prototype.create = function () {
 		} else { // if intro or first try
 			if (intro) {
 				_this.disable(true);
-				tl.eventCallback('onStart', function () { _this.skipper = tl; });
+				tl.skippable();
 				console.log('modeAgentTry Intro');
 				console.log('correct answer= ' + _this.currentNumber);
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.

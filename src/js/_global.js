@@ -12,7 +12,8 @@ var GLOBAL = {
 		agentGuess:     'agentGuess',     // [guess, correct number]
 		waterAdded:     'waterAdded',     // [total amount, added amount]
 		plantPress:     'plantPress',     // [garden plant]
-		waterPlant:     'waterPlant'      // [garden plant]
+		waterPlant:     'waterPlant',     // [garden plant]
+		skippable:      'skippable'       // [TimelineMax object]
 	},
 
 	AGENT: {

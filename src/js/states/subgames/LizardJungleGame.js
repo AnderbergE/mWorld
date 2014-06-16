@@ -260,7 +260,7 @@ LizardJungleGame.prototype.create = function () {
 			var t = new TimelineMax();
 			if (intro) {
 				_this.currentNumber = 3;
-				t.eventCallback('onStart', function () { _this.skipper = t; });
+				t.skippable();
 				t.add(newFood());
 				//t.addSound('lizardPlaceholder', lizard);
 				var hit1 = { x: tree.x, y: tree.pieces[1].world.y - shootOffset };
@@ -281,10 +281,8 @@ LizardJungleGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
-				t.eventCallback('onStart', function () {
-					_this.skipper = t;
-					hideButtons();
-				});
+				t.skippable();
+				t.eventCallback('onStart', function () { hideButtons(); });
 				t.add(_this.agent.moveTo.start());
 				t.addLabel('agentIntro');
 				//t.addSound('birdheroAgentShow', _this.agent);
@@ -305,10 +303,8 @@ LizardJungleGame.prototype.create = function () {
 			t.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
-				t.eventCallback('onStart', function () {
-					_this.skipper = t;
-					hideButtons();
-				});
+				t.skippable();
+				t.eventCallback('onStart', function () { hideButtons(); });
 				t.add(_this.agent.moveTo.start()); // Agent should be here already.
 				//t.addSound('birdheroAgentTry', _this.agent);
 				//t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
