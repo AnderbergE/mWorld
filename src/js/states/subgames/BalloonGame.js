@@ -9,10 +9,6 @@ function BalloonGame () {
 BalloonGame.prototype.preload = function () {
 
 	this.load.image('cliffside',    'assets/img/subgames/balloon/indent.png');
-	this.load.image('basket',    'assets/img/subgames/balloon/basket.png');
-	this.load.image('cave',      'assets/img/subgames/balloon/cave.png');
-	this.load.image('emptyglass',      'assets/img/subgames/balloon/emptyglass.png');
-	this.load.image('fullglass',      'assets/img/subgames/balloon/fullglass.png');
 	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
 	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
