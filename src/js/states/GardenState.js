@@ -55,6 +55,17 @@ GardenState.prototype.create = function () {
 		});
 	}, this);
 
+	// TODO: Remove eventually, for debugging Bee Flight game
+	var bee = this.add.sprite(600, 100, 'wood', 0);
+	bee.inputEnabled = true;
+	bee.events.onInputDown.add(function () {
+		this.state.start(GLOBAL.STATE.beeGame, true, false, {
+			representation: [0],
+			amount: 4, // TODO: Use range instead
+			roundsPerMode: 1
+		});
+	}, this);
+
 	var rows = 3;
 	var columns = 5;
 	var startPos = 200;

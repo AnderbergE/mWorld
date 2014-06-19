@@ -23,12 +23,13 @@ window.onload = function () {
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 
 		game.state.add('Boot', BootState);
-		game.state.add(GLOBAL.STATE.entry, EntryState);
-		game.state.add(GLOBAL.STATE.playerSetup, PlayerSetupState);
-		game.state.add(GLOBAL.STATE.garden, GardenState);
-		game.state.add(GLOBAL.STATE.lizardGame, LizardJungleGame);
+		game.state.add(GLOBAL.STATE.entry,        EntryState);
+		game.state.add(GLOBAL.STATE.playerSetup,  PlayerSetupState);
+		game.state.add(GLOBAL.STATE.garden,       GardenState);
+		game.state.add(GLOBAL.STATE.lizardGame,   LizardJungleGame);
 		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
-		game.state.add(GLOBAL.STATE.balloonGame, BalloonGame);
+		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
+		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
 
 		game.state.start('Boot');
 	}
@@ -86,6 +87,7 @@ BootState.prototype.preload = function () {
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	/* Agent related */
+	this.load.image('thought',    'assets/img/agent/thoughtbubble.png');
 	this.load.image('pandaBody',  'assets/img/agent/panda/body.png');
 	this.load.image('pandaArm',   'assets/img/agent/panda/arm.png');
 	this.load.image('pandaLeg',   'assets/img/agent/panda/leg.png');

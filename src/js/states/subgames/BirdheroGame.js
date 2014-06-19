@@ -31,7 +31,6 @@ BirdheroGame.prototype.preload = function () {
 	this.load.image('birdheroMother',  'assets/img/subgames/birdhero/mother.png');
 	this.load.image('birdheroNest',    'assets/img/subgames/birdhero/nest.png');
 	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
-	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 };
 
 /* Phaser state function */
@@ -85,7 +84,7 @@ BirdheroGame.prototype.create = function () {
 	this.agent.thought.x = coords.agent.stop.x + coords.agent.thought.x;
 	this.agent.thought.y = coords.agent.stop.y + coords.agent.thought.y;
 	this.agent.thought.visible = false;
-	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
+	var thoughtBubble = this.add.sprite(0, 0, 'thought', null, this.agent.thought);
 	thoughtBubble.anchor.set(0.5);
 	this.gameGroup.bringToTop(this.agent);
 

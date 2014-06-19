@@ -13,7 +13,6 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('cave',      'assets/img/subgames/balloon/cave.png');
 	this.load.image('emptyglass',      'assets/img/subgames/balloon/emptyglass.png');
 	this.load.image('fullglass',      'assets/img/subgames/balloon/fullglass.png');
-	this.load.image('birdheroThought', 'assets/img/subgames/birdhero/thoughtbubble.png');
 	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
 	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
@@ -211,7 +210,7 @@ BalloonGame.prototype.create = function () {
 	this.agent.thought.x = coords.agent.stop.x + 170;
 	this.agent.thought.y = coords.agent.stop.y - 170;
 	this.agent.thought.visible = false;
-	var thoughtBubble = this.add.sprite(0, 0, 'birdheroThought', null, this.agent.thought);
+	var thoughtBubble = this.add.sprite(0, 0, 'thought', null, this.agent.thought);
 	thoughtBubble.anchor.set(0.5);
 	thoughtBubble.scale.x = -0.7;
 	thoughtBubble.scale.y = 0.7;
