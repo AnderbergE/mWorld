@@ -54,6 +54,10 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 				offset = this.size/10;
 				this.add(new DotsRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
 
+			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.fingers) {
+				offset = this.size/12;
+				this.add(new FingerRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 				offset = this.size/6;
 				this.add(new StrikeRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
