@@ -21,7 +21,7 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.image('lizardTree',    'assets/img/subgames/lizardjungle/tree.png');
 	this.load.image('lizardTreeTop', 'assets/img/subgames/lizardjungle/top.png');
 	this.load.image('lizardAnt',     'assets/img/subgames/lizardjungle/ant.png');
-	this.load.image('lizardArrow',   'assets/img/subgames/birdhero/arrow.png');
+	this.load.image('lizardArrow',   'assets/img/objects/arrow.png');
 };
 
 /* Phaser state function */
