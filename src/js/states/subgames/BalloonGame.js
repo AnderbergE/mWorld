@@ -8,7 +8,6 @@ function BalloonGame () {
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
 
-	this.load.image('cliffside',    'assets/img/subgames/balloon/indent.png');
 	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
 	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
 	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
@@ -20,8 +19,9 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
 
-	this.load.audio('beetleintro1', 'assets/audio/subgames/balloongame/beetleinstructions1_a.mp3');
-	this.load.audio('beetleintro2', 'assets/audio/subgames/balloongame/beetleinstructions1_b.mp3');
+	this.load.audio('beetleintro1', 'assets/audio/subgames/balloongame/beetleinstructions1.mp3');
+	this.load.audio('beetleintro2', 'assets/audio/subgames/balloongame/beetleinstructions2.mp3');
+	this.load.audio('beetleintro3', 'assets/audio/subgames/balloongame/beetleinstructions3.mp3');
 	this.load.audio('agentintro', 'assets/audio/subgames/balloongame/agentintro.mp3');
 	this.load.audio('newtreasure', 'assets/audio/subgames/balloongame/newtreasure.mp3');
 	this.load.audio('tryless', 'assets/audio/subgames/balloongame/tryless.mp3');
@@ -40,9 +40,13 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('balloon4',      'assets/img/subgames/balloon/b4.png');
 	this.load.image('balloon5',      'assets/img/subgames/balloon/b5.png');
 	this.load.image('balloon6',      'assets/img/subgames/balloon/b6.png');
+	this.load.image('balloon7',      'assets/img/subgames/balloon/b7.png');
+	this.load.image('balloon8',      'assets/img/subgames/balloon/b8.png');
+	this.load.image('balloon9',      'assets/img/subgames/balloon/b9.png');
 	this.load.image('brokenballoon', 'assets/img/subgames/balloon/brokenballoon.png');
 	this.load.image('cloud1',      'assets/img/subgames/balloon/cloud1.png');
 	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
+	this.load.image('map',      'assets/img/subgames/balloon/map.png');
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	/*
@@ -65,14 +69,12 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('birdheroElevatorDown', ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
 	*/
 };
-
 	var background;
 	var sky;
 	var cloud1;
 	var cloud2;
 	var scale = 0.85;
 	var airballoons;
-	var cliffheight;
 	var cliff;
 	var metalLoop;
 	//var cave;
@@ -83,16 +85,19 @@ BalloonGame.prototype.preload = function () {
 	var balloonStack1;
 	var balloonStack2;
 	var eyes;
-	var balloonStock = 6;
+	var balloonStock = 9;
 	var airBalloonStock = 0;
 	var direction = 'right';
 	var catBush;
+	var difficulty = 2;
+	var mapText;
 	
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
-
+	var stepSize = 9/this.amount;
+	balloonStock = this.amount;
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
 	
 	_this.disable(false);
@@ -114,10 +119,11 @@ BalloonGame.prototype.create = function () {
 			stop: { x: 640, y: 450 },
 			basketStop: { x: 785, y: 500 },
 			scale: 0.65
+		},
+		cliff: {
+			leftx: 660, rightx: 990
 		}
 	};
-
-	cliffheight = this.cache.getImage('cliffside').height;
 
 	// Add main game
 	sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
@@ -126,7 +132,7 @@ BalloonGame.prototype.create = function () {
 	background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
 
 	
-	catBush = game.add.sprite(175, 400, 'catbush', 0, this.gameGroup);
+	catBush = game.add.sprite(175, 420, 'catbush', 0, this.gameGroup);
 	catBush.animations.add('catBlink');
 	catBush.inputEnabled = true;
 	catBush.events.onInputDown.add(catBushPlay, this);
@@ -140,19 +146,24 @@ BalloonGame.prototype.create = function () {
 		}, this);
 	}
 
-	// Adding the platforms on the cliff wall.
-	for (var i = 0; i < 5; i++){
 
-		//Right
-		cliff = this.add.sprite(1000, 450 - (cliffheight * scale * (i+1) * 2), 'spritesheet', 2, this.gameGroup);
-		cliff.scale.x = -scale;
-		cliff.scale.y = scale;
+	// Adding the platforms on the cliff wall. -55*(amount)*scale*stepSize
+	for (var i = 0; i < this.amount; i++){
 
-		//Left
-		cliff = this.add.sprite(1024-170*2.2, 450 - (cliffheight * scale * (i+1) * 2 + cliffheight*scale), 'spritesheet', 2, this.gameGroup);
-		cliff.scale.x = scale;
-		cliff.scale.y = scale;
-
+		if(i%2 === 0)
+		{
+			//Right
+			cliff = this.add.sprite(coords.cliff.rightx, 350 - (55 * scale * (i) * stepSize), 'spritesheet', 2, this.gameGroup);
+			//console.log('RIGHT: x= ' + cliff.x + ' y= ' + cliff.y);
+			cliff.scale.x = -scale;
+			cliff.scale.y = scale;
+		}else{
+			//Left
+			cliff = this.add.sprite(coords.cliff.leftx, 350 - (55 * scale * (i) * stepSize), 'spritesheet', 2, this.gameGroup);
+			//console.log('LEFT: x= ' + cliff.x + ' y= ' + cliff.y);
+			cliff.scale.x = scale;
+			cliff.scale.y = scale;
+		}
 	}
 
 	chest = _this.add.sprite(1200, 900, 'spritesheet', 3, _this.gameGroup);
@@ -166,6 +177,7 @@ BalloonGame.prototype.create = function () {
 
 	var beetle = this.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'spritesheet', 4, this.gameGroup);
 	beetle.scale.set(coords.beetle.scale);
+	//beetle.anchor.setTo(0, 0.5);
 	airballoons.add(beetle);
 
 	airballoons.basket = this.add.sprite(785, 510, 'spritesheet', 5, airballoons);
@@ -250,6 +262,7 @@ BalloonGame.prototype.create = function () {
 		//TODO add random sounds
 		if (!value) {
 			say('isitwrong', _this.agent).play();
+			_this.disable(false);
 			showLiftoff();
 		}
 		else { agentFloatBalloons(_this.agent.lastGuess); }
@@ -386,7 +399,13 @@ BalloonGame.prototype.create = function () {
 			console.log('No balloons!');
 			//TODO: Add a voice saying you need to attatch balloons to the basket.
 		} else {
+
 			var result = _this.tryNumber(amount);
+			//Ugly solution until I figure it out
+			if(this.amount === 9)
+			{
+				amount++;
+			}
 			_this.agent.eyesFollowObject(airballoons.basket);
 			_this.disable(true);
 			liftoffButton.visible = false;
@@ -397,7 +416,7 @@ BalloonGame.prototype.create = function () {
 			//TODO Optimize if something is done in all cases.
 			if (!result)
 			{
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn}));
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
 				console.log('Correct!');
 				tl.addCallback(function () {
 					fade(eyes, false);
@@ -414,7 +433,7 @@ BalloonGame.prototype.create = function () {
 				//TODO: Add victory animation.
 			} else if (result > 0)
 			{
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn}));
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
 				console.log('Too many!');
 				tl.addSound('tryless', beetle);
 				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
@@ -425,8 +444,7 @@ BalloonGame.prototype.create = function () {
 				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut}));
 			} else
 			{
-				
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -cliffheight*amount*scale-50, ease:Power1.easeIn}));
+				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
 				console.log('Too few!');
 				tl.addSound('trymore', beetle);
 				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
@@ -513,25 +531,42 @@ BalloonGame.prototype.create = function () {
 
 		fade(chest, false);
 
-		if(correctAnswer % 2 === 0)
+		if(correctAnswer % 2 === 1)
 			{
-				chest.x = 690;
-				eyes.x = 703;
+				chest.x = coords.cliff.rightx-105;
+				eyes.x = coords.cliff.rightx-95;
 			}
 		else
 			{
-				chest.x = 890;
-				eyes.x = 903;
+				chest.x = coords.cliff.leftx+45;
+				eyes.x = coords.cliff.leftx+50;
 			}
 
-			chest.y = 465 - (cliffheight * scale * (correctAnswer));
-			eyes.y = 535 - (cliffheight * scale * (correctAnswer));
+			chest.y = 455 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
+			eyes.y = 525 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
+			console.log('eyes x: ' + eyes.x);
+			console.log('y: ' + eyes.y);
+			console.log('chest x: ' + chest.x);
+			console.log('y: ' + chest.y);
 			chest.scale.x = 0.4;
 			chest.scale.y = 0.4;
 			eyes.scale.x = 0.3;
 			eyes.scale.y = 0.3;
 			fade(eyes, true);
 
+			if(difficulty === 2){
+				if(mapText)
+				{
+					mapText.destroy();
+				}
+
+				mapText = new NumberButton(correctAnswer, _this.representation, {
+							x: 640, y: 670, size: 38
+				});
+				_this.gameGroup.add(mapText);
+				eyes.y = -100;
+				eyes.x = -100;
+			}
 
 	}
 
@@ -571,8 +606,16 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		tl.skippable();
 		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
-		tl.addSound('beetleintro1', beetle);
-		tl.addSound('beetleintro2', beetle);
+		if(difficulty === 2){
+			var map = game.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'map', null, _this.gameGroup);
+			map.scale.setTo(0.5, 0.5);
+			tl.add( new TweenMax(map, 0.1, {x: coords.beetle.stop.x+70, y: coords.beetle.stop.y+60, ease:Power1.easeIn}));
+			tl.addSound('beetleintro3', beetle);
+			tl.add( new TweenMax(map, 2, {x: 620, y: 650, ease:Power1.easeIn}));
+		}else{
+			tl.addSound('beetleintro1', beetle);
+			tl.addSound('beetleintro2', beetle);
+		}
 		tl.eventCallback('onComplete', function () {
 			_this.disable(false);
 			_this.nextRound();
@@ -634,9 +677,10 @@ BalloonGame.prototype.create = function () {
 				tl.eventCallback('onComplete', function () {
 					renderChest(_this.currentNumber);
 					_this.sound.removeByKey('agenttry');
-					_this.disable(false);
+					_this.disable(true);
 				});
 			}
+		_this.disable(true);
 		tl.add(agentGuess());
 		}
 	};
