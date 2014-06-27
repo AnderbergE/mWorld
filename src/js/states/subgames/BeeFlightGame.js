@@ -34,6 +34,7 @@ BeeFlightGame.prototype.create = function () {
 			scale: 0.25
 		}
 	};
+	coords.flowers.size = coords.flowers.stop - coords.flowers.start;
 
 	// Add music
 	var music = this.add.audio('beeMusic', 1, true);
@@ -58,7 +59,7 @@ BeeFlightGame.prototype.create = function () {
 
 	// Setup tree and its branches
 	var flowers = [];
-	var width = (coords.flowers.stop - coords.flowers.start) / this.amount;
+	var width = coords.flowers.size / this.amount;
 	for (var i = 0; i < this.amount; i++) {
 		flowers.push(this.add.sprite(coords.flowers.start + width*i, 400, 'beeFlower', null, this.gameGroup));
 		flowers[i].anchor.set(0.5, 0);
@@ -71,14 +72,18 @@ BeeFlightGame.prototype.create = function () {
 	// Add HUD
 	var buttons = new ButtonPanel(this.amount, this.representation, {
 		method: this.method,
+		x: coords.flowers.start,
 		y: 25,
+		size: coords.flowers.size,
 		background: 'wood',
 		onClick: pushNumber
 	});
 	buttons.visible = false;
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
+		x: coords.flowers.start,
 		y: 25,
+		size: coords.flowers.size,
 		background: 'wood',
 		onClick: pushYesno
 	});
