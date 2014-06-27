@@ -26,7 +26,7 @@ GardenState.prototype.create = function () {
 	panda.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.birdheroGame, true, false, {
 			method: GLOBAL.METHOD.basicMath,
-			representation: [0],
+			representation: [1],
 			amount: 4, // TODO: Use range instead
 			roundsPerMode: 1
 		});
@@ -37,7 +37,7 @@ GardenState.prototype.create = function () {
 	balloonButton.inputEnabled = true;
 	balloonButton.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.balloonGame, true, false, {
-			representation: [0],
+			representation: [1],
 			amount: 6,
 			roundsPerMode: 1
 		});
@@ -49,7 +49,7 @@ GardenState.prototype.create = function () {
 	lizard.inputEnabled = true;
 	lizard.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.lizardGame, true, false, {
-			representation: [2],
+			representation: [3],
 			amount: 4, // TODO: Use range instead
 			roundsPerMode: 1
 		});
@@ -60,7 +60,7 @@ GardenState.prototype.create = function () {
 	bee.inputEnabled = true;
 	bee.events.onInputDown.add(function () {
 		this.state.start(GLOBAL.STATE.beeGame, true, false, {
-			representation: [0],
+			representation: [1],
 			amount: 4, // TODO: Use range instead
 			roundsPerMode: 1
 		});

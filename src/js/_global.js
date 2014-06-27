@@ -49,12 +49,13 @@ var GLOBAL = {
 	},
 
 	NUMBER_REPRESENTATION: {
-		dots:    0,
-		fingers: 1,
-		strikes: 2,
-		objects: 3,
-		numbers: 4,
-		dice:    5,
+		none:    0,
+		dots:    1,
+		fingers: 2,
+		strikes: 3,
+		objects: 4,
+		numbers: 5,
+		dice:    6,
 		yesno:   15 // Special for yes/no: odd values = yes, even values = no
 	},
 
