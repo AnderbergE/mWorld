@@ -19,52 +19,15 @@ GardenState.prototype.create = function () {
 		speech.addMarker(marker, markers[marker][0], markers[marker][1]);
 	}
 
-	// TODO: Remove eventually, for debugging Birdhero game
-	var panda = this.add.sprite(100, 50, 'pandaBody');
-	panda.scale.set(0.2);
-	panda.inputEnabled = true;
-	panda.events.onInputDown.add(function () {
-		this.state.start(GLOBAL.STATE.birdheroGame, true, false, {
-			method: GLOBAL.METHOD.basicMath,
-			representation: [1],
-			amount: 4, // TODO: Use range instead
-			roundsPerMode: 1
-		});
-	}, this);
-
-	// TODO: Remove eventually, for debugging Balloon game
-	var balloonButton = this.add.sprite(300, 50, 'balloon1');
-	balloonButton.inputEnabled = true;
-	balloonButton.events.onInputDown.add(function () {
-		this.state.start(GLOBAL.STATE.balloonGame, true, false, {
-			representation: [1],
-			amount: 9, //Only 4 and 9 works right now.
-			roundsPerMode: 1
-		});
-	}, this);
-
-	// TODO: Remove eventually, for debugging Lizard Jungle game
-	var lizard = this.add.sprite(500, 100, 'pandaLeg');
-	lizard.scale.set(0.2);
-	lizard.inputEnabled = true;
-	lizard.events.onInputDown.add(function () {
-		this.state.start(GLOBAL.STATE.lizardGame, true, false, {
-			representation: [3],
-			amount: 4, // TODO: Use range instead
-			roundsPerMode: 1
-		});
-	}, this);
-
-	// TODO: Remove eventually, for debugging Bee Flight game
-	var bee = this.add.sprite(600, 100, 'wood', 0);
-	bee.inputEnabled = true;
-	bee.events.onInputDown.add(function () {
-		this.state.start(GLOBAL.STATE.beeGame, true, false, {
-			representation: [1],
-			amount: 4, // TODO: Use range instead
-			roundsPerMode: 1
-		});
-	}, this);
+	// TODO: Remove eventually, for debugging
+	this.world.add(new TextButton('>', {
+		x: 800,
+		y: 100,
+		background: 'wood',
+		onClick: function () {
+			game.state.start(GLOBAL.STATE.chooseScenario, true, false);
+		}
+	}));
 
 	var rows = 3;
 	var columns = 5;

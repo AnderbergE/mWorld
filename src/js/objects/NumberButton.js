@@ -6,6 +6,7 @@ NumberButton.prototype.constructor = NumberButton;
  * @param {Number} The number for the button
  * @param {Number} The representations of the button (see GLOBAL.REPRESENTATION)
  * @param {Object} A list of options (in addition to GeneralButton):
+ *      size: the small side of the button (the other depend on representation amount) (default 75)
  *		vertical: stretch button vertically, otherwise horisontally (default true)
  *		onClick: a function to run when a button is clicked
  * @returns {Object} Itself.

@@ -23,13 +23,14 @@ window.onload = function () {
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 
 		game.state.add('Boot', BootState);
-		game.state.add(GLOBAL.STATE.entry,        EntryState);
-		game.state.add(GLOBAL.STATE.playerSetup,  PlayerSetupState);
-		game.state.add(GLOBAL.STATE.garden,       GardenState);
-		game.state.add(GLOBAL.STATE.lizardGame,   LizardJungleGame);
-		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
-		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
-		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
+		game.state.add(GLOBAL.STATE.entry,          EntryState);
+		game.state.add(GLOBAL.STATE.playerSetup,    PlayerSetupState);
+		game.state.add(GLOBAL.STATE.garden,         GardenState);
+		game.state.add(GLOBAL.STATE.lizardGame,     LizardJungleGame);
+		game.state.add(GLOBAL.STATE.birdheroGame,   BirdheroGame);
+		game.state.add(GLOBAL.STATE.balloonGame,    BalloonGame);
+		game.state.add(GLOBAL.STATE.beeGame,        BeeFlightGame);
+		game.state.add(GLOBAL.STATE.chooseScenario, ChooseScenarioState);
 
 		game.state.start('Boot');
 	}

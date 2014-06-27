@@ -24,19 +24,20 @@ var GLOBAL = {
 	},
 
 	STATE: {
-		entry:        'Entry',
-		playerSetup:  'PlayerSetup',
-		garden:       'Garden',
-		0:            'Lizard',
-		lizardGame:   'Lizard',
-		1:            'Mountain',
-		mountainGame: 'Mountain',
-		2:            'Birdhero',
-		birdheroGame: 'Birdhero',
-		3:            'Balloon',
-		balloonGame:  'Balloon',
-		4:            'BeeFlight',
-		beeGame:      'BeeFlight'
+		entry:          'Entry',
+		playerSetup:    'PlayerSetup',
+		chooseScenario: 'chooseScenario',
+		garden:         'Garden',
+		0:              'Lizard',
+		lizardGame:     'Lizard',
+		1:              'Mountain',
+		mountainGame:   'Mountain',
+		2:              'Birdhero',
+		birdheroGame:   'Birdhero',
+		3:              'Balloon',
+		balloonGame:    'Balloon',
+		4:              'BeeFlight',
+		beeGame:        'BeeFlight'
 	},
 
 	MODE: {

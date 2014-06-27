@@ -5,7 +5,7 @@ GeneralButton.prototype.constructor = GeneralButton;
  * @param {Object} A list of options:
  *		x: the x position (default 0)
  *		y: the y position (default 0)
- *		size: the small side of the button (the other depend on representation amount) (default 75)
+ *		size: the side of the button (default 75)
  *		background: the background for the button
  *		color: the color of the representation (default '#000000')
  *		disabled: true if the buttons should be disabled (default false)
