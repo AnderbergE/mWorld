@@ -175,35 +175,44 @@ ChooseScenarioState.prototype.create = function () {
 	/* Have the last press predefined */
 	switch (localStorage.chooseSubgame) {
 		case GLOBAL.STATE.balloonGame:
-			gameButtons[0].bg.events.onInputDown.dispatch();
+			gameButtons[0].bg.frame++;
+			subgame = gameButtons[0];
 			break;
 		case GLOBAL.STATE.birdheroGame:
-			gameButtons[1].bg.events.onInputDown.dispatch();
+			gameButtons[1].bg.frame++;
+			subgame = gameButtons[1];
 			break;
 		case GLOBAL.STATE.lizardGame:
-			gameButtons[2].bg.events.onInputDown.dispatch();
+			gameButtons[2].bg.frame++;
+			subgame = gameButtons[2];
 			break;
 		case GLOBAL.STATE.beeGame:
-			gameButtons[3].bg.events.onInputDown.dispatch();
+			gameButtons[3].bg.frame++;
+			subgame = gameButtons[3];
 			break;
 	}
 	switch (parseInt(localStorage.chooseAmount)) {
 		case 4:
-			onefourButton.bg.events.onInputDown.dispatch();
+			onefourButton.bg.frame++;
+			amount = onefourButton;
 			break;
 		case 9:
-			onenineButton.bg.events.onInputDown.dispatch();
+			onenineButton.bg.frame++;
+			amount = onenineButton;
 			break;
 	}
 	if (localStorage.chooseRepresentation) {
-		representationButtons[parseInt(localStorage.chooseRepresentation)].bg.events.onInputDown.dispatch();
+		representationButtons[parseInt(localStorage.chooseRepresentation)].bg.frame++;
+		representation = representationButtons[parseInt(localStorage.chooseRepresentation)];
 	}
 	switch (parseInt(localStorage.chooseMethod)) {
 		case GLOBAL.METHOD.count:
-			countButton.bg.events.onInputDown.dispatch();
+			countButton.bg.frame++;
+			method = countButton;
 			break;
 		case GLOBAL.METHOD.basicMath:
-			plusminusButton.bg.events.onInputDown.dispatch();
+			plusminusButton.bg.frame++;
+			method = plusminusButton;
 			break;
 	}
 
