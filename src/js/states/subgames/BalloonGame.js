@@ -89,7 +89,6 @@ BalloonGame.prototype.preload = function () {
 	var airBalloonStock = 0;
 	var direction = 'right';
 	var catBush;
-	var difficulty = 2;
 	var mapText;
 	
 
@@ -554,7 +553,9 @@ BalloonGame.prototype.create = function () {
 			eyes.scale.y = 0.3;
 			fade(eyes, true);
 
-			if(difficulty === 2){
+			console.log('render GLOBAL.NUMBER_REPRESENTATION.none: ' + GLOBAL.NUMBER_REPRESENTATION.none + ' this.representation: ' + _this.representation);
+			if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
+				console.log('Theyre not equal');
 				if(mapText)
 				{
 					mapText.destroy();
@@ -584,9 +585,15 @@ BalloonGame.prototype.create = function () {
 					say('agenthmm', _this.agent).play();
 				},
 				onComplete: function () {
-					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -50, y: -50, size: 100
-					});
+					if(parseInt(_this.representation) === GLOBAL.NUMBER_REPRESENTATION.none){
+						_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, 1, {
+							x: -50, y: -50, size: 100
+						});
+					}else{
+						_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
+							x: -50, y: -50, size: 100
+						});
+					}
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
 					say('question', _this.agent).play();
@@ -606,7 +613,9 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		tl.skippable();
 		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
-		if(difficulty === 2){
+		console.log('intro GLOBAL.NUMBER_REPRESENTATION.none: ' + GLOBAL.NUMBER_REPRESENTATION.none + ' this.representation: ' + _this.representation);
+		if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
+			console.log('Theyre not equal 1');
 			var map = game.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'map', null, _this.gameGroup);
 			map.scale.setTo(0.5, 0.5);
 			tl.add( new TweenMax(map, 0.1, {x: coords.beetle.stop.x+70, y: coords.beetle.stop.y+60, ease:Power1.easeIn}));
@@ -633,6 +642,7 @@ BalloonGame.prototype.create = function () {
 				renderChest(_this.currentNumber);
 			} else {
 				tl.addSound('newtreasure', beetle);
+				renderChest(_this.currentNumber);
 			}
 		showLiftoff();
 		}
@@ -656,6 +666,9 @@ BalloonGame.prototype.create = function () {
 					_this.disable(false);
 				});
 
+			} else {
+				tl.addSound('newtreasure', beetle);
+				renderChest(_this.currentNumber);
 			}
 		tl.addCallback(showLiftoff);
 		}
@@ -677,10 +690,12 @@ BalloonGame.prototype.create = function () {
 				tl.eventCallback('onComplete', function () {
 					renderChest(_this.currentNumber);
 					_this.sound.removeByKey('agenttry');
-					_this.disable(true);
+					_this.disable(false);
 				});
+			} else {
+				tl.addSound('newtreasure', beetle);
+				renderChest(_this.currentNumber);
 			}
-		_this.disable(true);
 		tl.add(agentGuess());
 		}
 	};
