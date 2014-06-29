@@ -61,6 +61,10 @@ GardenState.prototype.create = function () {
 		if (currentMove) { currentMove.kill(); }
 		currentMove = new TimelineMax();
 		// TODO: When agent has better talk animation: currentMove.addSound(speech, agent, 'ok');
+		if (agent.x !== x && agent.x % width > 10) {
+			var move = agent.x + (agent.x > x ? -agent.x % width : width - agent.x % width) ;
+			currentMove.add(agent.move({ x: move }, Math.abs((agent.x - move)/width)));
+		}
 		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
 		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
 	});
