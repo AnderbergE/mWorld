@@ -19,18 +19,7 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.ogg', 'assets/audio/subgames/birdhero/elevator_arrive.mp3']);
 	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.ogg',   'assets/audio/subgames/birdhero/elevator_down.mp3']);
 
-	this.load.atlasJSONHash('birdheroBird', 'assets/img/subgames/birdhero/birdAtlas.png', 'assets/img/subgames/birdhero/birdAtlas.json');
-	this.load.image('birdheroBg',      'assets/img/subgames/birdhero/bg.png');
-	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
-	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
-	this.load.image('birdheroBranch1', 'assets/img/subgames/birdhero/branch2.png');
-	this.load.image('birdheroBranch2', 'assets/img/subgames/birdhero/branch2.png');
-	this.load.image('birdheroBucket',  'assets/img/subgames/birdhero/bucket.png');
-	this.load.image('birdheroChick',   'assets/img/subgames/birdhero/chick.png');
-	this.load.image('birdheroCrown',   'assets/img/subgames/birdhero/crown.png');
-	this.load.image('birdheroMother',  'assets/img/subgames/birdhero/mother.png');
-	this.load.image('birdheroNest',    'assets/img/subgames/birdhero/nest.png');
-	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
+	this.load.atlasJSONHash('birdhero', 'assets/img/subgames/birdhero/atlas.png', 'assets/img/subgames/birdhero/atlas.json');
 };
 
 /* Phaser state function */
@@ -38,9 +27,9 @@ BirdheroGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var coords = {
 		tree: {
-			x: 600, y: 10, center: 215,
-			branch: { start: this.cache.getImage('birdheroBole').height - 150, end: 70 },
-			elevator: -30
+			x: 640, y: 15, center: 140,
+			branch: { start: 500, end: 70 },
+			elevator: -60
 		},
 		agent: {
 			start: { x: 250, y: 950 },
@@ -72,7 +61,7 @@ BirdheroGame.prototype.create = function () {
 
 
 	// Add background
-	this.add.sprite(0, 0, 'birdheroBg', null, this.gameGroup);
+	this.add.sprite(0, 0, 'birdhero', 'bg', this.gameGroup);
 
 	// Agent is added to the game in the superclass, so set up correct start point.
 	this.agent.x = coords.agent.start.x;
@@ -88,14 +77,9 @@ BirdheroGame.prototype.create = function () {
 	thoughtBubble.anchor.set(0.5);
 	this.gameGroup.bringToTop(this.agent);
 
-	// Create bird, it is added to the elevator group below since we need it to be "in" the elevator.
-	// Since the bird is in the elevator group, we need to offset for that when moving it.
-	var bird = new BirdheroBird();
-	bird.visible = false;
-	bird.scale.set(coords.bird.scale);
-
 	// Setup tree and its branches
-	var tree = this.add.sprite(coords.tree.x, coords.tree.y, 'birdheroBole', null, this.gameGroup);
+	this.add.sprite(coords.tree.x-90, coords.tree.y-25, 'birdhero', 'crown', this.gameGroup);
+	var tree = this.add.sprite(coords.tree.x, coords.tree.y, 'birdhero', 'bole', this.gameGroup);
 	tree.branch = [this.amount];
 	var treeBottom = tree.y + coords.tree.branch.start;
 	var treeCenter = tree.x + coords.tree.center;
@@ -103,33 +87,37 @@ BirdheroGame.prototype.create = function () {
 	for (var i = 0; i < this.amount; i++) {
 		tree.branch[i] = new BirdheroBranch(treeCenter, treeBottom - heightPerBranch*i, tint[i]);
 		tree.branch[i].scale.x = i % 2 ? 1 : -1;
+		tree.branch[i].chicks = 1;
 		this.gameGroup.add(tree.branch[i]);
 	}
 	tree.bringToTop();
 
 	// Add the elevator, the bird is added to this group to be in the elevator when moving it.
 	var elevator = this.add.group(this.gameGroup);
-	elevator.rope = this.add.sprite(0, 0, 'birdheroRope', null, elevator);
-	elevator.rope.y -= elevator.rope.height;
-	elevator.add(bird);
-	elevator.bucket = this.add.sprite(0, -5, 'birdheroBucket', null, elevator);
-	elevator.text = this.add.text(0 + elevator.bucket.width/2, elevator.bucket.y + elevator.bucket.height/2, '0', {
-		font: '30pt ' +  GLOBAL.FONT,
-		fill: '#ffff00'
-	}, elevator);
-	elevator.text.anchor.set(0.5);
 	elevator.origin = tree.y + tree.height + coords.tree.elevator;
-	elevator.x = treeCenter - elevator.bucket.width/2;
+	elevator.x = treeCenter;
 	elevator.y = elevator.origin;
 
+	// Create bird, it is added to the elevator group to move with the elevator when it moves.
+	// Since the bird is in the elevator group, we need to offset for that when moving it.
+	var bird = new BirdheroBird();
+	bird.visible = false;
+	bird.scale.set(coords.bird.scale);
+	elevator.add(bird);
 	// Calculate positions for bird based on elevator.
 	coords.bird.start.x -= elevator.x;
 	coords.bird.start.y -= elevator.y;
 	coords.bird.stop.x -= elevator.x;
 	coords.bird.stop.y -= elevator.y;
 
-	// The tree crown is added last so that it is put "closest" to the player.
-	this.add.sprite(tree.x, tree.y-100, 'birdheroCrown', null, this.gameGroup);
+	elevator.bucket = this.add.sprite(0, 0, 'birdhero', 'bucket', elevator);
+	elevator.bucket.anchor.set(0.5, 0);
+	elevator.text = this.add.text(0, elevator.bucket.y + elevator.bucket.height*0.75, '0', {
+		font: '30pt ' +  GLOBAL.FONT,
+		fill: '#ff0000'
+	}, elevator);
+	elevator.text.anchor.set(0.5);
+	this.add.sprite(0, 12, 'birdhero', 'rope', elevator).anchor.set(0.5, 1);
 
 
 	// Add HUD
@@ -156,20 +144,21 @@ BirdheroGame.prototype.create = function () {
 			return bird.move({ x: coords.bird.stop.x, y: coords.bird.stop.y }, 2, coords.bird.scale);
 		},
 		elevator: function () {
-			return bird.move({ x: elevator.bucket.x+elevator.bucket.width/2, y: elevator.bucket.y+elevator.bucket.height/2 }, 2, coords.bird.small);
+			return bird.move({ x: 0, y: elevator.bucket.height*0.7 }, 2, coords.bird.small);
 		},
 		peak: function (up) {
-			return bird.move({ y: (up ? '-=22' : '+=22') }, 0.5);
+			return bird.move({ y: (up ? '-=30' : '+=30') }, 0.5);
 		},
 		nest: function (target) {
-			return bird.move({ x: tree.branch[target-1].visit().x + elevator.bucket.width/2 }, 1);
+			var visit = tree.branch[target-1].visit();
+			return bird.move({ x: visit.x }, 1);
 		}
 	};
 
 	elevator.moveTo = {
 		_direct: function (target, arrived) {
 			return new TweenMax(elevator, 1, {
-				y: tree.branch[target-1].y + tree.branch[target-1].visit().y,
+				y: tree.branch[target-1].y + tree.branch[target-1].visit().y - elevator.bucket.height*0.75,
 				ease: Power1.easeInOut,
 				onComplete: function () {
 					elevator.text.text = target.toString();
@@ -379,7 +368,6 @@ BirdheroGame.prototype.create = function () {
 			chick.visible = true;
 		};
 		for (var i = 0; i < tree.branch.length; i++) {
-			tree.branch[i].chicks = 1;
 			var chick = new BirdheroBird(tint[i]);
 			chick.visible = false;
 			for (var j in chick.children) {
@@ -546,10 +534,10 @@ function BirdheroBranch (x, y, tint) {
 	this.x = x;
 	this.y = y;
 
-	var branch = game.add.sprite(0, 0, 'birdheroBranch' + parseInt(Math.random()*3), null, this);
-	branch.x -= branch.width;
-	this.nest = game.add.sprite(branch.x + 60, branch.height * 0.4, 'birdheroNest', null, this);
-	this.mother = game.add.sprite(this.nest.x + this.nest.width/5, this.nest.y, 'birdheroMother', null, this);
+	var branchType = parseInt(Math.random()*3+1);
+	var branch = game.add.sprite(0, 0, 'birdhero', 'branch' + branchType, this);
+	this.nest = game.add.sprite(branch.x + (branchType === 1) ? 100 : (branchType === 2) ? 60 : 80, branch.height * 0.4, 'birdhero', 'nest', this);
+	this.mother = game.add.sprite(this.nest.x + this.nest.width/5, this.nest.y, 'birdhero', 'parent', this);
 	this.mother.y -= this.mother.height*0.7;
 	this.mother.tint = tint || 0xffffff;
 	this.nest.bringToTop();
@@ -563,11 +551,11 @@ Object.defineProperty(BirdheroBranch.prototype, 'chicks', {
 	set: function(value) {
 		var change = value - this._chicks.length;
 		var dir = change > 0 ? -1 : 1;
-		while (change !== 0 && this._chicks.length < 5) {
+		while (change !== 0 && this._chicks.length < 3) {
 			if (dir < 0) {
-				var chick = game.add.sprite(this.mother.x - 5, this.nest.y, 'birdheroChick', null, this);
-				chick.x += this._chicks.length * chick.width * 0.8;
-				chick.y -= chick.height * 0.6;
+				var chick = game.add.sprite(this.mother.x - 10, this.nest.y, 'birdhero', 'chick', this);
+				chick.x += this._chicks.length * chick.width * 0.5;
+				chick.y -= chick.height * 0.5;
 				chick.tint = this.mother.tint;
 				this._chicks.push(chick);
 			} else {
@@ -590,7 +578,7 @@ BirdheroBranch.prototype.chickPos = function () {
 /** @returns {Object} The x, y coordinates of where the bird should stop at the nest */
 BirdheroBranch.prototype.visit = function () {
 	return {
-		x: (this.nest.x + this.nest.width) * this.scale.x,
+		x: this.nest.x * this.scale.x,
 		y: this.nest.y
 	};
 };
@@ -651,21 +639,21 @@ function BirdheroBird (tint) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this._number = null;
 
-	this.rightLeg = game.add.sprite(50, 160, 'birdheroBird', 'leg', this);
-	this.rightWing = game.add.sprite(160, -90, 'birdheroBird', 'wing5', this);
+	this.rightLeg = game.add.sprite(50, 160, 'birdhero', 'leg', this);
+	this.rightWing = game.add.sprite(160, -90, 'birdhero', 'wing5', this);
 	this.rightWing.visible = false;
-	this.body = game.add.sprite(0, 0, 'birdheroBird', 'body', this);
+	this.body = game.add.sprite(0, 0, 'birdhero', 'body', this);
 	this.body.anchor.set(0.5);
-	this.leftLeg = game.add.sprite(0, 175, 'birdheroBird', 'leg', this);
-	this.wing = game.add.sprite(75, -20, 'birdheroBird', 'wing', this);
+	this.leftLeg = game.add.sprite(0, 175, 'birdhero', 'leg', this);
+	this.wing = game.add.sprite(75, -20, 'birdhero', 'wing', this);
 	this.wing.anchor.set(1, 0);
-	this.leftWing = game.add.sprite(90, -125, 'birdheroBird', 'wing5', this);
+	this.leftWing = game.add.sprite(90, -125, 'birdhero', 'wing5', this);
 	this.leftWing.angle = 10;
 	this.leftWing.scale.x = -1;
 	this.leftWing.visible = false;
-	game.add.sprite(110, -160, 'birdheroBird', 'eyes', this);
-	game.add.sprite(118, -145, 'birdheroBird', 'pupils', this);
-	this.beak = game.add.sprite(190, -70, 'birdheroBird', 'beak0', this);
+	game.add.sprite(110, -160, 'birdhero', 'eyes', this);
+	game.add.sprite(118, -145, 'birdhero', 'pupils', this);
+	this.beak = game.add.sprite(190, -70, 'birdhero', 'beak0', this);
 	this.beak.anchor.set(0.5);
 
 	this.tint = tint || 0xffffff;
@@ -756,9 +744,9 @@ BirdheroBird.prototype.move = function (properties, duration, scale) {
 	t.to(this, duration, properties, 'mover');
 	t.addCallback(function () {
 		var dir = this.scale.x < 0;
-		if (properties.x &&                                 // Check if we should turn around
-			(properties.x <= this.x && 0 < this.scale.x) || // Going left, scale should be -1
-			(this.x <= properties.x && 0 > this.scale.x)) { // Going right, scale should be 1
+		if (typeof properties.x !== 'undefined' && properties.x !== null && // Check if we should turn around
+			(properties.x <= this.x && 0 < this.scale.x) ||                 // Going left, scale should be -1
+			(this.x <= properties.x && 0 > this.scale.x)) {                 // Going right, scale should be 1
 			dir = !dir;
 			t.add(this.turn(), 'mover');
 		}
