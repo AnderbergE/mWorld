@@ -22,6 +22,7 @@ Agent.prototype = Object.create(Phaser.Group.prototype);
 Agent.prototype.constructor = Agent;
 function Agent () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
+	var _this = this;
 	this._knowledge = 0.5;
 
 	this.lastGuess = null;
@@ -53,31 +54,77 @@ function Agent () {
 		.to(this.leftLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0)
 		.to(this.rightLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0.24);
 
+
+	/* Save the progress of the player for AI purposes */
+	this.playerCorrect = 0;
+	this.playerWrong = 0;
+	this.playerGuesses = [];
+	var currentMode = null;
+
+	Event.subscribe(GLOBAL.EVENT.subgameStarted, function () {
+		_this.playerCorrect = 0;
+		_this.playerWrong = 0;
+		_this.playerGuesses = [];
+	});
+	Event.subscribe(GLOBAL.EVENT.modeChange, function (mode) {
+		currentMode = mode;
+	});
+	Event.subscribe(GLOBAL.EVENT.tryNumber, function (guess, correct) {
+		if (currentMode === GLOBAL.MODE.playerDo ||
+			currentMode === GLOBAL.MODE.playerShow) {
+			_this.playerGuesses.push([guess, correct]);
+			if (guess === correct) {
+				_this.playerCorrect++;
+			} else {
+				_this.playerWrong++;
+			}
+		}
+	});
+
 	return this;
 }
 
 /**
  * Have the agent guess a number.
+ * NOTE: This can be overwritten by other AI.
+ * Variables that are available:
+ *     this.playerGuesses [[guess, correct], ...]
+ *     this.playerCorrect Number of correct guesses by the player
+ *     this.playerWrong   Number of incorrect guesses by the player
+ * @param {number} The correct number
+ * @param {number} Minimum value to guess
+ * @param {number} Maximum value to guess
+ * @returns {number} The guess
+ */
+Agent.prototype.guessing = function (correct, min, max) {
+	var perc = 1;
+	if (this.playerWrong > 0) {
+		perc = Math.random();
+	}
+
+	// Guessing correct is relative to how many wrongs you have made.
+	// There is also always a small chance for the agent to be wrong.
+	var guess;
+	if (perc >= (this.playerWrong / this.playerGuesses.length) && Math.random() > 0.1) {
+		guess = correct;
+	} else {
+		do {
+			guess = game.rnd.integerInRange(min, max);
+		} while (guess === correct && (min < correct || correct < max));
+	}
+
+	return guess;
+};
+
+/**
+ * Have the agent guess a number (publishes agentGuess event).
  * @param {number} The correct number
  * @param {number} Minimum value to guess
  * @param {number} Maximum value to guess
  * @returns {number} The guess (also available in this.lastGuess)
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
-	// TODO: How should the AI behave?
-	// TODO: Copy player's amount of right and wrongs and some randomized element.
-	var range = (max - min);
-	var errorRange = parseInt(range - range * this._knowledge);
-	var guessRangeMin = correct - errorRange;
-	var guessRangeMax = correct + errorRange;
-	if (guessRangeMin < min) {
-		guessRangeMax += Math.abs(guessRangeMin + min);
-		guessRangeMin = min;
-	} else if (guessRangeMax > max) {
-		guessRangeMin += (guessRangeMax - max);
-		guessRangeMax = max;
-	}
-	this.lastGuess = parseInt(guessRangeMin + Math.random()*(guessRangeMax - guessRangeMin));
+	this.lastGuess = this.guessing(correct, min, max);
 	Event.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
 	return this.lastGuess;
 };
