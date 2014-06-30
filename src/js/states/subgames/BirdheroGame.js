@@ -38,7 +38,7 @@ BirdheroGame.prototype.create = function () {
 			thought: { x: -150, y: -100, scale: 0.5 } // offset to agent
 		},
 		bird: {
-			start: { x: -150, y: 600 },
+			start: { x: -150, y: 700 },
 			stop: { x: 200, y: 550 },
 			scale: 0.3, small: 0.06
 		}
