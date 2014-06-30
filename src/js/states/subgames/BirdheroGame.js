@@ -102,7 +102,6 @@ BirdheroGame.prototype.create = function () {
 	// Since the bird is in the elevator group, we need to offset for that when moving it.
 	var bird = new BirdheroBird();
 	bird.visible = false;
-	bird.scale.set(coords.bird.scale);
 	elevator.add(bird);
 	// Calculate positions for bird based on elevator.
 	coords.bird.start.x -= elevator.x;
@@ -301,14 +300,13 @@ BirdheroGame.prototype.create = function () {
 	function newBird (silent) {
 		bird.number = _this.currentNumber;
 		bird.tint = tint[bird.number - 1];
+		bird.x = coords.bird.start.x;
+		bird.y = coords.bird.start.y;
+		bird.scale.set(coords.bird.scale);
 
 		var t = new TimelineMax();
-		t.addCallback(function () {
-			bird.x = coords.bird.start.x;
-			bird.y = coords.bird.start.y;
-			bird.visible = true;
-		});
-		t.add(bird.moveTo.initial(), 0); // TODO: Why does scale f up here when skipping?
+		t.addCallback(function () { bird.visible = true; });
+		t.add(bird.moveTo.initial(), 0);
 		t.add(zoom(true), 0);
 		if (!silent) {
 			t.addSound(speech, bird, 'floor');
