@@ -174,7 +174,7 @@ TimelineMax.prototype.addSound = function (what, who, marker) {
 		this.addCallback(function () { a.stop(); }, '+=' + a.markers[marker].duration);
 	} else {
 		this.addCallback(function () { a.play(); });
-		this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(what).data.duration);
+		this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(typeof what === 'string' ? what : what.key).data.duration);
 	}
 	return this;
 };
