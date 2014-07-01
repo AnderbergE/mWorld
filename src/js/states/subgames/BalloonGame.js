@@ -32,6 +32,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('oops', 'assets/audio/subgames/balloongame/oops.mp3');
 	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
 	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
+	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
@@ -47,6 +48,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('cloud1',      'assets/img/subgames/balloon/cloud1.png');
 	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
 	this.load.image('map',      'assets/img/subgames/balloon/map.png');
+	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 	/*
@@ -232,9 +234,14 @@ BalloonGame.prototype.create = function () {
 	//createBalloon();
 
 	// x = game.world.centerX
-	liftoffButton = game.add.button(100, 660, 'wood', takeOff, this);
+	liftoffButton = game.add.button(110, 680, 'wood', takeOff, this);
+	liftoffButton.anchor.set(0.5, 0.5);
 	liftoffButton.visible = false;
 	this.hudGroup.add(liftoffButton);
+	var anchor = this.add.sprite(110, 680, 'anchor', null, this.hudGroup);
+	anchor.anchor.set(0.5, 0.5);
+	anchor.scale.set(0.5);
+	anchor.visible = false;
 
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
 		y: this.world.height-100, background: 'wood', onClick: pushYesno
@@ -245,6 +252,7 @@ BalloonGame.prototype.create = function () {
 	function showYesnos () {
 		yesnos.reset();
 		fade(liftoffButton, false);
+		fade(anchor, false);
 		fade(yesnos, true);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
@@ -252,6 +260,7 @@ BalloonGame.prototype.create = function () {
 
 	function showLiftoff () {
 		fade(liftoffButton, true);
+		fade(anchor, true);
 		fade(yesnos, false);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
@@ -388,10 +397,11 @@ BalloonGame.prototype.create = function () {
 
 		var amount = airBalloonStock;
 		
-		//Begin here tomorrow! TODO: Add fail and success states when balloon takes off. Maybe rewrite the whole thing.
+		
 		//var result = _this.tryNumber(amount);
 
 		var tl = new TimelineMax();
+		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
 		tl.skippable();
 		if (amount <= 0)
 		{
@@ -408,54 +418,38 @@ BalloonGame.prototype.create = function () {
 			_this.agent.eyesFollowObject(airballoons.basket);
 			_this.disable(true);
 			liftoffButton.visible = false;
+			anchor.visible = false;
 
 			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
 				tl.add( new TweenMax(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn}));
 			}
-			//TODO Optimize if something is done in all cases.
+			tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
 			if (!result)
 			{
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
-				console.log('Correct!');
 				tl.addCallback(function () {
 					fade(eyes, false);
 					fade(chest, true);
 				});
 				tl.addSound(speech, beetle, 'yippi');
 				tl.add(_this.addWater(chest.x, chest.y), '-=3');
-				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
-				tl.addCallback(function () {
-					resetBalloons();
-				});
-				tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
-				tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
-				//TODO: Add victory animation.
 			} else if (result > 0)
 			{
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
-				console.log('Too many!');
 				tl.addSound('tryless', beetle);
-				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
-				tl.addCallback(function () {
-					resetBalloons();
-				});
-				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn}));
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut}));
-			} else
-			{
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
-				console.log('Too few!');
+			} else {
 				tl.addSound('trymore', beetle);
-				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
-				tl.addCallback(function () {
-					resetBalloons();
-				});
-				tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn}));
-				tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut}));
 			}
-
-			tl.eventCallback('onComplete', function(){
+			tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
+			tl.addCallback(function () {
+				tls.addSound('pop', balloonStack2);
+				resetBalloons();
+			});
+			tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
+			tl.addCallback(function () {
 				balloonStack2.kill();
+			});
+			tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
+			
+			tl.eventCallback('onComplete', function(){
 				_this.disable(false);
 				_this.agent.eyesFollowPointer();
 				_this.nextRound();
@@ -703,9 +697,11 @@ BalloonGame.prototype.create = function () {
 	this.modeAgentDo = function (intro, tries) {
 		if (tries > 0) {
 			liftoffButton.visible = true;
+			anchor.visible = true;
 		} else { // if intro or first try
 			console.log('modeAgentDo Intro');
 			liftoffButton.visible = true;
+			anchor.visible = true;
 		}
 	};
 
