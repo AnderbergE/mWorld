@@ -309,8 +309,10 @@ BirdheroGame.prototype.create = function () {
 		t.add(bird.moveTo.initial(), 0);
 		t.add(zoom(true), 0);
 		if (!silent) {
-			t.addSound(speech, bird, 'floor');
-			t.addCallback(function () { bird.showWings(); }, '-=2.9');
+			t.addSound(speech, bird, 'thisFloor1');
+			t.addLabel('showWings');
+			t.addCallback(function () { bird.showWings(); });
+			t.addSound(speech, bird, 'thisFloor2');
 		}
 		return t;
 	}
@@ -378,15 +380,17 @@ BirdheroGame.prototype.create = function () {
 			chick.y = pos.y - 20; // Counter-effect translate
 			chick.scale.set(coords.bird.small);
 			group.add(chick);
-			t.add(tree.branch[i].distress(4), 5.5);
+
+			var start = 5 + this.rnd.realInRange(0, 1);
+			t.add(tree.branch[i].distress(4), start);
 			t.add(new TweenMax(chick, 7, {
 				x: -500,
-				y: game.world.height - Math.random()*150,
-				angle: 1080 + Math.random()*2160,
+				y: game.world.height - this.rnd.integerInRange(0, 150),
+				angle: 1080 + this.rnd.integerInRange(0, 2160),
 				ease: Power0.easeIn,
 				onStart: starter,
 				onStartParams: [chick, tree.branch[i]]
-			}), 5.5);
+			}), start);
 		}
 
 		// Make it dark!
@@ -433,10 +437,10 @@ BirdheroGame.prototype.create = function () {
 				t.skippable();
 				t.add(newBird(true));
 				t.add(instructionIntro());
+				t.addCallback(showNumbers);
 			} else {
-				t.add(newBird());
+				t.add(newBird().addCallback(showNumbers, 'showWings'));
 			}
-			t.addCallback(showNumbers);
 		}
 	};
 
@@ -454,8 +458,7 @@ BirdheroGame.prototype.create = function () {
 				t.addSound(speech, _this.agent, 'agentIntro');
 				t.add(_this.agent.wave(3, 1), 'agentIntro');
 			}
-			t.add(newBird());
-			t.addCallback(showNumbers);
+			t.add(newBird().addCallback(showNumbers, 'showWings'));
 		}
 	};
 
@@ -533,7 +536,7 @@ function BirdheroBranch (x, y, tint) {
 	this.x = x;
 	this.y = y;
 
-	var branchType = parseInt(Math.random()*3+1);
+	var branchType = game.rnd.integerInRange(1, 3);
 	var branch = game.add.sprite(0, 0, 'birdhero', 'branch' + branchType, this);
 	this.nest = game.add.sprite(branch.x + (branchType === 1) ? 100 : (branchType === 2) ? 60 : 80, branch.height * 0.4, 'birdhero', 'nest', this);
 	this.mother = game.add.sprite(this.nest.x + this.nest.width/5, this.nest.y, 'birdhero', 'parent', this);

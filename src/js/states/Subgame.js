@@ -142,7 +142,7 @@ Subgame.prototype._nextNumber = function () {
 	// Should we allow the same number again?
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
-	this.currentNumber = parseInt(1+Math.random()*this.amount);
+	this.currentNumber = this.rnd.integerInRange(1, this.amount);
 };
 
 /** Skip the current mode. */
