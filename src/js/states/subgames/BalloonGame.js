@@ -92,6 +92,7 @@ BalloonGame.prototype.preload = function () {
 	var direction = 'right';
 	var catBush;
 	var mapText;
+	var treasures = 0;
 	
 
 /* Phaser state function */
@@ -249,11 +250,18 @@ BalloonGame.prototype.create = function () {
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
 
+	var plusminus = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.plusminus, {
+		y: this.world.height-100, background: 'wood', onClick: pushPlusminus
+	});
+	plusminus.visible = false;
+	this.hudGroup.add(plusminus);
+
 	function showYesnos () {
 		yesnos.reset();
 		fade(liftoffButton, false);
 		fade(anchor, false);
 		fade(yesnos, true);
+		fade(plusminus, false);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
@@ -262,6 +270,12 @@ BalloonGame.prototype.create = function () {
 		fade(liftoffButton, true);
 		fade(anchor, true);
 		fade(yesnos, false);
+		console.log('GLOBAL.METHOD.basicMath: ' + GLOBAL.METHOD.basicMath + ' this.method ' + _this.method);
+		if((parseInt(_this.method) === GLOBAL.METHOD.basicMath) && treasures)
+		{
+			console.log('Theyre equal!');
+			fade(plusminus, true);
+		}
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
@@ -271,7 +285,7 @@ BalloonGame.prototype.create = function () {
 		if (!value) {
 			say('isitwrong', _this.agent).play();
 			_this.disable(false);
-			showLiftoff();
+			showLiftoff(0, 0);
 		}
 		else { agentFloatBalloons(_this.agent.lastGuess); }
 	}
@@ -284,6 +298,50 @@ BalloonGame.prototype.create = function () {
 		balloonStack2.revive();
 		balloonStack2.loadTexture('balloon'+airBalloonStock);
 		takeOff();
+	}
+
+	function pushPlusminus (value) {
+		if(value){
+			addBalloon();
+		} else {
+			removeBalloon();
+		}
+	}
+
+	function addBalloon()
+	{
+		if(balloonStock > 0)
+		{
+			airBalloonStock++;
+			balloonStock--;
+			airBalloonStockUpdate();
+			balloonStockUpdate();
+
+			if(balloonStock === 0)
+			{
+				deleteB();
+			}
+		}
+		console.log('# balloonstock: ' + balloonStock);
+		console.log('# airballoonstock: ' + airBalloonStock);
+	}
+
+	function removeBalloon()
+	{
+		if(airBalloonStock > 0)
+		{
+			airBalloonStock--;
+			balloonStock++;
+			airBalloonStockUpdate();
+			balloonStockUpdate();
+
+			if(airBalloonStock === 0)
+			{
+				deleteAirB();
+			}
+		}
+		console.log('# balloonstock: ' + balloonStock);
+		console.log('# airballoonstock: ' + airBalloonStock);
 	}
 
 	//Creates one draggable balloon at the stack.
@@ -401,7 +459,6 @@ BalloonGame.prototype.create = function () {
 		//var result = _this.tryNumber(amount);
 
 		var tl = new TimelineMax();
-		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
 		tl.skippable();
 		if (amount <= 0)
 		{
@@ -419,11 +476,12 @@ BalloonGame.prototype.create = function () {
 			_this.disable(true);
 			liftoffButton.visible = false;
 			anchor.visible = false;
+			plusminus.visible = false;
 
 			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
 				tl.add( new TweenMax(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn}));
 			}
-			tl.add( new TweenMax(airballoons, amount/2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeIn}));
+			tl.add( new TweenMax(airballoons, 2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeInOut}));
 			if (!result)
 			{
 				tl.addCallback(function () {
@@ -432,22 +490,18 @@ BalloonGame.prototype.create = function () {
 				});
 				tl.addSound(speech, beetle, 'yippi');
 				tl.add(_this.addWater(chest.x, chest.y), '-=3');
+				treasures++;
 			} else if (result > 0)
 			{
 				tl.addSound('tryless', beetle);
 			} else {
 				tl.addSound('trymore', beetle);
 			}
-			tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
-			tl.addCallback(function () {
-				tls.addSound('pop', balloonStack2);
-				resetBalloons();
-			});
-			tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
-			tl.addCallback(function () {
-				balloonStack2.kill();
-			});
-			tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Bounce.easeOut});
+			//Popping balloons and Basket going back down.
+			if(((parseInt(_this.method) === GLOBAL.METHOD.basicMath) && !treasures) || (parseInt(_this.method) === GLOBAL.METHOD.count))
+			{
+				popAndReturn(tl);
+			}
 			
 			tl.eventCallback('onComplete', function(){
 				_this.disable(false);
@@ -457,14 +511,33 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
+	function popAndReturn(tl) {
+		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
+		tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
+		tl.addCallback(function () {
+			tls.addSound('pop', balloonStack2);
+			resetBalloons();
+		});
+		tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
+		tl.addCallback(function () {
+			balloonStack2.kill();
+		});
+		tl.to(airballoons, 2, {x: 0, y: 0, ease:Bounce.easeOut});
+	}
+
 	function resetBalloons() {
 
 		var amount = airBalloonStock;
 
 		for (var i = 0; i < amount; i++){
-			returnStart();
-			deleteExcessSprite(airballoons.getAt(3));
+			airBalloonStock -= 1;
+			airBalloonStockUpdate();
+			balloonStock += 1;
+			balloonStockUpdate();
 		}
+
+		deleteAirB();
+	
 		balloonStack2.revive();
 		balloonStack2.loadTexture('brokenballoon');
 	}
@@ -491,20 +564,25 @@ BalloonGame.prototype.create = function () {
 		tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
 	}
 */
-	function returnStart() {
-		airBalloonStock -= 1;
-		airBalloonStockUpdate();
+
+	function deleteAirB() {
+		for (var i = 0; i < 9; i++){
+			deleteExcessSprite(airballoons.getAt(3));
+		}
+	}
+
+	function deleteB() {
+		for (var i = 0; i < 9; i++){
+			deleteExcessSprite(balloons.getAt(0));
+		}
 	}
 
 	function deleteExcessSprite(sprite) {
-		console.log(sprite);
+		//console.log(sprite);
 		if(sprite !== -1)
 		{
 			sprite.destroy();
 		}
-		balloonStock += 1;
-		balloonStockUpdate();
-
 	}
 
 
@@ -522,7 +600,7 @@ BalloonGame.prototype.create = function () {
 
 	function renderChest (correctAnswer) {
 
-		fade(chest, false);
+		chest.visible = false;
 
 		if(correctAnswer % 2 === 1)
 			{
@@ -648,6 +726,8 @@ BalloonGame.prototype.create = function () {
 		} else { // if intro or first try
 			var tl = new TimelineMax();
 			if (intro) {
+				treasures = 0;
+				popAndReturn(tl);
 				_this.disable(true);
 				tl.skippable();
 				tl.add(_this.agent.moveTo.start());
@@ -675,6 +755,7 @@ BalloonGame.prototype.create = function () {
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
+				popAndReturn(tl);
 				_this.disable(true);
 				tl.skippable();
 				console.log('modeAgentTry Intro');
@@ -698,10 +779,12 @@ BalloonGame.prototype.create = function () {
 		if (tries > 0) {
 			liftoffButton.visible = true;
 			anchor.visible = true;
+			plusminus.visible = true;
 		} else { // if intro or first try
 			console.log('modeAgentDo Intro');
 			liftoffButton.visible = true;
 			anchor.visible = true;
+			plusminus.visible = true;
 		}
 	};
 
