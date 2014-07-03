@@ -44,8 +44,8 @@ BirdheroGame.prototype.create = function () {
 		}
 	};
 	var tint = [
-		0xffffff, 0xffcccc, 0xccffcc, 0xccccff, 0xffffcc,
-		0xffccff, 0xccffff, 0x5555cc, 0x55cc55, 0xcc5555
+		0xff8888, 0x77ee77, 0x8888ff, 0xfed011, 0xfedcba,
+		0x11abba, 0xabcdef, 0xffffff, 0xed88ba
 	];
 
 	// Add music and sounds
@@ -116,7 +116,7 @@ BirdheroGame.prototype.create = function () {
 		fill: '#ff0000'
 	}, elevator);
 	elevator.text.anchor.set(0.5);
-	this.add.sprite(0, 12, 'birdhero', 'rope', elevator).anchor.set(0.5, 1);
+	this.add.sprite(0, 9, 'birdhero', 'rope', elevator).anchor.set(0.5, 1);
 
 
 	// Add HUD
@@ -402,7 +402,7 @@ BirdheroGame.prototype.create = function () {
 		// Make it rain!
 		var bmd = new Phaser.BitmapData(game, '', 6, 6);
 		var half = bmd.width/2;
-		bmd.ctx.fillStyle = '#2266cc';
+		bmd.ctx.fillStyle = '#0044aa';
 		bmd.ctx.beginPath();
 		bmd.ctx.arc(half, half, half, 0, Math.PI2);
 		bmd.ctx.closePath();
