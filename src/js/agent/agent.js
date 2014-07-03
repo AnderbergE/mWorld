@@ -143,8 +143,7 @@ Agent.prototype.fistPump = function (duration, arm) {
 	var pump = this.coords.anim.arm.pump;
 	var upDown = duration / 4;
 	if (upDown > pump.durUp) { upDown = pump.durUp; }
-	var times = parseInt((duration - upDown * 2) / pump.dur);
-	times += (times % 2 === 0) ? 1 : 0; // Even numbers do not loop back to origin.
+	var times = TweenMax.prototype.calcYoyo(duration - upDown * 2, pump.dur);
 
 	var t = new TimelineMax();
 	if (arm <= 0) {

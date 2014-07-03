@@ -193,6 +193,27 @@ TimelineMax.prototype.skippable = function () {
 };
 
 /**
+ * When you want a yoyo animation to go back to the beginning.
+ * @param {Number} The total duration for the animation
+ * @param {Number} The duration of one direction (half of the loop from start back to start)
+ */
+TweenMax.prototype.calcYoyo = function (total, each) {
+	var times = parseInt(total / each);
+	return times + (times % 2 === 0 ? 1 : 0); // Odd number will make the animation return to origin.
+};
+
+/**
+ * Make an animation loop from start back to the origin.
+ * @param {Number} The total duration of the animation.
+ *                 NOTE: This is not exact time, depending on how well animation duration and total match.
+ */
+TweenMax.prototype.backForth = function (total) {
+	this.yoyo(true);
+	this.repeat(this.calcYoyo(total, this.duration()));
+	return this;
+};
+
+/**
  * Adds a rounded rectangle to the built-in rendering context.
  * @param {number} The x position
  * @param {number} The y position

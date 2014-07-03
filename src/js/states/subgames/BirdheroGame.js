@@ -378,6 +378,7 @@ BirdheroGame.prototype.create = function () {
 			chick.y = pos.y - 20; // Counter-effect translate
 			chick.scale.set(coords.bird.small);
 			group.add(chick);
+			t.add(tree.branch[i].distress(4), 5.5);
 			t.add(new TweenMax(chick, 7, {
 				x: -500,
 				y: game.world.height - Math.random()*150,
@@ -582,18 +583,26 @@ BirdheroBranch.prototype.visit = function () {
 };
 
 /**
+ * When the nest is upset!
+ * @param {number} The duration of the animation, default: 3
+ * @returns {Object} The tween
+ */
+BirdheroBranch.prototype.distress = function (duration) {
+	return new TweenMax(this.mother, 0.1, { y: this.mother.y - 3, ease: Power0.easeInOut }).backForth(duration || 3);
+};
+
+/**
  * When the nest goes wild!
  * @param {number} The duration of the celebration, default: 3
  * @returns {Object} The celebration tween
  */
 BirdheroBranch.prototype.celebrate = function (duration) {
 	duration = duration || 3;
-	var times = parseInt(duration / 0.2);
-	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
+
 	var t = new TimelineMax();
-	t.add(new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true }));
+	t.add(new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut }).backForth(duration));
 	for (var i = 0; i < this._chicks.length; i++) {
-		t.add(new TweenMax(this._chicks[i], 0.2, { y: '-=3', ease: Power0.easeInOut, repeat: times, yoyo: true }), Math.random()*0.2);
+		t.add(new TweenMax(this._chicks[i], 0.2, { y: '-=3', ease: Power0.easeInOut }).backForth(duration), Math.random()*0.2);
 	}
 	return t;
 };
@@ -615,18 +624,13 @@ BirdheroBranch.prototype.confused = function (duration) {
 			this.confusing.x += this.confusing.width;
 			this.confusing.scale.x = -1;
 		}
+		this.confusing.visible = false;
 	}
 
-	duration = duration || 3;
-	var times = parseInt(duration / 0.2);
-	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
-
-	var _this = this;
-	this.confusing.visible = false;
-	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5, repeat: times, yoyo: true,
-		onStart: function () { _this.confusing.visible = true; },
-		onComplete: function () { _this.confusing.visible = false; }
-	});
+	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5,
+		onStart: function () { this.confusing.visible = true; }, onStartScope: this,
+		onComplete: function () { this.confusing.visible = false; }, onCompleteScope: this
+	}).backForth(duration || 3);
 };
 
 
