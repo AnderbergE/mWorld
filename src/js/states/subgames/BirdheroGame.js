@@ -39,7 +39,7 @@ BirdheroGame.prototype.create = function () {
 		},
 		bird: {
 			start: { x: -150, y: 700 },
-			stop: { x: 200, y: 550 },
+			stop: { x: 180, y: 550 },
 			scale: 0.3, small: 0.06
 		}
 	};
