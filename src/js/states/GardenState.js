@@ -55,18 +55,19 @@ GardenState.prototype.create = function () {
 	Event.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
 		var y = plant.y + plant.height/2;
 		var x = plant.x;
-		if (agent.x > plant.x) { x += plant.width; }
+		if (agent.x > x) { x += plant.width; }
 		if (agent.x === x && agent.y === y ) { return; }
 
 		if (currentMove) { currentMove.kill(); }
+
 		currentMove = new TimelineMax();
-		// TODO: When agent has better talk animation: currentMove.addSound(speech, agent, 'ok');
 		if (agent.x !== x && agent.x % width > 10) {
 			var move = agent.x + (agent.x > x ? -agent.x % width : width - agent.x % width) ;
 			currentMove.add(agent.move({ x: move }, Math.abs((agent.x - move)/width)));
 		}
 		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
 		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
+		currentMove.addSound(speech, agent, 'ok', 0);
 	});
 
 	// Water plant when we push it.
@@ -107,17 +108,17 @@ GardenState.prototype.create = function () {
 	t.add(agent.move({ x: this.world.centerX }, 3));
 	/*
 	if (player.water > 0) {
-		// TODO: if (anything grows) {
+		if (anything grows) { // TODO
 			t.addSound(speech, agent, 'whereTo');
-		// } else {
+		} else {
 			t.addSound(speech, agent, 'haveWater');
-		// }
+		}
 	} else {
-		// TODO: if (anything grows) {
+		if (anything grows) { // TODO
 			t.addSound(speech, agent, 'welcomeBack'); // TODO: Perhaps a welcome back?
-		// } else {
+		} else {
 			t.addSound(speech, agent, 'intro');
-		// }
+		}
 		t.addSound(speech, agent, 'ready');
 	}
 	*/
