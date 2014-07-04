@@ -35,6 +35,7 @@ BalloonGame.prototype.preload = function () {
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
+	this.load.image('balloon1',      'assets/img/subgames/balloon/b1.png');
 	this.load.image('balloon2',      'assets/img/subgames/balloon/b2.png');
 	this.load.image('balloon3',      'assets/img/subgames/balloon/b3.png');
 	this.load.image('balloon4',      'assets/img/subgames/balloon/b4.png');

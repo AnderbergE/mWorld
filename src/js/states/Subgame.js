@@ -4,6 +4,7 @@
  * How to use:
  * Number amount:        this.amount
  * Representation:       this.representation
+ * The method:           this.method
  * The number to answer: this.currentNumber (updates automatically)
  *
  * Add game objects to:     this.gameGroup

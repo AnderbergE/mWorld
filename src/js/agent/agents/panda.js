@@ -1,11 +1,20 @@
 /* The panda agent */
 Panda.prototype = Object.create(Agent.prototype);
 Panda.prototype.constructor = Panda;
+
 Panda.prototype.id = 'panda'; // Reference for LANG files
+Panda.prototype.assets = {
+	pandaBody: 'assets/img/agent/panda/body.png',
+	pandaArm:  'assets/img/agent/panda/arm.png',
+	pandaLeg:  'assets/img/agent/panda/leg.png',
+	pandaEye:  'assets/img/agent/panda/eye.png'
+};
 
 function Panda () {
 	Agent.call(this); // Call parent constructor.
+
 	this.name = LANG.TEXT.pandaName;
+
 	this.coords.arm = {
 		left: { x: -150, y: -20 },
 		right: { x: 150, y: -20 }
@@ -24,6 +33,11 @@ function Panda () {
 	this.body = this.create(0, 0, 'pandaBody');
 	this.body.anchor.set(0.5);
 
+	this.leftEye = this.create(this.coords.eye.left.x, this.coords.eye.left.y, 'pandaEye');
+	this.leftEye.anchor.set(0.5);
+	this.rightEye = this.create(this.coords.eye.right.x, this.coords.eye.right.y, 'pandaEye');
+	this.rightEye.anchor.set(0.5);
+
 	this.leftArm.x = this.coords.arm.left.x;
 	this.leftArm.y = this.coords.arm.left.y;
 	var leftarm = game.add.sprite(0, 0, 'pandaArm', null, this.leftArm);
@@ -33,6 +47,7 @@ function Panda () {
 	var rightarm = game.add.sprite(0, 0, 'pandaArm', null, this.rightArm);
 	rightarm.anchor.set(1, 0.5);
 	rightarm.scale.x = -1;
+
 	this.leftLeg.x = this.coords.leg.left.x;
 	this.leftLeg.y = this.coords.leg.left.y;
 	var leftleg = game.add.sprite(0, 0, 'pandaLeg', null, this.leftLeg);
@@ -42,11 +57,6 @@ function Panda () {
 	var rightleg = game.add.sprite(0, 0, 'pandaLeg', null, this.rightLeg);
 	rightleg.anchor.set(0.5, 0);
 	rightleg.scale.x = -1;
-
-	this.leftEye = this.create(this.coords.eye.left.x, this.coords.eye.left.y, 'pandaEye');
-	this.leftEye.anchor.set(0.5);
-	this.rightEye = this.create(this.coords.eye.right.x, this.coords.eye.right.y, 'pandaEye');
-	this.rightEye.anchor.set(0.5);
 
 	return this;
 }
