@@ -167,15 +167,29 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
  * @param {String} For playing a specific marker in a sound file
  * @returns {Object} The TimelineMax object
  */
-TimelineMax.prototype.addSound = function (what, who, marker) {
+TimelineMax.prototype.addSound = function (what, who, marker, position) {
 	var a = say(what, who, marker);
-	if (marker) {
-		this.addCallback(function () { a.play(marker); });
-		this.addCallback(function () { a.stop(); }, '+=' + a.markers[marker].duration);
-	} else {
-		this.addCallback(function () { a.play(); });
-		this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(typeof what === 'string' ? what : what.key).data.duration);
+
+	if (typeof position === 'undefined' || position === null) {
+		position = '+=0';
 	}
+	var end;
+
+	if (marker) {
+		this.addCallback(function () { a.play(marker); }, position);
+		end = a.markers[marker].duration;
+	} else {
+		this.addCallback(function () { a.play(); }, position);
+		end = game.cache.getSound(a.key).data.duration;
+	}
+
+	if (isNaN(position)) {
+		end = '+=' + (parseFloat(position.substr(2)) + end);
+	} else {
+		end += position;
+	}
+	this.addCallback(function () { a.stop(); }, end);
+
 	return this;
 };
 
