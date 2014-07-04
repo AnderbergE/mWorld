@@ -94,13 +94,7 @@ BootState.prototype.preload = function () {
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	/* Agent related assets */
-	var agent, assets, key;
-	for (agent in GLOBAL.AGENT) {
-		assets = GLOBAL.AGENT[agent].prototype.assets;
-		for (key in assets) {
-			this.load.image(key, assets[key]);
-		}
-	}
+	this.load.atlasJSONHash(Panda.prototype.id, 'assets/img/agent/panda/panda.png', 'assets/img/agent/panda/panda.json');
 
 	/* Common game assets */
 	this.load.image('thought',    'assets/img/agent/thoughtbubble.png');
