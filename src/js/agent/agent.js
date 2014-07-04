@@ -1,65 +1,85 @@
 /*
  * The super class for agent objects.
- * Set up: .prototype.id = string, for reference in LANG files.
- * 
- * Set up the following in the sub class:
- * this.name
+ * (See Panda for sub classing template)
+ *
+ * In a subclass, set up the following:
+ * <SubAgent>.prototype.id = string, for reference in LANG files.
  * this.coords
- * this.body
- * this.leftEye
- * this.rightEye
  *
- * Add sprites to the following:
- * this.leftArm
- * this.rightArm
- * this.leftLeg
- * this.rightLeg
- *
- *
- * See Panda for sub classing inspiration.
+ * The subagent's sprite atlas should be loaded in the boot state.
+ * It should be named the same as the id of the subagent.
  */
 Agent.prototype = Object.create(Phaser.Group.prototype);
 Agent.prototype.constructor = Agent;
 function Agent () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	var _this = this;
-	this._knowledge = 0.5;
 
-	this.lastGuess = null;
-
-	this.coords = {
-		anim: {
-			arm: {
-				origin: -0.8,
-				wave: { from: -0.1, to: 0.2, durUp: 0.3, dur: 0.2 },
-				pump: { angle: 0.5, move: 50, durUp: 0.5, dur: 0.25 },
-				water: { angle: 0, back: -2, canAngle: -0.5, durBack: 0.2, durUp: 0.5, durCan: 0.5 }
-			}
+	this.coords = this.coords || {};
+	this.coords.anim = {
+		arm: {
+			origin: -0.8,
+			wave: { from: -0.1, to: 0.2, durUp: 0.3, dur: 0.2 },
+			pump: { angle: 0.5, move: 50, durUp: 0.5, dur: 0.25 },
+			water: { angle: 0, back: -2, canAngle: -0.5, durBack: 0.2, durUp: 0.5, durCan: 0.5 }
 		}
 	};
 
 	this.leftArm = game.add.group(this);
+	this.leftArm.x = this.coords.arm.left.x;
+	this.leftArm.y = this.coords.arm.left.y;
 	this.leftArm.rotation = this.coords.anim.arm.origin;
+	game.add.sprite(0, 0, this.id, 'arm', this.leftArm).anchor.set(1, 0.5);
+
 	this.rightArm = game.add.group(this);
+	this.rightArm.x = this.coords.arm.right.x;
+	this.rightArm.y = this.coords.arm.right.y;
 	this.rightArm.rotation = -this.coords.anim.arm.origin;
+	var rightarm = game.add.sprite(0, 0, this.id, 'arm', this.rightArm);
+	rightarm.anchor.set(1, 0.5);
+	rightarm.scale.x = -1;
+
 	this.leftLeg = game.add.group(this);
+	this.leftLeg.x = this.coords.leg.left.x;
+	this.leftLeg.y = this.coords.leg.left.y;
+	game.add.sprite(0, 0, this.id, 'leg', this.leftLeg).anchor.set(0.5, 0);
+
 	this.rightLeg = game.add.group(this);
+	this.rightLeg.x = this.coords.leg.right.x;
+	this.rightLeg.y = this.coords.leg.right.y;
+	var rightleg = game.add.sprite(0, 0, this.id, 'leg', this.rightLeg);
+	rightleg.anchor.set(0.5, 0);
+	rightleg.scale.x = -1;
 
-	// TODO: Fix up when agent has a face.
-	this.talk = TweenMax.to(this, 0.2, {
-		y: '+=5', repeat: -1, yoyo: true, paused: true
+	this.body = this.create(0, 0, this.id, 'body');
+	this.body.anchor.set(0.5);
+
+	this.leftEye = this.create(this.coords.eye.left.x, this.coords.eye.left.y, this.id, 'eye');
+	this.leftEye.anchor.set(0.5);
+
+	this.rightEye = this.create(this.coords.eye.right.x, this.coords.eye.right.y, this.id, 'eye');
+	this.rightEye.anchor.set(0.5);
+
+	this.mouth = this.create(this.coords.mouth.x, this.coords.mouth.y, this.id, 'mouth0');
+	this.mouth.anchor.set(0.5, 0);
+
+
+	/* Animations */
+	var mouthNeutral = this.mouth.frame;
+	this.talk = TweenMax.fromTo(this.mouth, 0.2, { frame: mouthNeutral }, {
+		frame: mouthNeutral + 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
 	});
-
 	this.walk = new TimelineMax({ repeat: -1, paused: true })
 		.to(this.leftLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0)
 		.to(this.rightLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0.24);
 
 
 	/* Save the progress of the player for AI purposes */
+	var _this = this;
+	var currentMode = null;
 	this.playerCorrect = 0;
 	this.playerWrong = 0;
 	this.playerGuesses = [];
-	var currentMode = null;
+	this.lastGuess = null;
 
 	Event.subscribe(GLOBAL.EVENT.subgameStarted, function () {
 		_this.playerCorrect = 0;
@@ -143,8 +163,7 @@ Agent.prototype.fistPump = function (duration, arm) {
 	var pump = this.coords.anim.arm.pump;
 	var upDown = duration / 4;
 	if (upDown > pump.durUp) { upDown = pump.durUp; }
-	var times = parseInt((duration - upDown * 2) / pump.dur);
-	times += (times % 2 === 0) ? 1 : 0; // Even numbers do not loop back to origin.
+	var times = TweenMax.prototype.calcYoyo(duration - upDown * 2, pump.dur);
 
 	var t = new TimelineMax();
 	if (arm <= 0) {

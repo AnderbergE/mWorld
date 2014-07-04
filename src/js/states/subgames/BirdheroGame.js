@@ -39,13 +39,13 @@ BirdheroGame.prototype.create = function () {
 		},
 		bird: {
 			start: { x: -150, y: 700 },
-			stop: { x: 200, y: 550 },
+			stop: { x: 180, y: 550 },
 			scale: 0.3, small: 0.06
 		}
 	};
 	var tint = [
-		0xffffff, 0xffcccc, 0xccffcc, 0xccccff, 0xffffcc,
-		0xffccff, 0xccffff, 0x5555cc, 0x55cc55, 0xcc5555
+		0xff8888, 0x77ee77, 0x8888ff, 0xfed011, 0xfedcba,
+		0x11abba, 0xabcdef, 0xffffff, 0xed88ba
 	];
 
 	// Add music and sounds
@@ -116,7 +116,7 @@ BirdheroGame.prototype.create = function () {
 		fill: '#ff0000'
 	}, elevator);
 	elevator.text.anchor.set(0.5);
-	this.add.sprite(0, 12, 'birdhero', 'rope', elevator).anchor.set(0.5, 1);
+	this.add.sprite(0, 9, 'birdhero', 'rope', elevator).anchor.set(0.5, 1);
 
 
 	// Add HUD
@@ -309,8 +309,10 @@ BirdheroGame.prototype.create = function () {
 		t.add(bird.moveTo.initial(), 0);
 		t.add(zoom(true), 0);
 		if (!silent) {
-			t.addSound(speech, bird, 'floor');
-			t.addCallback(function () { bird.showWings(); }, '-=2.9');
+			t.addSound(speech, bird, 'thisFloor1');
+			t.addLabel('showWings');
+			t.addCallback(function () { bird.showWings(); });
+			t.addSound(speech, bird, 'thisFloor2');
 		}
 		return t;
 	}
@@ -378,14 +380,17 @@ BirdheroGame.prototype.create = function () {
 			chick.y = pos.y - 20; // Counter-effect translate
 			chick.scale.set(coords.bird.small);
 			group.add(chick);
+
+			var start = 5 + this.rnd.realInRange(0, 1);
+			t.add(tree.branch[i].distress(4), start);
 			t.add(new TweenMax(chick, 7, {
 				x: -500,
-				y: game.world.height - Math.random()*150,
-				angle: 1080 + Math.random()*2160,
+				y: game.world.height - this.rnd.integerInRange(0, 150),
+				angle: 1080 + this.rnd.integerInRange(0, 2160),
 				ease: Power0.easeIn,
 				onStart: starter,
 				onStartParams: [chick, tree.branch[i]]
-			}), 5.5);
+			}), start);
 		}
 
 		// Make it dark!
@@ -397,7 +402,7 @@ BirdheroGame.prototype.create = function () {
 		// Make it rain!
 		var bmd = new Phaser.BitmapData(game, '', 6, 6);
 		var half = bmd.width/2;
-		bmd.ctx.fillStyle = '#2266cc';
+		bmd.ctx.fillStyle = '#0044aa';
 		bmd.ctx.beginPath();
 		bmd.ctx.arc(half, half, half, 0, Math.PI2);
 		bmd.ctx.closePath();
@@ -432,10 +437,10 @@ BirdheroGame.prototype.create = function () {
 				t.skippable();
 				t.add(newBird(true));
 				t.add(instructionIntro());
+				t.addCallback(showNumbers);
 			} else {
-				t.add(newBird());
+				t.add(newBird().addCallback(showNumbers, 'showWings'));
 			}
-			t.addCallback(showNumbers);
 		}
 	};
 
@@ -453,8 +458,7 @@ BirdheroGame.prototype.create = function () {
 				t.addSound(speech, _this.agent, 'agentIntro');
 				t.add(_this.agent.wave(3, 1), 'agentIntro');
 			}
-			t.add(newBird());
-			t.addCallback(showNumbers);
+			t.add(newBird().addCallback(showNumbers, 'showWings'));
 		}
 	};
 
@@ -532,7 +536,7 @@ function BirdheroBranch (x, y, tint) {
 	this.x = x;
 	this.y = y;
 
-	var branchType = parseInt(Math.random()*3+1);
+	var branchType = game.rnd.integerInRange(1, 3);
 	var branch = game.add.sprite(0, 0, 'birdhero', 'branch' + branchType, this);
 	this.nest = game.add.sprite(branch.x + (branchType === 1) ? 100 : (branchType === 2) ? 60 : 80, branch.height * 0.4, 'birdhero', 'nest', this);
 	this.mother = game.add.sprite(this.nest.x + this.nest.width/5, this.nest.y, 'birdhero', 'parent', this);
@@ -582,18 +586,26 @@ BirdheroBranch.prototype.visit = function () {
 };
 
 /**
+ * When the nest is upset!
+ * @param {number} The duration of the animation, default: 3
+ * @returns {Object} The tween
+ */
+BirdheroBranch.prototype.distress = function (duration) {
+	return new TweenMax(this.mother, 0.1, { y: this.mother.y - 3, ease: Power0.easeInOut }).backForth(duration || 3);
+};
+
+/**
  * When the nest goes wild!
  * @param {number} The duration of the celebration, default: 3
  * @returns {Object} The celebration tween
  */
 BirdheroBranch.prototype.celebrate = function (duration) {
 	duration = duration || 3;
-	var times = parseInt(duration / 0.2);
-	times += (times % 2 === 0) ? 1 : 0; // Bird will be strangely positioned if number is not odd.
+
 	var t = new TimelineMax();
-	t.add(new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut, repeat: times, yoyo: true }));
+	t.add(new TweenMax(this.mother, 0.2, { y: this.mother.y - 5, ease: Power0.easeInOut }).backForth(duration));
 	for (var i = 0; i < this._chicks.length; i++) {
-		t.add(new TweenMax(this._chicks[i], 0.2, { y: '-=3', ease: Power0.easeInOut, repeat: times, yoyo: true }), Math.random()*0.2);
+		t.add(new TweenMax(this._chicks[i], 0.2, { y: '-=3', ease: Power0.easeInOut }).backForth(duration), Math.random()*0.2);
 	}
 	return t;
 };
@@ -615,18 +627,13 @@ BirdheroBranch.prototype.confused = function (duration) {
 			this.confusing.x += this.confusing.width;
 			this.confusing.scale.x = -1;
 		}
+		this.confusing.visible = false;
 	}
 
-	duration = duration || 3;
-	var times = parseInt(duration / 0.2);
-	times += (times % 2 === 0) ? 1 : 0; // Group will be strangely positioned if number is not odd.
-
-	var _this = this;
-	this.confusing.visible = false;
-	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5, repeat: times, yoyo: true,
-		onStart: function () { _this.confusing.visible = true; },
-		onComplete: function () { _this.confusing.visible = false; }
-	});
+	return new TweenMax(this.confusing, 0.2, { y: this.confusing.y - 5,
+		onStart: function () { this.confusing.visible = true; }, onStartScope: this,
+		onComplete: function () { this.confusing.visible = false; }, onCompleteScope: this
+	}).backForth(duration || 3);
 };
 
 

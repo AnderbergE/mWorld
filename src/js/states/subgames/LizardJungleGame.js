@@ -365,8 +365,8 @@ Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
 
 LizardJungleLizard.prototype.sleeping = function (duration) {
 	duration = duration || 3;
-	var times = parseInt(duration / 1.5);
-	var t = new TimelineMax({ repeat: times });
+
+	var t = new TimelineMax({ repeat: TweenMax.prototype.calcYoyo(duration / 1.5) });
 	t.add(TweenMax.fromTo(this.snore, 0.8, { alpha: 0 }, { x: '+=25', y: '-=25', alpha: 1 }));
 	t.add(TweenMax.to(this.snore, 0.7, { x: '+=25', y: '-=25', alpha: 0, ease: Power1.easeIn }));
 	return t;

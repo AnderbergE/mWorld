@@ -4,6 +4,7 @@
  * How to use:
  * Number amount:        this.amount
  * Representation:       this.representation
+ * The method:           this.method
  * The number to answer: this.currentNumber (updates automatically)
  *
  * Add game objects to:     this.gameGroup
@@ -142,7 +143,7 @@ Subgame.prototype._nextNumber = function () {
 	// Should we allow the same number again?
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
-	this.currentNumber = parseInt(1+Math.random()*this.amount);
+	this.currentNumber = this.rnd.integerInRange(1, this.amount);
 };
 
 /** Skip the current mode. */

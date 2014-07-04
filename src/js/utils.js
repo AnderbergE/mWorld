@@ -167,15 +167,29 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
  * @param {String} For playing a specific marker in a sound file
  * @returns {Object} The TimelineMax object
  */
-TimelineMax.prototype.addSound = function (what, who, marker) {
+TimelineMax.prototype.addSound = function (what, who, marker, position) {
 	var a = say(what, who, marker);
-	if (marker) {
-		this.addCallback(function () { a.play(marker); });
-		this.addCallback(function () { a.stop(); }, '+=' + a.markers[marker].duration);
-	} else {
-		this.addCallback(function () { a.play(); });
-		this.addCallback(function () { a.stop(); }, '+=' + game.cache.getSound(typeof what === 'string' ? what : what.key).data.duration);
+
+	if (typeof position === 'undefined' || position === null) {
+		position = '+=0';
 	}
+	var end;
+
+	if (marker) {
+		this.addCallback(function () { a.play(marker); }, position);
+		end = a.markers[marker].duration;
+	} else {
+		this.addCallback(function () { a.play(); }, position);
+		end = game.cache.getSound(a.key).data.duration;
+	}
+
+	if (isNaN(position)) {
+		end = '+=' + (parseFloat(position.substr(2)) + end);
+	} else {
+		end += position;
+	}
+	this.addCallback(function () { a.stop(); }, end);
+
 	return this;
 };
 
@@ -189,6 +203,27 @@ TimelineMax.prototype.skippable = function () {
 		Event.publish(GLOBAL.EVENT.skippable, [this]);
 		this.addCallback(function () { Event.publish(GLOBAL.EVENT.skippable); });
 	}, 0, null, this);
+	return this;
+};
+
+/**
+ * When you want a yoyo animation to go back to the beginning.
+ * @param {Number} The total duration for the animation
+ * @param {Number} The duration of one direction (half of the loop from start back to start)
+ */
+TweenMax.prototype.calcYoyo = function (total, each) {
+	var times = parseInt(total / each);
+	return times + (times % 2 === 0 ? 1 : 0); // Odd number will make the animation return to origin.
+};
+
+/**
+ * Make an animation loop from start back to the origin.
+ * @param {Number} The total duration of the animation.
+ *                 NOTE: This is not exact time, depending on how well animation duration and total match.
+ */
+TweenMax.prototype.backForth = function (total) {
+	this.yoyo(true);
+	this.repeat(this.calcYoyo(total, this.duration()));
 	return this;
 };
 

@@ -40,8 +40,5 @@ GeneralButton.prototype.reset = function () {
 };
 
 GeneralButton.prototype.highlight = function (duration) {
-	duration = duration || 3;
-	var times = parseInt(duration / 0.5);
-	times += (times % 2 === 0) ? 1 : 0;
-	return TweenMax.to(this, 0.5, { alpha: 0, yoyo: true, repeat: times });
+	return TweenMax.to(this, 0.5, { alpha: 0 }).backForth(duration || 3);
 };
