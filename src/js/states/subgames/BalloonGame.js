@@ -251,9 +251,25 @@ BalloonGame.prototype.create = function () {
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
 
-	var plusminus = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.plusminus, {
-		y: this.world.height-100, background: 'wood', onClick: pushPlusminus
+	/*var plusminus = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.plusminus, {
+		y: this.world.height-100, background: 'wood', onClick: pushPlusminus, method: this.method
 	});
+	plusminus.visible = false;
+	this.hudGroup.add(plusminus);*/
+
+
+	var buttonOptions = {
+		background: 'wood',
+		y: this.world.height-100
+	};
+
+	var plusminus = this.add.group(this.gameGroup);
+	buttonOptions.onClick = function () { removeBalloon(); };
+	buttonOptions.x = 400;
+	plusminus.add(new TextButton('-', buttonOptions));
+	buttonOptions.onClick = function () { addBalloon(); };
+	buttonOptions.x = 500;
+	plusminus.add(new TextButton('+', buttonOptions));
 	plusminus.visible = false;
 	this.hudGroup.add(plusminus);
 
@@ -301,13 +317,13 @@ BalloonGame.prototype.create = function () {
 		takeOff();
 	}
 
-	function pushPlusminus (value) {
+	/*function pushPlusminus (value) {
 		if(value){
 			addBalloon();
 		} else {
 			removeBalloon();
 		}
-	}
+	}*/
 
 	function addBalloon()
 	{

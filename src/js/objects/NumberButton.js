@@ -74,9 +74,6 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 				this._number = this._number % 2;
 				this.add(new YesnoRepresentation(this._number, x, y, this.size/2, this.color));
 
-			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.plusminus) {
-				this._number = this._number % 2;
-				this.add(new PlusminusRepresentation(this._number, x, y, this.size/2, this.color));
 			}
 		}
 	}

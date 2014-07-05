@@ -58,7 +58,6 @@ var GLOBAL = {
 		numbers: 5,
 		dice:    6,
 		yesno:   15, // Special for yes/no: odd values = yes, even values = no
-		plusminus:   16 // Special for yes/no: odd values = yes, even values = no
 	},
 
 	METHOD: {
