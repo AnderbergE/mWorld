@@ -17,7 +17,7 @@ function ButtonPanel (amount, representations, options) {
 	options.vertical = options.vertical || false;
 	options.size = options.size || (options.vertical ? game.world.height : game.world.width);
 	options.maxButtonSize = options.maxButtonSize || 75;
-	if (options.method === GLOBAL.METHOD.basicMath) {
+	if (options.method === GLOBAL.METHOD.incrementalSteps) {
 		buttonOptions.min = 1;
 		buttonOptions.max = amount;
 		amount = 4;
@@ -35,7 +35,7 @@ function ButtonPanel (amount, representations, options) {
 	var i;
 
 	// Set up the buttons that should be in the panel.
-	if (options.method === GLOBAL.METHOD.basicMath) {
+	if (options.method === GLOBAL.METHOD.incrementalSteps) {
 		buttonOptions.onClick = options.onClick;
 		var change = new NumberButton(1, representations, buttonOptions);
 		buttonOptions.onClick = function () { change.number--; };

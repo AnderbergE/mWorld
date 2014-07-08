@@ -10,11 +10,13 @@ ChooseScenarioState.prototype.create = function () {
 	var representation = null;
 	var method = null;
 
+	var offset = 10;
+	var i, t;
+
 
 	/* Subgame selection */
 	var buttonSize = 200;
 	var fontSize = 25;
-	var offset = 10;
 	var gameClicker = function () {
 		if (subgame !== this && subgame) { subgame.reset(); }
 		subgame = this;
@@ -27,7 +29,6 @@ ChooseScenarioState.prototype.create = function () {
 		['Bee Flight', GLOBAL.STATE.beeGame]
 	];
 	var gameButtons = [];
-	var t, i;
 	for (i = 0; i < games.length; i++) {
 		t = new TextButton(games[i][0], {
 			x: 50 + i*(buttonSize + offset),
@@ -82,6 +83,7 @@ ChooseScenarioState.prototype.create = function () {
 
 	/* Representation selection */
 	buttonSize = 75;
+	fontSize = 33;
 	var representationClicker = function () {
 		if (representation !== this && representation) { representation.reset(); }
 		representation = this;
@@ -103,39 +105,35 @@ ChooseScenarioState.prototype.create = function () {
 
 
 	/* Method selection */
-	buttonSize = 75;
+	buttonSize = 200;
+	fontSize = 20;
 	var methodClicker = function () {
 		if (method !== this && method) { method.reset(); }
 		method = this;
 	};
 
-	buttonSize = 280;
-	fontSize = 25;
-	var countButton = new TextButton('  Counting', {
-		x: 50,
-		y: 400,
-		fontSize: fontSize,
-		background: 'wood',
-		onClick: methodClicker
-	});
-	countButton._text.anchor.set(0, 0.5);
-	countButton.bg.events.onInputUp.removeAll();
-	countButton.bg.width = buttonSize;
-	countButton.method = '' + GLOBAL.METHOD.count; // Trick to not get 0 value
-	this.world.add(countButton);
-
-	var plusminusButton = new TextButton('Add Subtract', {
-		x: 50 + buttonSize + offset,
-		y: 400,
-		fontSize: fontSize,
-		background: 'wood',
-		onClick: methodClicker
-	});
-	plusminusButton._text.anchor.set(0, 0.5);
-	plusminusButton.bg.events.onInputUp.removeAll();
-	plusminusButton.bg.width = buttonSize;
-	plusminusButton.method = GLOBAL.METHOD.basicMath;
-	this.world.add(plusminusButton);
+	var methods = [
+		[' Counting',  GLOBAL.METHOD.count],
+		['Step-by-step', GLOBAL.METHOD.incrementalSteps],
+		[' Addition', GLOBAL.METHOD.addition],
+		['Add & Sub', GLOBAL.METHOD.additionSubtraction]
+	];
+	var methodButtons = [];
+	for (i = 0; i < methods.length; i++) {
+		t = new TextButton(methods[i][0], {
+			x: 50 + i*(buttonSize + offset),
+			y: 400,
+			fontSize: fontSize,
+			background: 'wood',
+			onClick: methodClicker
+		});
+		t.bg.width = buttonSize;
+		t._text.anchor.set(0, 0.5);
+		t.bg.events.onInputUp.removeAll();
+		t.method = methods[i][1];
+		this.world.add(t);
+		methodButtons.push(t);
+	}
 
 
 	/* Start game (save current options) */
@@ -148,7 +146,7 @@ ChooseScenarioState.prototype.create = function () {
 			if (!subgame || !subgame.gameState ||
 				!amount || !amount.amount ||
 				!representation || !representation.representations ||
-				!method || !method.method) {
+				!method || (typeof method.method === 'undefined')) {
 				return;
 			}
 
@@ -156,11 +154,10 @@ ChooseScenarioState.prototype.create = function () {
 			localStorage.chooseSubgame = subgame.gameState;
 			localStorage.chooseAmount = amount.amount;
 			localStorage.chooseRepresentation = representation.representations;
-			var m = (method && method.method) ? method.method : GLOBAL.STATE.count;
-			localStorage.chooseMethod = m;
+			localStorage.chooseMethod = method.method;
 
 			game.state.start(subgame.gameState, true, false, {
-				method: parseInt(m),
+				method: method.method,
 				representation: representation.representations,
 				amount: amount.amount, // TODO: Use range instead
 				roundsPerMode: 3
@@ -170,6 +167,7 @@ ChooseScenarioState.prototype.create = function () {
 	startButton._text.anchor.set(0, 0.5);
 	startButton.bg.width = 300;
 	this.world.add(startButton);
+
 
 
 	/* Have the last press predefined */
@@ -205,17 +203,10 @@ ChooseScenarioState.prototype.create = function () {
 		representationButtons[parseInt(localStorage.chooseRepresentation)].bg.frame++;
 		representation = representationButtons[parseInt(localStorage.chooseRepresentation)];
 	}
-	switch (parseInt(localStorage.chooseMethod)) {
-		case GLOBAL.METHOD.count:
-			countButton.bg.frame++;
-			method = countButton;
-			break;
-		case GLOBAL.METHOD.basicMath:
-			plusminusButton.bg.frame++;
-			method = plusminusButton;
-			break;
+	if (localStorage.chooseMethod) {
+		methodButtons[parseInt(localStorage.chooseMethod)].bg.frame++;
+		method = methodButtons[parseInt(localStorage.chooseMethod)];
 	}
-
 
 	this.world.add(new Menu());
 };

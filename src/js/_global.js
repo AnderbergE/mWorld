@@ -57,12 +57,14 @@ var GLOBAL = {
 		objects: 4,
 		numbers: 5,
 		dice:    6,
-		yesno:   15, // Special for yes/no: odd values = yes, even values = no
+		yesno:   15 // Special for yes/no: odd values = yes, even values = no
 	},
 
 	METHOD: {
 		count: 0,
-		basicMath: 1
+		incrementalSteps: 1,
+		addition: 2,
+		additionSubtraction: 3
 	},
 
 	FONT: 'The Girl Next Door'

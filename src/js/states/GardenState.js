@@ -53,7 +53,7 @@ GardenState.prototype.create = function () {
 
 	// Move agent when we push a plant.
 	Event.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
-		var y = plant.y + plant.height/2;
+		var y = plant.y + plant.height/3;
 		var x = plant.x;
 		if (agent.x > x) { x += plant.width; }
 		if (agent.x === x && agent.y === y ) { return; }
@@ -140,11 +140,9 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	this.plantId = id;
 	this.x = x;
 	this.y = y;
-	this.width = width;
-	this.height = height;
 
 	/* TODO: Replace with actual plant. */
-	var bmd = game.add.bitmapData(this.width, this.height);
+	var bmd = game.add.bitmapData(width, height);
 	bmd.ctx.fillStyle = '#ffffff';
 	bmd.ctx.globalAlpha = 0.2;
 	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
