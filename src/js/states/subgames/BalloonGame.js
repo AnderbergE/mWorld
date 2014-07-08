@@ -507,7 +507,11 @@ BalloonGame.prototype.create = function () {
 				});
 				tl.addSound(speech, beetle, 'yippi');
 				tl.add(_this.addWater(chest.x, chest.y), '-=3');
-				treasures++;
+				if(parseInt(_this.method) === GLOBAL.METHOD.basicMath)
+				{
+					treasures++;
+					disableBalloons();
+				}
 			} else if (result > 0)
 			{
 				tl.addSound('tryless', beetle);
@@ -591,6 +595,40 @@ BalloonGame.prototype.create = function () {
 	function deleteB() {
 		for (var i = 0; i < 9; i++){
 			deleteExcessSprite(balloons.getAt(0));
+		}
+	}
+
+	function disableBalloons() {
+		for (var i = 0; i < 9; i++){
+			//console.log('Disable balloon: ');
+			disableBalloon(balloons.getAt(0+i));
+			//console.log('Disable airballoon: ');
+			disableBalloon(airballoons.getAt(3+i));
+		}
+	}
+
+	function enableBalloons() {
+		for (var i = 0; i < 9; i++){
+			//console.log('Enable balloon: ');
+			enableBalloon(balloons.getAt(0+i));
+			//console.log('Enable airballoon: ');
+			enableBalloon(airballoons.getAt(3+i));
+		}
+	}
+
+	function enableBalloon(sprite) {
+		//console.log(sprite);
+		if(sprite !== -1)
+		{
+			sprite.inputEnabled = true;
+		}
+	}
+
+	function disableBalloon(sprite) {
+		//console.log(sprite);
+		if(sprite !== -1)
+		{
+			sprite.inputEnabled = false;
 		}
 	}
 
@@ -744,6 +782,7 @@ BalloonGame.prototype.create = function () {
 			var tl = new TimelineMax();
 			if (intro) {
 				treasures = 0;
+				enableBalloons();
 				popAndReturn(tl);
 				_this.disable(true);
 				tl.skippable();
@@ -772,6 +811,7 @@ BalloonGame.prototype.create = function () {
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
+				enableBalloons();
 				popAndReturn(tl);
 				_this.disable(true);
 				tl.skippable();
