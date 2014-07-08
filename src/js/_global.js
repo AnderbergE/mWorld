@@ -62,7 +62,9 @@ var GLOBAL = {
 
 	METHOD: {
 		count: 0,
-		basicMath: 1
+		incrementalSteps: 1,
+		addition: 2,
+		additionSubtraction: 3
 	},
 
 	FONT: 'The Girl Next Door'

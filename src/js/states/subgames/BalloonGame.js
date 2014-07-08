@@ -287,8 +287,8 @@ BalloonGame.prototype.create = function () {
 		fade(liftoffButton, true);
 		fade(anchor, true);
 		fade(yesnos, false);
-		console.log('GLOBAL.METHOD.basicMath: ' + GLOBAL.METHOD.basicMath + ' this.method ' + _this.method);
-		if((parseInt(_this.method) === GLOBAL.METHOD.basicMath) && treasures)
+		console.log('GLOBAL.METHOD.incrementalSteps: ' + GLOBAL.METHOD.incrementalSteps + ' this.method ' + _this.method);
+		if((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && treasures)
 		{
 			console.log('Theyre equal!');
 			fade(plusminus, true);
@@ -515,7 +515,7 @@ BalloonGame.prototype.create = function () {
 				tl.addSound('trymore', beetle);
 			}
 			//Popping balloons and Basket going back down.
-			if(((parseInt(_this.method) === GLOBAL.METHOD.basicMath) && !treasures) || (parseInt(_this.method) === GLOBAL.METHOD.count))
+			if(((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && !treasures) || (parseInt(_this.method) === GLOBAL.METHOD.count))
 			{
 				popAndReturn(tl);
 			}
