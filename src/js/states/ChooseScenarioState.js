@@ -146,7 +146,7 @@ ChooseScenarioState.prototype.create = function () {
 			if (!subgame || !subgame.gameState ||
 				!amount || !amount.amount ||
 				!representation || !representation.representations ||
-				!method || !method.method) {
+				!method || (typeof method.method === 'undefined')) {
 				return;
 			}
 
@@ -154,11 +154,10 @@ ChooseScenarioState.prototype.create = function () {
 			localStorage.chooseSubgame = subgame.gameState;
 			localStorage.chooseAmount = amount.amount;
 			localStorage.chooseRepresentation = representation.representations;
-			var m = (method && method.method) ? method.method : GLOBAL.STATE.count;
-			localStorage.chooseMethod = m;
+			localStorage.chooseMethod = method.method;
 
 			game.state.start(subgame.gameState, true, false, {
-				method: parseInt(m),
+				method: method.method,
 				representation: representation.representations,
 				amount: amount.amount, // TODO: Use range instead
 				roundsPerMode: 3
@@ -204,9 +203,10 @@ ChooseScenarioState.prototype.create = function () {
 		representationButtons[parseInt(localStorage.chooseRepresentation)].bg.frame++;
 		representation = representationButtons[parseInt(localStorage.chooseRepresentation)];
 	}
-
-	methodButtons[parseInt(localStorage.chooseMethod)].bg.frame++;
-	method = methodButtons[parseInt(localStorage.chooseMethod)];
+	if (localStorage.chooseMethod) {
+		methodButtons[parseInt(localStorage.chooseMethod)].bg.frame++;
+		method = methodButtons[parseInt(localStorage.chooseMethod)];
+	}
 
 	this.world.add(new Menu());
 };
