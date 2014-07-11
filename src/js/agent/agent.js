@@ -4,6 +4,7 @@
  *
  * In a subclass, set up the following:
  * <SubAgent>.prototype.id = string, for reference in LANG files.
+ * <SubAgent>.prototype.agentName = string, name of the agent.
  * this.coords
  *
  * The subagent's sprite atlas should be loaded in the boot state.
