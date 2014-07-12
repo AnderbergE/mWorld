@@ -67,6 +67,7 @@ var Backend = (function () {
 	* PUT updates of player information.
 	*/
 	this.put = function (data) {
+		console.log(JSON.stringify(data));
 		return JSON.stringify(data);
 	};
 
