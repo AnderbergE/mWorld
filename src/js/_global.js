@@ -2,8 +2,6 @@
 var GLOBAL = {
 
 	EVENT: {
-		menuShow:       'menuShow',
-		menuHide:       'menuHide',
 		numberPress:    'numberPress',    // [number, representations]
 		textPress:      'textPress',      // [text]
 		subgameStarted: 'subgameStarted', // [game type]
