@@ -117,6 +117,7 @@ function fade (what, typ, duration) {
 function onShutDown () {
 	TweenMax.killAll();
 	this.sound.stopAll();
+	this.sound.onSoundDecode.removeAll();
 	EventSystem.clear();
 }
 
@@ -143,20 +144,18 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
 	if (this.checkSoundsDecoded()) {
 		func();
 	} else {
-		var _this = this;
 		var loader = document.querySelector('.loading').style;
 		loader.display = 'block';
 		document.querySelector('.progress').innerHTML = 'Decoding';
 
 		var c = function () {
-			loader.display = 'block';
-			if (_this.checkSoundsDecoded()) {
-				_this.onSoundDecode.remove(c);
+			if (this.checkSoundsDecoded()) {
+				this.onSoundDecode.remove(c);
 				func();
 				loader.display = 'none';
 			}
 		};
-		this.onSoundDecode.add(c);
+		this.onSoundDecode.add(c, this);
 	}
 };
 
