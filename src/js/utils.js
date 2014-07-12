@@ -117,7 +117,7 @@ function fade (what, typ, duration) {
 function onShutDown () {
 	TweenMax.killAll();
 	this.sound.stopAll();
-	Event.clear();
+	EventSystem.clear();
 }
 
 /**
@@ -200,8 +200,8 @@ TimelineMax.prototype.addSound = function (what, who, marker, position) {
  */
 TimelineMax.prototype.skippable = function () {
 	this.addCallback(function () {
-		Event.publish(GLOBAL.EVENT.skippable, [this]);
-		this.addCallback(function () { Event.publish(GLOBAL.EVENT.skippable); });
+		EventSystem.publish(GLOBAL.EVENT.skippable, [this]);
+		this.addCallback(function () { EventSystem.publish(GLOBAL.EVENT.skippable); });
 	}, 0, null, this);
 	return this;
 };

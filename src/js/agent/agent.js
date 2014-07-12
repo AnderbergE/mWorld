@@ -82,15 +82,15 @@ function Agent () {
 	this.playerGuesses = [];
 	this.lastGuess = null;
 
-	Event.subscribe(GLOBAL.EVENT.subgameStarted, function () {
+	EventSystem.subscribe(GLOBAL.EVENT.subgameStarted, function () {
 		_this.playerCorrect = 0;
 		_this.playerWrong = 0;
 		_this.playerGuesses = [];
 	});
-	Event.subscribe(GLOBAL.EVENT.modeChange, function (mode) {
+	EventSystem.subscribe(GLOBAL.EVENT.modeChange, function (mode) {
 		currentMode = mode;
 	});
-	Event.subscribe(GLOBAL.EVENT.tryNumber, function (guess, correct) {
+	EventSystem.subscribe(GLOBAL.EVENT.tryNumber, function (guess, correct) {
 		if (currentMode === GLOBAL.MODE.playerDo ||
 			currentMode === GLOBAL.MODE.playerShow) {
 			_this.playerGuesses.push([guess, correct]);
@@ -146,7 +146,7 @@ Agent.prototype.guessing = function (correct, min, max) {
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
 	this.lastGuess = this.guessing(correct, min, max);
-	Event.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
+	EventSystem.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
 	return this.lastGuess;
 };
 

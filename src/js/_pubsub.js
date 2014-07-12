@@ -1,25 +1,32 @@
-var Event = (function () {
-	var _events = {};
+var EventSystem = {
+	_events: {},
+	_persistent: {},
 
-	this.publish = function (topic, args) {
-		var subs = _events[topic];
-		var len = subs ? subs.length : 0;
+	pushEvent: function (to, topic, callback) {
+		if (!to[topic]) {
+			to[topic] = [];
+		}
+		to[topic].push(callback);
+	},
+
+	publish: function (topic, args) {
+		var subs = [].concat(this._events[topic], this._persistent[topic]);
+		var len = subs.length;
 
 		while (len--) {
-			subs[len].apply(this, args || []);
+			if (subs[len]) {
+				subs[len].apply(this, args || []);
+			}
 		}
-	};
+	},
 
-	this.subscribe = function (topic, callback) {
-		if (!_events[topic]) {
-			_events[topic] = [];
-		}
-		_events[topic].push(callback);
+	subscribe: function (topic, callback, persistent) {
+		this.pushEvent((persistent ? this._persistent : this._events), topic, callback);
 		return [topic, callback]; // Array
-	};
+	},
 
-	this.unsubscribe = function (handle, callback) {
-		var subs = _events[callback ? handle : handle[0]];
+	unsubscribe: function (handle, callback) {
+		var subs = this._events[callback ? handle : handle[0]];
 		callback = callback || handle[1];
 		var len = subs ? subs.length : 0;
 
@@ -28,11 +35,12 @@ var Event = (function () {
 				subs.splice(len, 1);
 			}
 		}
-	};
+	},
 
-	this.clear = function () {
-		_events = {};
-	};
-
-	return this;
-})();
+	clear: function (persistent) {
+		this._events = {};
+		if (persistent) {
+			this._persistent = {};
+		}
+	}
+};

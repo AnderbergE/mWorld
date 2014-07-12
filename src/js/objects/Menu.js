@@ -30,7 +30,7 @@ function Menu () {
 	skipButton.visible = false;
 	this.add(skipButton);
 
-	Event.subscribe(GLOBAL.EVENT.skippable, function (timeline) {
+	EventSystem.subscribe(GLOBAL.EVENT.skippable, function (timeline) {
 		skipper = timeline;
 		skipButton.visible = !!timeline;
 	});

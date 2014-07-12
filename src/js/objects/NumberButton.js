@@ -26,8 +26,8 @@ function NumberButton (number, representations, options) {
 
 	// This will be called in the general button's onInputDown
 	this.onClick = function () {
+		EventSystem.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
 		if (this.clicker) { this.clicker(this.number); }
-		Event.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
 	};
 
 	return this;

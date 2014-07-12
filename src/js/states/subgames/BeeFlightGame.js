@@ -297,9 +297,9 @@ BeeFlightGame.prototype.create = function () {
 	/* Play music on the first mode. */
 	function playMusic () {
 		music.play();
-		Event.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
+		EventSystem.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
 	}
-	Event.subscribe(GLOBAL.EVENT.modeChange, playMusic);
+	EventSystem.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 
 
 	// Everything is set up! Blast off!

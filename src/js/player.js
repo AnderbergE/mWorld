@@ -14,7 +14,7 @@ Object.defineProperty(Player.prototype, 'water', {
 		if (value >= 0) {
 			var diff = value - this._water;
 			this._water = value;
-			Event.publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
+			EventSystem.publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
 		}
 	}
 });

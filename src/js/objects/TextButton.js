@@ -26,8 +26,8 @@ function TextButton (text, options) {
 
 	// This will be called in the general button's onInputDown
 	this.onClick = function () {
+		EventSystem.publish(GLOBAL.EVENT.textPress, [this.text]);
 		if (this.clicker) { this.clicker(this.text); }
-		Event.publish(GLOBAL.EVENT.textPress, [this.text]);
 	};
 
 	this.bg.events.onInputUp.add(function () {
