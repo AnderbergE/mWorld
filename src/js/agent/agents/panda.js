@@ -3,10 +3,9 @@ Panda.prototype = Object.create(Agent.prototype);
 Panda.prototype.constructor = Panda;
 
 Panda.prototype.id = 'panda'; // Reference for LANG files and asset files
+Panda.prototype.agentName = LANG.TEXT.pandaName;
 
 function Panda () {
-	this.name = LANG.TEXT.pandaName;
-
 	this.coords = {
 		arm: {
 			left: { x: -150, y: -20 },

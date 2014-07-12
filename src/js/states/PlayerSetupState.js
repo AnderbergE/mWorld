@@ -28,7 +28,7 @@ PlayerSetupState.prototype.create = function () {
 	var a;
 	for (var key in GLOBAL.AGENT) {
 		a = new GLOBAL.AGENT[key]();
-		this.add.text(0, -(a.body.height/2) - 50, a.name, fontStyle, a).anchor.set(0.5);
+		this.add.text(0, -(a.body.height/2) - 50, a.agentName, fontStyle, a).anchor.set(0.5);
 		a.x = this.world.centerX + spacing * key;
 		a.y = this.world.centerY + 50;
 		a.scale.x = scale.x;

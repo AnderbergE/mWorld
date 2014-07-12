@@ -70,10 +70,12 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 				offset = this.size/6;
 				this.add(new DiceRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
 
+			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.signedNumbers) {
+				this.add(new SignedNumberRepresentation(this._number, x, y, this.size/2, this.color));
+
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 				this._number = this._number % 2;
 				this.add(new YesnoRepresentation(this._number, x, y, this.size/2, this.color));
-
 			}
 		}
 	}
