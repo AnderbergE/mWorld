@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.0.6 "Jornhill" - Built: Thu Jul 10 2014 20:17:38
+* v2.1.0 "Shienar" - Built: Sat Jul 12 2014 08:54:45
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -11421,7 +11421,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
         }
         exports.PIXI = PIXI;
     } else if (typeof define !== 'undefined' && define.amd) {
-        define(PIXI);
+        define('PIXI', (function() { return root.PIXI = PIXI; })() );
     } else {
         root.PIXI = PIXI;
     }
@@ -11435,7 +11435,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 *
 * Phaser - http://phaser.io
 *
-* v2.0.6 "Jornhill" - Built: Thu Jul 10 2014 20:17:38
+* v2.1.0 "Shienar" - Built: Sat Jul 12 2014 08:54:44
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -11478,7 +11478,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
 */
 var Phaser = Phaser || {
 
-	VERSION: '2.0.6',
+	VERSION: '2.1.0-dev',
 	GAMES: [],
 
     AUTO: 0,
@@ -21813,7 +21813,11 @@ Phaser.Game.prototype = {
                 this.pendingStep = true;
             }
 
-            this.debug.preUpdate();
+            if (this.config['enableDebug'])
+            {
+                this.debug.preUpdate();
+            }
+
             this.physics.preUpdate();
             this.state.preUpdate();
             this.plugins.preUpdate();
@@ -21834,8 +21838,11 @@ Phaser.Game.prototype = {
         else
         {
             this.state.pauseUpdate();
-            // this.input.update();
-            this.debug.preUpdate();
+
+            if (this.config['enableDebug'])
+            {
+                this.debug.preUpdate();
+            }
         }
 
         if (this.renderType != Phaser.HEADLESS)
@@ -28245,7 +28252,7 @@ Phaser.InputHandler.prototype = {
         this.dragOffset = new Phaser.Point();
         this.dragFromCenter = lockCenter;
 
-        this.pixelPerfect = pixelPerfect;
+        this.pixelPerfectClick = pixelPerfect;
         this.pixelPerfectAlpha = alphaThreshold;
 
         if (boundsRect)
@@ -30841,6 +30848,7 @@ Phaser.Sprite.prototype.loadTexture = function (key, frame) {
         }
         else if (typeof key === 'string' && !this.game.cache.checkImageKey(key))
         {
+            console.warn("Texture with key '" + key + "' not found.");
             this.key = '__missing';
             this.setTexture(PIXI.TextureCache[this.key]);
         }
@@ -31920,6 +31928,7 @@ Phaser.Image.prototype.loadTexture = function (key, frame) {
         }
         else if (typeof key === 'string' && !this.game.cache.checkImageKey(key))
         {
+            console.warn("Texture with key '" + key + "' not found.");
             this.key = '__missing';
             this.setTexture(PIXI.TextureCache[this.key]);
         }
@@ -32733,6 +32742,7 @@ Phaser.TileSprite.prototype.loadTexture = function (key, frame) {
         }
         else if (typeof key === 'string' && !this.game.cache.checkImageKey(key))
         {
+            console.warn("Texture with key '" + key + "' not found.");
             this.key = '__missing';
             this.setTexture(PIXI.TextureCache[this.key]);
         }
@@ -34578,7 +34588,7 @@ Object.defineProperty(Phaser.BitmapText.prototype, "destroyPhase", {
 * You can set a unique texture frame and Sound for any of these states.
 *
 * @constructor
-* @extends Phaser.Image
+* @extends Phaser.Sprite
 *
 * @param {Phaser.Game} game Current game instance.
 * @param {number} [x=0] - X position of the Button.
@@ -34599,7 +34609,7 @@ Phaser.Button = function (game, x, y, key, callback, callbackContext, overFrame,
     callback = callback || null;
     callbackContext = callbackContext || this;
 
-    Phaser.Image.call(this, game, x, y, key, outFrame);
+    Phaser.Sprite.call(this, game, x, y, key, outFrame);
 
     /**
     * @property {number} type - The Phaser Object Type.
@@ -34767,7 +34777,7 @@ Phaser.Button = function (game, x, y, key, callback, callbackContext, overFrame,
 
 };
 
-Phaser.Button.prototype = Object.create(Phaser.Image.prototype);
+Phaser.Button.prototype = Object.create(Phaser.Sprite.prototype);
 Phaser.Button.prototype.constructor = Phaser.Button;
 
 /**
