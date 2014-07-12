@@ -32,6 +32,7 @@ window.onload = function () {
 	if (document.querySelector('#game')) {
 		// Do not start game if the element does not exist.
 		player = new Player();
+
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 
 		game.state.add('Boot', BootState);

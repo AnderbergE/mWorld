@@ -1,24 +1,41 @@
 /**
  * Handles the communication with the backend.
  */
-var Backend = (function () {
-
-/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                             GET functions                                 */
-/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+var Backend = {
 
 	/**
-	* GET the next game that should be played.
-	* @returns {Object} An object with data about the next game.
-	*/
-	this.nextGame = function () {
+	 * GET the data of the player.
+	 * @returns {Object} An object with data about the player.
+	 */
+	getUser: function () {
 		var data = {
-			type: 2,
+			agent: 0,
+			water: 2
+		};
+
+		return data;
+	},
+
+	/**
+	 * GET the garden appearance.
+	 * @returns {Object} An object with data about the garden.
+	 */
+	getGarden: function () {
+		return [];
+	},
+
+	/**
+	 * GET the next game that should be played.
+	 * @returns {Object} An object with data about the next game.
+	 */
+	getScenario: function () {
+		var data = {
+			subgame: 1,
+			method: 0,
 			representation: [0],
-			amount: 4, // TODO: Use range instead
 			range: [1, 4],
-			// mode: [0, 1, 2],
-			roundsPerMode: 1
+			mode: [0, 1, 2],
+			roundsPerMode: 3
 		};
 		if (!Array.isArray(data.representation)) {
 			data.representation = [data.representation];
@@ -37,39 +54,14 @@ var Backend = (function () {
 		}
 
 		return data;
-	};
+	},
+
 
 	/**
-	* GET the garden appearance.
-	* @returns {Object} An object with data about the garden.
-	*/
-	this.getGarden = function () {
-		return [];
-	};
-
-
-/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                             PUT functions                                 */
-/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-
-	/**
-	* PUT the login for a specific player.
-	* TODO: Investigate if login should be made from the game or before.
-	* @param {string} The player id.
-	* @param {string} The player password.
-	* @returns {Object} An object with data about the player.
-	*/
-	this.login = function (name, pass) {
-		return [0, name === pass];
-	};
-
-	/**
-	* PUT updates of player information.
-	*/
-	this.put = function (data) {
+	 * PUT updates of player information.
+	 */
+	put: function (data) {
 		console.log(JSON.stringify(data));
 		return JSON.stringify(data);
-	};
-
-	return this;
-})();
+	}
+};
