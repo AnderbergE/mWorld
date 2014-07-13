@@ -258,17 +258,6 @@ Agent.prototype.water = function (duration, arm) {
 	return t;
 };
 
-Agent.prototype.move = function (properties, duration, scale) {
-	properties.ease = properties.ease || Power1.easeInOut;
-	var t = new TimelineMax({
-		onStart: function () { this.walk.play(); }, onStartScope: this,
-		onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
-	});
-	t.to(this, duration, properties);
-	if (scale) { t.to(this.scale, duration, { x: scale, y: scale, ease: properties.ease }, 0); }
-	return t;
-};
-
 /* Private. Have an eye follow a target. */
 Agent.prototype._eyeFollow = function (eye, targ) {
 	var origin = { x: eye.x, y: eye.y };

@@ -96,7 +96,7 @@ BeeFlightGame.prototype.create = function () {
 		start: function () {
 			var t = new TimelineMax();
 			t.add(bee.move(coords.bee, 3));
-			t.add(bee.turn(1));
+			t.add(bee.moveTurn(1));
 			return t;
 		},
 		flower: function (number) {
@@ -316,53 +316,10 @@ BeeFlightBee.prototype = Object.create(Character.prototype);
 BeeFlightBee.prototype.constructor = BeeFlightBee;
 function BeeFlightBee (x, y) {
 	Character.call(this); // Parent constructor.
+	this.turn = true;
 	this.x = x || 0;
 	this.y = y || 0;
 
 	this.body = game.add.sprite(0, 0, 'beeBody', null, this);
 	this.body.anchor.set(0.5);
 }
-
-/**
- * Turn around! Every now and then I get a little bit lonely...
- * @param {number} -1 = left, 1 = right, default: opposite of current
- * @returns {Object} The turning tween
- */
-BeeFlightBee.prototype.turn = function (direction) {
-	// Turn by manipulating the scale.
-	var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
-	return new TweenMax(this.scale, 0.2, { x: newScale });
-};
-
-/**
- * Move around, turn according to move direction.
- * NOTE: turning takes 200ms, making a new move before that might give strange results.
- * @param {Object} Properties to tween
- * @param {number} Duration of the move
- * @param {number} If a scaling should happen during the move
- * @returns {Object} The movement tween
- */
-BeeFlightBee.prototype.move = function (properties, duration, scale) {
-	var t = new TimelineMax({
-		// onStart: function () { this.walk.play(); }, onStartScope: this,
-		// onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
-	});
-	t.addLabel('mover'); // Add a label in beginning, use it for simultaneous tweening.
-	t.to(this, duration, properties, 'mover');
-	t.addCallback(function () {
-		var dir = this.scale.x < 0;
-		if (properties.x &&                                 // Check if we should turn around
-			(properties.x <= this.x && 0 < this.scale.x) || // Going left, scale should be -1
-			(this.x <= properties.x && 0 > this.scale.x)) { // Going right, scale should be 1
-			dir = !dir;
-			t.add(this.turn(), 'mover');
-		}
-		if (scale) {
-			t.to(this.scale, duration,
-				{ x: (dir ? -1 * scale : scale), y: scale },
-				'-=' + (duration - 0.2));
-		}
-	}, 'mover', null, this);
-
-	return t;
-};

@@ -243,7 +243,7 @@ BirdheroGame.prototype.create = function () {
 			t.add(bird.moveTo.initial(), 'initial');
 			t.add(zoom(true), 'initial');
 			t.addCallback(function () {
-				bird.turn(1);
+				bird.moveTurn(1);
 				_this.nextRound();
 			});
 		}
@@ -642,6 +642,8 @@ BirdheroBird.prototype = Object.create(Character.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
 function BirdheroBird (tint) {
 	Character.call(this); // Parent constructor.
+	this.turn = true;
+
 	this._number = null;
 
 	this.rightLeg = game.add.sprite(50, 160, 'birdhero', 'leg', this);
@@ -718,49 +720,5 @@ BirdheroBird.prototype.countFeathers = function () {
 		t.addCallback(fun, (i-1)*1, [i], this);
 	}
 	t.addCallback(function () {}, '+=1');
-	return t;
-};
-
-/**
- * Turn around! Every now and then I get a little bit lonely...
- * @param {number} -1 = left, 1 = right, default: opposite of current
- * @returns {Object} The turning tween
- */
-BirdheroBird.prototype.turn = function (direction) {
-	// Turn by manipulating the scale.
-	var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
-	return new TweenMax(this.scale, 0.2, { x: newScale });
-};
-
-/**
- * Move around, turn according to move direction.
- * NOTE: turning takes 200ms, making a new move before that might give strange results.
- * @param {Object} Properties to tween
- * @param {number} Duration of the move
- * @param {number} If a scaling should happen during the move
- * @returns {Object} The movement tween
- */
-BirdheroBird.prototype.move = function (properties, duration, scale) {
-	var t = new TimelineMax({
-		onStart: function () { this.walk.play(); }, onStartScope: this,
-		onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
-	});
-	t.addLabel('mover'); // Add a label in beginning, use it for simultaneous tweening.
-	t.to(this, duration, properties, 'mover');
-	t.addCallback(function () {
-		var dir = this.scale.x < 0;
-		if (typeof properties.x !== 'undefined' && properties.x !== null && // Check if we should turn around
-			(properties.x <= this.x && 0 < this.scale.x) ||                 // Going left, scale should be -1
-			(this.x <= properties.x && 0 > this.scale.x)) {                 // Going right, scale should be 1
-			dir = !dir;
-			t.add(this.turn(), 'mover');
-		}
-		if (scale) {
-			t.to(this.scale, duration,
-				{ x: (dir ? -1 * scale : scale), y: scale },
-				'-=' + (duration - 0.2));
-		}
-	}, 'mover', null, this);
-
 	return t;
 };
