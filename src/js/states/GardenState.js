@@ -79,7 +79,7 @@ GardenState.prototype.create = function () {
 			t.addCallback(function () {
 				player.water--;
 				plant.water.value++;
-				say(speech, agent).play('growing');
+				agent.say(speech).play('growing');
 			}, 'watering');
 			if (plant.water.left === 1 && plant.level.left === 1) {
 				t.addSound(speech, agent, 'fullGrown');

@@ -312,10 +312,10 @@ BeeFlightGame.prototype.create = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 /* Camilla Chameleon, the lizard that you are helping. */
-BeeFlightBee.prototype = Object.create(Phaser.Group.prototype);
+BeeFlightBee.prototype = Object.create(Character.prototype);
 BeeFlightBee.prototype.constructor = BeeFlightBee;
 function BeeFlightBee (x, y) {
-	Phaser.Group.call(this, game, null); // Parent constructor.
+	Character.call(this); // Parent constructor.
 	this.x = x || 0;
 	this.y = y || 0;
 

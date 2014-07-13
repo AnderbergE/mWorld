@@ -10,10 +10,10 @@
  * The subagent's sprite atlas should be loaded in the boot state.
  * It should be named the same as the id of the subagent.
  */
-Agent.prototype = Object.create(Phaser.Group.prototype);
+Agent.prototype = Object.create(Character.prototype);
 Agent.prototype.constructor = Agent;
 function Agent () {
-	Phaser.Group.call(this, game, null); // Parent constructor.
+	Character.call(this); // Parent constructor.
 
 	this.coords = this.coords || {};
 	this.coords.anim = {

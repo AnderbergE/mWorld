@@ -202,7 +202,7 @@ LizardJungleGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					say('birdheroAgentHmm', _this.agent).play();
+					_this.agent.say('birdheroAgentHmm').play();
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -323,10 +323,10 @@ LizardJungleGame.prototype.create = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 /* Camilla Chameleon, the lizard that you are helping. */
-LizardJungleLizard.prototype = Object.create(Phaser.Group.prototype);
+LizardJungleLizard.prototype = Object.create(Character.prototype);
 LizardJungleLizard.prototype.constructor = LizardJungleLizard;
 function LizardJungleLizard (x, y) {
-	Phaser.Group.call(this, game, null); // Parent constructor.
+	Character.call(this); // Parent constructor.
 	this.x = x || 0;
 	this.y = y || 0;
 

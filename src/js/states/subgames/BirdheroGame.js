@@ -251,7 +251,7 @@ BirdheroGame.prototype.create = function () {
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
 		if (!value) {
-			say(speech, _this.agent).play('agentCorrected');
+			_this.agent.say(speech).play('agentCorrected');
 			showNumbers();
 		}
 		else { pushNumber(_this.agent.lastGuess); }
@@ -328,7 +328,7 @@ BirdheroGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					say(speech, _this.agent).play('agentHmm');
+					_this.agent.say(speech).play('agentHmm');
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -638,10 +638,10 @@ BirdheroBranch.prototype.confused = function (duration) {
 
 
 /* The bird that you are helping home */
-BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
+BirdheroBird.prototype = Object.create(Character.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
 function BirdheroBird (tint) {
-	Phaser.Group.call(this, game, null); // Parent constructor.
+	Character.call(this); // Parent constructor.
 	this._number = null;
 
 	this.rightLeg = game.add.sprite(50, 160, 'birdhero', 'leg', this);

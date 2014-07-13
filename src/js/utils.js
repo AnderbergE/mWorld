@@ -43,49 +43,6 @@ Counter.prototype.update = function () {
 
 
 /**
- * Utility function: When you want a sound to be said by a character.
- * @param {Object|string} The sound file or the key to a sound file
- * @param {Object} The speaker, needs to have a '.talk' property of TweenMax or TimelineMax
- * @param {String} If you want the speaker to only talk during a specific marker.
- * @returns {Object} The sound object (not started)
- */
-function say (what, who, marker) {
-	var a = (typeof what === 'string') ? game.add.audio(what) : what;
-	if (who && who.talk) {
-		var current;
-		var play = function () {
-			if (a.currentMarker) {
-				current = a.currentMarker;
-			}
-			if (!marker || current === marker) {
-				who.talk.play();
-			}
-		};
-		var pause = function () {
-			if (!marker || current === marker) {
-				who.talk.pause(0);
-			}
-		};
-		var stop = function () {
-			if (!marker || current === marker) {
-				who.talk.pause(0);
-				a.onPlay.remove(play);
-				a.onResume.remove(play);
-				a.onPause.remove(pause);
-				a.onStop.remove(stop);
-			}
-		};
-
-		a.onPlay.add(play);
-		a.onResume.add(play);
-		a.onPause.add(pause);
-		a.onStop.add(stop);
-	}
-	return a;
-}
-
-
-/**
  * Utility function: Fade in or out an object.
  * @param {Object} The object to fade, needs to have an alpha property
  * @param {boolean} Fade in = true, out = false, toggle = undefined (default: toggle)
@@ -167,7 +124,8 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
  * @returns {Object} The TimelineMax object
  */
 TimelineMax.prototype.addSound = function (what, who, marker, position) {
-	var a = say(what, who, marker);
+	var a = (who && who.say) ? who.say(what, marker) :
+		((typeof what === 'string') ? game.add.audio(what) : what);
 
 	if (typeof position === 'undefined' || position === null) {
 		position = '+=0';
