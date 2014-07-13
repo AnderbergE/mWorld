@@ -34,13 +34,13 @@ function ButtonPanel (amount, representations, options) {
 	options.maxButtonSize = options.maxButtonSize || 75;
 
 	var buttonOptions = {
+		min: this.min,
+		max: this.max,
 		background: options.background,
 		color: options.color,
 		onClick: options.onClick
 	};
 	if (options.method === GLOBAL.METHOD.incrementalSteps) {
-		buttonOptions.min = this.min;
-		buttonOptions.max = this.max;
 		this.amount = 4; // Since we have these buttons: (-) (number) (+) (ok)
 	}
 
