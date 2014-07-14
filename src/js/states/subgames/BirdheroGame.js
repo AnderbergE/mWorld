@@ -243,7 +243,7 @@ BirdheroGame.prototype.create = function () {
 			t.add(bird.moveTo.initial(), 'initial');
 			t.add(zoom(true), 'initial');
 			t.addCallback(function () {
-				bird.turn(1);
+				bird.moveTurn(1);
 				_this.nextRound();
 			});
 		}
@@ -251,7 +251,7 @@ BirdheroGame.prototype.create = function () {
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
 		if (!value) {
-			say(speech, _this.agent).play('agentCorrected');
+			_this.agent.say(speech).play('agentCorrected');
 			showNumbers();
 		}
 		else { pushNumber(_this.agent.lastGuess); }
@@ -328,7 +328,7 @@ BirdheroGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					say(speech, _this.agent).play('agentHmm');
+					_this.agent.say(speech).play('agentHmm');
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
@@ -336,7 +336,6 @@ BirdheroGame.prototype.create = function () {
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
-					showYesnos();
 				}
 			});
 	}
@@ -350,6 +349,16 @@ BirdheroGame.prototype.create = function () {
 		t.addSound(speech, bird, 'instruction1b');
 		t.add(fade(buttons, true), 'useButtons');
 		t.add(buttons.highlight(1), 'flashButtons');
+		return t;
+	}
+
+	function instructionAgentTry () {
+		var t = new TimelineMax();
+		t.addSound(speech, bird, 'instruction2a');
+		t.add(fade(yesnos, true), 0);
+		t.add(yesnos.children[0].highlight(1));
+		t.addSound(speech, bird, 'instruction2b');
+		t.add(yesnos.children[1].highlight(1));
 		return t;
 	}
 
@@ -470,15 +479,22 @@ BirdheroGame.prototype.create = function () {
 			// TODO: Add more specified sounds?
 			t.addSound(speech, _this.agent, 'agentTryAgain');
 			t.add(agentGuess());
+			t.addCallback(showYesnos);
 		} else { // if intro or first try
 			if (intro) {
 				t.skippable();
 				t.eventCallback('onStart', function () { hideButtons(); });
 				t.add(_this.agent.moveTo.start()); // Agent should be here already.
 				t.addSound(speech, _this.agent, 'agentTry');
+				t.add(newBird());
+				t.add(agentGuess());
+				t.add(instructionAgentTry());
+				t.addCallback(showYesnos);
+			} else {
+				t.add(newBird());
+				t.add(agentGuess());
+				t.addCallback(showYesnos);
 			}
-			t.add(newBird());
-			t.add(agentGuess());
 		}
 	};
 
@@ -512,10 +528,10 @@ BirdheroGame.prototype.create = function () {
 	function playMusic (mode) {
 		if (mode !== GLOBAL.MODE.intro) {
 			bgMusic.play();
-			Event.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
+			EventSystem.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
 		}
 	}
-	Event.subscribe(GLOBAL.EVENT.modeChange, playMusic);
+	EventSystem.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 
 
 	// Everything is set up! Blast off!
@@ -638,10 +654,12 @@ BirdheroBranch.prototype.confused = function (duration) {
 
 
 /* The bird that you are helping home */
-BirdheroBird.prototype = Object.create(Phaser.Group.prototype);
+BirdheroBird.prototype = Object.create(Character.prototype);
 BirdheroBird.prototype.constructor = BirdheroBird;
 function BirdheroBird (tint) {
-	Phaser.Group.call(this, game, null); // Parent constructor.
+	Character.call(this); // Parent constructor.
+	this.turn = true;
+
 	this._number = null;
 
 	this.rightLeg = game.add.sprite(50, 160, 'birdhero', 'leg', this);
@@ -718,49 +736,5 @@ BirdheroBird.prototype.countFeathers = function () {
 		t.addCallback(fun, (i-1)*1, [i], this);
 	}
 	t.addCallback(function () {}, '+=1');
-	return t;
-};
-
-/**
- * Turn around! Every now and then I get a little bit lonely...
- * @param {number} -1 = left, 1 = right, default: opposite of current
- * @returns {Object} The turning tween
- */
-BirdheroBird.prototype.turn = function (direction) {
-	// Turn by manipulating the scale.
-	var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
-	return new TweenMax(this.scale, 0.2, { x: newScale });
-};
-
-/**
- * Move around, turn according to move direction.
- * NOTE: turning takes 200ms, making a new move before that might give strange results.
- * @param {Object} Properties to tween
- * @param {number} Duration of the move
- * @param {number} If a scaling should happen during the move
- * @returns {Object} The movement tween
- */
-BirdheroBird.prototype.move = function (properties, duration, scale) {
-	var t = new TimelineMax({
-		onStart: function () { this.walk.play(); }, onStartScope: this,
-		onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
-	});
-	t.addLabel('mover'); // Add a label in beginning, use it for simultaneous tweening.
-	t.to(this, duration, properties, 'mover');
-	t.addCallback(function () {
-		var dir = this.scale.x < 0;
-		if (typeof properties.x !== 'undefined' && properties.x !== null && // Check if we should turn around
-			(properties.x <= this.x && 0 < this.scale.x) ||                 // Going left, scale should be -1
-			(this.x <= properties.x && 0 > this.scale.x)) {                 // Going right, scale should be 1
-			dir = !dir;
-			t.add(this.turn(), 'mover');
-		}
-		if (scale) {
-			t.to(this.scale, duration,
-				{ x: (dir ? -1 * scale : scale), y: scale },
-				'-=' + (duration - 0.2));
-		}
-	}, 'mover', null, this);
-
 	return t;
 };

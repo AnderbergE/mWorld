@@ -20,7 +20,7 @@ function WaterCan (x, y, amount) {
 	this.can = game.add.sprite(0, 0, 'watercan', 0, this);
 
 	/* Keep track of when the player's water changes */
-	this._sub = Event.subscribe(GLOBAL.EVENT.waterAdded, function (total) {
+	this._sub = EventSystem.subscribe(GLOBAL.EVENT.waterAdded, function (total) {
 		var h = waterStep*total;
 		TweenMax.to(water, 0.5, { height: h, y: origin - h });
 	});
@@ -29,7 +29,7 @@ function WaterCan (x, y, amount) {
 }
 
 WaterCan.prototype.destroy = function (destroyChildren, soft) {
-	Event.unsubscribe(this._sub); // Otherwise possible memory leak.
+	EventSystem.unsubscribe(this._sub); // Otherwise possible memory leak.
 	Phaser.Group.prototype.destroy.call(this, destroyChildren, soft);
 };
 

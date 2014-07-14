@@ -43,72 +43,49 @@ Counter.prototype.update = function () {
 
 
 /**
- * Utility function: When you want a sound to be said by a character.
- * @param {Object|string} The sound file or the key to a sound file
- * @param {Object} The speaker, needs to have a '.talk' property of TweenMax or TimelineMax
- * @param {String} If you want the speaker to only talk during a specific marker.
- * @returns {Object} The sound object (not started)
- */
-function say (what, who, marker) {
-	var a = (typeof what === 'string') ? game.add.audio(what) : what;
-	if (who && who.talk) {
-		var current;
-		var play = function () {
-			if (a.currentMarker) {
-				current = a.currentMarker;
-			}
-			if (!marker || current === marker) {
-				who.talk.play();
-			}
-		};
-		var pause = function () {
-			if (!marker || current === marker) {
-				who.talk.pause(0);
-			}
-		};
-		var stop = function () {
-			if (!marker || current === marker) {
-				who.talk.pause(0);
-				a.onPlay.remove(play);
-				a.onResume.remove(play);
-				a.onPause.remove(pause);
-				a.onStop.remove(stop);
-			}
-		};
-
-		a.onPlay.add(play);
-		a.onResume.add(play);
-		a.onPause.add(pause);
-		a.onStop.add(stop);
-	}
-	return a;
-}
-
-
-/**
  * Utility function: Fade in or out an object.
  * @param {Object} The object to fade, needs to have an alpha property
  * @param {boolean} Fade in = true, out = false, toggle = undefined (default: toggle)
- *                  NOTE: When false, the returned tween has an onComplete function.
+ *                  NOTE: The returned tween has both an onStart and onComplete function.
  * @param {number} Fade duration in seconds (default: 0.5)
+ *                 NOTE: The tween will have 0 duration if fade state is correct.
  * @returns {Object} The TweenMax object
- *                   NOTE: If the object is already in correct fade state,
- *                         no animation will be made, an "empty" tween is returned.
  */
 function fade (what, typ, duration) {
-	typ = (typeof typ === 'undefined' || typ === null) ? !what.visible : typ;
+	var toggle = (typeof typ === 'undefined' || typ === null);
 	duration = duration || 0.5;
 
-	if (typ) {
-		if (!what.visible || what.alpha < 1) {
-			what.visible = true;
-			return TweenMax.fromTo(what, duration, { alpha: 0 }, { alpha: 1 });
+	return TweenMax.to(what, duration, {
+		onStart: function () {
+			if (toggle) {
+				typ = !what.visible || what.alpha === 0;
+			}
+
+			if (typ) {
+				if (!what.visible) {
+					what.alpha = 0;
+					what.visible = true;
+				} else if (what.alpha === 1) {
+					this.duration(0);
+					return;
+				}
+				what.visible = true;
+				this.updateTo({ alpha: 1 });
+
+			} else {
+				if (what.visible || what.alpha > 0) {
+					this.updateTo({ alpha: 0});
+				} else {
+					this.duration(0);
+				}
+			}
+		},
+		onComplete: function () {
+			if (!typ) {
+				what.visible = false;
+			}
 		}
-	} else if (what.visible || what.alpha > 0) {
-		return TweenMax.to(what, duration,
-			{ alpha: 0, onComplete: function () { what.visible = false; } });
-	}
-	return new TweenMax(what);
+	});
 }
 
 /**
@@ -117,7 +94,8 @@ function fade (what, typ, duration) {
 function onShutDown () {
 	TweenMax.killAll();
 	this.sound.stopAll();
-	Event.clear();
+	this.sound.onSoundDecode.removeAll();
+	EventSystem.clear();
 }
 
 /**
@@ -143,20 +121,18 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
 	if (this.checkSoundsDecoded()) {
 		func();
 	} else {
-		var _this = this;
 		var loader = document.querySelector('.loading').style;
 		loader.display = 'block';
 		document.querySelector('.progress').innerHTML = 'Decoding';
 
 		var c = function () {
-			loader.display = 'block';
-			if (_this.checkSoundsDecoded()) {
-				_this.onSoundDecode.remove(c);
+			if (this.checkSoundsDecoded()) {
+				this.onSoundDecode.remove(c);
 				func();
 				loader.display = 'none';
 			}
 		};
-		this.onSoundDecode.add(c);
+		this.onSoundDecode.add(c, this);
 	}
 };
 
@@ -168,7 +144,8 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
  * @returns {Object} The TimelineMax object
  */
 TimelineMax.prototype.addSound = function (what, who, marker, position) {
-	var a = say(what, who, marker);
+	var a = (who && who.say) ? who.say(what, marker) :
+		((typeof what === 'string') ? game.add.audio(what) : what);
 
 	if (typeof position === 'undefined' || position === null) {
 		position = '+=0';
@@ -200,8 +177,8 @@ TimelineMax.prototype.addSound = function (what, who, marker, position) {
  */
 TimelineMax.prototype.skippable = function () {
 	this.addCallback(function () {
-		Event.publish(GLOBAL.EVENT.skippable, [this]);
-		this.addCallback(function () { Event.publish(GLOBAL.EVENT.skippable); });
+		EventSystem.publish(GLOBAL.EVENT.skippable, [this]);
+		this.addCallback(function () { EventSystem.publish(GLOBAL.EVENT.skippable); });
 	}, 0, null, this);
 	return this;
 };

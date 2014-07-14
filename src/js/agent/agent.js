@@ -10,10 +10,10 @@
  * The subagent's sprite atlas should be loaded in the boot state.
  * It should be named the same as the id of the subagent.
  */
-Agent.prototype = Object.create(Phaser.Group.prototype);
+Agent.prototype = Object.create(Character.prototype);
 Agent.prototype.constructor = Agent;
 function Agent () {
-	Phaser.Group.call(this, game, null); // Parent constructor.
+	Character.call(this); // Parent constructor.
 
 	this.coords = this.coords || {};
 	this.coords.anim = {
@@ -82,15 +82,15 @@ function Agent () {
 	this.playerGuesses = [];
 	this.lastGuess = null;
 
-	Event.subscribe(GLOBAL.EVENT.subgameStarted, function () {
+	EventSystem.subscribe(GLOBAL.EVENT.subgameStarted, function () {
 		_this.playerCorrect = 0;
 		_this.playerWrong = 0;
 		_this.playerGuesses = [];
 	});
-	Event.subscribe(GLOBAL.EVENT.modeChange, function (mode) {
+	EventSystem.subscribe(GLOBAL.EVENT.modeChange, function (mode) {
 		currentMode = mode;
 	});
-	Event.subscribe(GLOBAL.EVENT.tryNumber, function (guess, correct) {
+	EventSystem.subscribe(GLOBAL.EVENT.tryNumber, function (guess, correct) {
 		if (currentMode === GLOBAL.MODE.playerDo ||
 			currentMode === GLOBAL.MODE.playerShow) {
 			_this.playerGuesses.push([guess, correct]);
@@ -146,7 +146,7 @@ Agent.prototype.guessing = function (correct, min, max) {
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
 	this.lastGuess = this.guessing(correct, min, max);
-	Event.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
+	EventSystem.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
 	return this.lastGuess;
 };
 
@@ -255,17 +255,6 @@ Agent.prototype.water = function (duration, arm) {
 		t.addCallback(function () { w2.destroy(); });
 		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -origin, ease: Power1.easeOut }));
 	}
-	return t;
-};
-
-Agent.prototype.move = function (properties, duration, scale) {
-	properties.ease = properties.ease || Power1.easeInOut;
-	var t = new TimelineMax({
-		onStart: function () { this.walk.play(); }, onStartScope: this,
-		onComplete: function () { this.walk.pause(0); }, onCompleteScope: this
-	});
-	t.to(this, duration, properties);
-	if (scale) { t.to(this.scale, duration, { x: scale, y: scale, ease: properties.ease }, 0); }
 	return t;
 };
 

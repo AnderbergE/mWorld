@@ -52,7 +52,7 @@ GardenState.prototype.create = function () {
 	this.world.add(new Menu());
 
 	// Move agent when we push a plant.
-	Event.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
+	EventSystem.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
 		var y = plant.y + plant.height/3;
 		var x = plant.x;
 		if (agent.x > x) { x += plant.width; }
@@ -71,7 +71,7 @@ GardenState.prototype.create = function () {
 	});
 
 	// Water plant when we push it.
-	Event.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
+	EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
 		var t;
 		if (player.water > 0) {
 			var side = ((plant.x + plant.width) <= agent.x) ? -1 : 1;
@@ -79,7 +79,7 @@ GardenState.prototype.create = function () {
 			t.addCallback(function () {
 				player.water--;
 				plant.water.value++;
-				say(speech, agent).play('growing');
+				agent.say(speech).play('growing');
 			}, 'watering');
 			if (plant.water.left === 1 && plant.level.left === 1) {
 				t.addSound(speech, agent, 'fullGrown');
@@ -170,7 +170,7 @@ function GardenPlant (id, level, water, x, y, width, height) {
 GardenPlant.prototype.down = function () {
 	var _this = this; // Events do not have access to this
 	if (this.active) {
-		Event.publish(GLOBAL.EVENT.plantPress, [this]);
+		EventSystem.publish(GLOBAL.EVENT.plantPress, [this]);
 		return;
 	}
 
@@ -195,7 +195,7 @@ GardenPlant.prototype.down = function () {
 			if (this.waterButton.frame === 0) {
 				// Water is added to the plant when animation runs.
 				this.waterButton.frame = 1;
-				Event.publish(GLOBAL.EVENT.waterPlant, [this]);
+				EventSystem.publish(GLOBAL.EVENT.waterPlant, [this]);
 			}
 		}, this);
 
@@ -226,15 +226,15 @@ GardenPlant.prototype.down = function () {
 
 	fade(this.infoGroup, true, 0.2);
 
-	Event.publish(GLOBAL.EVENT.plantPress, [this]);
-	this.active = Event.subscribe(GLOBAL.EVENT.plantPress, function () {
+	EventSystem.publish(GLOBAL.EVENT.plantPress, [this]);
+	this.active = EventSystem.subscribe(GLOBAL.EVENT.plantPress, function () {
 		_this.waterButton.frame = 0;
 		_this.hide();
 	});
 };
 
 GardenPlant.prototype.hide = function () {
-	Event.unsubscribe(this.active);
+	EventSystem.unsubscribe(this.active);
 	this.active = null;
 	fade(this.infoGroup, false, 0.2);
 };

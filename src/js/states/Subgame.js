@@ -97,7 +97,7 @@ Subgame.prototype.init = function (options) {
 
 	this._menuGroup.add(new Menu());
 
-	Event.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0]);
+	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0]);
 };
 
 /* Phaser state function */
@@ -173,7 +173,7 @@ Subgame.prototype.nextRound = function () {
 
 	// Publish event when it it is the first time it runs
 	if (this._first) {
-		Event.publish(GLOBAL.EVENT.modeChange, [this._pendingMode]);
+		EventSystem.publish(GLOBAL.EVENT.modeChange, [this._pendingMode]);
 	}
 
 	// Run mode and update properties
@@ -189,7 +189,7 @@ Subgame.prototype.nextRound = function () {
  * @returns {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
 Subgame.prototype.tryNumber = function (number) {
-	Event.publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
+	EventSystem.publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
 	this._currentTries++;
 	this.lastTry = number - this.currentNumber;
 

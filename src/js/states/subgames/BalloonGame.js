@@ -337,7 +337,7 @@ BalloonGame.prototype.create = function () {
 	function pushYesno (value) {
 		//TODO add random sounds
 		if (!value) {
-			say('isitwrong', _this.agent).play();
+			_this.agent.say('isitwrong').play();
 			_this.disable(false);
 			showLiftoff(0, 0);
 		}
@@ -809,7 +809,7 @@ BalloonGame.prototype.create = function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
 					//TODO: Random hmm
-					say('agenthmm', _this.agent).play();
+					_this.agent.say('agenthmm').play();
 				},
 				onComplete: function () {
 					if(parseInt(_this.representation) === GLOBAL.NUMBER_REPRESENTATION.none){
@@ -831,7 +831,7 @@ BalloonGame.prototype.create = function () {
 					console.log('hej4');
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
-					say('question', _this.agent).play();
+					_this.agent.say('question').play();
 					showYesnos();
 				}
 			});

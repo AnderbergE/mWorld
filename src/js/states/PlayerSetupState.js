@@ -58,7 +58,7 @@ PlayerSetupState.prototype.create = function () {
 		// Move the agent group to get the sliding effect on all agents
 		TweenMax.to(agents, slideTime, { x: -(agents.children.indexOf(a) * spacing), ease: Power2.easeOut,
 			onStart: function () { stopTalk(); },
-			onComplete: function () { say(a.itsame, a).play(); }
+			onComplete: function () { a.say(a.itsame).play(); }
 		});
 	}
 
