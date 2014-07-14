@@ -100,7 +100,10 @@ BalloonGame.prototype.preload = function () {
 BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var stepSize = 9/this.amount;
-	balloonStock = this.amount;
+
+	balloonStock = _this.amount;
+
+
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
 	
 	_this.disable(false);
@@ -251,6 +254,20 @@ BalloonGame.prototype.create = function () {
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
 
+	var pluspanel = new ButtonPanel(9, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
+		y: this.world.height-80, background: 'wood', onClick: pushPlus
+	});
+	pluspanel.visible = false;
+	pluspanel.scale.setTo(0.65);
+	this.hudGroup.add(pluspanel);
+
+	var minuspanel = new ButtonPanel(9, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
+		y: this.world.height-150, background: 'wood', onClick: pushMinus, min: -9, max: -1
+	});
+	minuspanel.visible = false;
+	minuspanel.scale.setTo(0.65);
+	this.hudGroup.add(minuspanel);
+
 	/*var plusminus = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.plusminus, {
 		y: this.world.height-100, background: 'wood', onClick: pushPlusminus, method: this.method
 	});
@@ -279,20 +296,40 @@ BalloonGame.prototype.create = function () {
 		fade(anchor, false);
 		fade(yesnos, true);
 		fade(plusminus, false);
+		fade(pluspanel, false);
+		fade(minuspanel, false);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 
 	function showLiftoff () {
-		fade(liftoffButton, true);
-		fade(anchor, true);
-		fade(yesnos, false);
-		console.log('GLOBAL.METHOD.incrementalSteps: ' + GLOBAL.METHOD.incrementalSteps + ' this.method ' + _this.method);
+		
 		if((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && treasures)
 		{
-			console.log('Theyre equal!');
 			fade(plusminus, true);
+			fade(liftoffButton, true);
+			fade(anchor, true);
+
+		} else if ((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && !treasures)
+		{
+			fade(liftoffButton, true);
+			fade(anchor, true);
+		} else if (parseInt(_this.method) === GLOBAL.METHOD.addition)
+		{
+			fade(pluspanel, true);
+
+		} else if (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction)
+		{
+			fade(pluspanel, true);
+			fade(minuspanel, true);
+
+		} else if (parseInt(_this.method) === GLOBAL.METHOD.count)
+		{
+			fade(liftoffButton, true);
+			fade(anchor, true);
 		}
+
+		fade(yesnos, false);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
@@ -305,6 +342,40 @@ BalloonGame.prototype.create = function () {
 			showLiftoff(0, 0);
 		}
 		else { agentFloatBalloons(_this.agent.lastGuess); }
+
+	}
+
+	function pushPlus (value) {
+		console.log('pushPlus: ' + value);
+		if((airBalloonStock + value) > _this.amount)
+		{
+			airBalloonStock = _this.amount;
+		}
+		else
+		{
+			airBalloonStock = airBalloonStock + value;
+		}
+		balloonStock = _this.amount-airBalloonStock;
+		balloonStockUpdate();
+		airBalloonStockUpdate();
+		takeOff();
+	}
+
+	function pushMinus (value) {
+		console.log('pushMinus: ' + value);
+		value = -value;
+		if((airBalloonStock - value) < 0)
+		{
+			airBalloonStock = 0;
+		}
+		else
+		{
+			airBalloonStock = airBalloonStock - value;
+		}
+		balloonStock = _this.amount-airBalloonStock;
+		balloonStockUpdate();
+		airBalloonStockUpdate();
+		takeOff();
 	}
 
 	function agentFloatBalloons(guess)
@@ -312,8 +383,7 @@ BalloonGame.prototype.create = function () {
 		airBalloonStock = guess;
 		balloonStock = _this.amount-guess;
 		balloonStockUpdate();
-		balloonStack2.revive();
-		balloonStack2.loadTexture('balloon'+airBalloonStock);
+		airBalloonStockUpdate();
 		takeOff();
 	}
 
@@ -475,14 +545,14 @@ BalloonGame.prototype.create = function () {
 		
 		//var result = _this.tryNumber(amount);
 
-		var tl = new TimelineMax();
-		tl.skippable();
+		
 		if (amount <= 0)
 		{
 			console.log('No balloons!');
 			//TODO: Add a voice saying you need to attatch balloons to the basket.
 		} else {
-
+			var tl = new TimelineMax();
+			tl.skippable();
 			var result = _this.tryNumber(amount);
 			//Ugly solution until I figure it out
 			if(this.amount === 9)
@@ -494,6 +564,8 @@ BalloonGame.prototype.create = function () {
 			liftoffButton.visible = false;
 			anchor.visible = false;
 			plusminus.visible = false;
+			minuspanel.visible = false;
+			pluspanel.visible = false;
 
 			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
 				tl.add( new TweenMax(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn}));
@@ -507,7 +579,11 @@ BalloonGame.prototype.create = function () {
 				});
 				tl.addSound(speech, beetle, 'yippi');
 				tl.add(_this.addWater(chest.x, chest.y), '-=3');
-				treasures++;
+				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
+				{
+					treasures++;
+					disableBalloons();
+				}
 			} else if (result > 0)
 			{
 				tl.addSound('tryless', beetle);
@@ -515,7 +591,8 @@ BalloonGame.prototype.create = function () {
 				tl.addSound('trymore', beetle);
 			}
 			//Popping balloons and Basket going back down.
-			if(((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && !treasures) || (parseInt(_this.method) === GLOBAL.METHOD.count))
+			console.log('this.method: ' + _this.method + ' GLOBAL.METHOD.incrementalSteps: ' + GLOBAL.METHOD.incrementalSteps + ' treasures: ' + treasures);
+			if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
 			{
 				popAndReturn(tl);
 			}
@@ -558,6 +635,36 @@ BalloonGame.prototype.create = function () {
 		balloonStack2.revive();
 		balloonStack2.loadTexture('brokenballoon');
 	}
+
+	function randomBalloons(correctAnswer) {
+
+	if (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction)
+	{
+		console.log('additionSubtraction');
+		var answerIsHigher = game.rnd.integerInRange(0, 1);
+		if((correctAnswer === _this.amount) || answerIsHigher)
+		{	//if answerIsHigher = 1 put ballons below answer.
+			console.log('1');
+			airBalloonStock = game.rnd.integerInRange(0, correctAnswer-1);
+		} else {
+			console.log('2');
+			airBalloonStock = game.rnd.integerInRange(correctAnswer+1, _this.amount);
+		}
+		
+	} else if (parseInt(_this.method) === GLOBAL.METHOD.addition)
+	{
+		airBalloonStock = game.rnd.integerInRange(0, correctAnswer-1);
+	} else {
+		airBalloonStock = this.amount;
+	}
+	console.log('3');
+	balloonStock = _this.amount - airBalloonStock;
+	balloonStockUpdate();
+	airBalloonStockUpdate();
+
+	}
+
+
 /*
 	//Animation to float the balloons back. Not used anymore.
 	function returnBalloonsFrom(fromX, fromY) {
@@ -591,6 +698,40 @@ BalloonGame.prototype.create = function () {
 	function deleteB() {
 		for (var i = 0; i < 9; i++){
 			deleteExcessSprite(balloons.getAt(0));
+		}
+	}
+
+	function disableBalloons() {
+		for (var i = 0; i < 9; i++){
+			//console.log('Disable balloon: ');
+			disableBalloon(balloons.getAt(0+i));
+			//console.log('Disable airballoon: ');
+			disableBalloon(airballoons.getAt(3+i));
+		}
+	}
+
+	function enableBalloons() {
+		for (var i = 0; i < 9; i++){
+			//console.log('Enable balloon: ');
+			enableBalloon(balloons.getAt(0+i));
+			//console.log('Enable airballoon: ');
+			enableBalloon(airballoons.getAt(3+i));
+		}
+	}
+
+	function enableBalloon(sprite) {
+		//console.log(sprite);
+		if(sprite !== -1)
+		{
+			sprite.inputEnabled = true;
+		}
+	}
+
+	function disableBalloon(sprite) {
+		//console.log(sprite);
+		if(sprite !== -1)
+		{
+			sprite.inputEnabled = false;
 		}
 	}
 
@@ -632,36 +773,37 @@ BalloonGame.prototype.create = function () {
 
 			chest.y = 455 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			eyes.y = 525 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
-			console.log('eyes x: ' + eyes.x);
-			console.log('y: ' + eyes.y);
-			console.log('chest x: ' + chest.x);
-			console.log('y: ' + chest.y);
 			chest.scale.x = 0.4;
 			chest.scale.y = 0.4;
 			eyes.scale.x = 0.3;
 			eyes.scale.y = 0.3;
 			fade(eyes, true);
 
-			console.log('render GLOBAL.NUMBER_REPRESENTATION.none: ' + GLOBAL.NUMBER_REPRESENTATION.none + ' this.representation: ' + _this.representation);
 			if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
-				console.log('Theyre not equal');
+				
 				if(mapText)
 				{
 					mapText.destroy();
 				}
 
 				mapText = new NumberButton(correctAnswer, _this.representation, {
-							x: 640, y: 670, size: 38
+							x: 690, y: 660, size: 38
 				});
 				_this.gameGroup.add(mapText);
 				eyes.y = -100;
 				eyes.x = -100;
+			}
+			if((parseInt(_this.method) === GLOBAL.METHOD.addition) || (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction))
+			{
+				randomBalloons(correctAnswer);
 			}
 
 	}
 
 	function agentGuess () {
 		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
+
+		var guess = _this.agent.lastGuess;
 
 		return TweenMax.fromTo(_this.agent.thought.scale, 1.5,
 			{ x: 0, y: 0 },
@@ -679,10 +821,22 @@ BalloonGame.prototype.create = function () {
 							x: -50, y: -50, size: 100
 						});
 					}else{
-						_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-							x: -50, y: -50, size: 100
-						});
+						console.log('hej');
+						if ((parseInt(_this.method) === GLOBAL.METHOD.addition) || (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction))
+						{
+								console.log('hej2 och guess: ' + guess);
+								guess -= airBalloonStock;
+								console.log('hej3 och guess: ' + guess);
+								_this.agent.thought.guess = new NumberButton(guess, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
+									x: -50, y: -50, size: 100
+								});
+						} else {
+							_this.agent.thought.guess = new NumberButton(guess, _this.representation, {
+								x: -50, y: -50, size: 100
+							});
+						}
 					}
+					console.log('hej4');
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
 					_this.agent.say('question').play();
@@ -702,14 +856,12 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		tl.skippable();
 		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
-		console.log('intro GLOBAL.NUMBER_REPRESENTATION.none: ' + GLOBAL.NUMBER_REPRESENTATION.none + ' this.representation: ' + _this.representation);
 		if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
-			console.log('Theyre not equal 1');
 			var map = game.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'map', null, _this.gameGroup);
 			map.scale.setTo(0.5, 0.5);
 			tl.add( new TweenMax(map, 0.1, {x: coords.beetle.stop.x+70, y: coords.beetle.stop.y+60, ease:Power1.easeIn}));
 			tl.addSound('beetleintro3', beetle);
-			tl.add( new TweenMax(map, 2, {x: 620, y: 650, ease:Power1.easeIn}));
+			tl.add( new TweenMax(map, 2, {x: 670, y: 640, ease:Power1.easeIn}));
 		}else{
 			tl.addSound('beetleintro1', beetle);
 			tl.addSound('beetleintro2', beetle);
@@ -744,7 +896,11 @@ BalloonGame.prototype.create = function () {
 			var tl = new TimelineMax();
 			if (intro) {
 				treasures = 0;
-				popAndReturn(tl);
+				enableBalloons();
+				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
+				{
+					popAndReturn(tl);
+				}
 				_this.disable(true);
 				tl.skippable();
 				tl.add(_this.agent.moveTo.start());
@@ -772,7 +928,12 @@ BalloonGame.prototype.create = function () {
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
-				popAndReturn(tl);
+				treasures = 0;
+				enableBalloons();
+				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
+				{
+					popAndReturn(tl);
+				}
 				_this.disable(true);
 				tl.skippable();
 				console.log('modeAgentTry Intro');
@@ -820,6 +981,7 @@ BalloonGame.prototype.create = function () {
 	function balloonStockUpdate() {
 		if (balloonStock === 0)
 		{
+			deleteB();
 			balloonStack1.kill();
 		} else {
 			balloonStack1.revive();
@@ -832,6 +994,7 @@ BalloonGame.prototype.create = function () {
 	function airBalloonStockUpdate() {
 		if (airBalloonStock === 0)
 		{
+			deleteAirB();
 			balloonStack2.kill();
 		} else {
 			balloonStack2.revive();
