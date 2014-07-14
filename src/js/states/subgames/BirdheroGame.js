@@ -336,7 +336,6 @@ BirdheroGame.prototype.create = function () {
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
-					showYesnos();
 				}
 			});
 	}
@@ -350,6 +349,16 @@ BirdheroGame.prototype.create = function () {
 		t.addSound(speech, bird, 'instruction1b');
 		t.add(fade(buttons, true), 'useButtons');
 		t.add(buttons.highlight(1), 'flashButtons');
+		return t;
+	}
+
+	function instructionAgentTry () {
+		var t = new TimelineMax();
+		t.addSound(speech, bird, 'instruction2a');
+		t.add(fade(yesnos, true), 0);
+		t.add(yesnos.children[0].highlight(1));
+		t.addSound(speech, bird, 'instruction2b');
+		t.add(yesnos.children[1].highlight(1));
 		return t;
 	}
 
@@ -470,15 +479,22 @@ BirdheroGame.prototype.create = function () {
 			// TODO: Add more specified sounds?
 			t.addSound(speech, _this.agent, 'agentTryAgain');
 			t.add(agentGuess());
+			t.addCallback(showYesnos);
 		} else { // if intro or first try
 			if (intro) {
 				t.skippable();
 				t.eventCallback('onStart', function () { hideButtons(); });
 				t.add(_this.agent.moveTo.start()); // Agent should be here already.
 				t.addSound(speech, _this.agent, 'agentTry');
+				t.add(newBird());
+				t.add(agentGuess());
+				t.add(instructionAgentTry());
+				t.addCallback(showYesnos);
+			} else {
+				t.add(newBird());
+				t.add(agentGuess());
+				t.addCallback(showYesnos);
 			}
-			t.add(newBird());
-			t.add(agentGuess());
 		}
 	};
 

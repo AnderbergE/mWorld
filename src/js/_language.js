@@ -106,7 +106,8 @@ LANG.english.speech = {
 		markers: {
 			instruction1a:    [1.8,   8.1],
 			instruction1b:    [10.5,  2.7],
-			instruction2:     [81.9,  7.6],
+			instruction2a:    [81.9,  3.4],
+			instruction2b:    [85.9,  3.6],
 			thisFloor1:       [17.3,  1.9],
 			thisFloor2:       [19.2,  1.5],
 			correct:          [39.9,  2  ],
