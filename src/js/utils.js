@@ -46,26 +46,46 @@ Counter.prototype.update = function () {
  * Utility function: Fade in or out an object.
  * @param {Object} The object to fade, needs to have an alpha property
  * @param {boolean} Fade in = true, out = false, toggle = undefined (default: toggle)
- *                  NOTE: When false, the returned tween has an onComplete function.
+ *                  NOTE: The returned tween has both an onStart and onComplete function.
  * @param {number} Fade duration in seconds (default: 0.5)
+ *                 NOTE: The tween will have 0 duration if fade state is correct.
  * @returns {Object} The TweenMax object
- *                   NOTE: If the object is already in correct fade state,
- *                         no animation will be made, an "empty" tween is returned.
  */
 function fade (what, typ, duration) {
-	typ = (typeof typ === 'undefined' || typ === null) ? !what.visible : typ;
+	var toggle = (typeof typ === 'undefined' || typ === null);
 	duration = duration || 0.5;
 
-	if (typ) {
-		if (!what.visible || what.alpha < 1) {
-			what.visible = true;
-			return TweenMax.fromTo(what, duration, { alpha: 0 }, { alpha: 1 });
+	return TweenMax.to(what, duration, {
+		onStart: function () {
+			if (toggle) {
+				typ = !what.visible || what.alpha === 0;
+			}
+
+			if (typ) {
+				if (!what.visible) {
+					what.alpha = 0;
+					what.visible = true;
+				} else if (what.alpha === 1) {
+					this.duration(0);
+					return;
+				}
+				what.visible = true;
+				this.updateTo({ alpha: 1 });
+
+			} else {
+				if (what.visible || what.alpha > 0) {
+					this.updateTo({ alpha: 0});
+				} else {
+					this.duration(0);
+				}
+			}
+		},
+		onComplete: function () {
+			if (!typ) {
+				what.visible = false;
+			}
 		}
-	} else if (what.visible || what.alpha > 0) {
-		return TweenMax.to(what, duration,
-			{ alpha: 0, onComplete: function () { what.visible = false; } });
-	}
-	return new TweenMax(what);
+	});
 }
 
 /**
