@@ -101,7 +101,7 @@ BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var stepSize = 9/this.amount;
 
-	balloonStock = this.amount;
+	balloonStock = _this.amount;
 
 
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
@@ -363,6 +363,7 @@ BalloonGame.prototype.create = function () {
 
 	function pushMinus (value) {
 		console.log('pushMinus: ' + value);
+		value = -value;
 		if((airBalloonStock - value) < 0)
 		{
 			airBalloonStock = 0;
@@ -792,7 +793,10 @@ BalloonGame.prototype.create = function () {
 				eyes.y = -100;
 				eyes.x = -100;
 			}
-			randomBalloons(correctAnswer);
+			if((parseInt(_this.method) === GLOBAL.METHOD.addition) || (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction))
+			{
+				randomBalloons(correctAnswer);
+			}
 
 	}
 
@@ -823,10 +827,14 @@ BalloonGame.prototype.create = function () {
 								console.log('hej2 och guess: ' + guess);
 								guess -= airBalloonStock;
 								console.log('hej3 och guess: ' + guess);
+								_this.agent.thought.guess = new NumberButton(guess, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
+									x: -50, y: -50, size: 100
+								});
+						} else {
+							_this.agent.thought.guess = new NumberButton(guess, _this.representation, {
+								x: -50, y: -50, size: 100
+							});
 						}
-						_this.agent.thought.guess = new NumberButton(guess, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-							x: -50, y: -50, size: 100
-						});
 					}
 					console.log('hej4');
 					_this.agent.thought.add(_this.agent.thought.guess);
