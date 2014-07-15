@@ -14,7 +14,10 @@
 
 		"subscribe": false,
 		"unsubscribe": false,
-		"publish": false
+		"publish": false,
+
+		"$": false, // jQuery
+		"Routes": false
 	},
 
 	// Enforcing options

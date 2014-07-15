@@ -4,6 +4,57 @@
 var Backend = {
 
 	/**
+	 * GET data.
+	 */
+	get: function (action) {
+		var data = null;
+		if (Routes && Routes[action]) {
+			var url = Routes[action]();
+
+			var getter = function () {
+				$.ajax(url, { async: false })
+					.done(function (data) {
+						data = JSON.parse(data);
+						EventSystem.publish(GLOBAL.EVENT.connection, [true]);
+					})
+					.fail(function () {
+						EventSystem.publish(GLOBAL.EVENT.connection, [false]);
+						setTimeout(function () {
+							getter();
+						}, 1000);
+					});
+			};
+			getter();
+		}
+		return data;
+	},
+
+	/**
+	 * PUT data.
+	 */
+	put: function (action, data) {
+		if (Routes && Routes[action]) {
+			var url = Routes[action]();
+			var jsonData = JSON.stringify(data);
+
+			var poster = function () {
+				$.post(url, jsonData)
+					.done(function () {
+						EventSystem.publish(GLOBAL.EVENT.connection, [true]);
+					})
+					.fail(function () {
+						EventSystem.publish(GLOBAL.EVENT.connection, [false]);
+						setTimeout(function () {
+							poster();
+						}, 1000);
+					});
+			};
+			poster();
+		}
+	},
+
+
+	/**
 	 * GET the data of the player.
 	 * @returns {Object} An object with data about the player.
 	 */
@@ -64,10 +115,16 @@ var Backend = {
 
 
 	/**
-	 * PUT updates of player information.
+	 * PUT player session results.
 	 */
-	put: function (data) {
-		console.log(JSON.stringify(data));
-		return JSON.stringify(data);
+	putSession: function (data) {
+		this.put('register_api_player_sessions_path', data);
+	},
+
+	/**
+	 * PUT garden updates.
+	 */
+	putGardenUpdates: function (data) {
+		this.put('', data);
 	}
 };

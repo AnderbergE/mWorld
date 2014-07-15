@@ -12,7 +12,7 @@
 
 	function modeChange (mode) {
 		if (mode === GLOBAL.MODE.outro) {
-			Backend.put(session);
+			Backend.putSession(session);
 		} else if (mode !== GLOBAL.MODE.intro) {
 			session.modes.push({ type: mode, results: [] });
 		} else {
@@ -56,7 +56,7 @@
 	}
 
 	function plantLevel (id, level) {
-		Backend.put([{ id: id, level: level }]);
+		Backend.putGardenUpdates([{ id: id, level: level }]);
 	}
 
 

@@ -13,7 +13,8 @@ var GLOBAL = {
 		waterPlant:     'waterPlant',     // [garden plant]
 		plantWaterUp:   'plantWaterUp',   // [id, current]
 		plantLevelUp:   'plantLevelUp',   // [id, level, type]
-		skippable:      'skippable'       // [TimelineMax object]
+		skippable:      'skippable',      // [TimelineMax object]
+		connection:     'connection'      // [status]
 	},
 
 	AGENT: {

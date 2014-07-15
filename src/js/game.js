@@ -31,6 +31,11 @@ void(WebFontConfig); // workaround for jshint unused warning.
 window.onload = function () {
 	if (document.querySelector('#game')) {
 		// Do not start game if the element does not exist.
+
+		if (typeof Routes === 'undefined' || Routes === null) {
+			console.log('You are running on a local server, no data will be sent.');
+		}
+
 		player = new Player();
 
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
@@ -79,6 +84,16 @@ BootState.prototype.preload = function () {
 			document.querySelector('.loading').style.display = 'block';
 		}
 	});
+
+	/* Respond to connection problems */
+	EventSystem.subscribe(GLOBAL.EVENT.connection, function (status) {
+		if (status) {
+			document.querySelector('.loading').style.display = 'none';
+		} else {
+			document.querySelector('.progress').innerHTML = 'Connection lost';
+			document.querySelector('.loading').style.display = 'block';
+		}
+	}, true);
 
 
 	/* Make sure the game scales according to resolution */
