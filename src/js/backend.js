@@ -4,28 +4,39 @@
 var Backend = {
 
 	/**
-	 * GET data.
+	 * Basic ajax call.
+	 * @param {Object} settings - An object with settings to jQuery ajax call
 	 */
-	get: function (action) {
+	ajax: function (settings) {
+		var _this = this;
+		return $.ajax(settings).fail(function (jqXHR) {
+			console.log(jqXHR.status + ' ' + jqXHR.statusText);
+			EventSystem.publish(GLOBAL.EVENT.connection, [false]);
+
+			// TODO: Monitor error codes, such as 403 or 500
+			// TODO: Create a function that is called if this takes too long.
+			setTimeout(function () { _this.ajax(settings); }, 1000);
+		});
+	},
+
+	/**
+	 * GET data.
+	 * @param {String} routeName - The name of the route function
+	 * @param {*} parameters - optional parameter for the route action
+	 */
+	get: function (routeName, parameters) {
 		var data = null;
 
-		if (typeof Routes !== 'undefined' && Routes[action]) {
-			var url = Routes[action]();
-
-			var getter = function () {
-				$.ajax(url, { async: false })
-					.done(function (data) {
-						data = JSON.parse(data);
-						EventSystem.publish(GLOBAL.EVENT.connection, [true]);
-					})
-					.fail(function () {
-						EventSystem.publish(GLOBAL.EVENT.connection, [false]);
-						setTimeout(function () {
-							getter();
-						}, 1000);
-					});
+		if (typeof Routes !== 'undefined' && Routes[routeName]) {
+			var settings = {
+				url: Routes[routeName](parameters),
+				async: false
 			};
-			getter();
+
+			this.ajax(settings).done(function (data) {
+				data = JSON.parse(data);
+				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
+			});
 		}
 
 		return data;
@@ -33,25 +44,20 @@ var Backend = {
 
 	/**
 	 * PUT data.
+	 * @param {String} routeName - The name of the route function
+	 * @param {Object} data - The data to send (will be transformed to JSON-format)
 	 */
-	put: function (action, data) {
-		if (typeof Routes !== 'undefined' && Routes[action]) {
-			var url = Routes[action]();
-			var jsonData = JSON.stringify(data);
-
-			var poster = function () {
-				$.post(url, jsonData)
-					.done(function () {
-						EventSystem.publish(GLOBAL.EVENT.connection, [true]);
-					})
-					.fail(function () {
-						EventSystem.publish(GLOBAL.EVENT.connection, [false]);
-						setTimeout(function () {
-							poster();
-						}, 1000);
-					});
+	put: function (routeName, data) {
+		if (typeof Routes !== 'undefined' && Routes[routeName]) {
+			var settings = {
+				url: Routes[routeName](),
+				type: 'POST',
+				data: JSON.stringify(data)
 			};
-			poster();
+
+			this.ajax(settings).done(function () {
+				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
+			});
 		}
 	},
 
@@ -119,17 +125,20 @@ var Backend = {
 	},
 
 
-	/**
-	 * PUT player session results.
-	 */
-	putSession: function (data) {
-		this.put('register_api_player_sessions_path', data);
-	},
 
 	/**
 	 * PUT garden updates.
+	 * @param {Object} data - The garden updates
 	 */
 	putGardenUpdates: function (data) {
 		this.put('', data);
+	},
+
+	/**
+	 * PUT player session results.
+	 * @param {Object} data - The session results
+	 */
+	putSession: function (data) {
+		this.put('register_api_player_sessions_path', data);
 	}
 };
