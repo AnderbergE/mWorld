@@ -6,6 +6,8 @@ GardenState.prototype.preload = function() {
 	this.load.audio('gardenSpeech', LANG.SPEECH.garden.speech); // audio sprite sheet
 
 	this.load.image('gardenBg', 'assets/img/garden/bg.png');
+
+	this.gardenData = Backend.getGarden();
 };
 
 /* Phaser state function */
@@ -34,9 +36,22 @@ GardenState.prototype.create = function () {
 	var startPos = 200;
 	var width = this.world.width/columns;
 	var height = (this.world.height - startPos)/rows;
+	var id, level, water, i;
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
-			this.world.add(new GardenPlant(row + ' ' + column, 0, 0, column*width, startPos+row*height, width, height));
+			id = row + '' + column;
+			level = 0;
+			water = 0;
+
+			for (i = 0; i < this.gardenData.length; i++) {
+				if (this.gardenData[i].id === id) {
+					level = this.gardenData[i].level || 0;
+					water = this.gardenData[i].water || 0;
+					break;
+				}
+			}
+
+			this.world.add(new GardenPlant(id, level, water, column*width, startPos+row*height, width, height));
 		}
 	}
 
@@ -53,7 +68,7 @@ GardenState.prototype.create = function () {
 
 	// Move agent when we push a plant.
 	EventSystem.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
-		var y = plant.y + plant.height/3;
+		var y = plant.y + plant.plantHeight - agent.height/2;
 		var x = plant.x;
 		if (agent.x > x) { x += plant.width; }
 		if (agent.x === x && agent.y === y ) { return; }
@@ -92,11 +107,13 @@ GardenState.prototype.create = function () {
 			t = new TimelineMax();
 			t.addSound(speech, agent, 'waterEmpty');
 		}
-		t.addCallback(function () { game.input.disabled = true; }, 0);
+
+		t.addCallback(function () { game.input.disabled = true; }, 0); // at start
 		t.addCallback(function () {
 			plant.waterButton.frame = 0;
 			game.input.disabled = false;
-		});
+		}); // at end
+
 		if (currentMove && currentMove.progress() < 1) {
 			currentMove.add(t);
 		}
@@ -140,6 +157,7 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	this.plantId = id;
 	this.x = x;
 	this.y = y;
+	this.plantHeight = height;
 
 	/* TODO: Replace with actual plant. */
 	var bmd = game.add.bitmapData(width, height);
@@ -152,17 +170,25 @@ function GardenPlant (id, level, water, x, y, width, height) {
 
 	// this.water = new Counter(level+1, true, water); // For plant leveling
 	this.water = new Counter(1, true, water);
+
 	this.level = new Counter(3, false, level);
-	this.level.onAdd = function (current) {
-		TweenMax.to(plant, 2, {
-			tint:
-				current === 1 ? 0x00ffff :
-				current === 2 ? 0xff00ff :
-				current === 3 ? 0xffff00 :
-				0xffffff,
-			onComplete: function () { _this.water.update(); }
-		});
+	this.level.onAdd = function (current, diff) {
+		var tint = current === 1 ? 0x00ffff :
+			current === 2 ? 0xff00ff :
+			current === 3 ? 0xffff00 :
+			0xffffff;
+		if (diff) {
+			TweenMax.to(plant, 2, {
+				tint: tint,
+				onComplete: function () { _this.water.update(); }
+			});
+			EventSystem.publish(GLOBAL.EVENT.plantLevelUp,
+				[_this.plantId, this.value]);
+		} else {
+			plant.tint = tint;
+		}
 	};
+	this.level.update();
 
 	return this;
 }
@@ -200,28 +226,39 @@ GardenPlant.prototype.down = function () {
 		}, this);
 
 		/* Water management */
-		var waterGroup = game.add.group(this.infoGroup);
-		this.water.onAdd = function (current, left) {
-			waterGroup.removeAll(true);
-			for (var i = 0; i < (current + left); i++) {
-				game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
-			}
+		var maxLevel = function () {
+			_this.waterButton.destroy();
+			game.add.text(_this.width/2, 50, LANG.TEXT.maxLevel, {
+				font: '60pt ' +  GLOBAL.FONT,
+				fill: '#5555ff'
+			}, _this.infoGroup).anchor.set(0.5);
 		};
-		this.water.onMax = function () {
-			_this.level.value++;
-			//_this.water.max = _this.level.value + 1;  // For plant leveling
-			if (_this.level.value === _this.level.max) {
-				_this.water.onAdd = null;
-				_this.water.onMax = null;
+
+		if (this.level.left > 0) {
+			var waterGroup = game.add.group(this.infoGroup);
+			this.water.onAdd = function (current, diff, left) {
 				waterGroup.removeAll(true);
-				_this.waterButton.destroy();
-				game.add.text(_this.width/2, 50, LANG.TEXT.maxLevel, {
-					font: '60pt ' +  GLOBAL.FONT,
-					fill: '#5555ff'
-				}, _this.infoGroup).anchor.set(0.5);
-			}
-		};
-		this.water.update();
+				for (var i = 0; i < (current + left); i++) {
+					game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
+				}
+				if (diff !== 0) {
+					EventSystem.publish(GLOBAL.EVENT.plantWaterUp, [this.id, this.value]);
+				}
+			};
+			this.water.onMax = function () {
+				_this.level.value++;
+				//_this.water.max = _this.level.value + 1;  // For plant leveling
+				if (_this.level.value === _this.level.max) {
+					_this.water.onAdd = null;
+					_this.water.onMax = null;
+					waterGroup.removeAll(true);
+					maxLevel();
+				}
+			};
+			this.water.update();
+		} else {
+			maxLevel();
+		}
 	}
 
 	fade(this.infoGroup, true, 0.2);

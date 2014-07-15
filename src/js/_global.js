@@ -11,6 +11,8 @@ var GLOBAL = {
 		waterAdded:     'waterAdded',     // [total amount, added amount]
 		plantPress:     'plantPress',     // [garden plant]
 		waterPlant:     'waterPlant',     // [garden plant]
+		plantWaterUp:   'plantWaterUp',   // [id, current]
+		plantLevelUp:   'plantLevelUp',   // [id, level, type]
 		skippable:      'skippable'       // [TimelineMax object]
 	},
 

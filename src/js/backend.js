@@ -21,7 +21,12 @@ var Backend = {
 	 * @returns {Object} An object with data about the garden.
 	 */
 	getGarden: function () {
-		return [];
+		var data = [
+			{ id: '00', x: 0, y: 0, level: 1 },
+			{ id: '20', x: 2, y: 0, level: 3 }
+		];
+
+		return data;
 	},
 
 	/**
@@ -37,6 +42,7 @@ var Backend = {
 			mode: [0, 1, 2],
 			roundsPerMode: 3
 		};
+
 		if (!Array.isArray(data.representation)) {
 			data.representation = [data.representation];
 		}

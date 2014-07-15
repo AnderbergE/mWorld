@@ -5,7 +5,6 @@
 	var session;
 	var trial = {};
 	var wasCorrect = true;
-	// var garden;
 
 	function reset () {
 		session = { modes: [], tries: 0, corrects: 0, water: 0 };
@@ -56,14 +55,15 @@
 		session.water++;
 	}
 
-	// function garden () {
-
-	// }
+	function plantLevel (id, level) {
+		Backend.put([{ id: id, level: level }]);
+	}
 
 
 	reset();
 
 
+	/* Session related */
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange,
 		function (mode) { modeChange(mode); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.tryNumber,
@@ -74,5 +74,10 @@
 		function (/*current, diff*/) { water(); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.numberPress,
 		function (value, representations) { numberPress(value, representations); }, true);
-	/* Garden */
+
+	/* Garden related */
+	EventSystem.subscribe(GLOBAL.EVENT.plantLevelUp,
+		function (id, level) { plantLevel(id, level); }, true);
+	/* EventSystem.subscribe(GLOBAL.EVENT.plantWaterUp,
+		function (id, current) { plantWater(id, current); }, true); */
 })();

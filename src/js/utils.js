@@ -26,8 +26,9 @@ Object.defineProperty(Counter.prototype, 'left', {
 Object.defineProperty(Counter.prototype, 'value', {
 	get: function() { return this._value; },
 	set: function(value) {
+		var diff = value - this._value;
 		this._value = value;
-		if (this.onAdd) { this.onAdd(this._value, this.left); }
+		if (this.onAdd) { this.onAdd(this._value, diff, this.left); }
 
 		if (this._value >= this.max) {
 			if (this._loop) { this._value = 0; }
@@ -38,7 +39,7 @@ Object.defineProperty(Counter.prototype, 'value', {
 
 /** Calls the onAdd function. */
 Counter.prototype.update = function () {
-	if (this.onAdd) { this.onAdd(this._value, this.left); }
+	if (this.onAdd) { this.onAdd(this._value, 0, this.left); }
 };
 
 
