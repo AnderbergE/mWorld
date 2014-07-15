@@ -3,7 +3,7 @@ function Player () {
 	this._agent = null;
 	this._water = 0;
 
-	var temp = Backend.getUser();
+	var temp = Backend.getPlayer();
 	this.agent = GLOBAL.AGENT[temp.agent];
 	this.water = temp.water;
 

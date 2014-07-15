@@ -8,7 +8,8 @@ var Backend = {
 	 */
 	get: function (action) {
 		var data = null;
-		if (Routes && Routes[action]) {
+
+		if (typeof Routes !== 'undefined' && Routes[action]) {
 			var url = Routes[action]();
 
 			var getter = function () {
@@ -26,6 +27,7 @@ var Backend = {
 			};
 			getter();
 		}
+
 		return data;
 	},
 
@@ -33,7 +35,7 @@ var Backend = {
 	 * PUT data.
 	 */
 	put: function (action, data) {
-		if (Routes && Routes[action]) {
+		if (typeof Routes !== 'undefined' && Routes[action]) {
 			var url = Routes[action]();
 			var jsonData = JSON.stringify(data);
 
@@ -58,11 +60,14 @@ var Backend = {
 	 * GET the data of the player.
 	 * @returns {Object} An object with data about the player.
 	 */
-	getUser: function () {
-		var data = {
-			agent: 0,
-			water: 2
-		};
+	getPlayer: function () {
+		var data = this.get('current_api_players_path');
+		if (!data) {
+			data = {
+				agent: 0,
+				water: 2
+			};
+		}
 
 		return data;
 	},
