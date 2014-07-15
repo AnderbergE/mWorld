@@ -10,13 +10,22 @@
 		session = { modes: [], tries: 0, corrects: 0, water: 0 };
 	}
 
-	function modeChange (mode) {
-		if (mode === GLOBAL.MODE.outro) {
+
+	function stateChange () {
+		if (session.tries > 0) {
 			Backend.putSession(session);
-		} else if (mode !== GLOBAL.MODE.intro) {
-			session.modes.push({ type: mode, results: [] });
-		} else {
+		}
+		if (session.water > 0) {
+			Backend.putPlayer({ water: player.water });
+		}
+	}
+
+
+	function modeChange (mode) {
+		if (mode === GLOBAL.MODE.intro) {
 			reset();
+		} else if (mode !== GLOBAL.MODE.outro) {
+			session.modes.push({ type: mode, results: [] });
 		}
 	}
 
@@ -55,13 +64,19 @@
 		session.water++;
 	}
 
+
 	function plantLevel (id, level) {
 		Backend.putGardenUpdates([{ id: id, level: level }]);
+		Backend.putPlayer({ water: player.water });
 	}
 
 
 	reset();
 
+
+	/* General */
+	EventSystem.subscribe(GLOBAL.EVENT.stateShutDown,
+		function (/*state*/) { stateChange(); }, true);
 
 	/* Session related */
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange,

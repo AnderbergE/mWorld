@@ -2,17 +2,21 @@
 var GLOBAL = {
 
 	EVENT: {
-		numberPress:    'numberPress',    // [number, representations]
-		textPress:      'textPress',      // [text]
+		stateShutDown:  'stateShutDown',  // [state]
+
 		subgameStarted: 'subgameStarted', // [game type]
-		modeChange:     'modeChange',     // [newMode]
+		modeChange:     'modeChange',     // [new mode]
 		tryNumber:      'tryNumber',      // [guess, correct number]
 		agentGuess:     'agentGuess',     // [guess, correct number]
+		numberPress:    'numberPress',    // [number, representations]
+		textPress:      'textPress',      // [text]
 		waterAdded:     'waterAdded',     // [total amount, added amount]
+
 		plantPress:     'plantPress',     // [garden plant]
 		waterPlant:     'waterPlant',     // [garden plant]
 		plantWaterUp:   'plantWaterUp',   // [id, current]
 		plantLevelUp:   'plantLevelUp',   // [id, level, type]
+
 		skippable:      'skippable',      // [TimelineMax object]
 		connection:     'connection'      // [status]
 	},

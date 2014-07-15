@@ -96,6 +96,7 @@ function onShutDown () {
 	TweenMax.killAll();
 	this.sound.stopAll();
 	this.sound.onSoundDecode.removeAll();
+	EventSystem.publish(GLOBAL.EVENT.stateShutDown, this);
 	EventSystem.clear();
 }
 

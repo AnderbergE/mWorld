@@ -58,6 +58,8 @@ var Backend = {
 			this.ajax(settings).done(function () {
 				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
 			});
+		} else {
+			console.log('PUT (' + routeName + '): ' + JSON.stringify(data));
 		}
 	},
 
@@ -124,7 +126,13 @@ var Backend = {
 		return data;
 	},
 
-
+	/**
+	 * PUT player updates.
+	 * @param {Object} data - The player updates
+	 */
+	putPlayer: function (data) {
+		this.put('', data);
+	},
 
 	/**
 	 * PUT garden updates.

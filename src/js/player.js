@@ -5,7 +5,7 @@ function Player () {
 
 	var temp = Backend.getPlayer();
 	this.agent = GLOBAL.AGENT[temp.agent];
-	this.water = temp.water;
+	this._water = temp.water;
 
 	return this;
 }
