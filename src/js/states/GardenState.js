@@ -36,22 +36,23 @@ GardenState.prototype.create = function () {
 	var startPos = 200;
 	var width = this.world.width/columns;
 	var height = (this.world.height - startPos)/rows;
-	var id, level, water, i;
+	var type, level, water, i;
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
-			id = row + '' + column;
 			level = 0;
 			water = 0;
 
 			for (i = 0; i < this.gardenData.length; i++) {
-				if (this.gardenData[i].id === id) {
+				if (this.gardenData[i].x === column &&
+					this.gardenData[i].y === row) {
+					type = this.gardenData[i].type || 0;
 					level = this.gardenData[i].level || 0;
 					water = this.gardenData[i].water || 0;
 					break;
 				}
 			}
 
-			this.world.add(new GardenPlant(id, level, water, column*width, startPos+row*height, width, height));
+			this.world.add(new GardenPlant(column, row, column*width, startPos+row*height, width, height, type, level, water));
 		}
 	}
 
@@ -151,10 +152,11 @@ GardenState.prototype.shutdown = onShutDown;
 
 GardenPlant.prototype = Object.create(Phaser.Group.prototype);
 GardenPlant.prototype.constructor = GardenPlant;
-function GardenPlant (id, level, water, x, y, width, height) {
+function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	var _this = this;
-	this.plantId = id;
+	this.column = column;
+	this.row = row;
 	this.x = x;
 	this.y = y;
 	this.plantHeight = height;
@@ -167,6 +169,8 @@ function GardenPlant (id, level, water, x, y, width, height) {
 	var plant = game.add.sprite(0, 0, bmd, null, this);
 	plant.inputEnabled = true;
 	plant.events.onInputDown.add(this.down, this);
+
+	this.type = type;
 
 	// this.water = new Counter(level+1, true, water); // For plant leveling
 	this.water = new Counter(1, true, water);
@@ -183,7 +187,7 @@ function GardenPlant (id, level, water, x, y, width, height) {
 				onComplete: function () { _this.water.update(); }
 			});
 			EventSystem.publish(GLOBAL.EVENT.plantLevelUp,
-				[_this.plantId, this.value]);
+				[_this.column, _this.row, this.value, _this.type]);
 		} else {
 			plant.tint = tint;
 		}
@@ -242,7 +246,8 @@ GardenPlant.prototype.down = function () {
 					game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
 				}
 				if (diff !== 0) {
-					EventSystem.publish(GLOBAL.EVENT.plantWaterUp, [this.id, this.value]);
+					EventSystem.publish(GLOBAL.EVENT.plantWaterUp,
+						[_this.column, _this.row, this.value]);
 				}
 			};
 			this.water.onMax = function () {

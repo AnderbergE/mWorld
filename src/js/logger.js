@@ -65,8 +65,8 @@
 	}
 
 
-	function plantLevel (id, level) {
-		Backend.putGardenUpdates([{ id: id, level: level }]);
+	function plantLevel (x, y, level, type) {
+		Backend.putGardenUpdates([{ x: x, y: y, level: level, type: type }]);
 		Backend.putPlayer({ water: player.water });
 	}
 
@@ -92,7 +92,7 @@
 
 	/* Garden related */
 	EventSystem.subscribe(GLOBAL.EVENT.plantLevelUp,
-		function (id, level) { plantLevel(id, level); }, true);
+		function (x, y, level, type) { plantLevel(x, y, level, type); }, true);
 	/* EventSystem.subscribe(GLOBAL.EVENT.plantWaterUp,
 		function (id, current) { plantWater(id, current); }, true); */
 })();

@@ -14,8 +14,8 @@ var GLOBAL = {
 
 		plantPress:     'plantPress',     // [garden plant]
 		waterPlant:     'waterPlant',     // [garden plant]
-		plantWaterUp:   'plantWaterUp',   // [id, current]
-		plantLevelUp:   'plantLevelUp',   // [id, level, type]
+		plantWaterUp:   'plantWaterUp',   // [x, y, current]
+		plantLevelUp:   'plantLevelUp',   // [x, y, level, type]
 
 		skippable:      'skippable',      // [TimelineMax object]
 		connection:     'connection'      // [status]
