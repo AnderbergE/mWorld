@@ -13,14 +13,11 @@ function LizardJungleGame () {
 LizardJungleGame.prototype.preload = function () {
 	this.load.audio('lizardPlaceholder', LANG.SPEECH.AGENT.hmm);
 
-	this.load.image('lizardBg',      'assets/img/subgames/lizardjungle/bg.jpg');
+	this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
 	this.load.image('lizardBody',    'assets/img/subgames/lizardjungle/body.png');
 	this.load.image('lizardHead',    'assets/img/subgames/lizardjungle/head.png');
 	this.load.image('lizardMouth',   'assets/img/subgames/lizardjungle/mouth.png');
 	this.load.image('lizardTounge',  'assets/img/subgames/lizardjungle/tounge.png');
-	this.load.image('lizardTree',    'assets/img/subgames/lizardjungle/tree.png');
-	this.load.image('lizardTreeTop', 'assets/img/subgames/lizardjungle/top.png');
-	this.load.image('lizardAnt',     'assets/img/subgames/lizardjungle/ant.png');
 	this.load.image('lizardArrow',   'assets/img/objects/arrow.png');
 };
 
@@ -29,7 +26,7 @@ LizardJungleGame.prototype.create = function () {
 	var _this = this; // Subscriptions do not have access to 'this' object
 	var coords = {
 		tree: {
-			x: 600, y: 10
+			x: 200, y: 220, height: 550, offset: -10
 		},
 		agent: {
 			start: { x: 1300, y: 700 },
@@ -43,7 +40,7 @@ LizardJungleGame.prototype.create = function () {
 	];
 
 	// Add main game
-	this.add.sprite(0, 0, 'lizardBg', null, this.gameGroup);
+	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
 
 	// Agent is added to the game in the superclass, so set up correct start point.
 	this.agent.x = coords.agent.start.x;
@@ -61,19 +58,14 @@ LizardJungleGame.prototype.create = function () {
 
 	// Setup tree and its branches
 	var tree = this.add.group(this.gameGroup);
-	tree.x = 200;
-	tree.y = 700;
-	tree.boleHeight = 0;
-	tree.pieces = [];
-	for (var i = 1; i <= this.amount; i++) {
-		tree.pieces.push(this.add.sprite(0, tree.boleHeight, 'lizardTree', null, tree));
-		tree.pieces[i-1].anchor.set(0.5, 1);
-		tree.boleHeight -= 78;
+	tree.x = coords.tree.x;
+	tree.y = coords.tree.y;
+	this.add.sprite(0, 0, 'lizard', 'bole', tree).anchor.set(0.5);
+	for (var i = this.amount - 2; i >= 0; i--) {
+		this.add.sprite(0, tree.height + coords.tree.offset, 'lizard', 'bole', tree).anchor.set(0.5);
 	}
-	this.add.sprite(0, tree.boleHeight + 5, 'lizardTreeTop', null, tree).anchor.set(0.5, 1);
-	tree.scale.set(500/-tree.boleHeight);
-	tree.boleHeight = -tree.boleHeight * tree.scale.y;
-	var shootOffset = 78 * tree.scale.y / 2;
+	tree.scale.set(coords.tree.height/tree.height);
+	this.add.sprite(tree.x - 40, tree.y + tree.height/tree.length, 'lizard', 'crown', this.gameGroup).anchor.set(0.5, 1);
 
 	// Setup lizard
 	var lizard = new LizardJungleLizard(575, 500);
@@ -86,9 +78,9 @@ LizardJungleGame.prototype.create = function () {
 	var buttons = new ButtonPanel(this.amount, this.representation, {
 		method: this.method,
 		x: this.world.width-(this.representation.length*75)-25,
-		y: tree.y - tree.boleHeight,
+		y: tree.y - tree.height / tree.length / 2,
 		vertical: true,
-		size: tree.boleHeight,
+		size: tree.height,
 		reversed: true,
 		background: 'wood',
 		onClick: pushNumber
@@ -124,8 +116,8 @@ LizardJungleGame.prototype.create = function () {
 		_this.agent.eyesFollowObject(lizard.tounge.world);
 
 		var result = _this.tryNumber(number);
-		var treePiece = tree.pieces[number-1].world;
-		var hit = { x: treePiece.x, y: treePiece.y - shootOffset };
+		var treePiece = tree.children[tree.length - number].world;
+		var hit = { x: treePiece.x, y: treePiece.y };
 
 		var t = new TimelineMax();
 		if (!result) { // Correct :)
@@ -175,18 +167,17 @@ LizardJungleGame.prototype.create = function () {
 	}
 
 	function newFood () {
-		target = _this.add.sprite(tree.x, 750, 'lizardAnt', null, _this.gameGroup);
+		target = _this.add.sprite(tree.x, 750, 'lizard', 'ant', _this.gameGroup);
 		target.tint = tint[_this.currentNumber];
 		target.visible = false;
 		target.anchor.set(0.5);
-		target.scale.set(0.25);
 		_this.gameGroup.bringToTop(lizard);
 
 		var t = new TimelineMax();
 		t.addCallback(function () { target.visible = true; });
-		t.add(new TweenMax(target, 1, { y: tree.pieces[0].world.y - shootOffset }));
+		t.add(new TweenMax(target, 1, { y: tree.children[tree.length - 1].world.y }));
 		for (var i = 1; i < _this.currentNumber; i++) {
-			t.add(new TweenMax(target, 0.8, { y: tree.pieces[i].world.y - shootOffset }));
+			t.add(new TweenMax(target, 0.8, { y: tree.children[tree.length - 1 - i].world.y }));
 		}
 		return t;
 	}
@@ -216,18 +207,18 @@ LizardJungleGame.prototype.create = function () {
 	}
 
 	function pointAtBole (number) {
-		var first = tree.pieces[0];
-		var center = { x: first.width*tree.scale.x/2, y: first.height*tree.scale.y/2*1.3 }; // 1.2 is a offset
+		var first = tree.children[tree.length - 1];
 		var start = first.world;
 		var offset = 70;
-		var arrow = game.add.sprite(start.x + center.x + offset, start.y - center.y, 'lizardArrow', null, this.gameGroup);
+		var arrow = game.add.sprite(start.x + offset, start.y, 'lizardArrow', null, this.gameGroup);
+		arrow.anchor.set(0, 0.5);
 		arrow.visible = false;
 
 		var t = new TimelineMax();
 		t.addCallback(function () { arrow.visible = true; });
 		for (var i = 0; i < number; i++) {
-			var pos = tree.pieces[i].world;
-			if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y - center.y })); }
+			var pos = tree.children[tree.length - 1 - i].world;
+			if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y })); }
 			t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
 		}
 		t.addCallback(function () { arrow.destroy(); }, '+=0.5');
@@ -262,9 +253,9 @@ LizardJungleGame.prototype.create = function () {
 				t.skippable();
 				t.add(newFood());
 				//t.addSound('lizardPlaceholder', lizard);
-				var hit1 = { x: tree.x, y: tree.pieces[1].world.y - shootOffset };
+				var hit1 = { x: tree.x, y: tree.children[tree.length - 1 - 1].world.y };
 				t.add(lizard.shoot(hit1));
-				var hit2 = { x: tree.x, y: tree.pieces[3].world.y- shootOffset };
+				var hit2 = { x: tree.x, y: tree.children[tree.length - 1 - 3].world.y };
 				t.add(lizard.shoot(hit2));
 				t.add(instructionIntro());
 			} else {
