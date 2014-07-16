@@ -32,23 +32,19 @@ window.onload = function () {
 	if (document.querySelector('#game')) {
 		// Do not start game if the element does not exist.
 
-		if (typeof Routes === 'undefined' || Routes === null) {
-			console.log('You are running on a local server, no data will be sent.');
-		}
-
 		player = new Player();
 
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
 
 		game.state.add('Boot', BootState);
-		game.state.add(GLOBAL.STATE.entry,          EntryState);
-		game.state.add(GLOBAL.STATE.playerSetup,    PlayerSetupState);
-		game.state.add(GLOBAL.STATE.garden,         GardenState);
-		game.state.add(GLOBAL.STATE.lizardGame,     LizardJungleGame);
-		game.state.add(GLOBAL.STATE.birdheroGame,   BirdheroGame);
-		game.state.add(GLOBAL.STATE.balloonGame,    BalloonGame);
-		game.state.add(GLOBAL.STATE.beeGame,        BeeFlightGame);
-		game.state.add(GLOBAL.STATE.chooseScenario, ChooseScenarioState);
+		game.state.add(GLOBAL.STATE.entry,        EntryState);
+		game.state.add(GLOBAL.STATE.playerSetup,  PlayerSetupState);
+		game.state.add(GLOBAL.STATE.garden,       GardenState);
+		game.state.add(GLOBAL.STATE.lizardGame,   LizardJungleGame);
+		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
+		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
+		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
+		game.state.add(GLOBAL.STATE.debug,        ChooseScenarioState);
 
 		game.state.start('Boot');
 	}
@@ -136,7 +132,19 @@ BootState.prototype.create = function () {
 BootState.prototype.isLoaded = false;
 BootState.prototype.bootGame = function () {
 	if (this.isLoaded) {
-		game.state.start(GLOBAL.STATE.entry);
+
+		if (typeof Routes === 'undefined' || Routes === null) {
+			console.warn('You are missing a route to the server, no data will be fetched or sent.');
+		}
+
+		if (window.location.hostname.toLowerCase() === 'localhost' ||
+			window.location.hostname === '127.0.0.1') {
+			console.log('You are running on localhost, entering debug mode :)');
+			game.state.start(GLOBAL.STATE.debug);
+
+		} else {
+			game.state.start(GLOBAL.STATE.entry);
+		}
 	} else {
 		BootState.prototype.isLoaded = true;
 	}

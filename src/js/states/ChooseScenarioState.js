@@ -5,6 +5,9 @@ function ChooseScenarioState () {}
 ChooseScenarioState.prototype.create = function () {
 	this.add.image(0, 0, 'entryBg');
 
+	console.log('Setting agent to: ' + GLOBAL.AGENT[0].prototype.id);
+	player.agent = GLOBAL.AGENT[0];
+
 	var subgame = null;
 	var amount = null;
 	var representation = null;
@@ -138,8 +141,8 @@ ChooseScenarioState.prototype.create = function () {
 
 	/* Start game (save current options) */
 	var startButton = new TextButton('   Start', {
-		x: this.world.centerX-150,
-		y: 550,
+		x: this.world.centerX - 150,
+		y: 520,
 		fontSize: 30,
 		background: 'wood',
 		onClick: function () {
@@ -168,6 +171,19 @@ ChooseScenarioState.prototype.create = function () {
 	startButton.bg.width = 300;
 	this.world.add(startButton);
 
+	/* In case you want to check out garden instead. */
+	var gotoGarden = new TextButton('Go to garden', {
+		x: this.world.width - 250,
+		y: 680,
+		fontSize: 20,
+		background: 'wood',
+		onClick: function () {
+			game.state.start(GLOBAL.STATE.garden);
+		}
+	});
+	gotoGarden._text.anchor.set(0, 0.5);
+	gotoGarden.bg.width = 230;
+	this.world.add(gotoGarden);
 
 
 	/* Have the last press predefined */
