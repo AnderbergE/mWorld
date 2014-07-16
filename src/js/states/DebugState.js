@@ -1,8 +1,8 @@
 /* The menu for choosing agent, */
-function ChooseScenarioState () {}
+function DebugState () {}
 
 /* Phaser state function */
-ChooseScenarioState.prototype.create = function () {
+DebugState.prototype.create = function () {
 	this.add.image(0, 0, 'entryBg');
 
 	console.log('Setting agent to: ' + GLOBAL.AGENT[0].prototype.id);
@@ -228,4 +228,4 @@ ChooseScenarioState.prototype.create = function () {
 };
 
 /* Phaser state function */
-ChooseScenarioState.prototype.shutdown = onShutDown;
+DebugState.prototype.shutdown = onShutDown;

@@ -44,7 +44,7 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
 		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
-		game.state.add(GLOBAL.STATE.debug,        ChooseScenarioState);
+		game.state.add(GLOBAL.STATE.debug,        DebugState);
 
 		game.state.start('Boot');
 	}
