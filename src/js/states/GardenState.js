@@ -7,7 +7,7 @@ GardenState.prototype.preload = function() {
 
 	this.load.image('gardenBg', 'assets/img/garden/bg.png');
 
-	this.gardenData = Backend.getGarden();
+	this.gardenData = Backend.getGarden() || [];
 };
 
 /* Phaser state function */

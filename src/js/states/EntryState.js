@@ -15,25 +15,31 @@ EntryState.prototype.create = function () {
 	});
 	title.anchor.set(0.5);
 
-	var text = this.add.text(this.world.centerX, this.world.centerY, LANG.TEXT.start, {
+	var start = this.add.text(this.world.centerX, this.world.centerY, LANG.TEXT.start, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#dd00dd'
 	});
-	text.anchor.set(0.5);
-	text.inputEnabled = true;
-	text.events.onInputDown.add(function () {
-		this.state.start(GLOBAL.STATE.garden);
+	start.anchor.set(0.5);
+	start.inputEnabled = true;
+	start.events.onInputDown.add(function () {
+		// Start the game, if player has an agent, go to garden, otherwises choose agent.
+		if (player.agent) {
+			this.state.start(GLOBAL.STATE.garden);
+		} else {
+			this.state.start(GLOBAL.STATE.playerSetup);
+		}
+
 	}, this);
 
 	var credits = this.add.text(this.world.centerX, this.world.centerY/0.75, LANG.TEXT.credits, {
-		font: '50pt ' +  GLOBAL.FONT,
+		font: '30pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
 	credits.anchor.set(0.5);
 	credits.inputEnabled = true;
 	credits.events.onInputDown.add(function () {
 		fade(credits, false, 0.3);
-		fade(text, false, 0.3);
+		fade(start, false, 0.3);
 		fade(allCredits, true);
 		rolling.restart();
 		cover.visible = true;
@@ -45,7 +51,7 @@ EntryState.prototype.create = function () {
 	cover.inputEnabled = true;
 	cover.events.onInputDown.add(function () {
 		fade(credits, true);
-		fade(text, true);
+		fade(start, true);
 		fade(allCredits, false, 0.3);
 		rolling.pause();
 		TweenMax.to(cover, 0.3, { alpha: 0, onComplete: function () { cover.visible = false; } });

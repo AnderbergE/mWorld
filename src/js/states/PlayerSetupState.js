@@ -36,6 +36,7 @@ PlayerSetupState.prototype.create = function () {
 		a.body.inputEnabled = true;
 		a.body.events.onInputDown.add(clickAgent, a);
 		a.itsame = game.add.audio(a.id + 'ChooseMe');
+		a.key = key;
 		agents.add(a);
 	}
 
@@ -48,7 +49,11 @@ PlayerSetupState.prototype.create = function () {
 	function clickAgent () {
 		if (a === this) {
 			a.fistPump()
-				.addCallback(function () { _this.state.start(GLOBAL.STATE.garden); });
+				.addCallback(function () {
+					Backend.putPlayer({ agent: { type: a.key } });
+					player.agent = GLOBAL.AGENT[a.key];
+					_this.state.start(GLOBAL.STATE.garden);
+				});
 			return;
 		}
 
@@ -56,7 +61,9 @@ PlayerSetupState.prototype.create = function () {
 		a = this;
 		TweenMax.to(a.scale, slideTime, scaleActive); // Scale up the new agent
 		// Move the agent group to get the sliding effect on all agents
-		TweenMax.to(agents, slideTime, { x: -(agents.children.indexOf(a) * spacing), ease: Power2.easeOut,
+		TweenMax.to(agents, slideTime, {
+			x: -(agents.children.indexOf(a) * spacing),
+			ease: Power2.easeOut,
 			onStart: function () { stopTalk(); },
 			onComplete: function () { a.say(a.itsame).play(); }
 		});

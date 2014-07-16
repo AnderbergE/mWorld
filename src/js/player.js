@@ -3,9 +3,13 @@ function Player () {
 	this._agent = null;
 	this._water = 0;
 
-	var temp = Backend.getPlayer();
-	this.agent = GLOBAL.AGENT[temp.agent];
-	this._water = temp.water;
+	var data = Backend.getPlayer();
+	if (data) {
+		if (typeof data.agent !== 'undefined' && data.agent !== null) {
+			this.agent = GLOBAL.AGENT[data.agent];
+		}
+		this._water = data.water || 0;
+	}
 
 	return this;
 }

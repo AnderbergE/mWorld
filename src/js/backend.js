@@ -69,15 +69,7 @@ var Backend = {
 	 * @returns {Object} An object with data about the player.
 	 */
 	getPlayer: function () {
-		var data = this.get('current_api_players_path');
-		if (!data) {
-			data = {
-				agent: 0,
-				water: 2
-			};
-		}
-
-		return data;
+		return this.get('current_api_players_path');
 	},
 
 	/**
@@ -85,15 +77,7 @@ var Backend = {
 	 * @returns {Object} An object with data about the garden.
 	 */
 	getGarden: function () {
-		var data = this.get('current_api_gardens_path');
-		if (!data) {
-			data = [
-				{ id: '00', x: 0, y: 0, level: 1 },
-				{ id: '20', x: 2, y: 0, level: 3 }
-			];
-		}
-
-		return data;
+		return this.get('current_api_gardens_path');
 	},
 
 	/**
@@ -101,33 +85,28 @@ var Backend = {
 	 * @returns {Object} An object with data about the next game.
 	 */
 	getScenario: function () {
-		var data = this.get('current_api_scenarios_path');
-		if (!data) {
-			data = {
-				subgame: 1,
-				method: 0,
-				representation: [0],
-				range: [1, 4],
-				mode: [0, 1, 2],
-				roundsPerMode: 3
-			};
+		var data;
+		while (true) {
+			data = this.get('current_api_scenarios_path');
+
+			if (!data.subgame || !data.method || !data.range || !data.representation || !data.mode) {
+				continue;
+			} else {
+				break;
+			}
 		}
 
 		if (!Array.isArray(data.representation)) {
 			data.representation = [data.representation];
 		}
-		if (!Array.isArray(data.range)) {
-			data.range = [data.range];
-		}
-		if (data.mode) {
-			if (!Array.isArray(data.mode)) {
-				data.mode = [data.mode];
-			}
 
-			// Add intro and outro for the game.
-			data.mode.unshift(GLOBAL.MODE.intro);
-			data.mode.push(GLOBAL.MODE.outro);
+		if (!Array.isArray(data.mode)) {
+			data.mode = [data.mode];
 		}
+
+		// Add intro and outro for the game.
+		data.mode.unshift(GLOBAL.MODE.intro);
+		data.mode.push(GLOBAL.MODE.outro);
 
 		return data;
 	},

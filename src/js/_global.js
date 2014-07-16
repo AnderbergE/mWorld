@@ -50,8 +50,8 @@ var GLOBAL = {
 		playerShow: 1,
 		agentTry:   2,
 		agentDo:    3,
-		intro:      4,
-		outro:      5,
+		intro:      10,
+		outro:      11,
 	},
 
 	NUMBER_REPRESENTATION: {
