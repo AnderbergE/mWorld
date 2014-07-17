@@ -57,7 +57,7 @@ DebugState.prototype.create = function () {
 		amount = this;
 	};
 
-	var onefourButton = new TextButton('1 - 4', {
+	var onefourButton = new TextButton('1 - ' + GLOBAL.NUMBER_RANGE[0], {
 		x: 50,
 		y: 200,
 		fontSize: fontSize,
@@ -67,10 +67,10 @@ DebugState.prototype.create = function () {
 	onefourButton._text.anchor.set(0, 0.5);
 	onefourButton.bg.events.onInputUp.removeAll();
 	onefourButton.bg.width = buttonSize;
-	onefourButton.amount = 4;
+	onefourButton.amount = GLOBAL.NUMBER_RANGE[0];
 	this.world.add(onefourButton);
 
-	var onenineButton = new TextButton('1 - 9', {
+	var onenineButton = new TextButton('1 - ' + GLOBAL.NUMBER_RANGE[1], {
 		x: 50 + buttonSize + offset,
 		y: 200,
 		fontSize: fontSize,
@@ -80,7 +80,7 @@ DebugState.prototype.create = function () {
 	onenineButton._text.anchor.set(0, 0.5);
 	onenineButton.bg.events.onInputUp.removeAll();
 	onenineButton.bg.width = buttonSize;
-	onenineButton.amount = 9;
+	onenineButton.amount = GLOBAL.NUMBER_RANGE[1];
 	this.world.add(onenineButton);
 
 

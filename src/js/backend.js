@@ -85,16 +85,9 @@ var Backend = {
 	 * @returns {Object} An object with data about the next game.
 	 */
 	getScenario: function () {
-		var data;
-		while (true) {
-			data = this.get('current_api_scenarios_path');
+		var data = this.get('current_api_scenarios_path');
 
-			if (!data.subgame || !data.method || !data.range || !data.representation || !data.mode) {
-				continue;
-			} else {
-				break;
-			}
-		}
+		data.amount = GLOBAL.NUMBER_RANGE[data.range];
 
 		if (!Array.isArray(data.representation)) {
 			data.representation = [data.representation];
