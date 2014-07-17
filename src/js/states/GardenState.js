@@ -122,6 +122,14 @@ GardenState.prototype.create = function () {
 		}
 	});
 
+	// Check that backend accepts plant upgrade
+	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
+		var waterProp = 'remaining_water'; // Cheap way to ignore jshint camel case warning
+		if (data[waterProp] !== player.water) {
+			player.water = data[waterProp];
+		}
+	});
+
 
 	/* When the state starts: */
 	var t = new TimelineMax();
@@ -189,6 +197,7 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 		newPlant.scale.set(0.5); // TODO: We should not scale this, use better graphics.
 
 		if (diff > 0) {
+			// Plant has leveled up by watering.
 			newPlant.alpha = 0;
 
 			TweenMax.to(newPlant, 2, {
@@ -199,13 +208,24 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 					plant = newPlant;
 				}
 			});
-			EventSystem.publish(GLOBAL.EVENT.plantLevelUp,
-				[_this.column, _this.row, current, _this.type]);
+
+			Backend.putUpgradePlant({ field: { x: x, y: y, level: level, type: type }});
+
 		} else {
+			// Could be: Setup of plant from constructor
+			// Could be: Backend says that water is missing
+			if (plant) { plant.destroy(); }
 			plant = newPlant;
 		}
 	};
 	this.level.update();
+
+	// Check that backend accepts plant upgrade
+	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
+		if (!data.success && data.x === _this.column && data.y === _this.row ) {
+			_this.level = data.level;
+		}
+	});
 
 	return this;
 }
@@ -257,10 +277,6 @@ GardenPlant.prototype.down = function () {
 				waterGroup.removeAll(true);
 				for (var i = 0; i < (current + left); i++) {
 					game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
-				}
-				if (diff !== 0) {
-					EventSystem.publish(GLOBAL.EVENT.plantWaterUp,
-						[_this.column, _this.row, this.value]);
 				}
 			};
 			this.water.onMax = function () {

@@ -47,7 +47,7 @@ var Backend = {
 	 * @param {String} routeName - The name of the route function
 	 * @param {Object} data - The data to send (will be transformed to JSON-format)
 	 */
-	put: function (routeName, data) {
+	put: function (routeName, data, callback) {
 		if (typeof Routes !== 'undefined' && Routes[routeName]) {
 			var settings = {
 				url: Routes[routeName](),
@@ -55,8 +55,9 @@ var Backend = {
 				data: JSON.stringify(data)
 			};
 
-			this.ajax(settings).done(function () {
+			this.ajax(settings).done(function (data) {
 				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
+				callback(data);
 			});
 		} else {
 			console.log('PUT (' + routeName + '): ' + JSON.stringify(data));
@@ -116,8 +117,10 @@ var Backend = {
 	 * PUT garden updates.
 	 * @param {Object} data - The garden updates
 	 */
-	putGardenUpdates: function (data) {
-		this.put('', data);
+	putUpgradePlant: function (data) {
+		this.put('', data, function (data) {
+			EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
+		});
 	},
 
 	/**
