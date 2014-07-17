@@ -5,8 +5,10 @@ function DebugState () {}
 DebugState.prototype.create = function () {
 	this.add.image(0, 0, 'entryBg');
 
-	console.log('Setting agent to: ' + GLOBAL.AGENT[0].prototype.id);
-	player.agent = GLOBAL.AGENT[0];
+	if (!player.agent) {
+		console.log('Setting agent to: ' + GLOBAL.AGENT[0].prototype.id);
+		player.agent = GLOBAL.AGENT[0];
+	}
 
 	var subgame = null;
 	var range = null;
