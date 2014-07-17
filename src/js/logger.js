@@ -18,6 +18,7 @@
 		if (session.water > 0) {
 			Backend.putPlayer({ water: player.water });
 		}
+		reset();
 	}
 
 
