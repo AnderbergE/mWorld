@@ -5,6 +5,7 @@ function GardenState () {}
 GardenState.prototype.preload = function() {
 	this.load.audio('gardenSpeech', LANG.SPEECH.garden.speech); // audio sprite sheet
 
+	this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
 	this.load.image('gardenBg', 'assets/img/garden/bg.png');
 
 	this.gardenData = Backend.getGarden() || [];
@@ -39,15 +40,16 @@ GardenState.prototype.create = function () {
 	var type, level, water, i;
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
+			type = 1;
 			level = 0;
 			water = 0;
 
 			for (i = 0; i < this.gardenData.length; i++) {
 				if (this.gardenData[i].x === column &&
 					this.gardenData[i].y === row) {
-					type = this.gardenData[i].type || 0;
-					level = this.gardenData[i].level || 0;
-					water = this.gardenData[i].water || 0;
+					type = this.gardenData[i].type || type;
+					level = this.gardenData[i].level || level;
+					water = this.gardenData[i].water || water;
 					break;
 				}
 			}
@@ -166,30 +168,41 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	bmd.ctx.fillStyle = '#ffffff';
 	bmd.ctx.globalAlpha = 0.2;
 	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
-	var plant = game.add.sprite(0, 0, bmd, null, this);
-	plant.inputEnabled = true;
-	plant.events.onInputDown.add(this.down, this);
+	var trigger = this.create(0, 0, bmd);
+	trigger.inputEnabled = true;
+	trigger.events.onInputDown.add(this.down, this);
 
 	this.type = type;
+	var plant = null;
 
 	// this.water = new Counter(level+1, true, water); // For plant leveling
 	this.water = new Counter(1, true, water);
 
-	this.level = new Counter(3, false, level);
+	this.level = new Counter(5, false, level);
 	this.level.onAdd = function (current, diff) {
-		var tint = current === 1 ? 0x00ffff :
-			current === 2 ? 0xff00ff :
-			current === 3 ? 0xffff00 :
-			0xffffff;
-		if (diff) {
-			TweenMax.to(plant, 2, {
-				tint: tint,
-				onComplete: function () { _this.water.update(); }
+		if (current <= 0) {
+			return;
+		}
+
+		var newPlant = _this.create(width/2, height/2, 'garden', 'plant' + _this.type + '-' + current);
+		newPlant.anchor.set(0.5);
+		newPlant.scale.set(0.5); // TODO: We should not scale this, use better graphics.
+
+		if (diff > 0) {
+			newPlant.alpha = 0;
+
+			TweenMax.to(newPlant, 2, {
+				alpha: 1,
+				onComplete: function () {
+					_this.water.update();
+					if (plant) { plant.destroy(); }
+					plant = newPlant;
+				}
 			});
 			EventSystem.publish(GLOBAL.EVENT.plantLevelUp,
-				[_this.column, _this.row, this.value, _this.type]);
+				[_this.column, _this.row, current, _this.type]);
 		} else {
-			plant.tint = tint;
+			plant = newPlant;
 		}
 	};
 	this.level.update();
