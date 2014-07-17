@@ -9,12 +9,12 @@ DebugState.prototype.create = function () {
 	player.agent = GLOBAL.AGENT[0];
 
 	var subgame = null;
-	var amount = null;
+	var range = null;
 	var representation = null;
 	var method = null;
 
 	var offset = 10;
-	var i, t;
+	var i, t, key;
 
 
 	/* Subgame selection */
@@ -52,36 +52,29 @@ DebugState.prototype.create = function () {
 	/* Range selection */
 	buttonSize = 150;
 	fontSize = 33;
-	var amountClicker = function () {
-		if (amount !== this && amount) { amount.reset(); }
-		amount = this;
+	var rangeClicker = function () {
+		if (range !== this && range) { range.reset(); }
+		range = this;
 	};
 
-	var onefourButton = new TextButton('1 - ' + GLOBAL.NUMBER_RANGE[0], {
-		x: 50,
-		y: 200,
-		fontSize: fontSize,
-		background: 'wood',
-		onClick: amountClicker
-	});
-	onefourButton._text.anchor.set(0, 0.5);
-	onefourButton.bg.events.onInputUp.removeAll();
-	onefourButton.bg.width = buttonSize;
-	onefourButton.amount = GLOBAL.NUMBER_RANGE[0];
-	this.world.add(onefourButton);
-
-	var onenineButton = new TextButton('1 - ' + GLOBAL.NUMBER_RANGE[1], {
-		x: 50 + buttonSize + offset,
-		y: 200,
-		fontSize: fontSize,
-		background: 'wood',
-		onClick: amountClicker
-	});
-	onenineButton._text.anchor.set(0, 0.5);
-	onenineButton.bg.events.onInputUp.removeAll();
-	onenineButton.bg.width = buttonSize;
-	onenineButton.amount = GLOBAL.NUMBER_RANGE[1];
-	this.world.add(onenineButton);
+	var rangeButtons = [];
+	i = 0;
+	for (key in GLOBAL.NUMBER_RANGE) {
+		t = new TextButton('1 - ' + GLOBAL.NUMBER_RANGE[key], {
+			x: 50 + i*(buttonSize + offset),
+			y: 200,
+			fontSize: fontSize,
+			background: 'wood',
+			onClick: rangeClicker
+		});
+		t._text.anchor.set(0, 0.5);
+		t.bg.events.onInputUp.removeAll();
+		t.bg.width = buttonSize;
+		t.range = key;
+		this.world.add(t);
+		rangeButtons[key] = t;
+		i++;
+	}
 
 
 	/* Representation selection */
@@ -94,7 +87,7 @@ DebugState.prototype.create = function () {
 
 	var representationButtons = [];
 	i = 0;
-	for (var key in GLOBAL.NUMBER_REPRESENTATION) {
+	for (key in GLOBAL.NUMBER_REPRESENTATION) {
 		if (key === 'objects' || key === 'yesno') { continue; }
 		representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new NumberButton(4, GLOBAL.NUMBER_REPRESENTATION[key], {
 			x: 50 + i*(buttonSize + offset),
@@ -147,7 +140,7 @@ DebugState.prototype.create = function () {
 		background: 'wood',
 		onClick: function () {
 			if (!subgame || !subgame.gameState ||
-				!amount || !amount.amount ||
+				!range || !range.range ||
 				!representation || !representation.representations ||
 				!method || (typeof method.method === 'undefined')) {
 				return;
@@ -155,14 +148,14 @@ DebugState.prototype.create = function () {
 
 			/* Persistent save for ease of use. */
 			localStorage.chooseSubgame = subgame.gameState;
-			localStorage.chooseAmount = amount.amount;
+			localStorage.chooseRange = range.range;
 			localStorage.chooseRepresentation = representation.representations;
 			localStorage.chooseMethod = method.method;
 
 			game.state.start(subgame.gameState, true, false, {
 				method: method.method,
 				representation: representation.representations,
-				amount: amount.amount, // TODO: Use range instead
+				range: range.range,
 				roundsPerMode: 3
 			});
 		}
@@ -205,15 +198,9 @@ DebugState.prototype.create = function () {
 			subgame = gameButtons[3];
 			break;
 	}
-	switch (parseInt(localStorage.chooseAmount)) {
-		case 4:
-			onefourButton.bg.frame++;
-			amount = onefourButton;
-			break;
-		case 9:
-			onenineButton.bg.frame++;
-			amount = onenineButton;
-			break;
+	if (localStorage.chooseRange) {
+		rangeButtons[parseInt(localStorage.chooseRange)].bg.frame++;
+		range = rangeButtons[parseInt(localStorage.chooseRange)];
 	}
 	if (localStorage.chooseRepresentation) {
 		representationButtons[parseInt(localStorage.chooseRepresentation)].bg.frame++;

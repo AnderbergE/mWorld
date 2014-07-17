@@ -66,7 +66,7 @@ Subgame.prototype.init = function (options) {
 	/* Public variables */
 	this.method = options.method || GLOBAL.METHOD.count;
 	this.representation = options.representation;
-	this.amount = options.amount;
+	this.amount = GLOBAL.NUMBER_RANGE[options.range];
 	/* The current number to answer */
 	this.currentNumber = null;
 	/* The current mode running */

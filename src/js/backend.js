@@ -48,11 +48,12 @@ var Backend = {
 	 * @param {Object} data - The data to send (will be transformed to JSON-format)
 	 */
 	put: function (routeName, data, callback) {
+		var stringified = JSON.stringify({ magic: data });
 		if (typeof Routes !== 'undefined' && Routes[routeName]) {
 			var settings = {
 				url: Routes[routeName](),
 				type: 'POST',
-				data: JSON.stringify(data)
+				data: stringified
 			};
 
 			this.ajax(settings).done(function (data) {
@@ -60,7 +61,7 @@ var Backend = {
 				callback(data);
 			});
 		} else {
-			console.log('PUT (' + routeName + '): ' + JSON.stringify(data));
+			console.log('PUT (' + routeName + '): ' + stringified);
 		}
 	},
 
@@ -87,8 +88,6 @@ var Backend = {
 	 */
 	getScenario: function () {
 		var data = this.get('current_api_scenarios_path');
-
-		data.amount = GLOBAL.NUMBER_RANGE[data.range];
 
 		if (!Array.isArray(data.representation)) {
 			data.representation = [data.representation];

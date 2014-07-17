@@ -28,7 +28,7 @@ GardenState.prototype.create = function () {
 		y: 100,
 		background: 'wood',
 		onClick: function () {
-			game.state.start(GLOBAL.STATE.chooseScenario, true, false);
+			game.state.start(GLOBAL.STATE.debug, true, false);
 		}
 	}));
 
