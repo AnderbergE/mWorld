@@ -5,9 +5,7 @@ function Player () {
 
 	var data = Backend.getPlayer();
 	if (data) {
-		if (typeof data.agent !== 'undefined' && data.agent !== null) {
-			this.agent = GLOBAL.AGENT[data.agent];
-		}
+		this.agent = GLOBAL.AGENT[data.agent];
 		this._water = data.water || 0;
 	}
 

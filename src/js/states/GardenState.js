@@ -8,7 +8,7 @@ GardenState.prototype.preload = function() {
 	this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
 	this.load.image('gardenBg', 'assets/img/garden/bg.png');
 
-	this.gardenData = Backend.getGarden() || [];
+	this.gardenData = Backend.getGarden() || { fields: [] };
 };
 
 /* Phaser state function */
@@ -38,18 +38,20 @@ GardenState.prototype.create = function () {
 	var width = this.world.width/columns;
 	var height = (this.world.height - startPos)/rows;
 	var type, level, water, i;
+	var fields = this.gardenData.fields;
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
 			type = 1;
 			level = 0;
 			water = 0;
 
-			for (i = 0; i < this.gardenData.length; i++) {
-				if (this.gardenData[i].x === column &&
-					this.gardenData[i].y === row) {
-					type = this.gardenData[i].type || type;
-					level = this.gardenData[i].level || level;
-					water = this.gardenData[i].water || water;
+			for (i = 0; i < fields.length; i++) {
+				if (fields[i].x === column &&
+					fields[i].y === row) {
+					/*jshint camelcase:false */
+					type = fields[i].content_type || type;
+					/*jshint camelcase:true */
+					level = fields[i].level || level;
 					break;
 				}
 			}
@@ -124,10 +126,11 @@ GardenState.prototype.create = function () {
 
 	// Check that backend accepts plant upgrade
 	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
-		var waterProp = 'remaining_water'; // Cheap way to ignore jshint camel case warning
-		if (data[waterProp] !== player.water) {
-			player.water = data[waterProp];
+		/*jshint camelcase:false */
+		if (data.remaining_water !== player.water) {
+			player.water = data.remaining_water;
 		}
+		/*jshint camelcase:true */
 	});
 
 
@@ -189,6 +192,7 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	this.level = new Counter(5, false, level);
 	this.level.onAdd = function (current, diff) {
 		if (current <= 0) {
+			if (plant) { plant.destroy(); }
 			return;
 		}
 
@@ -209,7 +213,9 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 				}
 			});
 
-			Backend.putUpgradePlant({ field: { x: x, y: y, level: level, type: type }});
+			/*jshint camelcase:false */
+			Backend.putUpgradePlant({ field: { x: x, y: y, level: level, content_type: type }});
+			/*jshint camelcase:true */
 
 		} else {
 			// Could be: Setup of plant from constructor
@@ -222,8 +228,8 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 
 	// Check that backend accepts plant upgrade
 	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
-		if (!data.success && data.x === _this.column && data.y === _this.row ) {
-			_this.level = data.level;
+		if (!data.success && data.field.x === _this.column && data.field.y === _this.row) {
+			_this.level = data.field.level;
 		}
 	});
 

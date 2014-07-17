@@ -117,7 +117,7 @@ var Backend = {
 	 * @param {Object} data - The garden updates
 	 */
 	putUpgradePlant: function (data) {
-		this.put('', data, function (data) {
+		this.put('upgrade_field_api_gardens_path', data, function (data) {
 			EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
 		});
 	},
