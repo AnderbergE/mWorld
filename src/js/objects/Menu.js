@@ -67,7 +67,47 @@ function Menu () {
 		showMenu(false);
 	}, this);
 
-	var quit = game.add.text(centerX, centerY/0.75, LANG.TEXT.quit, {
+	/* Volume slider */
+	var volumeSlider = new Slider(
+		centerX - bmd.width * 0.2,
+		centerY/0.8,
+		bmd.width * 0.5,
+		50,
+		function (value) {
+			game.sound.volume = value;
+			console.log(game.sound.volume);
+			if (value > 0) {
+				muteButton.text = 'V';
+				muteButton.muteValue = value;
+			} else {
+				muteButton.text = 'X';
+			}
+		},
+		game.sound.volume
+	);
+	menuGroup.add(volumeSlider);
+
+	// TODO: Change graphics to volume object
+	var muteButton = new TextButton('V', {
+		x: centerX - bmd.width * 0.35,
+		y: centerY/0.8 - volumeSlider.height/2,
+		fontSize: 20,
+		size: volumeSlider.height,
+		background: 'wood',
+		onClick: function () {
+			if (this.text === 'X') {
+				volumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
+				this.text = 'V';
+			} else {
+				volumeSlider.value = 0;
+				this.text = 'X';
+			}
+		}
+	});
+	muteButton.muteValue = volumeSlider.value;
+	menuGroup.add(muteButton);
+
+	var quit = game.add.text(centerX, centerY/0.65, LANG.TEXT.quit, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	}, menuGroup);
