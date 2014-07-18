@@ -25,7 +25,7 @@ var Backend = {
 	 * @param {*} parameters - optional parameter for the route action
 	 */
 	get: function (routeName, parameters) {
-		var data = null;
+		var json = null;
 
 		if (typeof Routes !== 'undefined' && Routes[routeName]) {
 			var settings = {
@@ -34,12 +34,12 @@ var Backend = {
 			};
 
 			this.ajax(settings).done(function (data) {
-				data = JSON.parse(data);
+				json = data;
 				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
 			});
 		}
 
-		return data;
+		return json;
 	},
 
 	/**
