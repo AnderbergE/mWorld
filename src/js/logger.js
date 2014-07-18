@@ -15,9 +15,7 @@
 		if (session.tries > 0) {
 			Backend.putSession(session);
 		}
-		if (session.water > 0) {
-			Backend.putPlayer({ water: player.water });
-		}
+
 		reset();
 	}
 
