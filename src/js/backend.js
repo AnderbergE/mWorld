@@ -18,16 +18,16 @@ var Backend = {
 
 		var _this = this;
 		return $.ajax(settings).fail(function (jqXHR) {
-			console.log(jqXHR.status + ' ' + jqXHR.statusText);
-			EventSystem.publish(GLOBAL.EVENT.connection, [false]);
-
-			// TODO: Create a function that is called if this takes too long.
 			if (jqXHR.status >= 400 && jqXHR.status < 500) {
 				tries = 0;
 			}
+
 			if (tries > 0) {
+				EventSystem.publish(GLOBAL.EVENT.connection, [false]);
 				setTimeout(function () { _this.ajax(settings, tries); },
 					(_this.maxTries - tries) * 1000);
+			} else {
+				EventSystem.publish(GLOBAL.EVENT.connectionLost);
 			}
 		});
 	},

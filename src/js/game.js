@@ -86,9 +86,16 @@ BootState.prototype.preload = function () {
 		if (status) {
 			document.querySelector('.loading').style.display = 'none';
 		} else {
-			document.querySelector('.progress').innerHTML = 'Connection lost';
+			document.querySelector('.progress').innerHTML = LANG.TEXT.connectionLost;
 			document.querySelector('.loading').style.display = 'block';
 		}
+	}, true);
+
+	EventSystem.subscribe(GLOBAL.EVENT.connectionLost, function () {
+		game.world.add(new Modal(LANG.TEXT.connectionLost, 40, function () {
+			document.querySelector('.loading').style.display = 'none';
+			game.state.start(GLOBAL.STATE.entry);
+		}));
 	}, true);
 
 

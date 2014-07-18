@@ -17,7 +17,8 @@ var GLOBAL = {
 		plantUpgrade:   'plantUpgrade',   // [backend data]
 
 		skippable:      'skippable',      // [TimelineMax object]
-		connection:     'connection'      // [status]
+		connection:     'connection',     // [status]
+		connectionLost: 'connectionLost'
 	},
 
 	AGENT: {

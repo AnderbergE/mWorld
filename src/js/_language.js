@@ -67,6 +67,10 @@ LANG.english.text = {
 	start: 'Start',
 	credits: 'Credits',
 
+	/* General */
+	ok: 'Ok',
+	connectionLost: 'Connection lost',
+
 	/* Garden state */
 	maxLevel: 'MAX!',
 
