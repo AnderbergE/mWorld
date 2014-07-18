@@ -21,7 +21,6 @@ var Backend = {
 			console.log(jqXHR.status + ' ' + jqXHR.statusText);
 			EventSystem.publish(GLOBAL.EVENT.connection, [false]);
 
-			// TODO: Monitor error codes, such as 403 or 500
 			// TODO: Create a function that is called if this takes too long.
 			if (jqXHR.status >= 400 && jqXHR.status < 500) {
 				tries = 0;
@@ -59,15 +58,15 @@ var Backend = {
 	/**
 	 * PUT data.
 	 * @param {String} routeName - The name of the route function
-	 * @param {Object} data - The data to send (will be transformed to JSON-format)
+	 * @param {Object} data - The data to send (JSON-format)
 	 */
-	put: function (routeName, data, callback) {
-		var stringified = JSON.stringify({ magic: data });
+	put: function (routeName, json, callback) {
+		json = { magic: json };
 		if (typeof Routes !== 'undefined' && Routes[routeName]) {
 			var settings = {
 				url: Routes[routeName](),
 				type: 'POST',
-				data: stringified
+				data: json
 			};
 
 			this.ajax(settings).done(function (data) {
@@ -75,7 +74,7 @@ var Backend = {
 				callback(data);
 			});
 		} else {
-			console.log('PUT (' + routeName + '): ' + stringified);
+			console.log('PUT (' + routeName + '): ' + json);
 		}
 	},
 
