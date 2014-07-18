@@ -71,7 +71,9 @@ var Backend = {
 
 			this.ajax(settings).done(function (data) {
 				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
-				callback(data);
+				if (callback) {
+					callback(data);
+				}
 			});
 		} else {
 			console.log('PUT (' + routeName + '): ' + json);
