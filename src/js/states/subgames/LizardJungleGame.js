@@ -193,7 +193,7 @@ LizardJungleGame.prototype.create = function () {
 				onStart: function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					_this.agent.say('birdheroAgentHmm').play();
+					_this.agent.say('lizardPlaceholder').play();
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
