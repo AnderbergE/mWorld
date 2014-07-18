@@ -52,25 +52,6 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
-	/*
-	this.load.image('birdheroBird',    'assets/img/subgames/birdhero/bird.png');
-	this.load.image('birdheroBole',    'assets/img/subgames/birdhero/bole.png');
-	this.load.image('birdheroBranch0', 'assets/img/subgames/birdhero/branch1.png');
-	this.load.image('birdheroBranch1', 'assets/img/subgames/birdhero/branch2.png');
-	this.load.image('birdheroBranch2', 'assets/img/subgames/birdhero/branch2.png');
-	this.load.image('birdheroBucket',  'assets/img/subgames/birdhero/bucket.png');
-	this.load.image('birdheroChick',   'assets/img/subgames/birdhero/chick.png');
-	this.load.image('birdheroCrown',   'assets/img/subgames/birdhero/crown.png');
-	this.load.image('birdheroMother',  'assets/img/subgames/birdhero/mother.png');
-	this.load.image('birdheroNest',    'assets/img/subgames/birdhero/nest.png');
-	this.load.image('birdheroRope',    'assets/img/subgames/birdhero/rope.png');
-	this.load.image('birdheroWhat',    'assets/img/subgames/birdhero/what.png');
-	this.load.spritesheet('birdheroBeak', 'assets/img/subgames/birdhero/beak.png', 31, 33);
-	this.load.audio('birdheroIntro', ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
-	this.load.audio('birdheroElevator', ['assets/audio/subgames/birdhero/elevator.mp3', 'assets/audio/subgames/birdhero/elevator.ogg']);
-	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.mp3', 'assets/audio/subgames/birdhero/elevator_arrive.ogg']);
-	this.load.audio('birdheroElevatorDown', ['assets/audio/subgames/birdhero/elevator_down.mp3', 'assets/audio/subgames/birdhero/elevator_down.ogg']);
-	*/
 };
 	var background;
 	var sky;
