@@ -7,7 +7,7 @@
 	var wasCorrect = true;
 
 	function reset () {
-		session = { modes: [], tries: 0, corrects: 0, water: 0 };
+		session = { modes: [], tries: 0, corrects: 0, finished: false, water: 0 };
 	}
 
 
@@ -23,7 +23,9 @@
 	function modeChange (mode) {
 		if (mode === GLOBAL.MODE.intro) {
 			reset();
-		} else if (mode !== GLOBAL.MODE.outro) {
+		} else if (mode === GLOBAL.MODE.outro) {
+			session.finished = true;
+		} else {
 			session.modes.push({ type: mode, results: [] });
 		}
 	}
