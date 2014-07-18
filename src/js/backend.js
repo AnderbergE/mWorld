@@ -105,10 +105,10 @@ var Backend = {
 	},
 
 	/**
-	 * PUT player updates.
-	 * @param {Object} data - The player updates
+	 * PUT agent updates.
+	 * @param {Object} data - The agent updates
 	 */
-	putPlayer: function (data) {
+	putAgent: function (data) {
 		this.put('', data);
 	},
 

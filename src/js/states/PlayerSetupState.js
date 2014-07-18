@@ -50,7 +50,7 @@ PlayerSetupState.prototype.create = function () {
 		if (a === this) {
 			a.fistPump()
 				.addCallback(function () {
-					Backend.putPlayer({ agent: { type: a.key } });
+					Backend.putAgent({ agent: { type: a.key } });
 					player.agent = GLOBAL.AGENT[a.key];
 					_this.state.start(GLOBAL.STATE.garden);
 				});
