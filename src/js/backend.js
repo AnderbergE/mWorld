@@ -23,6 +23,9 @@ var Backend = {
 
 			// TODO: Monitor error codes, such as 403 or 500
 			// TODO: Create a function that is called if this takes too long.
+			if (jqXHR.status >= 400 && jqXHR.status < 500) {
+				tries = 0;
+			}
 			if (tries > 0) {
 				setTimeout(function () { _this.ajax(settings, tries); },
 					(_this.maxTries - tries) * 1000);
