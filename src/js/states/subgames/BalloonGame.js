@@ -33,6 +33,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
 	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
 	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
+	this.load.audio('catbushpurr', 'assets/audio/subgames/balloongame/catbushpurr.mp3');
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
@@ -50,6 +51,8 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
 	this.load.image('map',      'assets/img/subgames/balloon/map.png');
 	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
+	this.load.image('closedChest',      'assets/img/subgames/balloon/chest.png');
+	this.load.image('openChest',      'assets/img/subgames/balloon/chest_open.png');
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 };
@@ -126,6 +129,8 @@ BalloonGame.prototype.create = function () {
 	//catBush.scale.set(0.5);
 
 	function catBushPlay(){
+		var tl = new TimelineMax();
+		tl.addSound('catbushpurr', catBush);
 		catBush.animations.play('catBlink', 8, false);
 		//TODO: Add sound.
 		catBush.events.onAnimationComplete.add(function(){
@@ -153,7 +158,8 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-	chest = _this.add.sprite(1200, 900, 'spritesheet', 3, _this.gameGroup);
+	chest = _this.add.sprite(1200, 900, 'closedChest', _this.gameGroup);
+	chest.anchor.setTo(0.5, 1);
 	chest.visible = false;
 	eyes = _this.add.sprite(1200, 900, 'eyes', 3, _this.gameGroup);
 
@@ -555,11 +561,9 @@ BalloonGame.prototype.create = function () {
 			if (!result)
 			{
 				tl.addCallback(function () {
-					fade(eyes, false);
-					fade(chest, true);
+					openChest(tl);
 				});
 				tl.addSound(speech, beetle, 'yippi');
-				tl.add(_this.addWater(chest.x, chest.y), '-=3');
 				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
 				{
 					treasures++;
@@ -584,6 +588,12 @@ BalloonGame.prototype.create = function () {
 				_this.nextRound();
 			});
 		}
+	}
+
+	function openChest(tl) {
+		fade(eyes, false);
+		fade(chest, true);
+		tl.add(_this.addWater(chest.x, chest.y), '-=3');
 	}
 
 	function popAndReturn(tl) {
@@ -743,16 +753,16 @@ BalloonGame.prototype.create = function () {
 
 		if(correctAnswer % 2 === 1)
 			{
-				chest.x = coords.cliff.rightx-105;
+				chest.x = coords.cliff.rightx-70;
 				eyes.x = coords.cliff.rightx-95;
 			}
 		else
 			{
-				chest.x = coords.cliff.leftx+45;
+				chest.x = coords.cliff.leftx+80;
 				eyes.x = coords.cliff.leftx+50;
 			}
 
-			chest.y = 455 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
+			chest.y = 550 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			eyes.y = 525 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			chest.scale.x = 0.4;
 			chest.scale.y = 0.4;
