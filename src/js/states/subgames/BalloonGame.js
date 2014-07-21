@@ -161,15 +161,14 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
+	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
+	treasure.anchor.setTo(0.5, 1);
+	treasure.visible = false;
+
 	chest = _this.add.sprite(1200, 900, 'closedChest', _this.gameGroup);
 	chest.anchor.setTo(0.5, 1);
 	chest.visible = false;
 	eyes = _this.add.sprite(1200, 900, 'eyes', 3, _this.gameGroup);
-
-	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
-	treasure.anchor.setTo(0.5, 1);
-	treasure.visible = false;
-	
 
 	// Setting up balloon related sprites and groups.
 	airballoons = this.add.group(this.gameGroup);
@@ -284,6 +283,10 @@ BalloonGame.prototype.create = function () {
 	plusminus.add(new TextButton('+', buttonOptions));
 	plusminus.visible = false;
 	this.hudGroup.add(plusminus);
+
+	var foreGround = this.add.group(this.gameGroup);
+	foreGround.add(chest);
+	foreGround.add(treasure);
 
 	function showYesnos () {
 		yesnos.reset();
@@ -568,52 +571,76 @@ BalloonGame.prototype.create = function () {
 			tl.add( new TweenMax(airballoons, 2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeInOut}));
 			if (!result)
 			{
-				tl.addCallback(function () {
-					openChest(tl);
+
+				tl.eventCallback('onComplete', function(){
+					openChest();
 				});
-				tl.addSound(speech, beetle, 'yippi');
+				
 				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
 				{
 					treasures++;
 					disableBalloons();
 				}
-			} else if (result > 0)
-			{
-				tl.addSound('tryless', beetle);
 			} else {
-				tl.addSound('trymore', beetle);
+				if (result > 0)
+				{
+					tl.addSound('tryless', beetle);
+				} else {
+					tl.addSound('trymore', beetle);
+				}
+				//Popping balloons and Basket going back down.
+				console.log('inte korrekt');
+				if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
+				{
+					popAndReturn(tl);
+				}
+
+				tl.eventCallback('onComplete', function(){
+					_this.disable(false);
+					_this.agent.eyesFollowPointer();
+					_this.nextRound();
+				});
 			}
-			//Popping balloons and Basket going back down.
-			console.log('this.method: ' + _this.method + ' GLOBAL.METHOD.incrementalSteps: ' + GLOBAL.METHOD.incrementalSteps + ' treasures: ' + treasures);
-			if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
-			{
-				popAndReturn(tl);
-			}
-			
-			tl.eventCallback('onComplete', function(){
-				_this.disable(false);
-				_this.agent.eyesFollowPointer();
-				_this.nextRound();
-			});
 		}
 	}
 
-	function openChest(tl) {
+	function openChest() {
+		console.log('hej1');
+		var tl = new TimelineMax();
+		//tl.add( new TweenMax(beetle, 2, {x: beetle.x, y: beetle.y+1, ease:Power1.easeInOut}));
+		tl.add(_this.addWater(chest.x, chest.y), '-=3');
 		fade(eyes, false);
 		fade(chest, true);
-		tl.add(_this.addWater(chest.x, chest.y), '-=3');
-		chest.loadTexture('openChest');
-		playRandomPrize();
+		tl.eventCallback('onComplete', function(){
+			chest.loadTexture('openChest');
+			playRandomPrize();
+		});
 	}
 
 	function playRandomPrize() {
+		console.log('hej2');
+		treasure.x = chest.x;
+		treasure.y = chest.y+10;
+		var tl = new TimelineMax();
+		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: treasure.y-75, ease:Power1.easeOut}));
+		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: chest.y+10, ease:Power1.easeIn}));
 		fade(treasure, true);
 		treasure.loadTexture('treasures', 3);
-		treasure.x = chest.x;
-		treasure.y = chest.y+30;
+		tl.addSound(speech, beetle, 'yippi');
+		//Popping balloons and Basket going back down.
+		if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
+		{
+			popAndReturn(tl);
+		}
+		tl.eventCallback('onComplete', function(){
+			_this.disable(false);
+			_this.agent.eyesFollowPointer();
+			_this.nextRound();
+		});
 	}
 
 	function popAndReturn(tl) {
+		console.log('hej3');
 		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
 		tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
 		tl.addCallback(function () {
