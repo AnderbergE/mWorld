@@ -11,6 +11,7 @@ var GLOBAL = {
 		numberPress:    'numberPress',    // [number, representations]
 		textPress:      'textPress',      // [text]
 		waterAdded:     'waterAdded',     // [total amount, added amount]
+		disabled:       'disabled',       // [true/false]
 
 		plantPress:     'plantPress',     // [garden plant]
 		waterPlant:     'waterPlant',     // [garden plant]
