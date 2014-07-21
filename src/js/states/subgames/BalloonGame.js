@@ -14,6 +14,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('eyes',      'assets/img/subgames/balloon/eyes.png');
 	this.load.image('metalLoop',      'assets/img/subgames/balloon/metalloop.png');
 	this.load.spritesheet('catbush',      'assets/img/subgames/balloon/catbush2.png',191,88,10);
+	this.load.spritesheet('treasures',      'assets/img/subgames/balloon/treasures.png', 75, 110, 6);
 
 	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
@@ -53,6 +54,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
 	this.load.image('closedChest',      'assets/img/subgames/balloon/chest.png');
 	this.load.image('openChest',      'assets/img/subgames/balloon/chest_open.png');
+	
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 };
@@ -72,6 +74,7 @@ BalloonGame.prototype.preload = function () {
 	var balloonStack1;
 	var balloonStack2;
 	var eyes;
+	var treasure;
 	var balloonStock = 9;
 	var airBalloonStock = 0;
 	var direction = 'right';
@@ -162,6 +165,11 @@ BalloonGame.prototype.create = function () {
 	chest.anchor.setTo(0.5, 1);
 	chest.visible = false;
 	eyes = _this.add.sprite(1200, 900, 'eyes', 3, _this.gameGroup);
+
+	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
+	treasure.anchor.setTo(0.5, 1);
+	treasure.visible = false;
+	
 
 	// Setting up balloon related sprites and groups.
 	airballoons = this.add.group(this.gameGroup);
@@ -594,6 +602,15 @@ BalloonGame.prototype.create = function () {
 		fade(eyes, false);
 		fade(chest, true);
 		tl.add(_this.addWater(chest.x, chest.y), '-=3');
+		chest.loadTexture('openChest');
+		playRandomPrize();
+	}
+
+	function playRandomPrize() {
+		fade(treasure, true);
+		treasure.loadTexture('treasures', 3);
+		treasure.x = chest.x;
+		treasure.y = chest.y+30;
 	}
 
 	function popAndReturn(tl) {
@@ -750,6 +767,8 @@ BalloonGame.prototype.create = function () {
 	function renderChest (correctAnswer) {
 
 		chest.visible = false;
+		chest.loadTexture('closedChest');
+		treasure.visible = false;
 
 		if(correctAnswer % 2 === 1)
 			{
@@ -758,11 +777,11 @@ BalloonGame.prototype.create = function () {
 			}
 		else
 			{
-				chest.x = coords.cliff.leftx+80;
+				chest.x = coords.cliff.leftx+75;
 				eyes.x = coords.cliff.leftx+50;
 			}
 
-			chest.y = 550 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
+			chest.y = 555 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			eyes.y = 525 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			chest.scale.x = 0.4;
 			chest.scale.y = 0.4;
