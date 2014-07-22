@@ -5,9 +5,11 @@
 	var session;
 	var trial = {};
 	var wasCorrect = true;
+	var time = 0;
 
 	function reset () {
 		session = { modes: [], tries: 0, corrects: 0, finished: false, water: 0 };
+		time = Date.now();
 	}
 
 
@@ -37,7 +39,7 @@
 		}
 
 		trial.try = guess;
-		// TODO: trial.time = 0;
+		trial.time = Date.now() - time;
 		modeResults[modeResults.length-1].trials.push(trial);
 
 		session.tries++;
@@ -65,6 +67,10 @@
 		session.water++;
 	}
 
+	function startTime () {
+		time = Date.now();
+	}
+
 
 	reset();
 
@@ -84,4 +90,6 @@
 		function (/*current, diff*/) { water(); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.numberPress,
 		function (value, representations) { numberPress(value, representations); }, true);
+	EventSystem.subscribe(GLOBAL.EVENT.disabled,
+		function (value) { if (!value) { startTime(); } }, true);
 })();
