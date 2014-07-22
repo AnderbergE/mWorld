@@ -67,12 +67,14 @@ LizardJungleGame.prototype.create = function () {
 	tree.scale.set(coords.tree.height/tree.height);
 	this.add.sprite(tree.x - 40, tree.y + tree.height/tree.length, 'lizard', 'crown', this.gameGroup).anchor.set(0.5, 1);
 
+	// The target is set up in the newFood function
+	var target = this.add.sprite(0, 0, 'lizard', 'ant', this.gameGroup);
+	target.anchor.set(0.5);
+	target.visible = false;
+
 	// Setup lizard
 	var lizard = new LizardJungleLizard(575, 500);
 	this.gameGroup.add(lizard);
-
-	// The target is set up in the newFood function
-	var target;
 
 	// Add HUD
 	var buttons = new ButtonPanel(this.amount, this.representation, {
@@ -122,8 +124,8 @@ LizardJungleGame.prototype.create = function () {
 		var t = new TimelineMax();
 		if (!result) { // Correct :)
 			t.add(lizard.shootObject(target));
+			t.addCallback(function () { target.visible = true; });
 			t.add(TweenMax.to(lizard, 1, { tint: target.tint }));
-			t.addCallback(function () { target.destroy(); });
 		} else { // Incorrect :(
 			t.add(lizard.shoot(hit));
 		}
@@ -167,11 +169,9 @@ LizardJungleGame.prototype.create = function () {
 	}
 
 	function newFood () {
-		target = _this.add.sprite(tree.x, 750, 'lizard', 'ant', _this.gameGroup);
+		target.x = tree.x;
+		target.y = game.world.height;
 		target.tint = tint[_this.currentNumber];
-		target.visible = false;
-		target.anchor.set(0.5);
-		_this.gameGroup.bringToTop(lizard);
 
 		var t = new TimelineMax();
 		t.addCallback(function () { target.visible = true; });
