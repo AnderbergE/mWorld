@@ -249,14 +249,18 @@ LizardJungleGame.prototype.create = function () {
 		} else { // if intro or first try
 			var t = new TimelineMax();
 			if (intro) {
-				_this.currentNumber = 3;
 				t.skippable();
 				t.add(newFood());
 				//t.addSound('lizardPlaceholder', lizard);
-				var hit1 = { x: tree.x, y: tree.children[tree.length - 1 - 1].world.y };
-				t.add(lizard.shoot(hit1));
-				var hit2 = { x: tree.x, y: tree.children[tree.length - 1 - 3].world.y };
-				t.add(lizard.shoot(hit2));
+				var hit;
+				if (_this.currentNumber > 1) {
+					hit = { x: tree.x, y: tree.children[tree.length + 1 - _this.currentNumber].world.y };
+					t.add(lizard.shoot(hit));
+				}
+				if (_this.currentNumber < this.amount) {
+					hit = { x: tree.x, y: tree.children[tree.length - 1 - _this.currentNumber].world.y };
+					t.add(lizard.shoot(hit));
+				}
 				t.add(instructionIntro());
 			} else {
 				t.add(newFood());
