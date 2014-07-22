@@ -180,9 +180,24 @@ BirdheroGame.prototype.create = function () {
 			}
 
 			var t = new TimelineMax();
-			for (var i = parseInt(elevator.text.text)+1; i <= target; i++) {
-				t.add(elevator.moveTo._direct(i, i === target));
+			var currentFloor = parseInt(elevator.text.text);
+			var dir = 1;
+
+			if (currentFloor === target) {
+				return t;
+			} else if (currentFloor > target) {
+				dir = -1;
 			}
+
+			var arrived = false;
+			for (var i = currentFloor + dir; true; i += dir) {
+				arrived = i === target;
+				t.add(elevator.moveTo._direct(i, arrived));
+				if (arrived) {
+					break;
+				}
+			}
+
 			return t;
 		}
 	};
