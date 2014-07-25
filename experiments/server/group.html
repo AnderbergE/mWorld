@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ströbröd Dagis - Magical Garden</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet' type='text/css'>
+	<link href='template.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+	<nav class="menu split">
+		<div class="lefted">
+			<a href="all_groups.html" class="menu-title menu-item">Magical Garden</a>
+			<a href="all_groups.html" class="menu-item">Mina grupper</a>
+			<a href="about.html" class="menu-item">Om spelet</a>
+		</div>
+		<div class="righted">
+			<a href="#" class="menu-item">Admin</a>
+			<a href="#" class="menu-item">API</a>
+			<a href="#" class="menu-item smaller">(logga ut)</a>
+			<a href="#" class="menu-item current-supervisor" id="supervisorId">
+				<span class="first-name">Agneta</span>
+				<span class="last-name">Gulz</span>
+			</a>
+		</div>
+	</nav>
+
+	<div class="wide-title">
+		<form method="post" action="editGroup">
+			<input type="text" class="h1 blend-in" value="Ströbröd Dagis" />
+		</form>
+	</div>
+
+	<div class="card-container centered">
+		<div class="card player" id="player1">
+			<a class="clickable"><img src="" class="player-image absolute top left" /></a>
+
+			<h4 class="card-header"><a class="clickable">
+				<span class="first-name">Erik</span>
+				<span class="last-name">Anderberg</span>
+			</a></h4>
+			<p class="card-content card-text">
+				Nivå: Fingrar i intervall 1-4
+			</p>
+
+			<a href="#" class="play-button absolute middle right"></a>
+
+			<div class="progress-bar absolute bottom left" style="width: 30%">30%</div>
+		</div>
+
+		<div class="card player" id="player2">
+			<a class="clickable"><img src="" class="player-image absolute top left" /></a>
+
+			<h4 class="card-header"><a class="clickable">
+				<span class="first-name">Marcus</span>
+				<span class="last-name">Malmberg</span>
+			</a></h4>
+			<p class="card-content card-text">
+				Har klarat alla nivåer
+			</p>
+
+			<a href="#" class="play-button absolute middle right"></a>
+
+			<div class="progress-bar absolute bottom left" style="width: 100%">100%</div>
+		</div>
+
+		<div class="card player" id="player3">
+			<a class="clickable"><img src="" class="player-image absolute top left" /></a>
+
+			<h4 class="card-header"><a class="clickable">
+				<span class="first-name">Sebastian</span>
+				<span class="last-name">Gulz</span>
+			</a></h4>
+			<p class="card-content card-text">
+				Har inte spelat än
+			</p>
+
+			<a href="#" class="play-button absolute middle right"></a>
+
+			<div class="progress-bar absolute bottom left" style="width: 0%">0%</div>
+		</div>
+	</div>
+
+	<div class="horizontal-line"></div>
+
+	<div class="action-container centered">
+		<a class="card clickable action" id="addPlayer">
+			<h4 class="card-header semi-light">Skapa ny spelare</h4>
+			<div class="plus-sign absolute top left"></div>
+		</a>
+		<a class="card clickable action" id="addExistingPlayer">
+			<h4 class="card-header semi-light">Lägg till befintlig</h4>
+			<div class="plus-sign absolute top left"></div>
+		</a>
+		<a class="card clickable action" id="removePlayer">
+			<h4 class="card-header semi-light">Ta bort spelare</h4>
+			<div class="minus-sign absolute top left"></div>
+		</a>
+	</div>
+
+	<div class="horizontal-line"></div>
+
+
+	<div class="wide-title light">
+		<h3>Handledare</h2>
+	</div>
+
+	<div class="semi-light">
+		<ul class="pointless">
+			<li>Agneta Gulz</li>
+			<li>Magnus Haake</li>
+		</ul>
+	</div>
+
+	<div class="horizontal-line"></div>
+
+	<div class="action-container centered">
+		<a class="card clickable action" id="addSupervisor">
+			<h4 class="card-header semi-light">Lägg till handledare</h4>
+			<div class="plus-sign absolute top left"></div>
+		</a>
+		<a class="card clickable action" id="removeSupervisor">
+			<h4 class="card-header semi-light">Ta bort handledare</h4>
+			<div class="minus-sign absolute top left"></div>
+		</a>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="script.js" type="text/javascript"></script>
+</body>
+</html>

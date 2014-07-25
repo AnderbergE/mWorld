@@ -1,0 +1,387 @@
+*, *:after, *::before {
+	-webkit-box-sizing:border-box;
+	   -moz-box-sizing:border-box;
+	        box-sizing:border-box;
+}
+
+body {
+	margin: 0;
+}
+
+body, input, button, select {
+	font-family: 'Rajdhani', sans-serif;
+	font-size: 18px;
+}
+
+h1, .h1 {
+	font-size: 2em;
+	font-weight: bold;
+	margin: 0.6em 0;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.hide {
+	display: none;
+}
+
+.smaller {
+	font-size: 80%;
+}
+.bigger {
+	font-size: 120%;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.split {
+	/* flexbox is a mess of prefixes :( */
+	display:-webkit-box;
+	display:-webkit-flex;
+	display:-ms-flexbox;
+	display:flex;
+	-webkit-box-pack:justify;
+	-webkit-justify-content:space-between;
+	-ms-flex-pack:justify;
+	justify-content:space-between;
+	-webkit-box-align:center;
+	-webkit-align-items:center;
+	-ms-flex-align:center;
+	align-items:center
+}
+
+.centered {
+	margin: auto;
+	text-align: center;
+}
+.lefted {
+	text-align: left;
+}
+.righted {
+	text-align: right;
+}
+
+.absolute {
+	position: absolute;
+}
+.absolute.top {
+	top: 0;
+}
+.absolute.middle {
+	top: 50%;
+}
+.absolute.bottom {
+	bottom: 0;
+}
+.absolute.left {
+	left: 0;
+}
+.absolute.center {
+	left: 50%;
+}
+.absolute.right {
+	right: 0;
+}
+
+.pointless {
+	list-style: none;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.good {
+	color: forestgreen;
+}
+.not-good {
+	color: firebrick;
+}
+.semi-light {
+	color: gray;
+}
+.light {
+	color: lightgray;
+}
+
+.blend-in {
+	background: inherit;
+	color: inherit;
+	border: none;
+}
+.blend-in:focus {
+	background: white;
+	color: initial;
+	border: initial;
+}
+
+
+.wide-title {
+	width: 100%;
+	padding: 1px 20px;
+	margin-bottom: 30px;
+	background: seagreen;
+	color: white;
+}
+
+.wide-title.light {
+	background: #e5e5e5;
+	color: gray;
+}
+
+
+.horizontal-line {
+	width: 90%;
+	height: 1px;
+	margin: 30px 5%;
+	border-bottom: 3px dashed lightgray;
+}
+
+
+.menu {
+	width: 100%;
+	background: orange;
+	line-height: 40px;
+	font-size: 18px;
+}
+
+.menu-title {
+	font-weight: bold;
+}
+
+.menu-item {
+	display: inline-block;
+	height: 100%;
+	margin: 0 10px;
+	color: black;
+}
+.menu-item:hover {
+	color: blue;
+}
+
+
+
+.card-container {
+	margin-bottom: 100px;
+}
+
+.card {
+	position: relative;
+	display: inline-block;
+	width: 350px;
+	height: 100px;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 5px;
+	overflow: hidden;
+	box-shadow: 0 0 3px #ddd, 1px 1px 4px #ddd;
+	vertical-align: top; /* Without this safari goes bananas. */
+	text-align: left;
+	white-space: nowrap;
+	text-decoration: none;
+	color: #333;
+}
+
+/* If card is a link, create hover effect. */
+a.card {
+	transition: background .2s;
+}
+a.card:hover {
+	background: lightyellow;
+}
+
+.card-header {
+	margin: 0 0 5px;
+	text-decoration: none;
+}
+
+.card-content {
+	max-height: 50px;
+	overflow: hidden;
+}
+
+.card-list {
+	padding: 0;
+	margin: 0 0 0 20px;
+}
+
+.card-text {
+	margin: 0;
+	white-space: normal;
+}
+
+.group-image {
+	display: inline-block;
+	width: 60px;
+	height: 60px;
+	background: antiquewhite;
+	margin: 0 5px 0 -10px;
+}
+
+.card.player {
+	padding: 10px 60px 14px 100px;
+}
+
+.player-image {
+	width: 86px;
+	height: 86px;
+	background: antiquewhite;
+}
+
+.play-button {
+	width: 50px;
+	height: 50px;
+	margin-top: -25px;
+	margin-right: 5px;
+	border-radius: 50%;
+
+	box-shadow: 0 0 2px lightgray, 0 0 4px lightgray, 0 0 6px lightgray;
+	transition: background .2s;
+}
+.play-button:after {
+	content: '';
+	position: absolute;
+	top: 13px;
+	left: 17px;
+	border-top: 12px solid transparent;
+	border-bottom: 12px solid transparent;
+	border-left: 20px solid lightgray;
+	transition: all .2s;
+}
+.play-button:hover {
+	background: cornflowerblue;
+}
+.play-button:hover:after {
+	border-left-color: white;
+}
+
+.progress-bar {
+	height: 14px;
+	background: lightgreen;
+
+	text-align: center;
+	line-height: 14px;
+	font-size: 12px;
+	color: white;
+	text-shadow: 1px 1px 1px gray;
+}
+
+
+
+.card.action {
+	width: 190px;
+	height: 70px;
+	padding-left: 70px;
+	white-space: normal;
+	line-height: 25px;
+}
+
+.card .plus-sign, .card .minus-sign {
+	width: 50px;
+	height: 50px;
+	margin: 10px;
+}
+
+.plus-sign:before, .plus-sign:after, .minus-sign:before {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	border-radius: 5px;
+	background: lightgray;
+}
+.plus-sign:before, .minus-sign:before {
+	width: 100%;
+	height: 24%;
+	top: 38%;
+}
+.plus-sign:after {
+	width: 24%;
+	height: 100%;
+	left: 38%;
+}
+
+
+.form-item {
+	min-height: 45px;
+	text-align: left;
+}
+
+.flat-button {
+	background: lightgray;
+	padding: 2px 5px;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.simple-button {
+	padding: 2px 5px;
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+
+.simple-button:hover {
+	color: blue;
+}
+
+.form-item > label:first-child {
+	display: inline-block;
+	width: 100px;
+}
+
+.form-radio:checked + .flat-button {
+	background: lightgreen;
+}
+
+.form-footer {
+	text-align: right;
+	margin-top: 10px;
+}
+
+.form-footer button {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+.form-dialog {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.form-dialog:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.form-dialog > form {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	        transform: translate(-50%, -50%);
+	width: auto;
+	padding: 25px;
+	background: white;
+	border-radius: 5px;
+}
+
+
+.content-wrapper {
+	margin: 0px 20px;
+}
