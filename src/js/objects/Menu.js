@@ -75,7 +75,7 @@ function Menu () {
 		50,
 		function (value) {
 			game.sound.volume = value;
-			console.log(game.sound.volume);
+			localStorage.mainVolume = value;
 			if (value > 0) {
 				muteButton.text = 'V';
 				muteButton.muteValue = value;
@@ -88,7 +88,7 @@ function Menu () {
 	menuGroup.add(volumeSlider);
 
 	// TODO: Change graphics to volume object
-	var muteButton = new TextButton('V', {
+	var muteButton = new TextButton(game.sound.volume > 0 ? 'V' : 'X', {
 		x: centerX - bmd.width * 0.35,
 		y: centerY/0.8 - volumeSlider.height/2,
 		fontSize: 20,
@@ -97,10 +97,8 @@ function Menu () {
 		onClick: function () {
 			if (this.text === 'X') {
 				volumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
-				this.text = 'V';
 			} else {
 				volumeSlider.value = 0;
-				this.text = 'X';
 			}
 		}
 	});
