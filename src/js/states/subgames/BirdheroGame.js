@@ -43,6 +43,7 @@ BirdheroGame.prototype.create = function () {
 			scale: 0.3, small: 0.06
 		}
 	};
+	/* Do not use tint below 0x111121, it will not work on the bird */
 	var tint = [
 		0xff8888, 0x77ee77, 0x8888ff, 0xfed011, 0xfedcba,
 		0x11abba, 0xabcdef, 0xffffff, 0xed88ba
@@ -721,6 +722,9 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 		this._number = value;
 		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value);
 		if (value > 5) { this.leftWing.frameName = 'wing' + (value - 5); }
+
+		/* For some reason the tint need to be changed to update the frame. */
+		this.tint--;
 	}
 });
 
