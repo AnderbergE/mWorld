@@ -55,12 +55,12 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
 	this.load.image('closedChest',      'assets/img/subgames/balloon/chest.png');
 	this.load.image('openChest',      'assets/img/subgames/balloon/chest_open.png');
+	this.load.image('sack',      'assets/img/subgames/balloon/sack.png');
 	
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 };
-	var background;
-	var sky;
+
 	var cloud1;
 	var cloud2;
 	var scale = 0.85;
@@ -120,10 +120,10 @@ BalloonGame.prototype.create = function () {
 	};
 
 	// Add main game
-	sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
+	var sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
 	cloud1 = this.add.sprite(-200, 25, 'cloud1', null, this.gameGroup);
 	cloud2 = this.add.sprite(200, 200, 'cloud2', null, this.gameGroup);
-	background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
+	var background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
 
 	
 	catBush = game.add.sprite(175, 420, 'catbush', 0, this.gameGroup);
@@ -162,6 +162,10 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
+	var sack = _this.add.sprite(900, 600, 'sack', _this.gameGroup);
+	sack.anchor.setTo(0.5, 1);
+	treasure.scale.set(0.8);
+
 	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
 	treasure.anchor.setTo(0.5, 1);
 	treasure.visible = false;
@@ -171,6 +175,7 @@ BalloonGame.prototype.create = function () {
 	chest.anchor.setTo(0.5, 1);
 	chest.visible = false;
 	eyes = _this.add.sprite(1200, 900, 'eyes', 3, _this.gameGroup);
+
 
 	// Setting up balloon related sprites and groups.
 	airballoons = this.add.group(this.gameGroup);
