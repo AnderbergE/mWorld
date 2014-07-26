@@ -43,6 +43,7 @@ BirdheroGame.prototype.create = function () {
 			scale: 0.3, small: 0.06
 		}
 	};
+	/* Do not use tint below 0x111121, it will not work on the bird */
 	var tint = [
 		0xff8888, 0x77ee77, 0x8888ff, 0xfed011, 0xfedcba,
 		0x11abba, 0xabcdef, 0xffffff, 0xed88ba
@@ -180,9 +181,24 @@ BirdheroGame.prototype.create = function () {
 			}
 
 			var t = new TimelineMax();
-			for (var i = parseInt(elevator.text.text)+1; i <= target; i++) {
-				t.add(elevator.moveTo._direct(i, i === target));
+			var currentFloor = parseInt(elevator.text.text);
+			var dir = 1;
+
+			if (currentFloor === target) {
+				return t;
+			} else if (currentFloor > target) {
+				dir = -1;
 			}
+
+			var arrived = false;
+			for (var i = currentFloor + dir; true; i += dir) {
+				arrived = i === target;
+				t.add(elevator.moveTo._direct(i, arrived));
+				if (arrived) {
+					break;
+				}
+			}
+
 			return t;
 		}
 	};
@@ -683,7 +699,7 @@ function BirdheroBird (tint) {
 
 	/* Animations */
 	this.talk = TweenMax.to(this.beak, 0.2, {
-		frame: this.beak.frame+1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+		frame: this.beak.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
 	this.walk = new TimelineMax({ repeat: -1, paused: true })
 		.fromTo(this.leftLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0)
@@ -706,6 +722,9 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 		this._number = value;
 		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value);
 		if (value > 5) { this.leftWing.frameName = 'wing' + (value - 5); }
+
+		/* For some reason the tint need to be changed to update the frame. */
+		this.tint--;
 	}
 });
 
@@ -733,7 +752,7 @@ BirdheroBird.prototype.countFeathers = function () {
 
 	var t = new TimelineMax();
 	for (var i = 1; i <= number; i++) {
-		t.addCallback(fun, (i-1)*1, [i], this);
+		t.addCallback(fun, i-1, [i], this);
 	}
 	t.addCallback(function () {}, '+=1');
 	return t;

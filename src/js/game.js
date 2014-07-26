@@ -124,6 +124,10 @@ BootState.prototype.preload = function () {
 
 	/* Load the entry state assets as well, no need to do two loaders. */
 	this.load.image('entryBg', 'assets/img/jungle.png');
+
+	if (typeof localStorage.mainVolume !== 'undefined') {
+		this.sound.volume = localStorage.mainVolume;
+	}
 };
 
 /* Phaser state function */

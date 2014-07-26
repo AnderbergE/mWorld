@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Supervisor zone design templates</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet' type='text/css'>
+	<link href='template.css' rel='stylesheet' type='text/css'>
+
+
+	<style>
+		/* ONLY FOR DEMO: */
+		.information-section {
+			border-top: 1px solid black;
+			margin: 50px 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="information-section">
+		<h2>Font family: Rajdhani</h2>
+		<p>From Google Fonts</p>
+	</div>
+
+
+	<div class="information-section">
+		<h2>Wide title</h2>
+		<p>To be used for certain headlines.</p>
+	</div>
+	<div class="wide-title">
+		<h1>Massiv rubrik</h1>
+	</div>
+
+
+	<div class="information-section">
+		<h2>Horisontal line</h2>
+		<p>To be used when dividing two sections.</p>
+	</div>
+	<div class="horizontal-line"></div>
+
+
+	<div class="information-section">
+		<h2>Main menu</h2>
+		<p>To be used on every page.</p>
+		<p>Some of the information "that is shown" needs to be inserted by the backend.</p>
+		<p>"Admin" and "API" should only be available to super-administrators.</p>
+	</div>
+	<nav class="menu split">
+		<div class="lefted">
+			<a href="#" class="menu-title menu-item">Magical Garden</a>
+			<a href="#" class="menu-item">Mina grupper</a>
+			<a href="#" class="menu-item">Om spelet</a>
+		</div>
+		<div class="righted">
+			<a href="#" class="menu-item">Admin</a>
+			<a href="#" class="menu-item">API</a>
+			<a href="#" class="menu-item smaller">(logga ut)</a>
+			<a href="#" class="menu-item current-supervisor" id="supervisorId">
+				<span class="first-name">Agneta</span>
+				<span class="last-name">Gulz</span>
+			</a>
+		</div>
+	</nav>
+
+
+	<div class="information-section">
+		<h2>Group/Class card</h2>
+		<p>To be used when showing many groups side by side.</p>
+		<p>All the information "that is shown" needs to be inserted by the backend.</p>
+		<p>NOTE: Images should be picked on random or based on some parameter (such as progress)</p>
+	</div>
+	<div class="card-container centered">
+		<a href="#" class="card group">
+			<h4 class="card-header bigger">
+				Ströbröd Dagis <span class="smaller light">(3 elever)</span>
+			</h4>
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+		</a>
+		<a href="#" class="card group">
+			<h4 class="card-header bigger">
+				Förskolan före sin tid <span class="smaller light">(21 elever)</span>
+			</h4>
+			<!-- No need to show more than six -->
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+			<img src="" class="group-image" />
+		</a>
+	</div>
+
+
+	<div class="information-section">
+		<h2>Player/Pupil cards</h2>
+		<p>To be used when showing a player.</p>
+		<p>All the information "that is shown" needs to be inserted by the backend.</p>
+		<p>NOTE: The width of the progress-bar also needs to be set.</p>
+	</div>
+	<div class="card-container centered">
+		
+		<div class="card player" id="player1">
+			<a class="clickable"><img src="" class="player-image absolute top left" /></a>
+
+			<h4 class="card-header"><a class="clickable">
+				<span class="first-name">Erik</span>
+				<span class="last-name">Anderberg</span>
+			</a></h4>
+			<p class="card-content card-text">
+				Nivå: Fingrar i intervall 1-4
+			</p>
+
+			<a href="#" class="play-button absolute middle right"></a>
+
+			<div class="progress-bar absolute bottom left" style="width: 30%">30%</div>
+		</div>
+
+		<div class="card player" id="player2">
+			<a class="clickable"><img src="" class="player-image absolute top left" /></a>
+
+			<h4 class="card-header"><a class="clickable">
+				<span class="first-name">Marcus</span>
+				<span class="last-name">Malmberg</span>
+			</a></h4>
+			<p class="card-content card-text">
+				Har klarat alla nivåer
+			</p>
+
+			<a href="#" class="play-button absolute middle right"></a>
+
+			<div class="progress-bar absolute bottom left" style="width: 100%">100%</div>
+		</div>
+
+		<div class="card player" id="player3">
+			<a class="clickable"><img src="" class="player-image absolute top left" /></a>
+
+			<h4 class="card-header"><a class="clickable">
+				<span class="first-name">Sebastian</span>
+				<span class="last-name">Gulz</span>
+			</a></h4>
+			<p class="card-content card-text">
+				Har inte spelat än
+			</p>
+
+			<a href="#" class="play-button absolute middle right"></a>
+
+			<div class="progress-bar absolute bottom left" style="width: 0%">0%</div>
+		</div>
+	</div>
+
+
+	<div class="information-section">
+		<h2>Action cards</h2>
+		<p>To be used when performing an action on a player or group.</p>
+	</div>
+	<div class="centered">
+		<a href="#" class="card action">
+			<h4 class="card-header">Add new player</h4>
+			<div class="plus-sign absolute top left"></div>
+		</a>
+		<a href="#" class="card action">
+			<h4 class="card-header">Remove player</h4>
+			<div class="minus-sign absolute top left"></div>
+		</a>
+		<a href="#" class="card action">
+			<h4 class="card-header">Add new group</h4>
+			<div class="plus-sign absolute top left"></div>
+		</a>
+	</div>
+
+
+	<div class="information-section">
+		<h2>Form</h2>
+		<p>To be used when adding or editing a player or group.</p>
+	</div>
+	<form method="post" id="form">
+		<h2 class="form-header">Add new player</h2>
+
+		<div class="form-item">
+			<label for="firstName">First Name:</label>
+			<input type="text" name="firstName" id="firstName" required />
+		</div>
+
+		<div class="form-item">
+			<label for="lastName">Last Name:</label>
+			<input type="text" name="lastName" id="lastName" required />
+		</div>
+
+		<div class="form-item">
+			<label>Agent:</label>
+			<input type="radio" name="agent" id="panda" class="hide form-radio" />
+			<label for="panda" class="flat-button">Panders</label>
+			<input type="radio" name="agent" id="squid" class="hide form-radio" />
+			<label for="squid" class="flat-button">Bläckvar</label>
+		</div>
+
+		<div class="form-item">
+			<label>Lista:</label>
+			<select name="select" required>
+				<option value="id1">Agneta Gulz</option>
+				<option value="id2">Magnus Haake</option>
+			</select>
+		</div>
+
+		<div class="form-footer">
+			<label class="simple-button semi-light">Avbryt</label>
+			<button class="simple-button"><strong>Spara</strong></button>
+		</div>
+	</form>
+</body>
+</html>
