@@ -698,7 +698,7 @@ function BirdheroBird (tint) {
 
 	/* Animations */
 	this.talk = TweenMax.to(this.beak, 0.2, {
-		frame: this.beak.frame+1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+		frame: this.beak.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
 	this.walk = new TimelineMax({ repeat: -1, paused: true })
 		.fromTo(this.leftLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0)
@@ -748,7 +748,7 @@ BirdheroBird.prototype.countFeathers = function () {
 
 	var t = new TimelineMax();
 	for (var i = 1; i <= number; i++) {
-		t.addCallback(fun, (i-1)*1, [i], this);
+		t.addCallback(fun, i-1, [i], this);
 	}
 	t.addCallback(function () {}, '+=1');
 	return t;

@@ -67,7 +67,7 @@ function Agent () {
 	/* Animations */
 	var mouthNeutral = this.mouth.frame;
 	this.talk = TweenMax.fromTo(this.mouth, 0.2, { frame: mouthNeutral }, {
-		frame: mouthNeutral + 1, ease: SteppedEase.config(1), repeat: -1, yoyo: true, paused: true
+		frame: mouthNeutral + 1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
 	this.walk = new TimelineMax({ repeat: -1, paused: true })
 		.to(this.leftLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0)
