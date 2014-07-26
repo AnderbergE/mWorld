@@ -36,6 +36,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
 	this.load.audio('catbushpurr', 'assets/audio/subgames/balloongame/catbushpurr.mp3');
 	this.load.audio('chestunlock', 'assets/audio/subgames/balloongame/chestunlock.mp3');
+	this.load.audio('sackjingle', 'assets/audio/subgames/balloongame/belljingle.mp3');
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
@@ -60,7 +61,8 @@ BalloonGame.prototype.preload = function () {
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 };
-
+	var background;
+	var sky;
 	var cloud1;
 	var cloud2;
 	var scale = 0.85;
@@ -82,6 +84,7 @@ BalloonGame.prototype.preload = function () {
 	var catBush;
 	var mapText;
 	var treasures = 0;
+	var map;
 	
 
 /* Phaser state function */
@@ -109,21 +112,24 @@ BalloonGame.prototype.create = function () {
 			x: 830, y: 565
 		},
 		beetle: {
-			start: { x: 790, y: 1000 },
+			start: { x: 790, y: 800 },
 			stop: { x: 640, y: 450 },
 			basketStop: { x: 785, y: 500 },
 			scale: 0.65
 		},
 		cliff: {
 			leftx: 660, rightx: 990
+		},
+		sack: {
+			x:950, y:600
 		}
 	};
 
 	// Add main game
-	var sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
+	sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
 	cloud1 = this.add.sprite(-200, 25, 'cloud1', null, this.gameGroup);
 	cloud2 = this.add.sprite(200, 200, 'cloud2', null, this.gameGroup);
-	var background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
+	background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
 
 	
 	catBush = game.add.sprite(175, 420, 'catbush', 0, this.gameGroup);
@@ -162,9 +168,9 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-	var sack = _this.add.sprite(900, 600, 'sack', _this.gameGroup);
-	sack.anchor.setTo(0.5, 1);
-	treasure.scale.set(0.8);
+	var sack = _this.add.sprite(coords.sack.x, coords.sack.y, 'sack', _this.gameGroup);
+	sack.anchor.setTo(0.5, 0.5);
+	sack.scale.set(0.8);
 
 	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
 	treasure.anchor.setTo(0.5, 1);
@@ -230,6 +236,10 @@ BalloonGame.prototype.create = function () {
 	thoughtBubble.scale.x = -0.7;
 	thoughtBubble.scale.y = 0.7;
 	this.gameGroup.bringToTop(this.agent);
+
+	map = game.add.sprite(coords.beetle.stop.x+70, coords.beetle.stop.y+60, 'map', null, _this.gameGroup);
+	map.scale.setTo(0.5, 0.5);
+	map.visible = false;
 
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
@@ -630,12 +640,27 @@ BalloonGame.prototype.create = function () {
 		treasure.x = chest.x;
 		treasure.y = chest.y+10;
 		var tl = new TimelineMax();
+		var tls = new TimelineMax();
+		var tla = new TimelineMax();
 		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: treasure.y-75, ease:Power1.easeOut}));
 		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: chest.y+10, ease:Power1.easeIn}));
 		fade(treasure, true);
 		var pickAnswer = game.rnd.integerInRange(0, 5);
 		treasure.loadTexture('treasures', pickAnswer);
 		tl.addSound(speech, beetle, 'yippi');
+		tl.add( new TweenMax(treasure, 2, {x: coords.sack.x, y: coords.sack.y+10, ease:Power4.easeIn}));
+		tl.addCallback(function () {
+			tls.addSound('sackjingle', sack);
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+		});
+		
 		//Popping balloons and Basket going back down.
 		if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
 		{
@@ -802,9 +827,10 @@ BalloonGame.prototype.create = function () {
 
 	function renderChest (correctAnswer) {
 
-		fade(chest, false);
+		//Not using fade since that takes a long time and you can see the next solution.
+		chest.visible = false;
 		chest.loadTexture('closedChest');
-		fade(treasure, false);
+		treasure.visible = false;
 
 		if(correctAnswer % 2 === 1)
 			{
@@ -903,9 +929,9 @@ BalloonGame.prototype.create = function () {
 		tl.skippable();
 		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
 		if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
-			var map = game.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'map', null, _this.gameGroup);
-			map.scale.setTo(0.5, 0.5);
-			tl.add( new TweenMax(map, 0.1, {x: coords.beetle.stop.x+70, y: coords.beetle.stop.y+60, ease:Power1.easeIn}));
+			tl.addCallback(function () {
+				fade(map, true);
+			});
 			tl.addSound('beetleintro3', beetle);
 			tl.add( new TweenMax(map, 2, {x: 670, y: 640, ease:Power1.easeIn}));
 		}else{
