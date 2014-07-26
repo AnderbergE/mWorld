@@ -241,7 +241,7 @@ BirdheroGame.prototype.create = function () {
 			});
 			t.addLabel('celebrate');
 			t.add(branch.celebrate(2), 'celebrate');
-			t.add(_this.addWater(branch.x + branch.mother.x * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
+			t.add(_this.addWater(branch.x + (branch.mother.x - 10) * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
 			t.add(elevator.moveTo.bottom());
 		} else { /* Incorrect :( */
 			t.addLabel('wrong');
