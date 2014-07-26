@@ -35,6 +35,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
 	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
 	this.load.audio('catbushpurr', 'assets/audio/subgames/balloongame/catbushpurr.mp3');
+	this.load.audio('chestunlock', 'assets/audio/subgames/balloongame/chestunlock.mp3');
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
@@ -164,6 +165,7 @@ BalloonGame.prototype.create = function () {
 	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
 	treasure.anchor.setTo(0.5, 1);
 	treasure.visible = false;
+	treasure.scale.set(0.5);
 
 	chest = _this.add.sprite(1200, 900, 'closedChest', _this.gameGroup);
 	chest.anchor.setTo(0.5, 1);
@@ -607,11 +609,12 @@ BalloonGame.prototype.create = function () {
 	function openChest() {
 		console.log('hej1');
 		var tl = new TimelineMax();
-		//tl.add( new TweenMax(beetle, 2, {x: beetle.x, y: beetle.y+1, ease:Power1.easeInOut}));
-		tl.add(_this.addWater(chest.x, chest.y), '-=3');
+		var watertl = new TimelineMax();
+		tl.addSound('chestunlock', chest);
 		fade(eyes, false);
 		fade(chest, true);
 		tl.eventCallback('onComplete', function(){
+			watertl.add(_this.addWater(chest.x, chest.y), '-=3');
 			chest.loadTexture('openChest');
 			playRandomPrize();
 		});
@@ -625,7 +628,8 @@ BalloonGame.prototype.create = function () {
 		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: treasure.y-75, ease:Power1.easeOut}));
 		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: chest.y+10, ease:Power1.easeIn}));
 		fade(treasure, true);
-		treasure.loadTexture('treasures', 3);
+		var pickAnswer = game.rnd.integerInRange(0, 5);
+		treasure.loadTexture('treasures', pickAnswer);
 		tl.addSound(speech, beetle, 'yippi');
 		//Popping balloons and Basket going back down.
 		if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
@@ -793,9 +797,9 @@ BalloonGame.prototype.create = function () {
 
 	function renderChest (correctAnswer) {
 
-		chest.visible = false;
+		fade(chest, false);
 		chest.loadTexture('closedChest');
-		treasure.visible = false;
+		fade(treasure, false);
 
 		if(correctAnswer % 2 === 1)
 			{
