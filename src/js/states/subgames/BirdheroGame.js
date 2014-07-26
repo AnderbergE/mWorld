@@ -237,19 +237,18 @@ BirdheroGame.prototype.create = function () {
 				bird.visible = false;
 				branch.chicks++;
 				speech.play('correct');
+				_this.agent.setHappy();
 			});
 			t.addLabel('celebrate');
 			t.add(branch.celebrate(2), 'celebrate');
 			t.add(_this.addWater(branch.x + branch.mother.x * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
 			t.add(elevator.moveTo.bottom());
-			t.addCallback(function () {
-				_this.nextRound();
-			});
 		} else { /* Incorrect :( */
 			t.addLabel('wrong');
 			if (result < 0) { t.addSound(speech, bird, 'higher'); }
 			else { t.addSound(speech, bird, 'lower'); }
 
+			t.addCallback(_this.agent.setSad, 'wrong', null, _this.agent);
 			t.add(branch.confused(), 'wrong'); // 3 second confusion
 			t.add(bird.moveTo.elevator());
 			t.add(bird.moveTo.peak(true));
@@ -258,11 +257,13 @@ BirdheroGame.prototype.create = function () {
 			t.addLabel('initial');
 			t.add(bird.moveTo.initial(), 'initial');
 			t.add(zoom(true), 'initial');
-			t.addCallback(function () {
-				bird.moveTurn(1);
-				_this.nextRound();
-			});
 		}
+
+		t.addCallback(function () {
+			_this.agent.setNeutral();
+			bird.moveTurn(1);
+			_this.nextRound();
+		});
 	}
 	/* Function to trigger when a yes/no button is pushed */
 	function pushYesno (value) {
@@ -536,6 +537,7 @@ BirdheroGame.prototype.create = function () {
 		_this.agent.thought.visible = false;
 		_this.agent.eyesFollowPointer(true);
 		_this.agent.fistPump()
+			.addCallback(_this.agent.setHappy, 0, null, _this.agent)
 			.addCallback(function () { _this.nextRound(); });
 	};
 

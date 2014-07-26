@@ -150,6 +150,18 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 	return this.lastGuess;
 };
 
+Agent.prototype.setNeutral = function () {
+	this.mouth.frameName = 'mouth0';
+};
+
+Agent.prototype.setHappy = function () {
+	this.mouth.frameName = 'mouth2';
+};
+
+Agent.prototype.setSad = function () {
+	this.mouth.frameName = 'mouth3';
+};
+
 /**
  * Animation: Pump it up yeah!
  * @param {number} Duration in seconds (default 3)
