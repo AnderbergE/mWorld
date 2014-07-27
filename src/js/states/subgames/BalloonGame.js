@@ -14,6 +14,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('eyes',      'assets/img/subgames/balloon/eyes.png');
 	this.load.image('metalLoop',      'assets/img/subgames/balloon/metalloop.png');
 	this.load.spritesheet('catbush',      'assets/img/subgames/balloon/catbush2.png',191,88,10);
+	this.load.spritesheet('treasures',      'assets/img/subgames/balloon/treasures.png', 75, 110, 6);
 
 	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
@@ -33,6 +34,9 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
 	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
 	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
+	this.load.audio('catbushpurr', 'assets/audio/subgames/balloongame/catbushpurr.mp3');
+	this.load.audio('chestunlock', 'assets/audio/subgames/balloongame/chestunlock.mp3');
+	this.load.audio('sackjingle', 'assets/audio/subgames/balloongame/belljingle.mp3');
 
 	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
 	this.load.image('background',      'assets/img/subgames/balloon/background.png');
@@ -50,6 +54,10 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
 	this.load.image('map',      'assets/img/subgames/balloon/map.png');
 	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
+	this.load.image('closedChest',      'assets/img/subgames/balloon/chest.png');
+	this.load.image('openChest',      'assets/img/subgames/balloon/chest_open.png');
+	this.load.image('sack',      'assets/img/subgames/balloon/sack.png');
+	
 
 	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
 };
@@ -69,12 +77,14 @@ BalloonGame.prototype.preload = function () {
 	var balloonStack1;
 	var balloonStack2;
 	var eyes;
+	var treasure;
 	var balloonStock = 9;
 	var airBalloonStock = 0;
 	var direction = 'right';
 	var catBush;
 	var mapText;
 	var treasures = 0;
+	var map;
 	
 
 /* Phaser state function */
@@ -102,13 +112,16 @@ BalloonGame.prototype.create = function () {
 			x: 830, y: 565
 		},
 		beetle: {
-			start: { x: 790, y: 1000 },
+			start: { x: 790, y: 800 },
 			stop: { x: 640, y: 450 },
 			basketStop: { x: 785, y: 500 },
 			scale: 0.65
 		},
 		cliff: {
 			leftx: 660, rightx: 990
+		},
+		sack: {
+			x:950, y:600
 		}
 	};
 
@@ -126,6 +139,8 @@ BalloonGame.prototype.create = function () {
 	//catBush.scale.set(0.5);
 
 	function catBushPlay(){
+		var tl = new TimelineMax();
+		tl.addSound('catbushpurr', catBush);
 		catBush.animations.play('catBlink', 8, false);
 		//TODO: Add sound.
 		catBush.events.onAnimationComplete.add(function(){
@@ -153,9 +168,20 @@ BalloonGame.prototype.create = function () {
 		}
 	}
 
-	chest = _this.add.sprite(1200, 900, 'spritesheet', 3, _this.gameGroup);
+	var sack = _this.add.sprite(coords.sack.x, coords.sack.y, 'sack', _this.gameGroup);
+	sack.anchor.setTo(0.5, 0.5);
+	sack.scale.set(0.8);
+
+	treasure = _this.add.sprite(300, 300, 'treasures', 1, _this.gameGroup);
+	treasure.anchor.setTo(0.5, 1);
+	treasure.visible = false;
+	treasure.scale.set(0.5);
+
+	chest = _this.add.sprite(1200, 900, 'closedChest', _this.gameGroup);
+	chest.anchor.setTo(0.5, 1);
 	chest.visible = false;
 	eyes = _this.add.sprite(1200, 900, 'eyes', 3, _this.gameGroup);
+
 
 	// Setting up balloon related sprites and groups.
 	airballoons = this.add.group(this.gameGroup);
@@ -210,6 +236,10 @@ BalloonGame.prototype.create = function () {
 	thoughtBubble.scale.x = -0.7;
 	thoughtBubble.scale.y = 0.7;
 	this.gameGroup.bringToTop(this.agent);
+
+	map = game.add.sprite(coords.beetle.stop.x+70, coords.beetle.stop.y+60, 'map', null, _this.gameGroup);
+	map.scale.setTo(0.5, 0.5);
+	map.visible = false;
 
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
@@ -270,6 +300,10 @@ BalloonGame.prototype.create = function () {
 	plusminus.add(new TextButton('+', buttonOptions));
 	plusminus.visible = false;
 	this.hudGroup.add(plusminus);
+
+	var foreGround = this.add.group(this.gameGroup);
+	foreGround.add(chest);
+	foreGround.add(treasure);
 
 	function showYesnos () {
 		yesnos.reset();
@@ -554,39 +588,93 @@ BalloonGame.prototype.create = function () {
 			tl.add( new TweenMax(airballoons, 2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeInOut}));
 			if (!result)
 			{
-				tl.addCallback(function () {
-					fade(eyes, false);
-					fade(chest, true);
+
+				tl.eventCallback('onComplete', function(){
+					openChest();
 				});
-				tl.addSound(speech, beetle, 'yippi');
-				tl.add(_this.addWater(chest.x, chest.y), '-=3');
+				
 				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
 				{
 					treasures++;
 					disableBalloons();
 				}
-			} else if (result > 0)
-			{
-				tl.addSound('tryless', beetle);
 			} else {
-				tl.addSound('trymore', beetle);
+				if (result > 0)
+				{
+					tl.addSound('tryless', beetle);
+				} else {
+					tl.addSound('trymore', beetle);
+				}
+				//Popping balloons and Basket going back down.
+				console.log('inte korrekt');
+				if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
+				{
+					popAndReturn(tl);
+				}
+
+				tl.eventCallback('onComplete', function(){
+					_this.disable(false);
+					_this.agent.eyesFollowPointer();
+					_this.nextRound();
+				});
 			}
-			//Popping balloons and Basket going back down.
-			console.log('this.method: ' + _this.method + ' GLOBAL.METHOD.incrementalSteps: ' + GLOBAL.METHOD.incrementalSteps + ' treasures: ' + treasures);
-			if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
-			{
-				popAndReturn(tl);
-			}
-			
-			tl.eventCallback('onComplete', function(){
-				_this.disable(false);
-				_this.agent.eyesFollowPointer();
-				_this.nextRound();
-			});
 		}
 	}
 
+	function openChest() {
+		console.log('hej1');
+		var tl = new TimelineMax();
+		var watertl = new TimelineMax();
+		tl.addSound('chestunlock', chest);
+		fade(eyes, false);
+		fade(chest, true);
+		tl.eventCallback('onComplete', function(){
+			watertl.add(_this.addWater(chest.x, chest.y), '-=3');
+			chest.loadTexture('openChest');
+			playRandomPrize();
+		});
+	}
+
+	function playRandomPrize() {
+		console.log('hej2');
+		treasure.x = chest.x;
+		treasure.y = chest.y+10;
+		var tl = new TimelineMax();
+		var tls = new TimelineMax();
+		var tla = new TimelineMax();
+		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: treasure.y-75, ease:Power1.easeOut}));
+		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: chest.y+10, ease:Power1.easeIn}));
+		fade(treasure, true);
+		var pickAnswer = game.rnd.integerInRange(0, 5);
+		treasure.loadTexture('treasures', pickAnswer);
+		tl.addSound(speech, beetle, 'yippi');
+		tl.add( new TweenMax(treasure, 2, {x: coords.sack.x, y: coords.sack.y+10, ease:Power4.easeIn}));
+		tl.addCallback(function () {
+			tls.addSound('sackjingle', sack);
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
+			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+		});
+		
+		//Popping balloons and Basket going back down.
+		if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
+		{
+			popAndReturn(tl);
+		}
+		tl.eventCallback('onComplete', function(){
+			_this.disable(false);
+			_this.agent.eyesFollowPointer();
+			_this.nextRound();
+		});
+	}
+
 	function popAndReturn(tl) {
+		console.log('hej3');
 		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
 		tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
 		tl.addCallback(function () {
@@ -739,20 +827,23 @@ BalloonGame.prototype.create = function () {
 
 	function renderChest (correctAnswer) {
 
+		//Not using fade since that takes a long time and you can see the next solution.
 		chest.visible = false;
+		chest.loadTexture('closedChest');
+		treasure.visible = false;
 
 		if(correctAnswer % 2 === 1)
 			{
-				chest.x = coords.cliff.rightx-105;
+				chest.x = coords.cliff.rightx-70;
 				eyes.x = coords.cliff.rightx-95;
 			}
 		else
 			{
-				chest.x = coords.cliff.leftx+45;
+				chest.x = coords.cliff.leftx+75;
 				eyes.x = coords.cliff.leftx+50;
 			}
 
-			chest.y = 455 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
+			chest.y = 555 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			eyes.y = 525 - (55 * scale * (correctAnswer-1) * stepSize + 55 * scale);
 			chest.scale.x = 0.4;
 			chest.scale.y = 0.4;
@@ -838,9 +929,9 @@ BalloonGame.prototype.create = function () {
 		tl.skippable();
 		tl.add( new TweenMax(beetle, 3, {x: coords.beetle.stop.x, y: coords.beetle.stop.y, ease:Power1.easeIn}));
 		if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
-			var map = game.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'map', null, _this.gameGroup);
-			map.scale.setTo(0.5, 0.5);
-			tl.add( new TweenMax(map, 0.1, {x: coords.beetle.stop.x+70, y: coords.beetle.stop.y+60, ease:Power1.easeIn}));
+			tl.addCallback(function () {
+				fade(map, true);
+			});
 			tl.addSound('beetleintro3', beetle);
 			tl.add( new TweenMax(map, 2, {x: 670, y: 640, ease:Power1.easeIn}));
 		}else{
