@@ -34,11 +34,11 @@ EntryState.prototype.create = function () {
 		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.garden); }, this);
 
 		changeAgent.text = LANG.TEXT.changeAgent;
-		changeAgent.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.playerSetup); }, this);
+		changeAgent.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.agentSetup); }, this);
 	} else {
 		// Player has not played before, go to setup.
 		start.text = LANG.TEXT.start;
-		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.playerSetup); }, this);
+		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.agentSetup); }, this);
 	}
 
 
