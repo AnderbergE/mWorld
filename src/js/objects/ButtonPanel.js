@@ -3,7 +3,7 @@ ButtonPanel.prototype.constructor = ButtonPanel;
 /**
  * Create a panel filled with buttons.
  * See NumberButton and GeneralButton for more information.
- * @param {Number} amount - The number of buttons (NOTE, this will be overwritten if you set options min or max)
+ * @param {Number} amount - The number of buttons (NOTE, this will be overwritten if you set option max)
  * @param {Number|Array} representations - The representations to use on the buttons.
  * @param {Object} options - options for the panel:
  *        {Number} x - The x position (default is 0)
@@ -22,42 +22,49 @@ ButtonPanel.prototype.constructor = ButtonPanel;
  */
 function ButtonPanel (amount, representations, options) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
+	this.representations = representations;
 	this.x = options.x || 0;
 	this.y = options.y || 0;
-	this.min = options.min || 1;
-	this.max = options.max || (this.min + amount - 1);
-	this.amount = this.max - this.min + 1;
+	this.vertical = options.vertical || false;
+	this.reversed = options.reversed || false;
+	this.size = options.size || (this.vertical ? game.world.height : game.world.width);
+	this.method = options.method || GLOBAL.METHOD.count;
 
-	options.vertical = options.vertical || false;
-	options.size = options.size || (options.vertical ? game.world.height : game.world.width);
-	options.method = options.method || GLOBAL.METHOD.count;
-	options.maxButtonSize = options.maxButtonSize || 75;
+	this.color = options.color;
+	this.background = options.background;
+	this.maxButtonSize = options.maxButtonSize || 75;
+	this.onClick = options.onClick;
 
+	options.min = options.min || 1;
+	this.setRange(options.min, options.max || (options.min + amount - 1));
+	
+	return this;
+}
+
+ButtonPanel.prototype._createButtons = function () {
+	this.removeAll(true);
+
+
+	/* Calculate max button size */
+	var buttonSize = this.size/this.amount;
+	if (buttonSize > this.maxButtonSize) {
+		buttonSize = this.maxButtonSize;
+	}
+
+	/* These options will be used when creating the buttons */
 	var buttonOptions = {
 		min: this.min,
 		max: this.max,
-		background: options.background,
-		color: options.color,
-		onClick: options.onClick
+		size: buttonSize,
+		background: this.background,
+		color: this.color,
+		vertical: !this.vertical,
+		onClick: this.onClick
 	};
-	if (options.method === GLOBAL.METHOD.incrementalSteps) {
-		this.amount = 4; // Since we have these buttons: (-) (number) (+) (ok)
-	}
-
-	var buttonSize = options.size/this.amount;
-	if (buttonSize > options.maxButtonSize) { buttonSize = options.maxButtonSize; }
-	var widthLeft = options.size - buttonSize*this.amount;
-	var paddingSize = widthLeft/this.amount;
-	if (paddingSize > buttonSize/2) { paddingSize = buttonSize/2; }
-	var margin = (options.size - this.amount*buttonSize - (this.amount-1)*paddingSize)/2;
-	var fullSize = paddingSize+buttonSize;
-
-	buttonOptions.size = buttonSize;
-	var i;
 
 	// Set up the buttons that should be in the panel.
-	if (options.method === GLOBAL.METHOD.incrementalSteps) {
-		var change = new NumberButton(1, representations, buttonOptions);
+	if (this.method === GLOBAL.METHOD.incrementalSteps) {
+		var change = new NumberButton(1, this.representations, buttonOptions);
 		buttonOptions.onClick = function () { change.number--; };
 		this.add(new TextButton('-', buttonOptions));
 		this.add(change);
@@ -65,25 +72,61 @@ function ButtonPanel (amount, representations, options) {
 		this.add(new TextButton('+', buttonOptions));
 		buttonOptions.onClick = function () { change.bg.events.onInputDown.dispatch(); };
 		this.add(new TextButton('v', buttonOptions));
+
 	} else {
-		buttonOptions.vertical = !options.vertical;
-		for (i = this.min; i <= this.max; i++) {
-			this.add(new NumberButton(i, representations, buttonOptions));
+		for (var i = this.min; i <= this.max; i++) {
+			this.add(new NumberButton(i, this.representations, buttonOptions));
 		}
 	}
 
 	// Reverse the order of the buttons if needed.
-	if (options.reversed) { this.reverse(); }
+	if (this.reversed) { this.reverse(); }
+
+
+	/* Calculate white space */
+	var widthLeft = this.size - buttonSize*this.amount;
+	var paddingSize = widthLeft/this.amount;
+	if (paddingSize > buttonSize/2) {
+		paddingSize = buttonSize/2;
+	}
+	var margin = (this.size - this.amount*buttonSize - (this.amount - 1)*paddingSize)/2;
+	var fullSize = paddingSize + buttonSize;
 
 	// Set up the x and y positions.
-	if (options.vertical) {
-		for (i = 0; i < this.length; i++) { this.children[i].y = margin + fullSize*i; }
-	} else {
-		for (i = 0; i < this.length; i++) { this.children[i].x = margin + fullSize*i; }
+	var direction = this.vertical ? 'y' : 'x';
+	for (var j = 0; j < this.length; j++) {
+		this.children[j][direction] = margin + fullSize*j;
 	}
+};
 
-	return this;
-}
+ButtonPanel.prototype._updateButtons = function () {
+	if (this.method === GLOBAL.METHOD.incrementalSteps) {
+		var button = this.children[this.reversed ? 2 : 1];
+		button.min = this.min;
+		button.max = this.max;
+	} else {
+		var val = this.min;
+		for (var key in this.children) {
+			this.children[key].number = val;
+			val++;
+		}
+	}
+};
+
+ButtonPanel.prototype.setRange = function (min, max) {
+	this.min = min || this.min || 1;
+	this.max = max || this.max || 1;
+
+	var oldAmount = this.amount || 0;
+	// incrementalSteps have these buttons: (-) (number) (+) (ok)
+	this.amount = this.method === GLOBAL.METHOD.incrementalSteps ? 4 : (this.max - this.min + 1);
+
+	if (this.amount !== oldAmount || this.length <= 0) {
+		this._createButtons();
+	} else {
+		this._updateButtons();
+	}
+};
 
 ButtonPanel.prototype.reset = function () {
 	for (var i = 0; i < this.length; i++) {

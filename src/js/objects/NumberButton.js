@@ -12,19 +12,18 @@ NumberButton.prototype.constructor = NumberButton;
  * @returns {Object} Itself.
  */
 function NumberButton (number, representations, options) {
-	GeneralButton.call(this, options); // Parent constructor.
 	this.representations = Array.isArray(representations) ? representations : [representations];
 	this.vertical = options.vertical || true;
-	this.clicker = options.onClick;
+
+	GeneralButton.call(this, options); // Parent constructor.
+
 	this.min = options.min || 1;
 	this.max = options.max || 9;
-	if (this.vertical) { this.bg.height *= this.representations.length; }
-	else { this.bg.width *= this.representations.length; }
-
 	this._number = 0;
 	this.number = number;
 
 	// This will be called in the general button's onInputDown
+	this.clicker = options.onClick;
 	this.onClick = function () {
 		EventSystem.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
 		if (this.clicker) { this.clicker(this.number); }
@@ -80,3 +79,10 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 		}
 	}
 });
+
+NumberButton.prototype.setSize = function (size) {
+	GeneralButton.prototype.setSize.call(this, size);
+
+	if (this.vertical) { this.bg.height *= this.representations.length; }
+	else { this.bg.width *= this.representations.length; }
+};

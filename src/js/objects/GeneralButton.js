@@ -15,14 +15,10 @@ function GeneralButton (options) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.x = options.x || 0;
 	this.y = options.y || 0;
-	this.size = options.size || 75;
 	this.color = options.color || '#000000';
 	this.disabled = options.disabled || false;
 
 	this.bg = game.add.sprite(0, 0, options.background, 0, this);
-	this.bg.width = this.size;
-	this.bg.height = this.size;
-
 	this.bg.inputEnabled = true;
 	this.bg.events.onInputDown.add(function () {
 		if (this.disabled) { return; }
@@ -32,8 +28,16 @@ function GeneralButton (options) {
 		if (this.onClick) { this.onClick(); }
 	}, this);
 
+	this.setSize(options.size || 75);
+
 	return this;
 }
+
+GeneralButton.prototype.setSize = function (size) {
+	this.size = size;
+	this.bg.width = size;
+	this.bg.height = size;
+};
 
 GeneralButton.prototype.reset = function () {
 	this.bg.frame -= this.bg.frame % 2;
