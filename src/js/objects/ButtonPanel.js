@@ -41,6 +41,9 @@ function ButtonPanel (amount, representations, options) {
 	return this;
 }
 
+/**
+ * Create the buttons.
+ */
 ButtonPanel.prototype._createButtons = function () {
 	this.removeAll(true);
 
@@ -99,6 +102,9 @@ ButtonPanel.prototype._createButtons = function () {
 	}
 };
 
+/**
+ * Update the values of the buttons.
+ */
 ButtonPanel.prototype._updateButtons = function () {
 	if (this.method === GLOBAL.METHOD.incrementalSteps) {
 		var button = this.children[this.reversed ? 2 : 1];
@@ -107,12 +113,19 @@ ButtonPanel.prototype._updateButtons = function () {
 	} else {
 		var val = this.min;
 		for (var key in this.children) {
+			this.children[key].min = this.min;
+			this.children[key].max = this.max;
 			this.children[key].number = val;
 			val++;
 		}
 	}
 };
 
+/**
+ * Set the range for the button panel. It will create or update the panel accordingly.
+ * @param {Number} The minimum amount in the panel
+ * @param {Number} The maximum amount in the panel
+ */
 ButtonPanel.prototype.setRange = function (min, max) {
 	this.min = min || this.min || 1;
 	this.max = max || this.max || 1;
@@ -128,12 +141,20 @@ ButtonPanel.prototype.setRange = function (min, max) {
 	}
 };
 
+/**
+ * Reset all buttons to "up" state.
+ */
 ButtonPanel.prototype.reset = function () {
 	for (var i = 0; i < this.length; i++) {
 		this.children[i].reset();
 	}
 };
 
+/**
+ * Highlight all buttons.
+ * @param {Number} How long to highlight
+ * @returns {Object} The animation timeline.
+ */
 ButtonPanel.prototype.highlight = function (duration) {
 	var t = new TimelineMax();
 	for (var i = 0; i < this.length; i++) {
@@ -142,6 +163,10 @@ ButtonPanel.prototype.highlight = function (duration) {
 	return t;
 };
 
+/**
+ * Disable/Enable all buttons.
+ * @param {Boolean} True is disabled, false is enabled
+ */
 ButtonPanel.prototype.disable = function (value) {
 	for (var i = 0; i < this.length; i++) {
 		this.children[i].disabled = value;

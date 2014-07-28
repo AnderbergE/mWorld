@@ -33,16 +33,28 @@ function GeneralButton (options) {
 	return this;
 }
 
+/**
+ * Set the size of this button.
+ * @param {Number} The new size.
+ */
 GeneralButton.prototype.setSize = function (size) {
 	this.size = size;
 	this.bg.width = size;
 	this.bg.height = size;
 };
 
+/**
+ * Reset the buttons to "up" state.
+ */
 GeneralButton.prototype.reset = function () {
 	this.bg.frame -= this.bg.frame % 2;
 };
 
+/**
+ * Highlight the buttons.
+ * @param {Number} How long to highlight
+ * @returns {Object} The animation tweenmax.
+ */
 GeneralButton.prototype.highlight = function (duration) {
 	return TweenMax.to(this, 0.5, { alpha: 0 }).backForth(duration || 3);
 };

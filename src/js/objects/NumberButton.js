@@ -80,6 +80,10 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 	}
 });
 
+/**
+ * Set the size of this button.
+ * @param {Number} The new size.
+ */
 NumberButton.prototype.setSize = function (size) {
 	GeneralButton.prototype.setSize.call(this, size);
 
