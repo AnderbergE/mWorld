@@ -3,9 +3,12 @@ function Player () {
 	this._agent = null;
 	this._water = 0;
 
+	this.tint = 0xffffff;
+
 	var data = Backend.getPlayer();
 	if (data) {
 		this.agent = GLOBAL.AGENT[data.agent];
+		this.tint = data.tint || this.tint;
 		this._water = data.water || 0;
 	}
 
@@ -36,3 +39,9 @@ Object.defineProperty(Player.prototype, 'agent', {
 		}
 	}
 });
+
+Player.prototype.createAgent = function () {
+	var agent = new this.agent();
+	agent.tint = this.tint;
+	return agent;
+};

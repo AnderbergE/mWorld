@@ -60,7 +60,7 @@ GardenState.prototype.create = function () {
 		}
 	}
 
-	var agent = new player.agent();
+	var agent = player.createAgent();
 	agent.scale.set(0.2);
 	agent.x = -100;
 	agent.y = startPos - agent.body.height * agent.scale.y/2;
