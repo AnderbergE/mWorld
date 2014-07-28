@@ -64,7 +64,7 @@ Subgame.prototype.init = function (options) {
 	this._totalTries = 0;
 
 	/* Public variables */
-	this.method = options.method || GLOBAL.METHOD.count;
+	this.method = parseInt(options.method || GLOBAL.METHOD.count);
 	this.representation = options.representation;
 	this.amount = GLOBAL.NUMBER_RANGE[options.range];
 	/* The current number to answer */
