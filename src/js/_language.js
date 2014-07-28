@@ -64,11 +64,14 @@ LANG.english = {};
 LANG.english.text = {
 	/* Entry state */
 	title: 'Magical Garden',
-	start: 'Start',
+	start: 'Start playing',
+	continuePlaying: 'Continue playing',
+	changeAgent: 'Change friend',
 	credits: 'Credits',
 
 	/* General */
 	ok: 'Ok',
+	continue: 'Continue playing',
 	connectionLost: 'Connection lost',
 
 	/* Garden state */
