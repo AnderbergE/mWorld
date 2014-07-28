@@ -148,7 +148,13 @@ Subgame.prototype._nextNumber = function () {
 	// Should we allow the same number again?
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
-	this.currentNumber = this.rnd.integerInRange(1, this.amount);
+
+	// Weighted randomisation, increase amount of high numbers with 50% if applicable
+	if (this.amount > 4 && this.rnd.frac() < 0.7) {
+		this.currentNumber = this.rnd.integerInRange(5, this.amount);
+	} else {
+		this.currentNumber = this.rnd.integerInRange(1, 4);
+	}
 };
 
 /** Skip the current mode. */
