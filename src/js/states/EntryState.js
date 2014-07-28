@@ -15,23 +15,35 @@ EntryState.prototype.create = function () {
 	});
 	title.anchor.set(0.5);
 
-	var start = this.add.text(this.world.centerX, this.world.centerY, LANG.TEXT.start, {
+	var start = this.add.text(this.world.centerX, this.world.centerY, LANG.TEXT.continuePlaying, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#dd00dd'
 	});
 	start.anchor.set(0.5);
 	start.inputEnabled = true;
-	start.events.onInputDown.add(function () {
-		// Start the game, if player has an agent, go to garden, otherwises choose agent.
-		if (player.agent) {
-			this.state.start(GLOBAL.STATE.garden);
-		} else {
-			this.state.start(GLOBAL.STATE.playerSetup);
-		}
 
-	}, this);
+	var changeAgent = this.add.text(this.world.centerX, this.world.centerY*1.33, '', {
+		font: '40pt ' +  GLOBAL.FONT,
+		fill: '#000000'
+	});
+	changeAgent.anchor.set(0.5);
+	changeAgent.inputEnabled = true;
 
-	var credits = this.add.text(this.world.centerX, this.world.centerY/0.75, LANG.TEXT.credits, {
+	if (player.agent) {
+		// Player has played before, we go to garden directly and show the agent change option.
+		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.garden); }, this);
+
+		changeAgent.text = LANG.TEXT.changeAgent;
+		changeAgent.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.playerSetup); }, this);
+	} else {
+		// Player has not played before, go to setup.
+		start.text = LANG.TEXT.start;
+		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.playerSetup); }, this);
+	}
+
+
+
+	var credits = this.add.text(this.world.width - 100, this.world.height - 40, LANG.TEXT.credits, {
 		font: '30pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
@@ -40,6 +52,7 @@ EntryState.prototype.create = function () {
 	credits.events.onInputDown.add(function () {
 		fade(credits, false, 0.3);
 		fade(start, false, 0.3);
+		fade(changeAgent, false, 0.3);
 		fade(allCredits, true);
 		rolling.restart();
 		cover.visible = true;
@@ -52,6 +65,7 @@ EntryState.prototype.create = function () {
 	cover.events.onInputDown.add(function () {
 		fade(credits, true);
 		fade(start, true);
+		fade(changeAgent, true);
 		fade(allCredits, false, 0.3);
 		rolling.pause();
 		TweenMax.to(cover, 0.3, { alpha: 0, onComplete: function () { cover.visible = false; } });
