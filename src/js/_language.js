@@ -79,6 +79,7 @@ LANG.english.text = {
 
 	/* Player setup state */
 	pickFriend: 'Who will be your friend?',
+	changeColor: 'Change colour',
 
 	/* Menu items */
 	menu: 'MENU',
