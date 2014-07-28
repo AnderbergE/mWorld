@@ -1,13 +1,13 @@
 /* The menu for choosing agent, */
-function PlayerSetupState () {}
+function AgentSetupState () {}
 
 /* Phaser state function */
-PlayerSetupState.prototype.preload = function () {
+AgentSetupState.prototype.preload = function () {
 	this.load.audio('pandaChooseMe', LANG.SPEECH.panda.chooseMe);
 };
 
 /* Phaser state function */
-PlayerSetupState.prototype.create = function () {
+AgentSetupState.prototype.create = function () {
 	var _this = this;
 	var spacing = 450;
 	var scale = { x: 0.3, y: 0.3 };
@@ -157,4 +157,4 @@ PlayerSetupState.prototype.create = function () {
 };
 
 /* Phaser state function */
-PlayerSetupState.prototype.shutdown = onShutDown;
+AgentSetupState.prototype.shutdown = onShutDown;

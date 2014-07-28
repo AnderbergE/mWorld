@@ -31,7 +31,7 @@ var GLOBAL = {
 
 	STATE: {
 		entry:        'Entry',
-		playerSetup:  'PlayerSetup',
+		agentSetup:   'AgentSetup',
 		garden:       'Garden',
 		0:            'Lizard',
 		lizardGame:   'Lizard',

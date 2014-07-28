@@ -38,7 +38,7 @@ window.onload = function () {
 
 		game.state.add('Boot', BootState);
 		game.state.add(GLOBAL.STATE.entry,        EntryState);
-		game.state.add(GLOBAL.STATE.playerSetup,  PlayerSetupState);
+		game.state.add(GLOBAL.STATE.agentSetup,   AgentSetupState);
 		game.state.add(GLOBAL.STATE.garden,       GardenState);
 		game.state.add(GLOBAL.STATE.lizardGame,   LizardJungleGame);
 		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
