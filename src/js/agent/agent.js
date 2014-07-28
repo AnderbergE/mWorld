@@ -105,6 +105,17 @@ function Agent () {
 	return this;
 }
 
+Object.defineProperty(Agent.prototype, 'tint', {
+	get: function() { return this.body.tint; },
+	set: function(value) {
+		this.body.tint = value;
+		this.leftArm.children[0].tint = value;
+		this.rightArm.children[0].tint = value;
+		this.leftLeg.children[0].tint = value;
+		this.rightLeg.children[0].tint = value;
+	}
+});
+
 /**
  * Have the agent guess a number.
  * NOTE: This can be overwritten by other AI.
