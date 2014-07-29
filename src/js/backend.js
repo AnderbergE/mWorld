@@ -1,18 +1,30 @@
 /**
  * Handles the communication with the backend.
+ * The communication needs a Route object set which will tell where
+ * to send the different get and post requests.
+ * @global
  */
 var Backend = {
-
-	/* Max tries to send requests. */
-	maxTries: 10,
+	/**
+	 * @property {Object} _maxTries - Max tries to send requests.
+	 * @default
+	 * @private
+	 */
+	_maxTries: 10,
 
 	/**
 	 * Basic ajax call.
+	 * Publishes connection event if ajax call fail.
 	 * @param {Object} settings - An object with settings to jQuery ajax call
+	 * @param {number} tries - Amount of times to resend if something goes wrong.
+	 *                         Default value is max tries.
+	 *                         NOTE: If server code is between 400 and 500 it will not retry.
+	 * @return {Array} A promise to the ajax request.
+	 *                 NOTE: This has a fail function set which will show connection lost.
 	 */
 	ajax: function (settings, tries) {
 		if (isNaN(tries) || tries === null) {
-			tries = this.maxTries;
+			tries = this._maxTries;
 		}
 		tries--;
 
@@ -25,7 +37,7 @@ var Backend = {
 			if (tries > 0) {
 				EventSystem.publish(GLOBAL.EVENT.connection, [false]);
 				setTimeout(function () { _this.ajax(settings, tries); },
-					(_this.maxTries - tries) * 1000);
+					(_this._maxTries - tries) * 1000);
 			} else {
 				EventSystem.publish(GLOBAL.EVENT.connectionLost);
 			}
@@ -33,12 +45,15 @@ var Backend = {
 	},
 
 	/**
-	 * GET data.
-	 * @param {String} routeName - The name of the route function
-	 * @param {*} parameters - optional parameter for the route action
+	 * GET request.
+	 * Publishes connection event when get is done.
+	 * NOTE: This request is sent synchronous.
+	 * @param {String} routeName - The name of the route function.
+	 * @param {*} parameters - optional parameters for the route action.
+	 * @return {Object} The object returned from the ajax request.
 	 */
 	get: function (routeName, parameters) {
-		var json = null;
+		var ret = null;
 
 		if (typeof Routes !== 'undefined' && Routes[routeName]) {
 			var settings = {
@@ -47,21 +62,24 @@ var Backend = {
 			};
 
 			this.ajax(settings).done(function (data) {
-				json = data;
+				ret = data;
 				EventSystem.publish(GLOBAL.EVENT.connection, [true]);
 			});
 		}
 
-		return json;
+		return ret;
 	},
 
 	/**
-	 * PUT data.
-	 * @param {String} routeName - The name of the route function
-	 * @param {Object} data - The data to send (will be transformed to JSON-format)
+	 * POST data.
+	 * Publishes connection event when post is done.
+	 * @param {String} routeName - The name of the route function.
+	 * @param {Object} data - The data to send (will be transformed to JSON-format).
 	 */
-	put: function (routeName, data, callback) {
+	post: function (routeName, data, callback) {
+		/* We wrap the data in "magic" to make it easier to find at the server. */
 		var stringified = JSON.stringify({ magic: data });
+
 		if (typeof Routes !== 'undefined' && Routes[routeName]) {
 			var settings = {
 				url: Routes[routeName](),
@@ -77,8 +95,10 @@ var Backend = {
 					callback(data);
 				}
 			});
+
 		} else {
-			console.log('PUT (' + routeName + '): ' + stringified);
+			/* This should only be used when in local mode. */
+			console.log('POST (' + routeName + '): ' + stringified);
 		}
 	},
 
@@ -122,28 +142,29 @@ var Backend = {
 	},
 
 	/**
-	 * PUT agent updates.
-	 * @param {Object} data - The agent updates
+	 * POST agent updates.
+	 * @param {Object} data - The agent updates.
 	 */
 	putAgent: function (data) {
-		this.put('', data);
+		this.post('', data);
 	},
 
 	/**
-	 * PUT garden updates.
-	 * @param {Object} data - The garden updates
+	 * POST garden updates.
+	 * Publishes plantUpgrade event.
+	 * @param {Object} data - The garden updates.
 	 */
 	putUpgradePlant: function (data) {
-		this.put('upgrade_field_api_gardens_path', data, function (data) {
+		this.post('upgrade_field_api_gardens_path', data, function (data) {
 			EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
 		});
 	},
 
 	/**
-	 * PUT player session results.
-	 * @param {Object} data - The session results
+	 * POST player session results.
+	 * @param {Object} data - The session results.
 	 */
 	putSession: function (data) {
-		this.put('register_api_player_sessions_path', data);
+		this.post('register_api_player_sessions_path', data);
 	}
 };

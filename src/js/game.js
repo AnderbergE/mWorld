@@ -1,13 +1,14 @@
 /**
  * The player object.
  * Use this to do any player interaction.
+ * @global
  */
 var player;
 
 /**
  * The Phaser game object.
- * Use this to add objects to the game engine.
  * NOTE: In game states, use 'this' instead.
+ * @global
  */
 var game;
 
@@ -53,8 +54,7 @@ window.onload = function () {
 
 /**
  * The boot state will load the first parts of the game and common game assets.
- * Add assets that will be used by many states in this section.
- * The next state will be called when the web font has been loaded.
+ * Add assets that will be used by many states.
  */
 function BootState () {}
 
@@ -105,9 +105,13 @@ BootState.prototype.preload = function () {
 	this.scale.pageAlignVertically = true;
 	this.scale.setScreenSize(true);
 
+	/* If volume has been changed, use the stored one. */
+	if (typeof localStorage.mainVolume !== 'undefined') {
+		this.sound.volume = localStorage.mainVolume;
+	}
 
 	/* Allow images to be served from external sites, e.g. amazon */
-	game.load.crossOrigin = 'anonymous';
+	this.load.crossOrigin = 'anonymous';
 
 	/* Load the Google WebFont Loader script */
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -124,10 +128,6 @@ BootState.prototype.preload = function () {
 
 	/* Load the entry state assets as well, no need to do two loaders. */
 	this.load.image('entryBg', 'assets/img/jungle.png');
-
-	if (typeof localStorage.mainVolume !== 'undefined') {
-		this.sound.volume = localStorage.mainVolume;
-	}
 };
 
 /* Phaser state function */
@@ -136,13 +136,20 @@ BootState.prototype.create = function () {
 };
 
 /**
- * Boot needs to wait for both the google font and the loading of all assets.
- * When one of them is loaded the "isLoaded" is set to true. The other one will then
- * boot the real game when finished.
+ * @property {boolean} _isLoaded - Used for loading all assets. See bootGame.
+ * @default
+ * @private
  */
-BootState.prototype.isLoaded = false;
+BootState.prototype._isLoaded = false;
+
+/**
+ * The next state will be called when everything has been loaded.
+ * So we need to wait for both the web font and all the assets.
+ * When one of them is loaded the "_isLoaded" is set to true.
+ * The other one will then boot the real game when finished.
+ */
 BootState.prototype.bootGame = function () {
-	if (this.isLoaded) {
+	if (this._isLoaded) {
 
 		if (typeof Routes === 'undefined' || Routes === null) {
 			console.warn('You are missing a route to the server, no data will be fetched or sent.');
@@ -156,7 +163,8 @@ BootState.prototype.bootGame = function () {
 		} else {
 			game.state.start(GLOBAL.STATE.entry);
 		}
+
 	} else {
-		BootState.prototype.isLoaded = true;
+		BootState.prototype._isLoaded = true;
 	}
 };
