@@ -14,6 +14,12 @@
  */
 var LANG = {};
 
+/**
+ * Change the language.
+ * NOTE: A warning is set if text or speech are missing translations.
+ * @param {Object} text - The text.
+ * @param {Object} speech - The speech markers.
+ */
 LANG.change = function (text, speech) {
 	function replacer (orig, plus, missing, prefix) {
 		missing = missing || [];
@@ -52,6 +58,10 @@ LANG.change = function (text, speech) {
 	}
 };
 
+/**
+ * Set the speech for the agent.
+ * @param {Object} id - The id of the agent.
+ */
 LANG.setAgent = function (id) {
 	LANG.SPEECH.AGENT = LANG.SPEECH[id];
 };

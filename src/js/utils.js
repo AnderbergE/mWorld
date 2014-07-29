@@ -2,9 +2,10 @@
  * An easy-to-use counter with a max value.
  *
  * @constructor
- * @param {integer} The max value for the counter.
- * @param {boolean} If the counter should loop back to 0 when reaching max value (default is false).
- * @param {integer} The start value the first loop (default is 0).
+ * @param {integer} max - The max value for the counter.
+ * @param {boolean} loop - If the counter should loop back to 0 when reaching max value (default is false).
+ * @param {integer} start - The start value the first loop (default is 0).
+ * @return {Counter} This object.
  */
 function Counter (max, loop, start) {
 	/**
@@ -75,12 +76,12 @@ Counter.prototype.update = function () {
 
 /**
  * Fade in or out an object.
- * @param {Object} The object to fade, needs to have an alpha property.
- * @param {boolean} Fade in = true, out = false, toggle = undefined (default: toggle).
+ * @param {Object} what - The object to fade, needs to have an alpha property.
+ * @param {boolean} typ - Fade in = true, out = false, toggle = undefined (default: toggle).
  *                  NOTE: The returned tween has both an onStart and onComplete function.
- * @param {number} Fade duration in seconds (default: 0.5).
+ * @param {number} duration - Fade duration in seconds (default: 0.5).
  *                 NOTE: The tween will have 0 duration if fade state is correct.
- * @returns {Object} The animation TweenMax.
+ * @return {Object} The animation TweenMax.
  */
 function fade (what, typ, duration) {
 	var toggle = (typeof typ === 'undefined' || typ === null);
@@ -119,6 +120,12 @@ function fade (what, typ, duration) {
 	});
 }
 
+/**
+ * Easily create an audio sheet.
+ * @param {string} key - The key of the audio object.
+ * @param {Object} markers - The Markers of the audio object.
+ * @return {Object} The audio object.
+ */
 function createAudioSheet (key, markers) {
 	var a = game.add.audio(key);
 	for (var marker in markers) {
@@ -143,7 +150,7 @@ function onShutDown () {
  * Check if all sound files have been decoded.
  * NOTE: This will not start decoding. So if you turn off autodecode you
  * need to start it yourself.
- * @returns {Object} True if all sounds are decoded, otherwise false.
+ * @return {Object} True if all sounds are decoded, otherwise false.
  */
 Phaser.SoundManager.prototype.checkSoundsDecoded = function () {
 	for (var key in this.game.cache._sounds) {
@@ -156,7 +163,7 @@ Phaser.SoundManager.prototype.checkSoundsDecoded = function () {
 
 /**
  * Run a function when all sounds have been decoded.
- * @param {function} The function to run.
+ * @param {function} func - The function to run.
  */
 Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
 	if (this.checkSoundsDecoded()) {
@@ -180,10 +187,11 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
 
 /**
  * A function to easily add sound to a tween timeline.
- * @param {string|Object} The name of the sound file, or the sound object, to play.
- * @param {Object} If someone should say it (object must have "say" function).
- * @param {string} For playing a specific marker in a sound file.
- * @returns {Object} The TimelineMax object.
+ * @param {string|Object} what - The name of the sound file, or the sound object, to play.
+ * @param {Object} who - If someone should say it (object must have "say" function) (optional).
+ * @param {string} marker - For playing a specific marker in a sound file (optional).
+ * @param {number} position - The position to put the sound (default is '+=0').
+ * @return {Object} The TimelineMax object.
  */
 TimelineMax.prototype.addSound = function (what, who, marker, position) {
 	var a = (who && who.say) ? who.say(what, marker) :
@@ -228,8 +236,8 @@ TimelineMax.prototype.skippable = function () {
 
 /**
  * When you want a yoyo animation to go back to the beginning.
- * @param {number} The total duration for the animation.
- * @param {number} The duration of one direction (half of the loop from start back to start).
+ * @param {number} total - The total duration for the animation.
+ * @param {number} each - The duration of one direction (half of the loop from start back to start).
  * @return {number} The amount of times to repeat the animation
  */
 TweenMax.prototype.calcYoyo = function (total, each) {
@@ -239,7 +247,7 @@ TweenMax.prototype.calcYoyo = function (total, each) {
 
 /**
  * Make an animation loop from start back to the origin.
- * @param {number} The total duration of the animation.
+ * @param {number} total - The total duration of the animation.
  *                 NOTE: This is not exact time, depending on how well animation duration and total match.
  * @return {Object} The TweenMax object.
  */
@@ -251,12 +259,12 @@ TweenMax.prototype.backForth = function (total) {
 
 /**
  * Adds a rounded rectangle to the built-in rendering context.
- * @param {number} The x position
- * @param {number} The y position
- * @param {number} The width
- * @param {number} The height
- * @param {number} The radius
- * @returns {Object} The CanvasRenderingContext2D object
+ * @param {number} x - The x position
+ * @param {number} y - The y position
+ * @param {number} w - The width
+ * @param {number} h - The height
+ * @param {number} r - The radius
+ * @return {Object} The CanvasRenderingContext2D object
  */
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
 	if (w < 2 * r) { r = w / 2; }

@@ -105,7 +105,7 @@ var Backend = {
 
 	/**
 	 * GET the data of the player.
-	 * @returns {Object} An object with data about the player.
+	 * @return {Object} An object with data about the player.
 	 */
 	getPlayer: function () {
 		return this.get('current_api_players_path');
@@ -113,7 +113,7 @@ var Backend = {
 
 	/**
 	 * GET the garden appearance.
-	 * @returns {Object} An object with data about the garden.
+	 * @return {Object} An object with data about the garden.
 	 */
 	getGarden: function () {
 		return this.get('current_api_gardens_path');
@@ -121,7 +121,7 @@ var Backend = {
 
 	/**
 	 * GET the next game that should be played.
-	 * @returns {Object} An object with data about the next game.
+	 * @return {Object} An object with data about the next game.
 	 */
 	getScenario: function () {
 		var data = this.get('current_api_scenarios_path');
