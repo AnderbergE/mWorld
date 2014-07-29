@@ -22,7 +22,7 @@ EntryState.prototype.create = function () {
 	start.anchor.set(0.5);
 	start.inputEnabled = true;
 
-	var changeAgent = this.add.text(this.world.centerX, this.world.centerY*1.33, '', {
+	var changeAgent = this.add.text(this.world.centerX, this.world.centerY*1.4, '', {
 		font: '40pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
