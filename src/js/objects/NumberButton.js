@@ -17,8 +17,8 @@ function NumberButton (number, representations, options) {
 
 	GeneralButton.call(this, options); // Parent constructor.
 
-	this.min = options.min || 1;
-	this.max = options.max || 9;
+	this.min = options.min || number;
+	this.max = options.max || number;
 	this._number = 0;
 	this.number = number;
 
@@ -60,7 +60,7 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 				offset = this.size/6;
-				this.add(new StrikeRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+				this.add(new StrikeRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color, this.max));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 				this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));

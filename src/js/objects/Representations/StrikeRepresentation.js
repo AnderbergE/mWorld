@@ -1,15 +1,16 @@
 /* The finger representation of a number. */
 StrikeRepresentation.prototype = Object.create(Phaser.Sprite.prototype);
 StrikeRepresentation.prototype.constructor = StrikeRepresentation;
-function StrikeRepresentation (number, xPos, yPos, size, color) {
+function StrikeRepresentation (number, xPos, yPos, size, color, max) {
 	size = size || 100;
+	max = max || number;
 	var diagTop = 0.8;
 	var diagBottom = 0.2;
 	var width = size/10;
 	var half = width/2;
 	var padding = width*1.25;
 	var offset = 2;
-	var height = size/Math.ceil(number/5) - offset;
+	var height = size/Math.ceil(max/5) - offset;
 
 	var pos = (size - width - padding*2) / 3;
 
