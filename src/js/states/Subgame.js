@@ -12,7 +12,7 @@
  * Use agent with:          this.agent (default visibility = false)
  *
  * Start game:              this.startGame()
- * Disable/Enable input:    this.disable(true/false) - default = true = disabled
+ * Disable/Enable input:    this.disable(true/false) - default = true = disabled (publishes disabled event)
  * Run next round:          this.nextRound() - will change mode automatically when needed
  * Try a number:            this.tryNumber(number) - when testing a guess against this.currentNumber
  * Add water to the can:    this.addWater(fromX, fromY) - Adds a water drop to the can
@@ -39,11 +39,14 @@
  */
 function Subgame () {}
 
-/* Phaser state function. (publishes subgameStarted event) */
+/* 
+ * Phaser state function.
+ * Publishes subgameStarted event.
+ */
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
 	var _this = this; // Event subscriptions does not have access to this
-	this.token = options.token || Date.now();
+	this._token = options.token || Date.now();
 	this._modes = options.mode || [
 		GLOBAL.MODE.intro,
 		GLOBAL.MODE.playerDo,
@@ -77,16 +80,16 @@ Subgame.prototype.init = function (options) {
 	this.lastTry = 0;
 
 	/* Setup game objects */
-	this.gameGroup = game.add.group();
+	this.gameGroup = this.add.group();
 	this.agent = player.createAgent();
 	this.agent.visible = false;
 	this.gameGroup.add(this.agent);
 
-	this.hudGroup = game.add.group();
+	this.hudGroup = this.add.group();
 
 	//  TODO: Is there an easier way to disable all input, except the menu?
 	var disabler = new Cover('#ffffff', 0);
-	game.world.add(disabler);
+	this.world.add(disabler);
 	this.disable = function (value) {
 		if (disabler.visible !== value) {
 			EventSystem.publish(GLOBAL.EVENT.disabled, [value]);
@@ -95,15 +98,15 @@ Subgame.prototype.init = function (options) {
 	};
 
 	/* Setup menu objects */
-	this._menuGroup = game.add.group();
+	this._menuGroup = this.add.group();
 	this._menuGroup.visible = false;
 
-	this.waterCan = new WaterCan(this.game.width - 100, 10);
-	this._menuGroup.add(this.waterCan);
+	this._waterCan = new WaterCan(this.world.width - 100, 10);
+	this._menuGroup.add(this._waterCan);
 
 	this._menuGroup.add(new Menu());
 
-	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0, this.token]);
+	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0, this._token]);
 };
 
 /* Phaser state function */
@@ -170,10 +173,10 @@ Subgame.prototype._skipMode = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 /**
- * Calls the current mode function (publishes modeChange event first time mode runs).
- * It will be called with two parameters:
+ * Calls the current mode function. It will be called with two parameters:
  * 1) If it is the first time on this mode.
  * 2) How many tries that have been made on the current number.
+ * Publishes modeChange event (first time a mode runs).
  */
 Subgame.prototype.nextRound = function () {
 	// Special case: intro and outro only have one round
@@ -195,10 +198,11 @@ Subgame.prototype.nextRound = function () {
 };
 
 /**
- * Try a number against this.currentNumber (publishes tryNumber event).
+ * Try a number against this.currentNumber.
  * The offset of the last try is stored in this.lastTry.
+ * Publishes tryNumber event.
  * @param {number} The number to try.
- * @returns {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
+ * @return {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
 Subgame.prototype.tryNumber = function (number) {
 	EventSystem.publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
@@ -218,7 +222,7 @@ Subgame.prototype.tryNumber = function (number) {
  * @param {number} The x position where the drop will begin.
  * @param {number} The y position where the drop will begin.
  * @param {boolean} Override mode restrictions and force drop to be added.
- * @returns {Object} The drop animation from x, y to water can.
+ * @return {Object} The drop animation from x, y to water can.
  */
 Subgame.prototype.addWater = function (x, y, force) {
 	var t = new TimelineMax();
@@ -233,7 +237,7 @@ Subgame.prototype.addWater = function (x, y, force) {
 		// Show drop
 		t.to(drop.scale, 1.5, { y: 1, ease:Elastic.easeOut })
 			// Move drop
-			.to(drop, 1.5, { x: this.waterCan.x + 30, y: this.waterCan.y, ease:Power2.easeOut })
+			.to(drop, 1.5, { x: this._waterCan.x + 30, y: this._waterCan.y, ease:Power2.easeOut })
 			// Hide drop and add water
 			.to(drop, 0.5, { height: 0,
 				onStart: function () { player.water++; },
@@ -254,14 +258,13 @@ Subgame.prototype.startGame = function () {
 	});
 };
 
-/* End the game. */
+/** End the game. */
 Subgame.prototype.endGame = function () {
 	this.state.start(GLOBAL.STATE.garden);
 };
 
 
-/* Overshadowing mode functions */
-/* The following functions should be overshadowed in the game object */
+/* The following functions should be overshadowed in the game object. */
 Subgame.prototype.modeIntro      = Subgame.prototype._skipMode;
 Subgame.prototype.modePlayerDo   = Subgame.prototype._skipMode;
 Subgame.prototype.modePlayerShow = Subgame.prototype._skipMode;
