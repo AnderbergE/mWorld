@@ -29,6 +29,7 @@ GardenState.prototype.create = function () {
 		}
 	}));
 
+	/* Setup the garden fields */
 	var rows = 3;
 	var columns = 5;
 	var startPos = 200;
@@ -57,6 +58,7 @@ GardenState.prototype.create = function () {
 		}
 	}
 
+	/* Add the garden agent */
 	var agent = player.createAgent();
 	agent.scale.set(0.2);
 	agent.x = -100;
@@ -64,12 +66,15 @@ GardenState.prototype.create = function () {
 	this.world.add(agent);
 	var currentMove = null;
 
+	/* Add the water can */
 	this.world.add(new WaterCan(this.game.width - 100, 10));
 	var firstWatering = true;
 
+	/* Add the menu */
 	this.world.add(new Menu());
 
-	// Move agent when we push a plant.
+
+	/* Move agent when we push a plant. */
 	EventSystem.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
 		var y = plant.y + plant.plantHeight - agent.height/2;
 		var x = plant.x;
@@ -88,7 +93,7 @@ GardenState.prototype.create = function () {
 		currentMove.addSound(speech, agent, 'ok', 0);
 	});
 
-	// Water plant when we push it.
+	/* Water plant when we push it. */
 	EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
 		var t;
 		if (player.water > 0) {
@@ -122,7 +127,7 @@ GardenState.prototype.create = function () {
 		}
 	});
 
-	// Check that backend accepts plant upgrade
+	/* Check that backend accepts plant upgrade */
 	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
 		/*jshint camelcase:false */
 		if (data.remaining_water !== player.water) {
@@ -161,6 +166,19 @@ GardenState.prototype.shutdown = onShutDown;
 /*                              Garden objects                               */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
+/**
+ * A garden plant/field.
+ * It will level up depending on how much you water it.
+ * @param {number} column - The column position of the plant (for server).
+ * @param {number} row - The row position of the plant (for server).
+ * @param {number} x - X position.
+ * @param {number} y - Y position.
+ * @param {number} width - The width.
+ * @param {number} height - The height.
+ * @param {number} type - The type of plant.
+ * @param {number} level - The level of the plant.
+ * @param {number} water - The amount of water the plant has.
+ */
 GardenPlant.prototype = Object.create(Phaser.Group.prototype);
 GardenPlant.prototype.constructor = GardenPlant;
 function GardenPlant (column, row, x, y, width, height, type, level, water) {
@@ -172,7 +190,7 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	this.y = y;
 	this.plantHeight = height;
 
-	/* TODO: Replace with actual plant. */
+	/* The push area of the field */
 	var bmd = game.add.bitmapData(width, height);
 	bmd.ctx.fillStyle = '#ffffff';
 	bmd.ctx.globalAlpha = 0.2;
@@ -224,7 +242,7 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	};
 	this.level.update();
 
-	// Check that backend accepts plant upgrade
+	/* Check that backend accepts plant upgrade */
 	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
 		if (!data.success && data.field.x === _this.column && data.field.y === _this.row) {
 			_this.level = data.field.level;
@@ -234,13 +252,21 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	return this;
 }
 
+/**
+ * When pushing on a garden plant.
+ * Publishes plantPress event.
+ * Publishes waterPlant when waterButton is pushed.
+ */
 GardenPlant.prototype.down = function () {
 	var _this = this; // Events do not have access to this
+
+	/* If this plant is active, it means that it is already showing only publish plantPress */
 	if (this.active) {
 		EventSystem.publish(GLOBAL.EVENT.plantPress, [this]);
 		return;
 	}
 
+	/* The interface for the plant is set up when needed. */
 	if (!this.infoGroup) {
 		// TODO: A lot of hard coded values here dude...
 		this.infoGroup = game.add.group(this);
@@ -254,6 +280,7 @@ GardenPlant.prototype.down = function () {
 		bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
 		game.add.sprite(0, 0, bmd, null, this.infoGroup).inputEnabled = true;
 
+		/* The button to push when adding water. */
 		this.waterButton = game.add.sprite(this.width - 90, 10, 'wood', null, this.infoGroup);
 		this.waterButton.width = 80;
 		this.waterButton.height = 80;
@@ -275,6 +302,7 @@ GardenPlant.prototype.down = function () {
 			}, _this.infoGroup).anchor.set(0.5);
 		};
 
+		/* Check if this plant can be upgraded more. */
 		if (this.level.left > 0) {
 			var waterGroup = game.add.group(this.infoGroup);
 			this.water.onAdd = function (current, diff, left) {
@@ -299,15 +327,22 @@ GardenPlant.prototype.down = function () {
 		}
 	}
 
+
 	fade(this.infoGroup, true, 0.2);
 
+	/* Publish plantPress to hide other possible active plant interfaces. */
 	EventSystem.publish(GLOBAL.EVENT.plantPress, [this]);
+
+	/* Subscribe to plantPress to hide this plant interface when applicable. */
 	this.active = EventSystem.subscribe(GLOBAL.EVENT.plantPress, function () {
 		_this.waterButton.frame = 0;
 		_this.hide();
 	});
 };
 
+/**
+ * Hide the plant interface
+ */
 GardenPlant.prototype.hide = function () {
 	EventSystem.unsubscribe(this.active);
 	this.active = null;
