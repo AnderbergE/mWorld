@@ -50,7 +50,8 @@ var GLOBAL = {
 		count: 0,              // All numbers displayed at the same time
 		incrementalSteps: 1,   // One number that you increment or decrement, ex: (- 1 +)
 		addition: 2,           // Start with one number and choose what to add
-		additionSubtraction: 3 // Start with one number and choose what to add or subtract
+		subtraction: 3,        // Start with one number and choose what to subtract
+		additionSubtraction: 4 // Start with one number and choose what to add or subtract
 	},
 
 	NUMBER_REPRESENTATION: {
