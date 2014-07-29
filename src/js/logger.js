@@ -13,6 +13,13 @@
 	}
 
 
+	function subgameStarted (type, token) {
+		reset();
+
+		session.type = type;
+		session.token = token;
+	}
+
 	function stateChange () {
 		if (session.tries > 0) {
 			Backend.putSession(session);
@@ -23,11 +30,9 @@
 
 
 	function modeChange (mode) {
-		if (mode === GLOBAL.MODE.intro) {
-			reset();
-		} else if (mode === GLOBAL.MODE.outro) {
+		if (mode === GLOBAL.MODE.outro) {
 			session.finished = true;
-		} else {
+		} else if (mode !== GLOBAL.MODE.intro) {
 			session.modes.push({ type: mode, results: [] });
 		}
 	}
@@ -80,6 +85,8 @@
 		function (/*state*/) { stateChange(); }, true);
 
 	/* Session related */
+	EventSystem.subscribe(GLOBAL.EVENT.subgameStarted,
+		function (type, token) { subgameStarted(type, token); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange,
 		function (mode) { modeChange(mode); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.tryNumber,

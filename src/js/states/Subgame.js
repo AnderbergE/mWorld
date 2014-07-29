@@ -43,6 +43,7 @@ function Subgame () {}
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
 	var _this = this; // Event subscriptions does not have access to this
+	this.token = options.token || Date.now();
 	this._modes = options.mode || [
 		GLOBAL.MODE.intro,
 		GLOBAL.MODE.playerDo,
@@ -102,7 +103,7 @@ Subgame.prototype.init = function (options) {
 
 	this._menuGroup.add(new Menu());
 
-	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0]);
+	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0, this.token]);
 };
 
 /* Phaser state function */

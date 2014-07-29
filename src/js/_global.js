@@ -4,7 +4,7 @@ var GLOBAL = {
 	EVENT: {
 		stateShutDown:  'stateShutDown',  // [state]
 
-		subgameStarted: 'subgameStarted', // [game type]
+		subgameStarted: 'subgameStarted', // [game type, session token]
 		modeChange:     'modeChange',     // [new mode]
 		tryNumber:      'tryNumber',      // [guess, correct number]
 		agentGuess:     'agentGuess',     // [guess, correct number]
