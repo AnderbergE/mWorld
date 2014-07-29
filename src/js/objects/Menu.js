@@ -8,12 +8,22 @@ function Menu () {
 	var centerY = game.world.centerY;
 
 	/* Add menu button. */
-	game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
-	game.add.text(125, 15, '=', { // These position values were set by trial and error
-		font: '70pt ' +  GLOBAL.FONT,
-		stroke: '#000000',
-		strokeThickness: 5
-	}, this).angle = 90;
+	var button = game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
+	var menuSplit = Math.ceil(LANG.TEXT.menu.length/2);
+	var menuText = game.add.text(
+		button.x + button.width/2,
+		button.y + button.height/2 + 7,
+		'\n' + LANG.TEXT.menu.substr(0, menuSplit) + '\n' + LANG.TEXT.menu.substr(menuSplit),
+		{
+			font: '20pt ' +  GLOBAL.FONT,
+			stroke: '#000000',
+			strokeThickness: 2,
+			align: 'center'
+		},
+		this
+	);
+	menuText.lineSpacing = -30;
+	menuText.anchor.set(0.5);
 
 
 	/* For skipping timelines */
@@ -34,7 +44,6 @@ function Menu () {
 		skipper = timeline;
 		skipButton.visible = !!timeline;
 	});
-
 
 
 	/* The menu group will be shown when the button is clicked. */
