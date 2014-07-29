@@ -1,4 +1,7 @@
-/* The garden */
+/**
+ * The garden of the game.
+ * This is where the player uses the water from the sessions.
+ */
 function GardenState () {}
 
 /* Phaser state function */
@@ -13,14 +16,8 @@ GardenState.prototype.preload = function() {
 
 /* Phaser state function */
 GardenState.prototype.create = function () {
-	var firstWatering = true;
-
 	this.add.sprite(0, 0, 'gardenBg');
-	var speech = this.add.audio('gardenSpeech');
-	var markers = LANG.SPEECH.garden.markers;
-	for (var marker in markers) {
-		speech.addMarker(marker, markers[marker][0], markers[marker][1]);
-	}
+	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
 	// TODO: Remove eventually, for debugging
 	this.world.add(new TextButton('>', {
@@ -68,6 +65,7 @@ GardenState.prototype.create = function () {
 	var currentMove = null;
 
 	this.world.add(new WaterCan(this.game.width - 100, 10));
+	var firstWatering = true;
 
 	this.world.add(new Menu());
 

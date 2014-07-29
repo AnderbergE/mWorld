@@ -119,6 +119,14 @@ function fade (what, typ, duration) {
 	});
 }
 
+function createAudioSheet (key, markers) {
+	var a = game.add.audio(key);
+	for (var marker in markers) {
+		a.addMarker(marker, markers[marker][0], markers[marker][1]);
+	}
+	return a;
+}
+
 /**
  * Utility function: Call this upon state shutdown.
  * Publishes stateShutDown event.
