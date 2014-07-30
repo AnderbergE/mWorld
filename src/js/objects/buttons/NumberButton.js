@@ -13,7 +13,6 @@ NumberButton.prototype.constructor = NumberButton;
  *        {number} max: The maximum value of the button (default number parameter).
  *        {number} size: the small side of the button (the other depend on representation amount) (default 75).
  *        {boolean} vertical: stretch button vertically if many representations, otherwise horisontally (default true).
- *        {function} onClick: a function to run when a button is clicked.
  * @return {Object} Itself.
  */
 function NumberButton (number, representations, options) {
@@ -31,12 +30,12 @@ function NumberButton (number, representations, options) {
 	this._number = 0;
 	this.number = number;
 
-	this.clicker = options.onClick;
+	this._clicker = options.onClick;
 	/* This will be called in the GeneralButton's onInputDown */
 	this.onClick = function () {
 		EventSystem.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
-		if (this.clicker) {
-			this.clicker(this.number);
+		if (this._clicker) {
+			this._clicker(this.number);
 		}
 	};
 

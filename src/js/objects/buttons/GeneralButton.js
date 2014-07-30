@@ -7,20 +7,26 @@ GeneralButton.prototype.constructor = GeneralButton;
  *        {number} x: the x position (default 0).
  *        {number} y: the y position (default 0).
  *        {number} size: the side of the button (default 75).
- *        {string} background: the background for the button.
+ *        {string} background: the background for the button (default 'wood').
  *        {string} color: the color of the content (default '#000000').
+ *        {function} onClick: a function to run when a button is clicked.
  *        {boolean} disabled: true if the button should be disabled (default false).
  *        {boolean} keepDown: true if the button should not auto raise when clicked (default false).
  * @return {Object} Itself.
  */
 function GeneralButton (options) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
+	options = options || {};
 	this.x = options.x || 0;
 	this.y = options.y || 0;
 	this.color = options.color || '#000000';
+	this.onClick = options.onClick;
 	this.disabled = options.disabled || false;
 	this.keepDown = options.keepDown || false;
 
+	if (typeof options.background === 'undefined') {
+		options.background = 'wood';
+	}
 	this.bg = this.create(0, 0, options.background);
 	this.bg.inputEnabled = true;
 
