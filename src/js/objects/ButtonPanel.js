@@ -72,11 +72,13 @@ ButtonPanel.prototype._createButtons = function () {
 	if (this.method === GLOBAL.METHOD.incrementalSteps) {
 		buttonOptions.doNotAdapt = true;
 		var change = new NumberButton(1, this.representations, buttonOptions);
+		buttonOptions.keepDown = false;
 		buttonOptions.onClick = function () { change.number--; };
 		this.add(new TextButton('-', buttonOptions));
 		this.add(change);
 		buttonOptions.onClick = function () { change.number++; };
 		this.add(new TextButton('+', buttonOptions));
+		buttonOptions.keepDown = true;
 		buttonOptions.onClick = function () { change.bg.events.onInputDown.dispatch(); };
 		this.add(new TextButton('v', buttonOptions));
 
