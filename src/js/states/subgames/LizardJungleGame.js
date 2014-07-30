@@ -168,7 +168,7 @@ LizardJungleGame.prototype.create = function () {
 
 	function newFood () {
 		target.x = tree.x;
-		target.y = game.world.height;
+		target.y = game.world.height + target.height;
 		target.tint = tint[_this.currentNumber];
 
 		var t = new TimelineMax();
