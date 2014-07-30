@@ -120,7 +120,7 @@ function Menu () {
 	muteButton.muteValue = volumeSlider.value;
 	menuGroup.add(muteButton);
 
-	if (game.state.current !== GLOBAL.STATE.garden && player.agent) {
+	if (game.state.states[game.state.current] instanceof Subgame) {
 		var garden = game.add.text(centerX, centerY/0.7, LANG.TEXT.gotoGarden, {
 			font: '30pt ' +  GLOBAL.FONT,
 			fill: '#000000'
