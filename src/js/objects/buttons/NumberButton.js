@@ -5,6 +5,7 @@ NumberButton.prototype.constructor = NumberButton;
  * A button with number representations on it.
  * If you supply more than one representation the button will stretch.
  * Publishes numberPress event on click.
+ * NOTE: This button will not go to "up" state after click unless you set keepDown option to false.
  * @param {number} number - The number for the button.
  * @param {number|Array} representations - The representations of the button (see GLOBAL.NUMBER_REPRESENTATION).
  * @param {Object} options - A list of options (in addition to GeneralButton):

@@ -3,7 +3,6 @@ TextButton.prototype.constructor = TextButton;
 
 /**
  * A button with text on it.
- * NOTE: This button will automatically go to "up" state after click.
  * @param {string} text - The text for the button.
  * @param {Object} options - A list of options (in addition to GeneralButton):
  *        {number} fontSize: The size of the font (default is options.size * 0.8).
