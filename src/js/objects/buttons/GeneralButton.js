@@ -25,11 +25,16 @@ function GeneralButton (options) {
 	this.bg.inputEnabled = true;
 
 	this.bg.events.onInputDown.add(function () {
-		if (this.disabled) { return; }
+		if (this.disabled || this.bg.frame % 2 !== 0) {
+			return;
+		}
 
+		this.bg.frame++;
 		game.add.audio('click').play();
-		if (this.bg.frame % 2 === 0) { this.bg.frame++; }
-		if (this.onClick) { this.onClick(); }
+
+		if (this.onClick) {
+			this.onClick();
+		}
 	}, this);
 
 	this.bg.events.onInputUp.add(function () {
