@@ -71,6 +71,7 @@ AgentSetupState.prototype.create = function () {
 	}
 
 	function chooseAgent () {
+		_this.input.disabled = true;
 		fadeInterface(false);
 		a.fistPump()
 			.addCallback(function () {
@@ -79,6 +80,7 @@ AgentSetupState.prototype.create = function () {
 				player.tint = a.tint;
 			}, 0)
 			.addCallback(function () {
+				_this.input.disabled = false;
 				_this.state.start(GLOBAL.STATE.garden);
 			});
 	}
