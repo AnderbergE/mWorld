@@ -129,6 +129,11 @@ Object.defineProperty(Agent.prototype, 'tint', {
 });
 
 /**
+ * @property {number} percentWrong - The minimum chance of an agent picking wrong number.
+ */
+Agent.prototype.percentWrong = 0.3;
+
+/**
  * Have the agent guess a number.
  * NOTE: This can be overwritten by other AI.
  * Variables that are available:
@@ -149,7 +154,7 @@ Agent.prototype.guessing = function (correct, min, max) {
 	// Guessing correct is relative to how many wrongs you have made.
 	// There is also always a small chance for the agent to be wrong.
 	var guess;
-	if (perc >= (this.playerWrong / this.playerGuesses.length) && Math.random() > 0.1) {
+	if (perc >= (this.playerWrong / this.playerGuesses.length) && Math.random() > this.percentWrong) {
 		guess = correct;
 	} else {
 		do {
