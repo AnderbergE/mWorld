@@ -96,6 +96,7 @@ LANG.english.text = {
 	/* Menu items */
 	menu: 'MENU',
 	resume: 'Resume',
+	gotoGarden: 'Go to garden',
 	quit: 'Quit',
 
 	/* Agents */
