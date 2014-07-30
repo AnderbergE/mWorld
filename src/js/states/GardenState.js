@@ -70,6 +70,11 @@ GardenState.prototype.create = function () {
 	this.world.add(new WaterCan(this.game.width - 100, 10));
 	var firstWatering = true;
 
+	/* Add disabler. */
+	var disabler = new Cover('#ffffff', 0);
+	disabler.visible = false;
+	this.world.add(disabler);
+
 	/* Add the menu */
 	this.world.add(new Menu());
 
@@ -116,10 +121,10 @@ GardenState.prototype.create = function () {
 			t.addSound(speech, agent, 'waterEmpty');
 		}
 
-		t.addCallback(function () { game.input.disabled = true; }, 0); // at start
+		t.addCallback(function () { disabler.visible = true; }, 0); // at start
 		t.addCallback(function () {
 			plant.waterButton.reset();
-			game.input.disabled = false;
+			disabler.visible = false;
 		}); // at end
 
 		if (currentMove && currentMove.progress() < 1) {
