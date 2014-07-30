@@ -1,19 +1,32 @@
-/* The dice representation of a number. */
 DiceRepresentation.prototype = Object.create(Phaser.Sprite.prototype);
 DiceRepresentation.prototype.constructor = DiceRepresentation;
+
+/**
+ * Dice representation of a number.
+ * This is similar to DotsRepresentation, but has a pattern for the dot positions.
+ * NOTE: Only available between numbers 1-6.
+ * @param {number} number - The number to represent.
+ * @param {number} x - X position.
+ * @param {number} y - Y position.
+ * @param {number} size - Width and height of the representation (default 100).
+ * @param {string} color - The color of the representation (default '#000000').
+ * @return {Object} Itself.
+ */
 function DiceRepresentation (number, x, y, size, color) {
 	size = size || 100;
 	var radius = parseInt(size/8);
-	var center = parseInt(size/2);
 	var top = radius+1;
+	var center = parseInt(size/2);
 	var bottom = size-radius-1;
 	var left = top;
-	var right = bottom;
 	var middle = center;
+	var right = bottom;
 
-	// For more information about context:
-	// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
-	var bmd = new Phaser.BitmapData(game, '', size, size);
+	/*
+	 * For more information about context:
+	 * https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+	 */
+	var bmd = game.add.bitmapData(size, size);
 	var ctx = bmd.ctx;
 	ctx.fillStyle = color || '#000000';
 	if (number === 1) {

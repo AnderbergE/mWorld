@@ -1,6 +1,18 @@
-/* The finger representation of a number. */
 StrikeRepresentation.prototype = Object.create(Phaser.Sprite.prototype);
 StrikeRepresentation.prototype.constructor = StrikeRepresentation;
+
+/**
+ * Strike/Tick representation of a number.
+ * @param {number} number - The number to represent.
+ * @param {number} xPos - X position.
+ * @param {number} yPos - Y position.
+ * @param {number} size - Width and height of the representation (default 100).
+ * @param {string} color - The color of the representation (default '#000000').
+ * @param {number} max - If you have a range of numbers, set this to the highest one,
+ *                       that way the height of the individual strikes will be the same
+ *                       (default argument number).
+ * @return {Object} Itself.
+ */
 function StrikeRepresentation (number, xPos, yPos, size, color, max) {
 	size = size || 100;
 	max = max || number;
@@ -14,8 +26,10 @@ function StrikeRepresentation (number, xPos, yPos, size, color, max) {
 
 	var pos = (size - width - padding*2) / 3;
 
-	// For more information about context:
-	// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+	/*
+	 * For more information about context:
+	 * https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+	 */
 	var bmd = new Phaser.BitmapData(game, '', size, size);
 	var ctx = bmd.ctx;
 	ctx.fillStyle = color || '#000000';

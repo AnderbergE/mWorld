@@ -1,15 +1,16 @@
 GeneralButton.prototype = Object.create(Phaser.Group.prototype);
 GeneralButton.prototype.constructor = GeneralButton;
+
 /**
  * A general button.
- * @param {Object} A list of options:
- *		x: the x position (default 0)
- *		y: the y position (default 0)
- *		size: the side of the button (default 75)
- *		background: the background for the button
- *		color: the color of the representation (default '#000000')
- *		disabled: true if the buttons should be disabled (default false)
- * @returns {Object} Itself.
+ * @param {Object} options - A list of options:
+ *        {number} x: the x position (default 0).
+ *        {number} y: the y position (default 0).
+ *        {number} size: the side of the button (default 75).
+ *        {string} background: the background for the button.
+ *        {string} color: the color of the content (default '#000000').
+ *        {boolean} disabled: true if the buttons should be disabled (default false).
+ * @return {Object} Itself.
  */
 function GeneralButton (options) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
@@ -18,7 +19,7 @@ function GeneralButton (options) {
 	this.color = options.color || '#000000';
 	this.disabled = options.disabled || false;
 
-	this.bg = game.add.sprite(0, 0, options.background, 0, this);
+	this.bg = this.create(0, 0, options.background);
 	this.bg.inputEnabled = true;
 	this.bg.events.onInputDown.add(function () {
 		if (this.disabled) { return; }

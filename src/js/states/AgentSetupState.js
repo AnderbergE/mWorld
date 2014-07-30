@@ -1,4 +1,6 @@
-/* The menu for choosing agent, */
+/**
+ * The state for choosing agent.
+ */
 function AgentSetupState () {}
 
 /* Phaser state function */
@@ -10,9 +12,9 @@ AgentSetupState.prototype.preload = function () {
 AgentSetupState.prototype.create = function () {
 	var _this = this;
 	var spacing = 450;
-	var scale = { x: 0.3, y: 0.3 };
-	var scaleActive = { x: 0.5, y: 0.5 };
-	var scalePicked = { x: 0.6, y: 0.6 };
+	var scale = { x: 0.3, y: 0.3 };       // Default scale
+	var scaleActive = { x: 0.5, y: 0.5 }; // Scale when pushed
+	var scalePicked = { x: 0.6, y: 0.6 }; // Scale when pushed the second time
 	var slideTime = 1;
 	var fontStyle = {
 		font: '50pt ' +  GLOBAL.FONT,

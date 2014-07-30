@@ -43,9 +43,12 @@ function Counter (max, loop, start) {
 
 /**
  * @property {number} left - Value left until max.
+ * @readonly
  */
 Object.defineProperty(Counter.prototype, 'left', {
-	get: function() { return this.max - this._value; },
+	get: function() {
+		return this.max - this._value;
+	}
 });
 
 /**
@@ -53,8 +56,9 @@ Object.defineProperty(Counter.prototype, 'left', {
  *                            This will fire onAdd and onMax when applicable.
  */
 Object.defineProperty(Counter.prototype, 'value', {
-	get: function() { return this._value; },
-
+	get: function() {
+		return this._value;
+	},
 	set: function(value) {
 		var diff = value - this._value;
 		this._value = value;

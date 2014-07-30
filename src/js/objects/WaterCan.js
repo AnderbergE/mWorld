@@ -1,7 +1,13 @@
-/* The graphical representation of the watering can. */
 WaterCan.prototype = Object.create(Phaser.Group.prototype);
 WaterCan.prototype.constructor = WaterCan;
 
+/**
+ * The graphical representation of the watering can.
+ * @param {number} x - X position (default is 0).
+ * @param {number} y - Y position (default is 0).
+ * @param {number} amount - amount of water in the can (default player amount).
+ * @return {Object} Itself.
+ */
 function WaterCan (x, y, amount) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	this.x = x || 0;
@@ -10,14 +16,16 @@ function WaterCan (x, y, amount) {
 	var origin = 52;
 	var waterStep = 5;
 
+	/* Add water level */
 	var bmd = game.add.bitmapData(55, 1);
 	bmd.ctx.fillStyle = '#0000ff';
 	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
-	var water = game.add.sprite(20, origin, bmd, null, this);
+	var water = this.create(20, origin, bmd);
 	water.height = waterStep*this.amount;
 	water.y -= water.height;
 
-	this.can = game.add.sprite(0, 0, 'watercan', 0, this);
+	/* Add can */
+	this.can = this.create(0, 0, 'watercan');
 
 	/* Keep track of when the player's water changes */
 	this._sub = EventSystem.subscribe(GLOBAL.EVENT.waterAdded, function (total) {
@@ -28,11 +36,17 @@ function WaterCan (x, y, amount) {
 	return this;
 }
 
+/** Removes subscriptions in addition to Phaser.Group.destroy */
 WaterCan.prototype.destroy = function (destroyChildren, soft) {
 	EventSystem.unsubscribe(this._sub); // Otherwise possible memory leak.
 	Phaser.Group.prototype.destroy.call(this, destroyChildren, soft);
 };
 
+/**
+ * Pour water from the can.
+ * @param {number} duration - Duration to pour.
+ * @return {Object} The animation TweenMax.
+ */
 WaterCan.prototype.pour = function (duration) {
 	var bmd = new Phaser.BitmapData(game, '', 6, 6);
 	var half = bmd.width/2;

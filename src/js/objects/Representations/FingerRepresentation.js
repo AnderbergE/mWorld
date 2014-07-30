@@ -1,20 +1,32 @@
-/* The finger representation of a number. */
 FingerRepresentation.prototype = Object.create(Phaser.Sprite.prototype);
 FingerRepresentation.prototype.constructor = FingerRepresentation;
+
+/**
+ * Finger representation of a number.
+ * NOTE: Only available between numbers 1-9.
+ * @param {number} number - The number to represent.
+ * @param {number} xPos - X position.
+ * @param {number} yPos - Y position.
+ * @param {number} size - Width and height of the representation (default 100).
+ * @param {string} color - The color of the representation (default '#000000').
+ * @return {Object} Itself.
+ */
 function FingerRepresentation (number, xPos, yPos, size, color) {
 	size = size || 100;
 	var half = size/2;
 	var width = size/20;
 	var middle = 11.2;
-	var x, y, height;
 
-	// For more information about context:
-	// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
-	var bmd = new Phaser.BitmapData(game, '', size, size);
+	/*
+	 * For more information about context:
+	 * https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+	 */
+	var bmd = game.add.bitmapData(size, size);
 	var ctx = bmd.ctx;
 	ctx.fillStyle = color || '#000000';
 	ctx.beginPath();
-	
+
+	var x, y, height;
 	if (number >= 1) {
 		x = 0;
 		y = half*0.8;

@@ -1,17 +1,22 @@
-/* A button for a number with flexible representation. */
 NumberButton.prototype = Object.create(GeneralButton.prototype);
 NumberButton.prototype.constructor = NumberButton;
+
 /**
- * A button with a representation on it (publishes numberPress event on click).
- * @param {Number} The number for the button
- * @param {Number} The representations of the button (see GLOBAL.REPRESENTATION)
- * @param {Object} A list of options (in addition to GeneralButton):
- *      size: the small side of the button (the other depend on representation amount) (default 75)
- *		vertical: stretch button vertically, otherwise horisontally (default true)
- *		onClick: a function to run when a button is clicked
- * @returns {Object} Itself.
+ * A button with number representations on it.
+ * If you supply more than one representation the button will stretch.
+ * Publishes numberPress event on click.
+ * @param {number} number - The number for the button.
+ * @param {number|Array} representations - The representations of the button (see GLOBAL.NUMBER_REPRESENTATION).
+ * @param {Object} options - A list of options (in addition to GeneralButton):
+ *        {number} min: The minimum value of the button (default number parameter).
+ *        {number} max: The maximum value of the button (default number parameter).
+ *        {number} size: the small side of the button (the other depend on representation amount) (default 75).
+ *        {boolean} vertical: stretch button vertically if many representations, otherwise horisontally (default true).
+ *        {function} onClick: a function to run when a button is clicked.
+ * @return {Object} Itself.
  */
 function NumberButton (number, representations, options) {
+	/* The order here is a bit weird because GeneralButton calls setSize, which this class overshadows. */
 	this.representations = Array.isArray(representations) ? representations : [representations];
 	this.vertical = options.vertical || true;
 
@@ -22,27 +27,40 @@ function NumberButton (number, representations, options) {
 	this._number = 0;
 	this.number = number;
 
-	// This will be called in the general button's onInputDown
 	this.clicker = options.onClick;
+	/* This will be called in the GeneralButton's onInputDown */
 	this.onClick = function () {
 		EventSystem.publish(GLOBAL.EVENT.numberPress, [this.number, this.representations]);
-		if (this.clicker) { this.clicker(this.number); }
+		if (this.clicker) {
+			this.clicker(this.number);
+		}
 	};
 
 	return this;
 }
 
+/**
+ * @property {number} number - The number on the button. Set according to representations.
+ *                             NOTE: This can not be less or more than min or max.
+ */
 Object.defineProperty(NumberButton.prototype, 'number', {
-	get: function() { return this._number; },
+	get: function() {
+		return this._number;
+	},
 	set: function(value) {
+		/* Chcek boundaries */
 		if (value < this.min) { value = this.min; }
 		if (value > this.max) { value = this.max; }
 		if (value === this._number) { return; }
+
 		this._number = value;
+
+		/* Remove old graphics. */
 		if (this.children.length > 1) {
 			this.removeBetween(1, this.children.length-1, true);
 		}
 
+		/* Add new graphics. */
 		var x = 0;
 		var y = 0;
 		var offset = 0;
@@ -87,6 +105,9 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 NumberButton.prototype.setSize = function (size) {
 	GeneralButton.prototype.setSize.call(this, size);
 
-	if (this.vertical) { this.bg.height *= this.representations.length; }
-	else { this.bg.width *= this.representations.length; }
+	if (this.vertical) {
+		this.bg.height *= this.representations.length;
+	} else {
+		this.bg.width *= this.representations.length;
+	}
 };

@@ -1,24 +1,26 @@
 ButtonPanel.prototype = Object.create(Phaser.Group.prototype);
 ButtonPanel.prototype.constructor = ButtonPanel;
+
 /**
  * Create a panel filled with buttons.
  * See NumberButton and GeneralButton for more information.
- * @param {Number} amount - The number of buttons (NOTE, this will be overwritten if you set option max)
- * @param {Number|Array} representations - The representations to use on the buttons.
+ * @param {number} amount - The number of buttons (NOTE, this will be overwritten if you set option max)
+ * @param {number|Array} representations - The representations to use on the buttons.
  * @param {Object} options - options for the panel:
- *        {Number} x - The x position (default is 0)
- *        {Number} y - The y position (default is 0)
- *        {Number} size - The size of the panel (default is game width or height, depending on if vertical is set)
- *        {Number} method - The method of the panel (default is GLOBAL.METHOD.count)
- *        {Boolean} vertical - If the panel should be vertical (default is false)
- *        {Boolean} reversed - If the panel should display the buttons in reverse (default is false)
- *        {Number} min - The smallest number on the panel (default is 1)
- *        {Number} max - The biggest number on the panel (default is min + amount - 1)
- *        {Function} onClick - What should happen when clicking the button
- *        {String} background - The sprite key for the button backgrounds
- *        {String} color - The color of the representation
- *        {Number} maxButtonSize - The maximum size of the buttons (default is 75)
+ *        {number} x - The x position (default is 0)
+ *        {number} y - The y position (default is 0)
+ *        {number} size - The size of the panel (default is game width or height, depending on if vertical is set)
+ *        {number} method - The method of the panel (default is GLOBAL.METHOD.count)
+ *        {boolean} vertical - If the panel should be vertical (default is false)
+ *        {boolean} reversed - If the panel should display the buttons in reverse (default is false)
+ *        {number} min - The smallest number on the panel (default is 1)
+ *        {number} max - The biggest number on the panel (default is min + amount - 1)
+ *        {function} onClick - What should happen when clicking the button
+ *        {string} background - The sprite key for the button backgrounds
+ *        {string} color - The color of the representation
+ *        {number} maxButtonSize - The maximum size of the buttons (default is 75)
  *                                 NOTE: The button size is always calculated to not overlap
+ * @return {Object} Itself.
  */
 function ButtonPanel (amount, representations, options) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
@@ -35,6 +37,7 @@ function ButtonPanel (amount, representations, options) {
 	this.maxButtonSize = options.maxButtonSize || 75;
 	this.onClick = options.onClick;
 
+	/* Set range of the panel, which will create the buttons. */
 	options.min = options.min || 1;
 	this.setRange(options.min, options.max || (options.min + amount - 1));
 	
@@ -43,18 +46,18 @@ function ButtonPanel (amount, representations, options) {
 
 /**
  * Create the buttons.
+ * @private
  */
 ButtonPanel.prototype._createButtons = function () {
 	this.removeAll(true);
 
-
-	/* Calculate max button size */
+	/* Calculate max button size. */
 	var buttonSize = this.size/this.amount;
 	if (buttonSize > this.maxButtonSize) {
 		buttonSize = this.maxButtonSize;
 	}
 
-	/* These options will be used when creating the buttons */
+	/* These options will be used when creating the buttons. */
 	var buttonOptions = {
 		min: this.min,
 		max: this.max,
@@ -65,7 +68,7 @@ ButtonPanel.prototype._createButtons = function () {
 		onClick: this.onClick
 	};
 
-	// Set up the buttons that should be in the panel.
+	/* Set up the buttons that should be in the panel. */
 	if (this.method === GLOBAL.METHOD.incrementalSteps) {
 		var change = new NumberButton(1, this.representations, buttonOptions);
 		buttonOptions.onClick = function () { change.number--; };
@@ -82,11 +85,11 @@ ButtonPanel.prototype._createButtons = function () {
 		}
 	}
 
-	// Reverse the order of the buttons if needed.
+	/* Reverse the order of the buttons if needed. */
 	if (this.reversed) { this.reverse(); }
 
 
-	/* Calculate white space */
+	/* Calculate white space. */
 	var widthLeft = this.size - buttonSize*this.amount;
 	var paddingSize = widthLeft/this.amount;
 	if (paddingSize > buttonSize/2) {
@@ -95,7 +98,7 @@ ButtonPanel.prototype._createButtons = function () {
 	var margin = (this.size - this.amount*buttonSize - (this.amount - 1)*paddingSize)/2;
 	var fullSize = paddingSize + buttonSize;
 
-	// Set up the x and y positions.
+	/* Set up the x and y positions. */
 	var direction = this.vertical ? 'y' : 'x';
 	for (var j = 0; j < this.length; j++) {
 		this.children[j][direction] = margin + fullSize*j;
@@ -104,6 +107,7 @@ ButtonPanel.prototype._createButtons = function () {
 
 /**
  * Update the values of the buttons.
+ * @private
  */
 ButtonPanel.prototype._updateButtons = function () {
 	if (this.method === GLOBAL.METHOD.incrementalSteps) {
@@ -123,8 +127,8 @@ ButtonPanel.prototype._updateButtons = function () {
 
 /**
  * Set the range for the button panel. It will create or update the panel accordingly.
- * @param {Number} The minimum amount in the panel
- * @param {Number} The maximum amount in the panel
+ * @param {Number} The minimum amount in the panel.
+ * @param {Number} The maximum amount in the panel.
  */
 ButtonPanel.prototype.setRange = function (min, max) {
 	this.min = min || this.min || 1;
@@ -153,7 +157,7 @@ ButtonPanel.prototype.reset = function () {
 /**
  * Highlight all buttons.
  * @param {Number} How long to highlight
- * @returns {Object} The animation timeline.
+ * @return {Object} The animation timeline.
  */
 ButtonPanel.prototype.highlight = function (duration) {
 	var t = new TimelineMax();

@@ -1,19 +1,21 @@
-/* A button for a number with flexible text. */
 TextButton.prototype = Object.create(GeneralButton.prototype);
 TextButton.prototype.constructor = TextButton;
+
 /**
- * A button with text on it (publishes textPress event on click).
- * @param {string} The text for the button
- * @param {Object} A list of options (in addition to GeneralButton):
- *		fontSize: The size of the font
- *		strokeThickness: The size of the stroke (default: 3)
- *		strokeColor: The color of stroke (if any) (default: same as color)
- *		onClick: a function to run when a button is clicked
- * @returns {Object} Itself.
+ * A button with text on it.
+ * Publishes textPress event on click.
+ * NOTE: This button will automatically go to "up" state after click.
+ * @param {string} text - The text for the button.
+ * @param {Object} options - A list of options (in addition to GeneralButton):
+ *        {number} fontSize: The size of the font (default is options.size * 0.8).
+ *        {number} strokeThickness: The size of the stroke (default is 3).
+ *        {string} strokeColor: The color of stroke (if any) (default options.color).
+ *        {function} onClick: a function to run when a button is clicked.
+ * @return {Object} Itself.
  */
 function TextButton (text, options) {
 	GeneralButton.call(this, options); // Parent constructor.
-	this.clicker = options.onClick;
+
 	var half = this.size/2;
 	var fontSize = (options.fontSize || this.size*0.8);
 	this._text = game.add.text(half, half, text, {
@@ -24,10 +26,13 @@ function TextButton (text, options) {
 	}, this);
 	this._text.anchor.set(0.5);
 
-	// This will be called in the general button's onInputDown
+	this.clicker = options.onClick;
+	// This will be called in the GeneralButton's onInputDown
 	this.onClick = function () {
 		EventSystem.publish(GLOBAL.EVENT.textPress, [this.text]);
-		if (this.clicker) { this.clicker(this.text); }
+		if (this.clicker) {
+			this.clicker(this.text);
+		}
 	};
 
 	this.bg.events.onInputUp.add(function () {
@@ -37,8 +42,13 @@ function TextButton (text, options) {
 	return this;
 }
 
+/**
+ * @property {string} text - The text on the button.
+ */
 Object.defineProperty(TextButton.prototype, 'text', {
-	get: function() { return this._text.text; },
+	get: function() {
+		return this._text.text;
+	},
 	set: function(value) {
 		this._text.text = value;
 	}

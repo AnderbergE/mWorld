@@ -1,7 +1,10 @@
-/* Main menu of the game */
 Menu.prototype = Object.create(Phaser.Group.prototype);
 Menu.prototype.constructor = Menu;
 
+/**
+ * The game's main menu.
+ * @return {Object} Itself.
+ */
 function Menu () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	var centerX = game.world.centerX;
@@ -46,18 +49,21 @@ function Menu () {
 	});
 
 
-	/* The menu group will be shown when the button is clicked. */
+	/* Create the menu group. It will be shown when the button is clicked. */
 	var menuGroup = game.add.group(this);
 	showMenu(false);
 
-	// Create a background behind the menu, traps all mouse events.
+
+	/* Create a cover behind the menu. */
 	menuGroup.add(new Cover('#056449', 0.7));
 
+	/* Create the background of the menu. */
 	var bmd = game.add.bitmapData(parseInt(game.world.width/3), parseInt(game.world.height/2));
 	bmd.ctx.fillStyle = '#b9d384';
 	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
-	game.add.sprite(game.world.width/3, centerY - centerY/3, bmd, null, menuGroup).alpha = 0.7;
+	menuGroup.create(game.world.width/3, centerY * 0.67, bmd).alpha = 0.7;
 
+	/* Create the texts. */
 	var title = game.add.text(centerX, centerY/2, LANG.TEXT.title, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#ffff00',
@@ -76,7 +82,7 @@ function Menu () {
 		showMenu(false);
 	}, this);
 
-	/* Volume slider */
+	/* Add volume control. */
 	var volumeSlider = new Slider(
 		centerX - bmd.width * 0.2,
 		centerY/0.8,

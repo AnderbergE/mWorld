@@ -190,7 +190,7 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	this.y = y;
 	this.plantHeight = height;
 
-	/* The push area of the field */
+	/* The pushable area of the field */
 	var bmd = game.add.bitmapData(width, height);
 	bmd.ctx.fillStyle = '#ffffff';
 	bmd.ctx.globalAlpha = 0.2;

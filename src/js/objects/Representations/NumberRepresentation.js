@@ -1,6 +1,15 @@
-/* The number symbol representation of a number. */
 NumberRepresentation.prototype = Object.create(Phaser.Text.prototype);
 NumberRepresentation.prototype.constructor = NumberRepresentation;
+
+/**
+ * Number symbol representation of a number.
+ * @param {number} number - The number to represent.
+ * @param {number} x - X position.
+ * @param {number} y - Y position.
+ * @param {number} size - Font size of the representation (default 50).
+ * @param {string} color - The color of the representation (default '#000000').
+ * @return {Object} Itself.
+ */
 function NumberRepresentation (number, x, y, size, color) {
 	size = size || 50;
 	color = color || '#000000';
