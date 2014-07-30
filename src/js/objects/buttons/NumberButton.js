@@ -17,6 +17,9 @@ NumberButton.prototype.constructor = NumberButton;
  */
 function NumberButton (number, representations, options) {
 	/* The order here is a bit weird because GeneralButton calls setSize, which this class overshadows. */
+	if (typeof options.keepDown === 'undefined' || options.keepDown === null) {
+		options.keepDown = true;
+	}
 	this.representations = Array.isArray(representations) ? representations : [representations];
 	this.vertical = options.vertical || true;
 

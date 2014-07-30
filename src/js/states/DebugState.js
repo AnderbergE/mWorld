@@ -40,11 +40,11 @@ DebugState.prototype.create = function () {
 			y: 100,
 			fontSize: fontSize,
 			background: 'wood',
-			onClick: gameClicker
+			onClick: gameClicker,
+			keepDown: true
 		});
 		t.bg.width = buttonSize;
 		t._text.anchor.set(0, 0.5);
-		t.bg.events.onInputUp.removeAll();
 		t.gameState = games[i][1];
 		this.world.add(t);
 		gameButtons.push(t);
@@ -67,10 +67,10 @@ DebugState.prototype.create = function () {
 			y: 200,
 			fontSize: fontSize,
 			background: 'wood',
-			onClick: rangeClicker
+			onClick: rangeClicker,
+			keepDown: true
 		});
 		t._text.anchor.set(0, 0.5);
-		t.bg.events.onInputUp.removeAll();
 		t.bg.width = buttonSize;
 		t.range = key;
 		this.world.add(t);
@@ -123,11 +123,11 @@ DebugState.prototype.create = function () {
 			y: 400,
 			fontSize: fontSize,
 			background: 'wood',
-			onClick: methodClicker
+			onClick: methodClicker,
+			keepDown: true
 		});
 		t.bg.width = buttonSize;
 		t._text.anchor.set(0, 0.5);
-		t.bg.events.onInputUp.removeAll();
 		t.method = methods[i][1];
 		this.world.add(t);
 		methodButtons.push(t);

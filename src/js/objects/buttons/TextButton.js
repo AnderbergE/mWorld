@@ -35,10 +35,6 @@ function TextButton (text, options) {
 		}
 	};
 
-	this.bg.events.onInputUp.add(function () {
-		this.reset();
-	}, this);
-
 	return this;
 }
 

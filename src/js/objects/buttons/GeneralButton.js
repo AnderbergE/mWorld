@@ -9,7 +9,8 @@ GeneralButton.prototype.constructor = GeneralButton;
  *        {number} size: the side of the button (default 75).
  *        {string} background: the background for the button.
  *        {string} color: the color of the content (default '#000000').
- *        {boolean} disabled: true if the buttons should be disabled (default false).
+ *        {boolean} disabled: true if the button should be disabled (default false).
+ *        {boolean} keepDown: true if the button should not auto raise when clicked (default false).
  * @return {Object} Itself.
  */
 function GeneralButton (options) {
@@ -18,9 +19,11 @@ function GeneralButton (options) {
 	this.y = options.y || 0;
 	this.color = options.color || '#000000';
 	this.disabled = options.disabled || false;
+	this.keepDown = options.keepDown || false;
 
 	this.bg = this.create(0, 0, options.background);
 	this.bg.inputEnabled = true;
+
 	this.bg.events.onInputDown.add(function () {
 		if (this.disabled) { return; }
 
@@ -28,6 +31,13 @@ function GeneralButton (options) {
 		if (this.bg.frame % 2 === 0) { this.bg.frame++; }
 		if (this.onClick) { this.onClick(); }
 	}, this);
+
+	this.bg.events.onInputUp.add(function () {
+		if (!this.keepDown) {
+			this.reset();
+		}
+	}, this);
+
 
 	this.setSize(options.size || 75);
 
