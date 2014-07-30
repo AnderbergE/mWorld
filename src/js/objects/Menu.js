@@ -88,15 +88,16 @@ function Menu () {
 		centerX - bmd.width*0.2,
 		centerY/0.85,
 		bmd.width*0.5,
-		50,
+		40,
 		function (value) {
 			game.sound.volume = value;
 			localStorage.mainVolume = value;
+
 			if (value > 0) {
-				muteButton.text = 'V';
+				muteButton.sprite.frame = 0;
 				muteButton.muteValue = value;
 			} else {
-				muteButton.text = 'X';
+				muteButton.sprite.frame = 1;
 			}
 		},
 		game.sound.volume
@@ -104,14 +105,12 @@ function Menu () {
 	menuGroup.add(volumeSlider);
 
 	// TODO: Change graphics to volume object
-	var muteButton = new TextButton(game.sound.volume > 0 ? 'V' : 'X', {
-		x: centerX - bmd.width * 0.35,
-		y: volumeSlider.y - volumeSlider.height/2,
-		fontSize: 20,
-		size: volumeSlider.height,
-		doNotAdapt: true,
+	var muteButton = new SpriteButton('drop', game.sound.volume > 0 ? 0 : 1, {
+		x: centerX - bmd.width*0.35,
+		y: volumeSlider.y - volumeSlider.height*0.75,
+		size: volumeSlider.height*1.5,
 		onClick: function () {
-			if (this.text === 'X') {
+			if (this.sprite.frame === 1) {
 				volumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
 			} else {
 				volumeSlider.value = 0;
@@ -121,7 +120,7 @@ function Menu () {
 	muteButton.muteValue = volumeSlider.value;
 	menuGroup.add(muteButton);
 
-	if (game.state.current !== GLOBAL.STATE.garden) {
+	if (game.state.current !== GLOBAL.STATE.garden && player.agent) {
 		var garden = game.add.text(centerX, centerY/0.7, LANG.TEXT.gotoGarden, {
 			font: '30pt ' +  GLOBAL.FONT,
 			fill: '#000000'
