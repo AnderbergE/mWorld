@@ -23,7 +23,7 @@ function TextButton (text, options) {
 		stroke: options.strokeColor || this.color,
 		strokeThickness: options.strokeThickness || 3
 	}, this);
-	this._text.anchor.set(0.5);
+	this._text.anchor.set(0.5, 0.45);
 
 	/* Do this to adapt button size. */
 	this.text = this.text;
