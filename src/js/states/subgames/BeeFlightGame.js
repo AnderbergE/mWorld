@@ -164,7 +164,7 @@ BeeFlightGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, false);
 
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
+		if (_this.agent.visible) { _this.agent.eyesStopFollow(); }
 	}
 
 	function newFlower () {
@@ -274,7 +274,7 @@ BeeFlightGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var t = new TimelineMax();
 		if (tries > 0) {
-			_this.agent.eyesFollowPointer(true);
+			_this.agent.eyesStopFollow();
 			// TODO: Add more specified sounds?
 			//t.addSound('birdheroAgentOops', _this.agent);
 			t.add(agentGuess());

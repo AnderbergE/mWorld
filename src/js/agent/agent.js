@@ -291,7 +291,7 @@ Agent.prototype.water = function (duration, arm) {
 		t.addCallback(this.eyesFollowObject, null, [w1.can], this);
 		t.addLabel('watering');
 		t.add(w1.pour(duration));
-		t.addCallback(this.eyesFollowObject, null, [null], this);
+		t.addCallback(this.eyesStopFollow, null, null, this);
 		t.add(new TweenMax(this.leftArm, water.durUp, { rotation: water.back, ease: Power1.easeIn }));
 		t.addCallback(function () { w1.destroy(); });
 		t.add(new TweenMax(this.leftArm, water.durBack, { rotation: origin, ease: Power1.easeOut }));
@@ -309,7 +309,7 @@ Agent.prototype.water = function (duration, arm) {
 		t.addCallback(this.eyesFollowObject, null, [w2.can], this);
 		t.addLabel('watering');
 		t.add(w2.pour(duration));
-		t.addCallback(this.eyesFollowObject, null, [null], this);
+		t.addCallback(this.eyesStopFollow, null, null, this);
 		t.add(new TweenMax(this.rightArm, water.durUp, { rotation: -water.back, ease: Power1.easeIn }));
 		t.addCallback(function () { w2.destroy(); });
 		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -origin, ease: Power1.easeOut }));
@@ -345,27 +345,30 @@ Agent.prototype._eyeFollow = function (eye, targ) {
 /**
  * Make the agent's eyes follow an object.
  * @param {Object} The target to follow
- * @param {boolean} true to turn off following object
  */
-Agent.prototype.eyesFollowObject = function (targ, off) {
+Agent.prototype.eyesFollowObject = function (targ) {
+	this.eyesStopFollow();
+
+	this._eyeFollow(this.leftEye, targ);
+	this._eyeFollow(this.rightEye, targ);
+};
+
+/**
+ * Make the agent's eyes follow the input pointer.
+ */
+Agent.prototype.eyesFollowPointer = function () {
+	this.eyesFollowObject(game.input.activePointer);
+};
+
+/**
+ * Stop the eyes following pointer or object.
+ */
+Agent.prototype.eyesStopFollow = function () {
 	this.leftEye.x = this.coords.eye.left.x;
 	this.leftEye.y = this.coords.eye.left.y;
 	this.rightEye.x = this.coords.eye.right.x;
 	this.rightEye.y = this.coords.eye.right.y;
 
-	if (off || !targ) {
-		this.leftEye.update = function () {};
-		this.rightEye.update = function () {};
-	} else {
-		this._eyeFollow(this.leftEye, targ);
-		this._eyeFollow(this.rightEye, targ);
-	}
-};
-
-/**
- * Make the agent's eyes follow the input pointer.
- * @param {boolean} true to turn off following pointer
- */
-Agent.prototype.eyesFollowPointer = function (off) {
-	this.eyesFollowObject(game.input.activePointer, off);
+	this.leftEye.update = function () {};
+	this.rightEye.update = function () {};
 };

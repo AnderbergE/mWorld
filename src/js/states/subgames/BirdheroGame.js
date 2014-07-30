@@ -296,7 +296,7 @@ BirdheroGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, false);
 
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
+		if (_this.agent.visible) { _this.agent.eyesStopFollow(); }
 	}
 
 	function zoom (ins) {
@@ -490,7 +490,7 @@ BirdheroGame.prototype.create = function () {
 		var t = new TimelineMax();
 		if (tries > 0) {
 			bird.showWings();
-			_this.agent.eyesFollowPointer(true);
+			_this.agent.eyesStopFollow();
 			// TODO: Add more specified sounds?
 			t.addSound(speech, _this.agent, 'agentTryAgain');
 			t.add(agentGuess());
@@ -533,7 +533,7 @@ BirdheroGame.prototype.create = function () {
 		}
 
 		_this.agent.thought.visible = false;
-		_this.agent.eyesFollowPointer(true);
+		_this.agent.eyesStopFollow();
 		_this.agent.fistPump()
 			.addCallback(_this.agent.setHappy, 0, null, _this.agent)
 			.addCallback(function () { _this.nextRound(); });
