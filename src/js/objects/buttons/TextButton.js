@@ -3,7 +3,6 @@ TextButton.prototype.constructor = TextButton;
 
 /**
  * A button with text on it.
- * Publishes textPress event on click.
  * NOTE: This button will automatically go to "up" state after click.
  * @param {string} text - The text for the button.
  * @param {Object} options - A list of options (in addition to GeneralButton):
@@ -29,7 +28,6 @@ function TextButton (text, options) {
 	this.clicker = options.onClick;
 	// This will be called in the GeneralButton's onInputDown
 	this.onClick = function () {
-		EventSystem.publish(GLOBAL.EVENT.textPress, [this.text]);
 		if (this.clicker) {
 			this.clicker(this.text);
 		}

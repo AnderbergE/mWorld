@@ -13,7 +13,6 @@ var GLOBAL = {
 		tryNumber:      'tryNumber',      // [guess, correct number]
 		agentGuess:     'agentGuess',     // [guess, correct number]
 		numberPress:    'numberPress',    // [number, representations]
-		textPress:      'textPress',      // [text]
 		waterAdded:     'waterAdded',     // [total amount, added amount]
 		disabled:       'disabled',       // [true/false]
 
