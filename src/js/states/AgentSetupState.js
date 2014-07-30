@@ -92,12 +92,8 @@ AgentSetupState.prototype.create = function () {
 		x: this.world.centerX - 150,
 		y: 25,
 		fontSize: 30,
-		color: '#ffffff',
-		background: 'wood',
 		onClick: function () { a.tint = game.rnd.integerInRange(0x000000, 0xffffff); }
 	});
-	color.bg.width = 300;
-	color._text.anchor.set(0, 0.5);
 	color.visible = false;
 	this.world.add(color);
 
@@ -105,7 +101,6 @@ AgentSetupState.prototype.create = function () {
 		x: this.world.centerX - 275,
 		y: this.world.centerY*0.6,
 		size: 75,
-		background: 'wood',
 		onClick: cancelAgent
 	});
 	noToAgent.visible = false;
@@ -115,7 +110,6 @@ AgentSetupState.prototype.create = function () {
 		x: this.world.centerX + 200,
 		y: this.world.centerY*0.6,
 		size: 75,
-		background: 'wood',
 		onClick: chooseAgent
 	});
 	yesToAgent.visible = false;

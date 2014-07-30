@@ -124,14 +124,12 @@ BirdheroGame.prototype.create = function () {
 	var buttons = new ButtonPanel(this.amount, this.representation, {
 		method: this.method,
 		y: this.world.height-(this.representation.length*75)-25,
-		background: 'wood',
 		onClick: pushNumber
 	});
 	buttons.visible = false;
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
 		y: this.world.height-100,
-		background: 'wood',
 		onClick: pushYesno
 	});
 	yesnos.visible = false;
@@ -349,7 +347,7 @@ BirdheroGame.prototype.create = function () {
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -60, y: -30, background: 'wood', disabled: true
+						x: -60, y: -30, disabled: true
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.

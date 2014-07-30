@@ -33,7 +33,7 @@ function Menu () {
 	var skipper = null;
 	var skipButton = new TextButton('>>', {
 		x: 75, y: 5, size: 56, fontSize: 30,
-		background: 'wood',
+		doNotAdapt: true,
 		onClick: function () {
 			if (skipper) {
 				skipper.totalProgress(1);
@@ -108,7 +108,7 @@ function Menu () {
 		y: centerY/0.8 - volumeSlider.height/2,
 		fontSize: 20,
 		size: volumeSlider.height,
-		background: 'wood',
+		doNotAdapt: true,
 		onClick: function () {
 			if (this.text === 'X') {
 				volumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;

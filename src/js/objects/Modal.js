@@ -33,11 +33,10 @@ function Modal (text, fontSize, callback) {
 	/* Add the ok button. */
 	var _this = this;
 	this.add(new TextButton(LANG.TEXT.ok, {
-		x: centerX - 40,
+		x: centerX - 55,
 		y: centerY/0.75,
 		size: 80,
 		fontSize: 30,
-		background: 'wood',
 		onClick: function () {
 			_this.destroy();
 			if (callback) {

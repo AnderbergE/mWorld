@@ -23,7 +23,7 @@ GardenState.prototype.create = function () {
 	this.world.add(new TextButton('>', {
 		x: 800,
 		y: 100,
-		background: 'wood',
+		doNotAdapt: true,
 		onClick: function () {
 			game.state.start(GLOBAL.STATE.debug, true, false);
 		}

@@ -84,7 +84,6 @@ LizardJungleGame.prototype.create = function () {
 		vertical: true,
 		size: tree.height,
 		reversed: true,
-		background: 'wood',
 		onClick: pushNumber
 	});
 	buttons.visible = false;
@@ -92,7 +91,6 @@ LizardJungleGame.prototype.create = function () {
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
 		x: this.world.width-100,
 		vertical: true,
-		background: 'wood',
 		onClick: pushYesno
 	});
 	yesnos.visible = false;
@@ -197,7 +195,7 @@ LizardJungleGame.prototype.create = function () {
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -60, y: -30, background: 'wood', disabled: true
+						x: -60, y: -30, disabled: true
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.

@@ -70,6 +70,7 @@ ButtonPanel.prototype._createButtons = function () {
 
 	/* Set up the buttons that should be in the panel. */
 	if (this.method === GLOBAL.METHOD.incrementalSteps) {
+		buttonOptions.doNotAdapt = true;
 		var change = new NumberButton(1, this.representations, buttonOptions);
 		buttonOptions.onClick = function () { change.number--; };
 		this.add(new TextButton('-', buttonOptions));
