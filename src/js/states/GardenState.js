@@ -118,7 +118,7 @@ GardenState.prototype.create = function () {
 
 		t.addCallback(function () { game.input.disabled = true; }, 0); // at start
 		t.addCallback(function () {
-			plant.waterButton.frame = 0;
+			plant.waterButton.reset();
 			game.input.disabled = false;
 		}); // at end
 
@@ -281,17 +281,17 @@ GardenPlant.prototype.down = function () {
 		game.add.sprite(0, 0, bmd, null, this.infoGroup).inputEnabled = true;
 
 		/* The button to push when adding water. */
-		this.waterButton = game.add.sprite(this.width - 90, 10, 'wood', null, this.infoGroup);
-		this.waterButton.width = 80;
-		this.waterButton.height = 80;
-		this.waterButton.inputEnabled = true;
-		this.waterButton.events.onInputDown.add(function () {
-			if (this.waterButton.frame === 0) {
-				// Water is added to the plant when animation runs.
-				this.waterButton.frame = 1;
-				EventSystem.publish(GLOBAL.EVENT.waterPlant, [this]);
+		this.waterButton = new SpriteButton('watercan', null, {
+			x: this.width - 90,
+			y: 10,
+			size: 80,
+			keepDown: true,
+			onClick: function () {
+				/* Water is added to the plant when animation runs. */
+				EventSystem.publish(GLOBAL.EVENT.waterPlant, [_this]);
 			}
-		}, this);
+		});
+		this.infoGroup.add(this.waterButton);
 
 		/* Water management */
 		var maxLevel = function () {
@@ -335,7 +335,7 @@ GardenPlant.prototype.down = function () {
 
 	/* Subscribe to plantPress to hide this plant interface when applicable. */
 	this.active = EventSystem.subscribe(GLOBAL.EVENT.plantPress, function () {
-		_this.waterButton.frame = 0;
+		_this.waterButton.reset();
 		_this.hide();
 	});
 };
