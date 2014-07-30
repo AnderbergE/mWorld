@@ -11,6 +11,8 @@
  * template for other languages.
  *
  * NOTE: GLOBAL.FONT specifies which font that is used.
+ *
+ * @global
  */
 var LANG = {};
 
