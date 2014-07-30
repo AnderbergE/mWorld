@@ -230,7 +230,7 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 			});
 
 			/*jshint camelcase:false */
-			Backend.putUpgradePlant({ field: { x: column, y: row, level: level, content_type: type }});
+			Backend.putUpgradePlant({ field: { x: column, y: row, level: this.value, content_type: type }});
 			/*jshint camelcase:true */
 
 		} else {
