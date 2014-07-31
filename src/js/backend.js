@@ -127,14 +127,6 @@ var Backend = {
 		var data = this.get('current_api_scenarios_path');
 
 		if (data) {
-			if (!Array.isArray(data.representation)) {
-				data.representation = [data.representation];
-			}
-
-			if (!Array.isArray(data.mode)) {
-				data.mode = [data.mode];
-			}
-
 			// Add intro and outro for the game.
 			data.mode.unshift(GLOBAL.MODE.intro);
 			data.mode.push(GLOBAL.MODE.outro);
