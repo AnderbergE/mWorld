@@ -20,12 +20,25 @@ GardenState.prototype.create = function () {
 	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
 	// TODO: Remove eventually, for debugging
+	this.world.add(new TextButton('D', {
+		x: 700,
+		y: 100,
+		doNotAdapt: true,
+		onClick: function () {
+			game.state.start(GLOBAL.STATE.debug, true, false);
+		}
+	}));
+
+	// TODO: Update graphics
 	this.world.add(new TextButton('>', {
 		x: 800,
 		y: 100,
 		doNotAdapt: true,
 		onClick: function () {
-			game.state.start(GLOBAL.STATE.debug, true, false);
+			var scen = Backend.getScenario();
+			if (scen) {
+				game.state.start(scen.subgame, true, false, scen);
+			}
 		}
 	}));
 

@@ -126,17 +126,19 @@ var Backend = {
 	getScenario: function () {
 		var data = this.get('current_api_scenarios_path');
 
-		if (!Array.isArray(data.representation)) {
-			data.representation = [data.representation];
-		}
+		if (data) {
+			if (!Array.isArray(data.representation)) {
+				data.representation = [data.representation];
+			}
 
-		if (!Array.isArray(data.mode)) {
-			data.mode = [data.mode];
-		}
+			if (!Array.isArray(data.mode)) {
+				data.mode = [data.mode];
+			}
 
-		// Add intro and outro for the game.
-		data.mode.unshift(GLOBAL.MODE.intro);
-		data.mode.push(GLOBAL.MODE.outro);
+			// Add intro and outro for the game.
+			data.mode.unshift(GLOBAL.MODE.intro);
+			data.mode.push(GLOBAL.MODE.outro);
+		}
 
 		return data;
 	},
