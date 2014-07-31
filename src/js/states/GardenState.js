@@ -37,7 +37,7 @@ GardenState.prototype.create = function () {
 		onClick: function () {
 			var scen = Backend.getScenario();
 			if (scen) {
-				game.state.start(scen.subgame, true, false, scen);
+				game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
 			}
 		}
 	}));
