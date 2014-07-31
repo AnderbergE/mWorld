@@ -43,9 +43,9 @@ BirdheroGame.prototype.create = function () {
 			scale: 0.3, small: 0.06
 		}
 	};
-	/* Do not use tint below 0x111121, it will not work on the bird */
+	/* Do not use tint below 0x111112, or 0xXXXX12, it will not work on the bird */
 	var tint = [
-		0xff8888, 0x77ee77, 0x8888ff, 0xfed011, 0xfedcba,
+		0xff8888, 0x77ee77, 0x8888ff, 0xfed012, 0xfedcba,
 		0x11abba, 0xabcdef, 0xffffff, 0xed88ba
 	];
 
@@ -124,14 +124,12 @@ BirdheroGame.prototype.create = function () {
 	var buttons = new ButtonPanel(this.amount, this.representation, {
 		method: this.method,
 		y: this.world.height-(this.representation.length*75)-25,
-		background: 'wood',
 		onClick: pushNumber
 	});
 	buttons.visible = false;
 	this.hudGroup.add(buttons);
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
 		y: this.world.height-100,
-		background: 'wood',
 		onClick: pushYesno
 	});
 	yesnos.visible = false;
@@ -298,7 +296,7 @@ BirdheroGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, false);
 
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
+		if (_this.agent.visible) { _this.agent.eyesStopFollow(); }
 	}
 
 	function zoom (ins) {
@@ -349,7 +347,7 @@ BirdheroGame.prototype.create = function () {
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -60, y: -30, background: 'wood', disabled: true
+						x: -60, y: -30, disabled: true
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
@@ -492,7 +490,7 @@ BirdheroGame.prototype.create = function () {
 		var t = new TimelineMax();
 		if (tries > 0) {
 			bird.showWings();
-			_this.agent.eyesFollowPointer(true);
+			_this.agent.eyesStopFollow();
 			// TODO: Add more specified sounds?
 			t.addSound(speech, _this.agent, 'agentTryAgain');
 			t.add(agentGuess());
@@ -535,7 +533,7 @@ BirdheroGame.prototype.create = function () {
 		}
 
 		_this.agent.thought.visible = false;
-		_this.agent.eyesFollowPointer(true);
+		_this.agent.eyesStopFollow();
 		_this.agent.fistPump()
 			.addCallback(_this.agent.setHappy, 0, null, _this.agent)
 			.addCallback(function () { _this.nextRound(); });
@@ -726,7 +724,7 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 		if (value > 5) { this.leftWing.frameName = 'wing' + (value - 5); }
 
 		/* For some reason the tint need to be changed to update the frame. */
-		this.tint--;
+		this.tint += this.tint % 2 === 0 ? 1 : -1;
 	}
 });
 

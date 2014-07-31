@@ -84,7 +84,6 @@ LizardJungleGame.prototype.create = function () {
 		vertical: true,
 		size: tree.height,
 		reversed: true,
-		background: 'wood',
 		onClick: pushNumber
 	});
 	buttons.visible = false;
@@ -92,7 +91,6 @@ LizardJungleGame.prototype.create = function () {
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
 		x: this.world.width-100,
 		vertical: true,
-		background: 'wood',
 		onClick: pushYesno
 	});
 	yesnos.visible = false;
@@ -165,12 +163,12 @@ LizardJungleGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, false);
 
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
+		if (_this.agent.visible) { _this.agent.eyesStopFollow(); }
 	}
 
 	function newFood () {
 		target.x = tree.x;
-		target.y = game.world.height;
+		target.y = game.world.height + target.height;
 		target.tint = tint[_this.currentNumber];
 
 		var t = new TimelineMax();
@@ -197,7 +195,7 @@ LizardJungleGame.prototype.create = function () {
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -60, y: -30, background: 'wood', disabled: true
+						x: -60, y: -30, disabled: true
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
@@ -291,7 +289,7 @@ LizardJungleGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var t = new TimelineMax();
 		if (tries > 0) {
-			_this.agent.eyesFollowPointer(true);
+			_this.agent.eyesStopFollow();
 			// TODO: Add more specified sounds?
 			//t.addSound('birdheroAgentOops', _this.agent);
 			t.add(agentGuess());

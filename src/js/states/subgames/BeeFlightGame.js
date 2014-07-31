@@ -75,7 +75,6 @@ BeeFlightGame.prototype.create = function () {
 		x: coords.flowers.start,
 		y: 25,
 		size: coords.flowers.size,
-		background: 'wood',
 		onClick: pushNumber
 	});
 	buttons.visible = false;
@@ -84,7 +83,6 @@ BeeFlightGame.prototype.create = function () {
 		x: coords.flowers.start,
 		y: 25,
 		size: coords.flowers.size,
-		background: 'wood',
 		onClick: pushYesno
 	});
 	yesnos.visible = false;
@@ -166,7 +164,7 @@ BeeFlightGame.prototype.create = function () {
 		fade(buttons, false);
 		fade(yesnos, false);
 
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(true); }
+		if (_this.agent.visible) { _this.agent.eyesStopFollow(); }
 	}
 
 	function newFlower () {
@@ -190,7 +188,7 @@ BeeFlightGame.prototype.create = function () {
 				},
 				onComplete: function () {
 					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -20, y: -30, background: 'wood', disabled: true
+						x: -20, y: -30, disabled: true
 					});
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
@@ -276,7 +274,7 @@ BeeFlightGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var t = new TimelineMax();
 		if (tries > 0) {
-			_this.agent.eyesFollowPointer(true);
+			_this.agent.eyesStopFollow();
 			// TODO: Add more specified sounds?
 			//t.addSound('birdheroAgentOops', _this.agent);
 			t.add(agentGuess());

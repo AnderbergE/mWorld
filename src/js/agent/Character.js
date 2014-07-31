@@ -1,24 +1,29 @@
 Character.prototype = Object.create(Phaser.Group.prototype);
 Character.prototype.constructor = Character;
+
+/**
+ * Superclass for characters.
+ */
 function Character () {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 }
 
 /**
  * When you want a sound to be said by a character.
- * If the character has a say talk animation it will be used.
- * @param {String|Object} The sound file or the key to a sound file
- * @param {Object} The speaker, needs to have a '.talk' property of TweenMax or TimelineMax
- * @param {String} If you want the speaker to only talk during a specific marker.
- * @returns {Object} The sound object (not started)
+ * NOTE: If the character has a this.talk TweenMax or TimelineMax it will be used.
+ * @param {string|Object} Key to a sound file or the sound object.
+ * @param {string} If you want the speaker to only talk during a specific marker.
+ * @return {Object} The sound object (not started).
  */
 Character.prototype.say = function (what, marker) {
 	var a = (typeof what === 'string') ? game.add.audio(what) : what;
 
+	/* Check if character has a talk animation. */
 	if (this.talk) {
 		var current;
 		var signals = [];
 
+		/* Functions to run on audio signals. */
 		var play = function () {
 			if (a.currentMarker) {
 				current = a.currentMarker;
@@ -56,11 +61,12 @@ Character.prototype.say = function (what, marker) {
 
 /**
  * Move a character.
- * If the character has the turn property set to true, it will turn according to direction.
- * @param {Object} Properties to tween, set x and/or y to move
- * @param {number} Duration of the move
- * @param {number} If a scaling should happen during the move
- * @returns {Object} The movement timeline
+ * NOTE: If this.turn property is true, it will turn according to direction.
+ * NOTE: If the character has a this.walk TweenMax or TimelineMax it will be used.
+ * @param {Object} Properties to tween, set x and/or y to move.
+ * @param {number} Duration of the move.
+ * @param {number} If a scaling should happen during the move.
+ * @return {Object} The movement timeline.
  */
 Character.prototype.move = function (properties, duration, scale) {
 	properties.ease = properties.ease || Power1.easeInOut;
@@ -68,17 +74,20 @@ Character.prototype.move = function (properties, duration, scale) {
 	var t = new TimelineMax();
 	t.to(this, duration, properties);
 
+	/* Check if character has a walk animation. */
 	if (this.walk) {
 		t.addCallback(function () { this.walk.play(); }, 0, null, this);
 		t.addCallback(function () { this.walk.pause(0); }, '+=0', null, this);
 	}
 
-
+	/* Animate the scale if available. */
+	/* Scaling is also how we turn the character, so it gets a bit complicated later... */
 	var ts = null;
 	if (scale) {
 		ts = new TweenMax(this.scale, duration, { x: scale, y: scale, ease: properties.ease });
 	}
 
+	/* Check if the character should be turned when moving. */
 	if (this.turn) {
 		var _this = this;
 		var turnDuration = 0.2;
@@ -87,6 +96,8 @@ Character.prototype.move = function (properties, duration, scale) {
 		t.add(new TweenMax(this.scale, turnDuration, {
 			ease: properties.ease,
 			onStart: function () {
+				// The turn tween needs to be updated in real time,
+				// otherwise it won't work in Timelines.
 				var prop = { x: Math.abs(_this.scale.x), y: Math.abs(_this.scale.y) };
 
 				// Check if we are scaling along with the movement.
@@ -105,21 +116,21 @@ Character.prototype.move = function (properties, duration, scale) {
 				}
 
 				// Set the scale direction
-				// If we do note change x and we are looking left, keep doing it.
+				// If we do not change x and we are looking left, keep doing it.
 				if (typeof properties.x === 'undefined' || properties.x === null ||
 					_this.x === properties.x) {
 					if (_this.scale.x < 0) {
 						prop.x *= -1;
 					}
-				// If we are going to a position to the left of the current, look left.
+				/* If we are going to a position to the left of the current, look left. */
 				} else if (properties.x < _this.x) {
 					prop.x *= -1;
 				}
 
-				// Update the turn tween with new values
+				/* Update the turn tween with new values */
 				this.updateTo({ x: prop.x, y: prop.y });
 
-				// Make sure that a scaling tween has the correct direction
+				/* Make sure that a scaling tween has the correct direction */
 				if (ts && prop.x < 0) {
 					ts.updateTo({ x: -1 * ts.vars.x });
 				}
@@ -127,10 +138,13 @@ Character.prototype.move = function (properties, duration, scale) {
 		}), 0);
 
 		if (ts) {
+			/* Update the duration of scaling and add it. */
 			ts.duration(ts.duration() - turnDuration);
 			t.add(ts, turnDuration);
 		}
+
 	} else if (ts) {
+		/* No turning, just add the scaling. */
 		t.add(ts, 0);
 	}
 
@@ -139,10 +153,10 @@ Character.prototype.move = function (properties, duration, scale) {
 
 /**
  * Turn around! Every now and then I get a little bit lonely...
- * NOTE: This only takes into account the state when the function is called.
- *       Making a "toggle turn" inside a Timeline might not have the expected result.
- * @param {number} -1 = left, 1 = right, default: opposite of current
- * @returns {Object} The turning tween
+ * @param {number} direction - -1 = left, 1 = right, default: opposite of current.
+ *                      NOTE: This only takes into account the state when the function is called.
+ *                      Making a "opposite turn" inside a Timeline might not have the expected result.
+ * @returns {Object} The turning tween.
  */
 Character.prototype.moveTurn = function (direction) {
 	// Turn by manipulating the scale.

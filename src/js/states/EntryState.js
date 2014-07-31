@@ -1,4 +1,6 @@
-/* The first state of the game. */
+/**
+ * The first state of the game, where you start the game or do settings.
+ */
 function EntryState () {}
 
 /* Entry state assets are loaded in the boot section */
@@ -22,7 +24,7 @@ EntryState.prototype.create = function () {
 	start.anchor.set(0.5);
 	start.inputEnabled = true;
 
-	var changeAgent = this.add.text(this.world.centerX, this.world.centerY*1.33, '', {
+	var changeAgent = this.add.text(this.world.centerX, this.world.centerY*1.4, '', {
 		font: '40pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
@@ -35,6 +37,7 @@ EntryState.prototype.create = function () {
 
 		changeAgent.text = LANG.TEXT.changeAgent;
 		changeAgent.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.agentSetup); }, this);
+
 	} else {
 		// Player has not played before, go to setup.
 		start.text = LANG.TEXT.start;
@@ -42,7 +45,7 @@ EntryState.prototype.create = function () {
 	}
 
 
-
+	/* Credits related objects: */
 	var credits = this.add.text(this.world.width - 100, this.world.height - 40, LANG.TEXT.credits, {
 		font: '30pt ' +  GLOBAL.FONT,
 		fill: '#000000'

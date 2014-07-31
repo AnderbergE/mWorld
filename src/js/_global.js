@@ -1,15 +1,18 @@
-/* Holds all global constant objects. */
+/**
+ * Holds all global constant objects.
+ * @global
+ */
 var GLOBAL = {
 
+	/* Used for the publish-subscribe system */
 	EVENT: {
 		stateShutDown:  'stateShutDown',  // [state]
 
-		subgameStarted: 'subgameStarted', // [game type]
+		subgameStarted: 'subgameStarted', // [game type, session token]
 		modeChange:     'modeChange',     // [new mode]
 		tryNumber:      'tryNumber',      // [guess, correct number]
 		agentGuess:     'agentGuess',     // [guess, correct number]
 		numberPress:    'numberPress',    // [number, representations]
-		textPress:      'textPress',      // [text]
 		waterAdded:     'waterAdded',     // [total amount, added amount]
 		disabled:       'disabled',       // [true/false]
 
@@ -22,6 +25,7 @@ var GLOBAL = {
 		connectionLost: 'connectionLost'
 	},
 
+	/* The different types of agents */
 	AGENT: {
 		0: Panda,
 		1: Panda,
@@ -29,6 +33,7 @@ var GLOBAL = {
 		3: Panda
 	},
 
+	/* The different Phaser states, some are the subgames for scenarios */
 	STATE: {
 		entry:        'Entry',
 		agentSetup:   'AgentSetup',
@@ -46,13 +51,16 @@ var GLOBAL = {
 		debug:        'Debug'
 	},
 
+	/* Method for scenario */
 	METHOD: {
 		count: 0,              // All numbers displayed at the same time
 		incrementalSteps: 1,   // One number that you increment or decrement, ex: (- 1 +)
 		addition: 2,           // Start with one number and choose what to add
-		additionSubtraction: 3 // Start with one number and choose what to add or subtract
+		subtraction: 3,        // Start with one number and choose what to subtract
+		additionSubtraction: 4 // Start with one number and choose what to add or subtract
 	},
 
+	/* Number representation for scenario */
 	NUMBER_REPRESENTATION: {
 		none:           0,
 		dots:           1,
@@ -65,11 +73,13 @@ var GLOBAL = {
 		yesno:         15 // Special for yes/no: odd values = yes, even values = no
 	},
 
+	/* Number range for scenario */
 	NUMBER_RANGE: {
 		0: 4, // Range 1-4
 		1: 9  // Range 1-9
 	},
 
+	/* The different modes of a subgame */
 	MODE: {
 		playerDo:   0,
 		playerShow: 1,

@@ -28,7 +28,7 @@ DebugState.prototype.create = function () {
 	};
 
 	var games = [
-		[' Balloon', GLOBAL.STATE.balloonGame],
+		['Balloon', GLOBAL.STATE.balloonGame],
 		['Bird Hero', GLOBAL.STATE.birdheroGame],
 		['Lizard', GLOBAL.STATE.lizardGame],
 		['Bee Flight', GLOBAL.STATE.beeGame]
@@ -39,12 +39,9 @@ DebugState.prototype.create = function () {
 			x: 50 + i*(buttonSize + offset),
 			y: 100,
 			fontSize: fontSize,
-			background: 'wood',
-			onClick: gameClicker
+			onClick: gameClicker,
+			keepDown: true
 		});
-		t.bg.width = buttonSize;
-		t._text.anchor.set(0, 0.5);
-		t.bg.events.onInputUp.removeAll();
 		t.gameState = games[i][1];
 		this.world.add(t);
 		gameButtons.push(t);
@@ -66,12 +63,9 @@ DebugState.prototype.create = function () {
 			x: 50 + i*(buttonSize + offset),
 			y: 200,
 			fontSize: fontSize,
-			background: 'wood',
-			onClick: rangeClicker
+			onClick: rangeClicker,
+			keepDown: true
 		});
-		t._text.anchor.set(0, 0.5);
-		t.bg.events.onInputUp.removeAll();
-		t.bg.width = buttonSize;
 		t.range = key;
 		this.world.add(t);
 		rangeButtons[key] = t;
@@ -94,7 +88,6 @@ DebugState.prototype.create = function () {
 		representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new NumberButton(4, GLOBAL.NUMBER_REPRESENTATION[key], {
 			x: 50 + i*(buttonSize + offset),
 			y: 300,
-			background: 'wood',
 			onClick: representationClicker
 		});
 		this.world.add(representationButtons[representationButtons.length-1]);
@@ -111,7 +104,7 @@ DebugState.prototype.create = function () {
 	};
 
 	var methods = [
-		[' Counting',  GLOBAL.METHOD.count],
+		['Counting',  GLOBAL.METHOD.count],
 		['Step-by-step', GLOBAL.METHOD.incrementalSteps],
 		[' Addition', GLOBAL.METHOD.addition],
 		['Add & Sub', GLOBAL.METHOD.additionSubtraction]
@@ -122,12 +115,9 @@ DebugState.prototype.create = function () {
 			x: 50 + i*(buttonSize + offset),
 			y: 400,
 			fontSize: fontSize,
-			background: 'wood',
-			onClick: methodClicker
+			onClick: methodClicker,
+			keepDown: true
 		});
-		t.bg.width = buttonSize;
-		t._text.anchor.set(0, 0.5);
-		t.bg.events.onInputUp.removeAll();
 		t.method = methods[i][1];
 		this.world.add(t);
 		methodButtons.push(t);
@@ -135,11 +125,10 @@ DebugState.prototype.create = function () {
 
 
 	/* Start game (save current options) */
-	var startButton = new TextButton('   Start', {
+	var startButton = new TextButton('Start scenario', {
 		x: this.world.centerX - 150,
 		y: 520,
 		fontSize: 30,
-		background: 'wood',
 		onClick: function () {
 			if (!subgame || !subgame.gameState ||
 				!range || !range.range ||
@@ -162,8 +151,6 @@ DebugState.prototype.create = function () {
 			});
 		}
 	});
-	startButton._text.anchor.set(0, 0.5);
-	startButton.bg.width = 300;
 	this.world.add(startButton);
 
 	/* In case you want to check out garden instead. */
@@ -171,13 +158,10 @@ DebugState.prototype.create = function () {
 		x: this.world.width - 250,
 		y: 680,
 		fontSize: 20,
-		background: 'wood',
 		onClick: function () {
 			game.state.start(GLOBAL.STATE.garden);
 		}
 	});
-	gotoGarden._text.anchor.set(0, 0.5);
-	gotoGarden.bg.width = 230;
 	this.world.add(gotoGarden);
 
 

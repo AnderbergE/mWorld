@@ -1,3 +1,6 @@
+Agent.prototype = Object.create(Character.prototype);
+Agent.prototype.constructor = Agent;
+
 /*
  * The super class for agent objects.
  * (See Panda for sub classing template)
@@ -9,9 +12,11 @@
  *
  * The subagent's sprite atlas should be loaded in the boot state.
  * It should be named the same as the id of the subagent.
+ * It should at least have the following: arm, leg, body, eye,
+ *                                        mouth0 (neutral), mouth1 (open), mouth2 (happy), mouth3 (sad)
+ *
+ * @return {Object} Itself
  */
-Agent.prototype = Object.create(Character.prototype);
-Agent.prototype.constructor = Agent;
 function Agent () {
 	Character.call(this); // Parent constructor.
 
@@ -29,25 +34,25 @@ function Agent () {
 	this.leftArm.x = this.coords.arm.left.x;
 	this.leftArm.y = this.coords.arm.left.y;
 	this.leftArm.rotation = this.coords.anim.arm.origin;
-	game.add.sprite(0, 0, this.id, 'arm', this.leftArm).anchor.set(1, 0.5);
+	this.leftArm.create(0, 0, this.id, 'arm').anchor.set(1, 0.5);
 
 	this.rightArm = game.add.group(this);
 	this.rightArm.x = this.coords.arm.right.x;
 	this.rightArm.y = this.coords.arm.right.y;
 	this.rightArm.rotation = -this.coords.anim.arm.origin;
-	var rightarm = game.add.sprite(0, 0, this.id, 'arm', this.rightArm);
+	var rightarm = this.rightArm.create(0, 0, this.id, 'arm');
 	rightarm.anchor.set(1, 0.5);
 	rightarm.scale.x = -1;
 
 	this.leftLeg = game.add.group(this);
 	this.leftLeg.x = this.coords.leg.left.x;
 	this.leftLeg.y = this.coords.leg.left.y;
-	game.add.sprite(0, 0, this.id, 'leg', this.leftLeg).anchor.set(0.5, 0);
+	this.leftLeg.create(0, 0, this.id, 'leg').anchor.set(0.5, 0);
 
 	this.rightLeg = game.add.group(this);
 	this.rightLeg.x = this.coords.leg.right.x;
 	this.rightLeg.y = this.coords.leg.right.y;
-	var rightleg = game.add.sprite(0, 0, this.id, 'leg', this.rightLeg);
+	var rightleg = this.rightLeg.create(0, 0, this.id, 'leg');
 	rightleg.anchor.set(0.5, 0);
 	rightleg.scale.x = -1;
 
@@ -64,7 +69,7 @@ function Agent () {
 	this.mouth.anchor.set(0.5, 0);
 
 
-	/* Animations */
+	/* Character animations */
 	var mouthNeutral = this.mouth.frame;
 	this.talk = TweenMax.fromTo(this.mouth, 0.2, { frame: mouthNeutral }, {
 		frame: mouthNeutral + 1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
@@ -87,9 +92,11 @@ function Agent () {
 		_this.playerWrong = 0;
 		_this.playerGuesses = [];
 	});
+
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange, function (mode) {
 		currentMode = mode;
 	});
+
 	EventSystem.subscribe(GLOBAL.EVENT.tryNumber, function (guess, correct) {
 		if (currentMode === GLOBAL.MODE.playerDo ||
 			currentMode === GLOBAL.MODE.playerShow) {
@@ -105,8 +112,13 @@ function Agent () {
 	return this;
 }
 
+/**
+ * @property {number} tint - The tint of the agent.
+ */
 Object.defineProperty(Agent.prototype, 'tint', {
-	get: function() { return this.body.tint; },
+	get: function() {
+		return this.body.tint;
+	},
 	set: function(value) {
 		this.body.tint = value;
 		this.leftArm.children[0].tint = value;
@@ -117,16 +129,21 @@ Object.defineProperty(Agent.prototype, 'tint', {
 });
 
 /**
+ * @property {number} percentWrong - The minimum chance of an agent picking wrong number.
+ */
+Agent.prototype.percentWrong = 0.3;
+
+/**
  * Have the agent guess a number.
  * NOTE: This can be overwritten by other AI.
  * Variables that are available:
- *     this.playerGuesses [[guess, correct], ...]
- *     this.playerCorrect Number of correct guesses by the player
- *     this.playerWrong   Number of incorrect guesses by the player
- * @param {number} The correct number
- * @param {number} Minimum value to guess
- * @param {number} Maximum value to guess
- * @returns {number} The guess
+ *     this.playerGuesses [[guess, correct], ...].
+ *     this.playerCorrect Number of correct guesses by the player.
+ *     this.playerWrong   Number of incorrect guesses by the player.
+ * @param {number} The correct number.
+ * @param {number} Minimum value to guess.
+ * @param {number} Maximum value to guess.
+ * @return {number} The guess.
  */
 Agent.prototype.guessing = function (correct, min, max) {
 	var perc = 1;
@@ -137,7 +154,7 @@ Agent.prototype.guessing = function (correct, min, max) {
 	// Guessing correct is relative to how many wrongs you have made.
 	// There is also always a small chance for the agent to be wrong.
 	var guess;
-	if (perc >= (this.playerWrong / this.playerGuesses.length) && Math.random() > 0.1) {
+	if (perc >= (this.playerWrong / this.playerGuesses.length) && Math.random() > this.percentWrong) {
 		guess = correct;
 	} else {
 		do {
@@ -149,11 +166,12 @@ Agent.prototype.guessing = function (correct, min, max) {
 };
 
 /**
- * Have the agent guess a number (publishes agentGuess event).
- * @param {number} The correct number
- * @param {number} Minimum value to guess
- * @param {number} Maximum value to guess
- * @returns {number} The guess (also available in this.lastGuess)
+ * Have the agent guess a number
+ * Publishes agentGuess event.
+ * @param {number} The correct number.
+ * @param {number} Minimum value to guess.
+ * @param {number} Maximum value to guess.
+ * @return {number} The guess (also available in this.lastGuess).
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
 	this.lastGuess = this.guessing(correct, min, max);
@@ -161,23 +179,34 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 	return this.lastGuess;
 };
 
+
+/**
+ * Set the agent to neutral state.
+ */
 Agent.prototype.setNeutral = function () {
 	this.mouth.frameName = 'mouth0';
 };
 
+/**
+ * Set the agent to happy state.
+ */
 Agent.prototype.setHappy = function () {
 	this.mouth.frameName = 'mouth2';
 };
 
+/**
+ * Set the agent to sad state.
+ */
 Agent.prototype.setSad = function () {
 	this.mouth.frameName = 'mouth3';
 };
 
+
 /**
  * Animation: Pump it up yeah!
- * @param {number} Duration in seconds (default 3)
- * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0)
- * @returns {Object} The animation timeline
+ * @param {number} Duration in seconds (default 3).
+ * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0).
+ * @return {Object} The animation timeline.
  */
 Agent.prototype.fistPump = function (duration, arm) {
 	duration = duration || 3;
@@ -205,9 +234,9 @@ Agent.prototype.fistPump = function (duration, arm) {
 
 /**
  * Animation: Put you hand up in the air and wave it around like you care.
- * @param {number} Duration in seconds (default 3)
- * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0)
- * @returns {Object} The animation timeline
+ * @param {number} Duration in seconds (default 3).
+ * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0).
+ * @return {Object} The animation timeline.
  */
 Agent.prototype.wave = function (duration, arm) {
 	duration = duration || 3;
@@ -234,6 +263,12 @@ Agent.prototype.wave = function (duration, arm) {
 	return t;
 };
 
+/**
+ * Animation: Water with a water can.
+ * @param {number} Duration in seconds (default 3).
+ * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0).
+ * @return {Object} The animation timeline.
+ */
 Agent.prototype.water = function (duration, arm) {
 	duration = duration || 3;
 	arm = arm || 0;
@@ -241,6 +276,7 @@ Agent.prototype.water = function (duration, arm) {
 	var origin = this.coords.anim.arm.origin;
 	var water = this.coords.anim.arm.water;
 
+	// TODO: This could probably be refactored.
 	var t = new TimelineMax();
 	if (arm <= 0) {
 		var w1 = new WaterCan(-this.leftArm.children[0].width+60, -100);
@@ -255,7 +291,7 @@ Agent.prototype.water = function (duration, arm) {
 		t.addCallback(this.eyesFollowObject, null, [w1.can], this);
 		t.addLabel('watering');
 		t.add(w1.pour(duration));
-		t.addCallback(this.eyesFollowObject, null, [null], this);
+		t.addCallback(this.eyesStopFollow, null, null, this);
 		t.add(new TweenMax(this.leftArm, water.durUp, { rotation: water.back, ease: Power1.easeIn }));
 		t.addCallback(function () { w1.destroy(); });
 		t.add(new TweenMax(this.leftArm, water.durBack, { rotation: origin, ease: Power1.easeOut }));
@@ -273,7 +309,7 @@ Agent.prototype.water = function (duration, arm) {
 		t.addCallback(this.eyesFollowObject, null, [w2.can], this);
 		t.addLabel('watering');
 		t.add(w2.pour(duration));
-		t.addCallback(this.eyesFollowObject, null, [null], this);
+		t.addCallback(this.eyesStopFollow, null, null, this);
 		t.add(new TweenMax(this.rightArm, water.durUp, { rotation: -water.back, ease: Power1.easeIn }));
 		t.addCallback(function () { w2.destroy(); });
 		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -origin, ease: Power1.easeOut }));
@@ -281,7 +317,12 @@ Agent.prototype.water = function (duration, arm) {
 	return t;
 };
 
-/* Private. Have an eye follow a target. */
+/**
+ * Have an eye follow a target.
+ * @param {Object} eye - The eye to follow with.
+ * @param {Object} targ - The target to follow.
+ * @private
+ */
 Agent.prototype._eyeFollow = function (eye, targ) {
 	var origin = { x: eye.x, y: eye.y };
 	var depth = this.coords.eye.depth;
@@ -304,27 +345,30 @@ Agent.prototype._eyeFollow = function (eye, targ) {
 /**
  * Make the agent's eyes follow an object.
  * @param {Object} The target to follow
- * @param {boolean} true to turn off following object
  */
-Agent.prototype.eyesFollowObject = function (targ, off) {
+Agent.prototype.eyesFollowObject = function (targ) {
+	this.eyesStopFollow();
+
+	this._eyeFollow(this.leftEye, targ);
+	this._eyeFollow(this.rightEye, targ);
+};
+
+/**
+ * Make the agent's eyes follow the input pointer.
+ */
+Agent.prototype.eyesFollowPointer = function () {
+	this.eyesFollowObject(game.input.activePointer);
+};
+
+/**
+ * Stop the eyes following pointer or object.
+ */
+Agent.prototype.eyesStopFollow = function () {
 	this.leftEye.x = this.coords.eye.left.x;
 	this.leftEye.y = this.coords.eye.left.y;
 	this.rightEye.x = this.coords.eye.right.x;
 	this.rightEye.y = this.coords.eye.right.y;
 
-	if (off || !targ) {
-		this.leftEye.update = function () {};
-		this.rightEye.update = function () {};
-	} else {
-		this._eyeFollow(this.leftEye, targ);
-		this._eyeFollow(this.rightEye, targ);
-	}
-};
-
-/**
- * Make the agent's eyes follow the input pointer.
- * @param {boolean} true to turn off following pointer
- */
-Agent.prototype.eyesFollowPointer = function (off) {
-	this.eyesFollowObject(game.input.activePointer, off);
+	this.leftEye.update = function () {};
+	this.rightEye.update = function () {};
 };

@@ -1,4 +1,6 @@
-/* The menu for choosing agent, */
+/**
+ * The state for choosing agent.
+ */
 function AgentSetupState () {}
 
 /* Phaser state function */
@@ -10,9 +12,9 @@ AgentSetupState.prototype.preload = function () {
 AgentSetupState.prototype.create = function () {
 	var _this = this;
 	var spacing = 450;
-	var scale = { x: 0.3, y: 0.3 };
-	var scaleActive = { x: 0.5, y: 0.5 };
-	var scalePicked = { x: 0.6, y: 0.6 };
+	var scale = { x: 0.3, y: 0.3 };       // Default scale
+	var scaleActive = { x: 0.5, y: 0.5 }; // Scale when pushed
+	var scalePicked = { x: 0.6, y: 0.6 }; // Scale when pushed the second time
 	var slideTime = 1;
 	var fontStyle = {
 		font: '50pt ' +  GLOBAL.FONT,
@@ -69,6 +71,7 @@ AgentSetupState.prototype.create = function () {
 	}
 
 	function chooseAgent () {
+		_this.input.disabled = true;
 		fadeInterface(false);
 		a.fistPump()
 			.addCallback(function () {
@@ -77,6 +80,7 @@ AgentSetupState.prototype.create = function () {
 				player.tint = a.tint;
 			}, 0)
 			.addCallback(function () {
+				_this.input.disabled = false;
 				_this.state.start(GLOBAL.STATE.garden);
 			});
 	}
@@ -90,12 +94,8 @@ AgentSetupState.prototype.create = function () {
 		x: this.world.centerX - 150,
 		y: 25,
 		fontSize: 30,
-		color: '#ffffff',
-		background: 'wood',
 		onClick: function () { a.tint = game.rnd.integerInRange(0x000000, 0xffffff); }
 	});
-	color.bg.width = 300;
-	color._text.anchor.set(0, 0.5);
 	color.visible = false;
 	this.world.add(color);
 
@@ -103,7 +103,6 @@ AgentSetupState.prototype.create = function () {
 		x: this.world.centerX - 275,
 		y: this.world.centerY*0.6,
 		size: 75,
-		background: 'wood',
 		onClick: cancelAgent
 	});
 	noToAgent.visible = false;
@@ -113,7 +112,6 @@ AgentSetupState.prototype.create = function () {
 		x: this.world.centerX + 200,
 		y: this.world.centerY*0.6,
 		size: 75,
-		background: 'wood',
 		onClick: chooseAgent
 	});
 	yesToAgent.visible = false;

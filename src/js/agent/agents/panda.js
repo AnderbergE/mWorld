@@ -1,10 +1,14 @@
-/* The panda agent */
 Panda.prototype = Object.create(Agent.prototype);
 Panda.prototype.constructor = Panda;
 
 Panda.prototype.id = 'panda'; // Reference for LANG files and asset files
 Panda.prototype.agentName = LANG.TEXT.pandaName;
 
+/**
+ * The panda agent.
+ * The asset files are loaded in the boot state using key: Panda.prototype.id.
+ * @return Itself
+ */
 function Panda () {
 	this.coords = {
 		arm: {
