@@ -140,7 +140,7 @@ var Backend = {
 	 * @param {Object} data - The agent updates.
 	 */
 	putAgent: function (data) {
-		this.post('', data);
+		this.post('update_agent_api_players_path', data);
 	},
 
 	/**
