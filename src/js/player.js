@@ -25,8 +25,8 @@ function Player () {
 	/* Load player data from server. */
 	var data = Backend.getPlayer();
 	if (data) {
-		this.agent = GLOBAL.AGENT[data.agent];
-		this.tint = data.tint || this.tint;
+		this.agent = GLOBAL.AGENT[data.agent.type];
+		this.tint = data.agent.tint || this.tint;
 		this._water = data.water || 0; // Do not use water since that fires an event.
 	}
 
