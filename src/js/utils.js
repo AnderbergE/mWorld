@@ -80,46 +80,54 @@ Counter.prototype.update = function () {
 
 /**
  * Fade in or out an object.
+ * NOTE: The returned tween has both an onStart and onComplete function.
  * @param {Object} what - The object to fade, needs to have an alpha property.
  * @param {boolean} typ - Fade in = true, out = false, toggle = undefined (default: toggle).
- *                  NOTE: The returned tween has both an onStart and onComplete function.
  * @param {number} duration - Fade duration in seconds (default: 0.5).
- *                 NOTE: The tween will have 0 duration if fade state is correct.
+ *                            NOTE: The tween will have 0 duration if state is correct.
+ * @param {number} to - The alpha to fade to (only used when fading in) (default: 1).
+ *                      NOTE: You can fade to a lower alpha using fade in.
  * @return {Object} The animation TweenMax.
  */
-function fade (what, typ, duration) {
-	var toggle = (typeof typ === 'undefined' || typ === null);
+function fade (what, typ, duration, to) {
 	duration = duration || 0.5;
 
 	return TweenMax.to(what, duration, {
 		onStart: function () {
-			if (toggle) {
+			/* If this object is fading, stop it! */
+			if (what.isFading) {
+				what.isFading.kill();
+			}
+
+			/* No specified type: Toggle the current one. */
+			if (typeof typ === 'undefined' || typ === null) {
 				typ = !what.visible || what.alpha === 0;
 			}
 
-			if (typ) {
-				if (!what.visible) {
-					what.alpha = 0;
+			/* Not visible? Set alpha to 0 and make it visible if it should be. */
+			if (!what.visible) {
+				what.alpha = 0;
+				if (typ) {
 					what.visible = true;
-				} else if (what.alpha === 1) {
-					this.duration(0);
-					return;
-				}
-				what.visible = true;
-				this.updateTo({ alpha: 1 });
-
-			} else {
-				if (what.visible || what.alpha > 0) {
-					this.updateTo({ alpha: 0});
-				} else {
-					this.duration(0);
 				}
 			}
+
+			/* If we are fading in, fade to the specified alpha, otherwise 0. */
+			to = typ > 0 ? (to || 1) : 0;
+			if (what.alpha !== to) {
+				this.updateTo({ alpha: to });
+			} else {
+				/* We are already at correct state, cut the duration. */
+				this.duration(0);
+			}
+
+			what.isFading = this;
 		},
 		onComplete: function () {
 			if (!typ) {
 				what.visible = false;
 			}
+			delete what.isFading;
 		}
 	});
 }
