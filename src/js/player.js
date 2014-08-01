@@ -20,11 +20,17 @@ function Player () {
 	/**
 	 * @property {number} tint - A tint for the agent.
 	 */
+	this.name = LANG.TEXT.anonymous;
+
+	/**
+	 * @property {number} tint - A tint for the agent.
+	 */
 	this.tint = 0xffffff;
 
 	/* Load player data from server. */
 	var data = Backend.getPlayer();
 	if (data) {
+		this.name = data.name;
 		this.agent = GLOBAL.AGENT[data.agent.type];
 		this.tint = data.agent.tint || this.tint;
 		this._water = data.water || 0; // Do not use water since that fires an event.

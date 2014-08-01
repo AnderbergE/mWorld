@@ -80,6 +80,8 @@ LANG.english.text = {
 	continuePlaying: 'Continue playing',
 	changeAgent: 'Play with another friend',
 	credits: 'Credits',
+	anonymous: 'Anonymous',
+	logOut: 'Log out',
 
 	/* General */
 	ok: 'Ok',

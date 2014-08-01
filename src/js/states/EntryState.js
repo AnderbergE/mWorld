@@ -45,12 +45,23 @@ EntryState.prototype.create = function () {
 	}
 
 
-	/* Credits related objects: */
-	var credits = this.add.text(this.world.width - 100, this.world.height - 40, LANG.TEXT.credits, {
-		font: '30pt ' +  GLOBAL.FONT,
+	// TODO: This should actually log out.
+	this.add.text(20, this.world.height - 100, LANG.TEXT.logOut, {
+		font: '25pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
-	credits.anchor.set(0.5);
+
+	this.add.text(20, this.world.height - 60, player.name, {
+		font: '25pt ' +  GLOBAL.FONT,
+		fill: '#000000'
+	});
+
+	/* Credits related objects: */
+	var credits = this.add.text(this.world.width - 20, this.world.height - 60, LANG.TEXT.credits, {
+		font: '25pt ' +  GLOBAL.FONT,
+		fill: '#000000'
+	});
+	credits.anchor.set(1, 0);
 	credits.inputEnabled = true;
 	credits.events.onInputDown.add(function () {
 		fade(credits, false, 0.3);
