@@ -106,6 +106,17 @@ Subgame.prototype.init = function (options) {
 
 	this._menuGroup.add(new Menu());
 
+	/* Numbers for randomisation. */
+	this._weighted = this.amount > 4 && this.method === GLOBAL.METHOD.count;
+	this._numberMin = 1;
+	this._numberMax = this.amount;
+	if (this.method === GLOBAL.METHOD.addition) {
+		this._numberMin++;
+	}
+	if (this.method === GLOBAL.METHOD.subtraction) {
+		this._numberMax--;
+	}
+
 	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0, this._token]);
 };
 
@@ -153,11 +164,11 @@ Subgame.prototype._nextNumber = function () {
 	this._totalTries += this._currentTries;
 	this._currentTries = 0;
 
-	// Weighted randomisation, increase amount of high numbers with about 50% if applicable
-	if (this.amount > 4 && this.rnd.frac() < 0.7) {
-		this.currentNumber = this.rnd.integerInRange(5, this.amount);
+	// Weighted randomisation if applicable
+	if (this._weighted && this.rnd.frac() < 0.2) {
+		this.currentNumber = this.rnd.integerInRange(5, this._numberMax);
 	} else {
-		this.currentNumber = this.rnd.integerInRange(1, 4);
+		this.currentNumber = this.rnd.integerInRange(this._numberMin, this._numberMax);
 	}
 };
 
