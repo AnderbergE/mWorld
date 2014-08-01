@@ -78,7 +78,7 @@ LANG.english.text = {
 	title: 'Magical Garden',
 	start: 'Start playing',
 	continuePlaying: 'Continue playing',
-	changeAgent: 'Change friend',
+	changeAgent: 'Play with another friend',
 	credits: 'Credits',
 
 	/* General */
