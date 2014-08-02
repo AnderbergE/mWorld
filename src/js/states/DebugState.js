@@ -96,7 +96,7 @@ DebugState.prototype.create = function () {
 
 
 	/* Method selection */
-	buttonSize = 200;
+	buttonSize = 180;
 	fontSize = 20;
 	var methodClicker = function () {
 		if (method !== this && method) { method.reset(); }
@@ -106,7 +106,8 @@ DebugState.prototype.create = function () {
 	var methods = [
 		['Counting',  GLOBAL.METHOD.count],
 		['Step-by-step', GLOBAL.METHOD.incrementalSteps],
-		[' Addition', GLOBAL.METHOD.addition],
+		['Addition', GLOBAL.METHOD.addition],
+		['Subtraction', GLOBAL.METHOD.subtraction],
 		['Add & Sub', GLOBAL.METHOD.additionSubtraction]
 	];
 	var methodButtons = [];
