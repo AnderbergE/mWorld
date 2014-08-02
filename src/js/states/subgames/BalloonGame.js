@@ -66,7 +66,6 @@ BalloonGame.prototype.preload = function () {
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
 
-	this.direction = 'right';
 	var tempgroup;
 	var background;
 	var sky;
@@ -88,6 +87,7 @@ BalloonGame.prototype.create = function () {
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var stepSize = 9/this.amount;
 
+	this.direction = 'right';
 	balloonStock = this.amount;
 
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
@@ -249,7 +249,7 @@ BalloonGame.prototype.create = function () {
 	liftoffButton = game.add.button(110, 680, 'wood', takeOff, this.hudgroup);
 	liftoffButton.anchor.set(0.5, 0.5);
 	liftoffButton.visible = false;
-	var anchor = this.add.sprite(110, 680, 'anchor', null, this.hudGroup);
+	var anchor = this.add.sprite(110, 680, 'anchor', null);
 	anchor.anchor.set(0.5, 0.5);
 	anchor.scale.set(0.5);
 	anchor.visible = false;
@@ -260,30 +260,24 @@ BalloonGame.prototype.create = function () {
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
 
-	var pluspanel = new ButtonPanel(9, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-		y: this.world.height-80, background: 'wood', onClick: pushPlus
+	var pluspanel = new ButtonPanel(this.amount, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
+		y: this.world.height-80, background: 'wood', onClick: pushPlus,
 	});
 	pluspanel.visible = false;
 	pluspanel.scale.setTo(0.65);
 	this.hudGroup.add(pluspanel);
 
-	var minuspanel = new ButtonPanel(9, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-		y: this.world.height-150, background: 'wood', onClick: pushMinus, min: -9, max: -1
-	});
-	minuspanel.visible = false;
-	minuspanel.scale.setTo(0.65);
-	this.hudGroup.add(minuspanel);
-
 	var buttonOptions = {
 		background: 'wood',
-		y: this.world.height-100
+		y: this.world.height-100,
+		doNotAdapt: true
 	};
 
 	var plusminus = this.add.group(this.gameGroup);
-	buttonOptions.onClick = function () { removeBalloon(); };
+	buttonOptions.onClick = function () { updateBalloon(0); };
 	buttonOptions.x = 400;
 	plusminus.add(new TextButton('-', buttonOptions));
-	buttonOptions.onClick = function () { addBalloon(); };
+	buttonOptions.onClick = function () { updateBalloon(1); };
 	buttonOptions.x = 500;
 	plusminus.add(new TextButton('+', buttonOptions));
 	plusminus.visible = false;
@@ -303,7 +297,6 @@ BalloonGame.prototype.create = function () {
 		fade(yesnos, true);
 		fade(plusminus, false);
 		fade(pluspanel, false);
-		fade(minuspanel, false);
 
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
@@ -319,11 +312,16 @@ BalloonGame.prototype.create = function () {
 			fade(liftoffButton, true);
 			fade(anchor, true);
 		} else if (_this.method === GLOBAL.METHOD.addition) {
+			pluspanel.setRange(1, _this.amount-airBalloonStock);
+			pluspanel.amount = _this.amount-airBalloonStock;
 			fade(pluspanel, true);
 		} else if (_this.method === GLOBAL.METHOD.additionSubtraction) {
+			pluspanel.setRange(0-airBalloonStock, _this.amount-airBalloonStock);
+			pluspanel.amount = _this.amount-1;
+			if(airBalloonStock === 0){
+				pluspanel.amount++;
+			}
 			fade(pluspanel, true);
-			fade(minuspanel, true);
-
 		} else if (_this.method === GLOBAL.METHOD.count) {
 			fade(liftoffButton, true);
 			fade(anchor, true);
@@ -349,21 +347,10 @@ BalloonGame.prototype.create = function () {
 	function pushPlus (value) {
 		if((airBalloonStock + value) > _this.amount) {
 			airBalloonStock = _this.amount;
-		} else {
-			airBalloonStock = airBalloonStock + value;
-		}
-		balloonStock = _this.amount-airBalloonStock;
-		balloonStockUpdate();
-		airBalloonStockUpdate();
-		takeOff();
-	}
-
-	function pushMinus (value) {
-		value = -value;
-		if((airBalloonStock - value) < 0) {
+		} else if((airBalloonStock + value) < 0) {
 			airBalloonStock = 0;
 		} else {
-			airBalloonStock = airBalloonStock - value;
+			airBalloonStock = airBalloonStock + value;
 		}
 		balloonStock = _this.amount-airBalloonStock;
 		balloonStockUpdate();
@@ -380,31 +367,24 @@ BalloonGame.prototype.create = function () {
 		takeOff();
 	}
 
-	function addBalloon()
+	function updateBalloon(change)
 	{
-		if(balloonStock > 0) {
+		if((change === 1) && (balloonStock > 0)) {
 			airBalloonStock++;
 			balloonStock--;
 			airBalloonStockUpdate();
 			balloonStockUpdate();
-
-			if(balloonStock === 0) {
-				cleanUpBalloons(); //this makes sure that we delete any excess balloons that might have been created before we hide the stack.
-			}
-		}
-	}
-
-	function removeBalloon()
-	{
-		if(airBalloonStock > 0) {
+		} else if((change === 0) && (airBalloonStock > 0)) {
 			airBalloonStock--;
 			balloonStock++;
 			airBalloonStockUpdate();
 			balloonStockUpdate();
-
-			if(airBalloonStock === 0) {
-				cleanUpAirBalloons(); //this makes sure that we delete any excess balloons that might have been created before we hide the stack.
-			}
+		}
+		if(balloonStock === 0) {
+			cleanUpBalloons(); //this makes sure that we delete any excess balloons that might have been created before we hide the stack.
+		}
+		if(airBalloonStock === 0) {
+			cleanUpAirBalloons(); //this makes sure that we delete any excess balloons that might have been created before we hide the stack.
 		}
 	}
 
@@ -459,7 +439,7 @@ BalloonGame.prototype.create = function () {
 		var tl = new TimelineMax();
 		if(checkOverlap(balloon, airballoons)) {
 			balloon.angle = 0;
-			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
+			tl.to(balloon, 0.5, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
 			tl.eventCallback('onComplete', function() {
 				airBalloonStock += 1;
 				airballoons.add(balloon);
@@ -524,7 +504,6 @@ BalloonGame.prototype.create = function () {
 			liftoffButton.visible = false;
 			anchor.visible = false;
 			plusminus.visible = false;
-			minuspanel.visible = false;
 			pluspanel.visible = false;
 
 			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
@@ -589,7 +568,7 @@ BalloonGame.prototype.create = function () {
 		fade(treasure, true);
 		var pickAnswer = game.rnd.integerInRange(0, 5);
 		treasure.loadTexture('treasures', pickAnswer);
-		tl.addSound(speech, 'yippi');
+		tl.addSound(speech, beetle, 'yippi');
 		tl.add( new TweenMax(treasure, 2, {x: coords.sack.x, y: coords.sack.y+10, ease:Power4.easeIn}));
 		tl.addCallback(function () {
 			tls.addSound('sackjingle');
@@ -743,7 +722,7 @@ BalloonGame.prototype.create = function () {
 				mapText.number = correctAnswer;
 			} else {
 				mapText = new NumberButton(correctAnswer, _this.representation, {
-							x: 700, y: 670, size: 40
+							x: 700, y: 670, size: 40, min: 1, max: _this.amount
 				});
 				_this.gameGroup.add(mapText);
 			}
@@ -784,9 +763,10 @@ BalloonGame.prototype.create = function () {
 									x: -50, y: -50, size: 100
 								});
 						} else {
-							_this.agent.thought.guess = new NumberButton(guess, _this.representation, {
-								x: -50, y: -50, size: 100
-							});
+							var balloonRepresentation = _this.add.sprite(10, 0, 'balloon'+guess, null, _this.gameGroup);
+							balloonRepresentation.scale.set(0.4);
+							balloonRepresentation.anchor.setTo(0.5, 0.5);
+							_this.agent.thought.guess = balloonRepresentation;
 						}
 					}
 					_this.agent.thought.add(_this.agent.thought.guess);
@@ -887,7 +867,7 @@ BalloonGame.prototype.create = function () {
 				tl.addSound('newtreasure', beetle);
 				renderChest(_this.currentNumber);
 			}
-			tl.addCallback(showLiftoff);
+			showLiftoff();
 		}
 	};
 
