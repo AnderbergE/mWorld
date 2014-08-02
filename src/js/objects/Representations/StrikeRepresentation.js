@@ -16,6 +16,7 @@ StrikeRepresentation.prototype.constructor = StrikeRepresentation;
 function StrikeRepresentation (number, xPos, yPos, size, color, max) {
 	size = size || 100;
 	max = max || number;
+	max = Math.abs(max);
 	var diagTop = 0.8;
 	var diagBottom = 0.2;
 	var width = size/10;

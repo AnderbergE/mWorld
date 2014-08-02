@@ -67,35 +67,36 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 		var x = 0;
 		var y = 0;
 		var offset = 0;
+		var useNum = Math.abs(this._number);
 		for (var i = 0; i < this.representations.length; i++) {
 			if (this.vertical) { y = this.size * i; }
 			else { x = this.size * i; }
 
 			if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
 				offset = this.size/10;
-				this.add(new DotsRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+				this.add(new DotsRepresentation(useNum, x+offset, y+offset, this.size-offset*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.fingers) {
 				offset = this.size/12;
-				this.add(new FingerRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+				this.add(new FingerRepresentation(useNum, x+offset, y+offset, this.size-offset*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 				offset = this.size/6;
-				this.add(new StrikeRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color, this.max));
+				this.add(new StrikeRepresentation(useNum, x+offset, y+offset, this.size-offset*2, this.color, this.max));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 				this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dice) {
 				offset = this.size/6;
-				this.add(new DiceRepresentation(this._number, x+offset, y+offset, this.size-offset*2, this.color));
+				this.add(new DiceRepresentation(useNum, x+offset, y+offset, this.size-offset*2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.signedNumbers) {
 				this.add(new SignedNumberRepresentation(this._number, x, y, this.size/2, this.color));
 
 			} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 				this._number = this._number % 2;
-				this.add(new YesnoRepresentation(this._number, x, y, this.size/2, this.color));
+				this.add(new YesnoRepresentation(useNum, x, y, this.size/2, this.color));
 			}
 		}
 	}

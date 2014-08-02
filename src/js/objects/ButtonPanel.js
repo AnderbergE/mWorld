@@ -134,8 +134,8 @@ ButtonPanel.prototype._updateButtons = function () {
  * @param {Number} The maximum amount in the panel.
  */
 ButtonPanel.prototype.setRange = function (min, max) {
-	this.min = min || this.min || 1;
-	this.max = max || this.max || 1;
+	this.min = min;
+	this.max = max;
 
 	var oldAmount = this.amount || 0;
 	// incrementalSteps have these buttons: (-) (number) (+) (ok)
