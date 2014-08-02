@@ -240,7 +240,6 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 
 			/* Check that backend accepts plant upgrade */
 			var ev = EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
-				console.log('Testa');
 				if (!data.success && data.field.x === _this.column && data.field.y === _this.row) {
 					_this.level.value = data.field.level;
 				}
