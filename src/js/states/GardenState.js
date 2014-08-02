@@ -238,18 +238,28 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 			// Plant has leveled up by watering.
 			newPlant.alpha = 0;
 
+			/* Check that backend accepts plant upgrade */
+			var ev = EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
+				console.log('Testa');
+				if (!data.success && data.field.x === _this.column && data.field.y === _this.row) {
+					_this.level.value = data.field.level;
+				}
+				EventSystem.unsubscribe(ev);
+			});
+
+			/* Upgrade plant animation, ending with sending to backend. */
 			TweenMax.to(newPlant, 2, {
 				alpha: 1,
 				onComplete: function () {
 					_this.water.update();
 					if (plant) { plant.destroy(); }
 					plant = newPlant;
+
+				/*jshint camelcase:false */
+				Backend.putUpgradePlant({ field: { x: column, y: row, level: this.value, content_type: type }});
+				/*jshint camelcase:true */
 				}
 			});
-
-			/*jshint camelcase:false */
-			Backend.putUpgradePlant({ field: { x: column, y: row, level: this.value, content_type: type }});
-			/*jshint camelcase:true */
 
 		} else {
 			// Could be: Setup of plant from constructor
@@ -259,13 +269,6 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 		}
 	};
 	this.level.update();
-
-	/* Check that backend accepts plant upgrade */
-	EventSystem.subscribe(GLOBAL.EVENT.plantUpgrade, function (data) {
-		if (!data.success && data.field.x === _this.column && data.field.y === _this.row) {
-			_this.level = data.field.level;
-		}
-	});
 
 	return this;
 }
