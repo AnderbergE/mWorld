@@ -146,6 +146,30 @@ LANG.english.speech = {
 		}
 	},
 
+	balloongame: {
+		speech: ['assets/audio/subgames/balloongame/balloongametalkswedish.ogg', 'assets/audio/subgames/balloongame/balloongametalkswedish.mp3'],
+		markers: {
+			agenthmm1:      [0,     2.1],
+			agenthmm2:      [2.2,   2.3],
+			agenthmm3:      [4.6,   2.1],
+			agenthmm4:      [6.8,   2.3],
+			agentintro:     [9.4,   7.0],
+			agentquestion1: [16.5,  1.1],
+			agentquestion2: [17.7,  2.1],
+			agentquestion3: [19.9,  2.5],
+			agenttry:       [22.5,  2.8],
+			beetleintro1:   [25.4, 23.2],
+			beetleintro2:   [48.7,  2.6],
+			beetleintro3:   [51.4, 13.9],
+			isitwrong:      [65.4,  2.8],
+			newtreasure:    [68.3,  3.7],
+			oops:           [72.1,  1.8],
+			tryless:        [74.0,  2.6],
+			trymore:        [76.7,  2.6],
+			yippi:          [27.4,  1.0]
+		}
+	},
+
 	/* Agents */
 	panda: {
 		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],

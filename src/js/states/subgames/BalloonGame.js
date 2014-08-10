@@ -15,28 +15,30 @@ BalloonGame.prototype.preload = function () {
 	this.load.image('metalLoop', 'assets/img/subgames/balloon/metalloop.png');
 	this.load.spritesheet('catbush', 'assets/img/subgames/balloon/catbush2.png',191,88,10);
 	this.load.spritesheet('treasures', 'assets/img/subgames/balloon/treasures.png', 75, 110, 6);
+	this.load.atlasJSONHash('balloonsheet', 'assets/img/subgames/balloon/balloonsheet.png', 'assets/img/subgames/balloon/balloonsheet.json');
 
 	this.load.audio('birdheroAgentHmm', LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
 	this.load.audio('birdheroAgentOops', LANG.SPEECH.AGENT.tryAgain);
 
-	this.load.audio('beetleintro1', 'assets/audio/subgames/balloongame/beetleinstructions1.mp3');
-	this.load.audio('beetleintro2', 'assets/audio/subgames/balloongame/beetleinstructions2.mp3');
-	this.load.audio('beetleintro3', 'assets/audio/subgames/balloongame/beetleinstructions3.mp3');
-	this.load.audio('agentintro', 'assets/audio/subgames/balloongame/agentintro.mp3');
-	this.load.audio('newtreasure', 'assets/audio/subgames/balloongame/newtreasure.mp3');
-	this.load.audio('tryless', 'assets/audio/subgames/balloongame/tryless.mp3');
-	this.load.audio('trymore', 'assets/audio/subgames/balloongame/trymore.mp3');
-	this.load.audio('success', 'assets/audio/subgames/balloongame/trymore.mp3');
-	this.load.audio('agenthmm', 'assets/audio/subgames/balloongame/agenthmm1.mp3');
-	this.load.audio('agenttry', 'assets/audio/subgames/balloongame/agenttry.mp3');
-	this.load.audio('oops', 'assets/audio/subgames/balloongame/oops.mp3');
-	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
-	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
-	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
-	this.load.audio('catbushpurr', 'assets/audio/subgames/balloongame/catbushpurr.mp3');
-	this.load.audio('chestunlock', 'assets/audio/subgames/balloongame/chestunlock.mp3');
-	this.load.audio('sackjingle', 'assets/audio/subgames/balloongame/belljingle.mp3');
+	this.load.audio('balloonSpeech',         LANG.SPEECH.balloongame.speech); // audio sprite sheet
+	this.load.audio('beetleintro1', ['assets/audio/subgames/balloongame/beetleinstructions1.mp3', 'assets/audio/subgames/balloongame/beetleinstructions1.mp3']);
+	this.load.audio('beetleintro2', ['assets/audio/subgames/balloongame/beetleinstructions2.mp3', 'assets/audio/subgames/balloongame/beetleinstructions2.mp3']);
+	this.load.audio('beetleintro3', ['assets/audio/subgames/balloongame/beetleinstructions3.mp3', 'assets/audio/subgames/balloongame/beetleinstructions3.mp3']);
+	this.load.audio('agentintro', ['assets/audio/subgames/balloongame/agentintro.mp3', 'assets/audio/subgames/balloongame/agentintro.mp3']);
+	this.load.audio('newtreasure', ['assets/audio/subgames/balloongame/newtreasure.mp3', 'assets/audio/subgames/balloongame/newtreasure.mp3']);
+	this.load.audio('tryless', ['assets/audio/subgames/balloongame/tryless.mp3', 'assets/audio/subgames/balloongame/tryless.mp3']);
+	this.load.audio('trymore', ['assets/audio/subgames/balloongame/trymore.mp3', 'assets/audio/subgames/balloongame/trymore.mp3']);
+	this.load.audio('success', ['assets/audio/subgames/balloongame/trymore.mp3', 'assets/audio/subgames/balloongame/trymore.mp3']);
+	this.load.audio('agenthmm', ['assets/audio/subgames/balloongame/agenthmm1.mp3', 'assets/audio/subgames/balloongame/agenthmm1.mp3']);
+	this.load.audio('agenttry', ['assets/audio/subgames/balloongame/agenttry.mp3', 'assets/audio/subgames/balloongame/agenttry.mp3']);
+	this.load.audio('oops', ['assets/audio/subgames/balloongame/oops.mp3', 'assets/audio/subgames/balloongame/oops.mp3']);
+	this.load.audio('isitwrong', ['assets/audio/subgames/balloongame/isitwrong.mp3', 'assets/audio/subgames/balloongame/isitwrong.mp3']);
+	this.load.audio('question', ['assets/audio/subgames/balloongame/agentquestion1.mp3', 'assets/audio/subgames/balloongame/agentquestion1.mp3']);
+	this.load.audio('pop', ['assets/audio/subgames/balloongame/pop.mp3', 'assets/audio/subgames/balloongame/pop.mp3']);
+	this.load.audio('catbushpurr', ['assets/audio/subgames/balloongame/catbushpurr.mp3', 'assets/audio/subgames/balloongame/catbushpurr.mp3']);
+	this.load.audio('chestunlock', ['assets/audio/subgames/balloongame/chestunlock.mp3', 'assets/audio/subgames/balloongame/chestunlock.mp3']);
+	this.load.audio('sackjingle', ['assets/audio/subgames/balloongame/belljingle.mp3', 'assets/audio/subgames/balloongame/belljingle.mp3']);
 
 	this.load.image('sky', 'assets/img/subgames/balloon/sky.png');
 	this.load.image('background', 'assets/img/subgames/balloon/background.png');
@@ -86,6 +88,11 @@ BalloonGame.prototype.create = function () {
 	var map;
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var stepSize = 9/this.amount;
+	var speech = this.add.audio('balloonSpeech');
+	var markers = LANG.SPEECH.balloongame.markers;
+	for (var marker in markers) {
+		speech.addMarker(marker, markers[marker][0], markers[marker][1]);
+	}
 
 	this.direction = 'right';
 	balloonStock = this.amount;
@@ -192,8 +199,8 @@ BalloonGame.prototype.create = function () {
 	this.balloons.x = 0;
 	this.balloons.y = 0;
 
-	this.balloonStack1 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
-	balloonStack2 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
+	this.balloonStack1 = _this.add.sprite(0, 0, 'balloonsheet', 'b6', _this.gameGroup);
+	balloonStack2 = _this.add.sprite(0, 0, 'balloonsheet', 'b6', _this.gameGroup);
 	metalLoop = _this.add.sprite(0, 0, 'metalLoop', null, _this.gameGroup);
 
 	airballoons.add(balloonStack2);
@@ -289,9 +296,6 @@ BalloonGame.prototype.create = function () {
 	foreGround.add(chest);
 	foreGround.add(treasure);
 
-	var speech = this.add.audio('beetleintro1');
-	speech.addMarker('yippi', 1.9, 1);
-
 	function showYesnos () {
 		yesnos.reset();
 		fade(liftoffButton, false);
@@ -299,7 +303,6 @@ BalloonGame.prototype.create = function () {
 		fade(yesnos, true);
 		fade(plusminus, false);
 		fade(pluspanel, false);
-		console.log('stock: ' + airBalloonStock);
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 
@@ -393,7 +396,7 @@ BalloonGame.prototype.create = function () {
 	function createBalloon()
 	{
 		if (_this.balloons.length < 1) {
-			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloon'+balloonStock, null, _this.gameGroup);
+			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloonsheet', 'b'+balloonStock, _this.gameGroup);
 			balloon.x = coords.balloons.x;
 			balloon.y = coords.balloons.y;
 			balloon.inputEnabled = true;
@@ -408,7 +411,7 @@ BalloonGame.prototype.create = function () {
 	function createAirBalloon()
 	{
 		if (airballoons.length < 3) {
-			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloon'+airBalloonStock, null, _this.gameGroup);
+			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloonsheet', 'b'+airBalloonStock, _this.gameGroup);
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
 			balloon.events.onDragStart.add(release, _this);
@@ -419,7 +422,7 @@ BalloonGame.prototype.create = function () {
 
 	//release and atthchToBasket control the dragging and snapping of balloons.
 	function release(balloon) {
-		balloon.loadTexture('balloon1');
+		balloon.loadTexture('balloonsheet', 'b1');
 		if(airballoons.getIndex(balloon) === -1) {
 			balloonStock -= 1;
 			tempgroup.add(balloon);
@@ -464,7 +467,7 @@ BalloonGame.prototype.create = function () {
 		
 		for (var i = 0; i < amount; i++) {
 			var g = _this.balloons.getAt(i);
-			g.loadTexture('balloon'+balloonStock);
+			g.loadTexture('balloonsheet', 'b'+balloonStock);
 		}
 	}
 
@@ -473,7 +476,7 @@ BalloonGame.prototype.create = function () {
 		var amount = airballoons.length;
 
 		for (var i = 3; i < amount; i++) {
-				airballoons.getAt(i).loadTexture('balloon'+airBalloonStock);
+				airballoons.getAt(i).loadTexture('balloonsheet', 'b'+airBalloonStock);
 		}
 	}
 
@@ -523,9 +526,9 @@ BalloonGame.prototype.create = function () {
 
 			} else {
 				if (result > 0) {
-					tl.addSound('tryless');
+					tl.addSound(speech, beetle, 'tryless');
 				} else {
-					tl.addSound('trymore');
+					tl.addSound(speech, beetle, 'trymore');
 				}
 				//Popping balloons and Basket going back down.
 				if((!treasures) || (_this.method !== GLOBAL.METHOD.incrementalSteps)) {
@@ -760,10 +763,7 @@ BalloonGame.prototype.create = function () {
 						_this.agent.thought.guess = balloonRepresentation;
 					} else {
 						if ((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
-								console.log('guess: ' + guess);
-								console.log('stock: ' + airBalloonStock);
 								guess -= airBalloonStock; //If you skip too fast this part is skipped over before airBalloonStock is set.
-								console.log('guess: ' + guess);
 								_this.agent.thought.guess = new NumberButton(guess, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
 									x: -20, y: -25, size: 70
 								});
@@ -786,7 +786,7 @@ BalloonGame.prototype.create = function () {
 			_this.balloonStack1.kill();
 		} else {
 			_this.balloonStack1.revive();
-			_this.balloonStack1.loadTexture('balloon' + balloonStock);
+			_this.balloonStack1.loadTexture('balloonsheet', 'b' + balloonStock);
 			copyTexture();
 			createBalloon();
 		}
@@ -798,7 +798,7 @@ BalloonGame.prototype.create = function () {
 			balloonStack2.kill();
 		} else {
 			balloonStack2.revive();
-			balloonStack2.loadTexture('balloon' + airBalloonStock);
+			balloonStack2.loadTexture('balloonsheet', 'b' + airBalloonStock);
 			copyAirTexture();
 			createAirBalloon();
 		}
@@ -815,11 +815,11 @@ BalloonGame.prototype.create = function () {
 			tl.addCallback(function () {
 				fade(map, true);
 			});
-			tl.addSound('beetleintro3', beetle);
+			tl.addSound(speech, beetle, 'beetleintro3');
 			tl.add( new TweenMax(map, 2, {x: 670, y: 640, ease:Power1.easeIn}));
 		}else{
-			tl.addSound('beetleintro1', beetle);
-			tl.addSound('beetleintro2', beetle);
+			tl.addSound(speech, beetle, 'beetleintro1');
+			tl.addSound(speech, beetle, 'beetleintro2');
 		}
 		tl.eventCallback('onComplete', function () {
 			_this.disable(false);
@@ -835,7 +835,7 @@ BalloonGame.prototype.create = function () {
 			if (intro) {
 				renderChest(_this.currentNumber);
 			} else {
-				tl.addSound('newtreasure', beetle);
+				tl.addSound(speech, beetle, 'newtreasure');
 				renderChest(_this.currentNumber);
 			}
 			tl.addCallback(function () {
@@ -860,7 +860,7 @@ BalloonGame.prototype.create = function () {
 				tl.skippable();
 				tl.add(_this.agent.moveTo.start());
 				tl.addLabel('agentIntro');
-				tl.addSound('agentintro', _this.agent);
+				tl.addSound(speech, _this.agent, 'agentintro');
 				tl.add(_this.agent.wave(3, 1), 'agentIntro');
 				tl.eventCallback('onComplete', function () {
 					_this.sound.removeByKey('birdheroAgentShow');
@@ -868,7 +868,7 @@ BalloonGame.prototype.create = function () {
 				});
 
 			} else {
-				tl.addSound('newtreasure', beetle);
+				tl.addSound(speech, beetle, 'newtreasure');
 				renderChest(_this.currentNumber);
 			}
 			tl.addCallback(function () {
@@ -880,7 +880,7 @@ BalloonGame.prototype.create = function () {
 	this.modeAgentTry = function (intro, tries) {
 		var tl = new TimelineMax();
 		if (tries > 0) {
-			tl.addSound('oops', _this.agent);
+			tl.addSound(speech, _this.agent, 'oops');
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
@@ -893,13 +893,13 @@ BalloonGame.prototype.create = function () {
 				disableBalloons();
 				tl.skippable();
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
-				tl.addSound('agenttry', _this.agent);
+				tl.addSound(speech, _this.agent, 'agenttry');
 				tl.eventCallback('onComplete', function () {
 					_this.sound.removeByKey('agenttry');
 					_this.disable(false);
 				});
 			} else {
-				tl.addSound('newtreasure', beetle);
+				tl.addSound(speech, beetle, 'newtreasure');
 				renderChest(_this.currentNumber);
 			}
 			tl.addCallback(function () {
