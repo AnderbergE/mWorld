@@ -7,97 +7,76 @@ function BalloonGame () {
 
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
-
-	this.load.audio('birdheroAgentShow',      ['assets/audio/agent/panda/hello.mp3', 'assets/audio/agent/panda/hello.ogg']);
-	this.load.audio('birdheroAgentTry',       ['assets/audio/agent/panda/i_try.mp3', 'assets/audio/agent/panda/i_try.ogg']);
-	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
-	this.load.image('eyes',      'assets/img/subgames/balloon/eyes.png');
-	this.load.image('metalLoop',      'assets/img/subgames/balloon/metalloop.png');
-	this.load.spritesheet('catbush',      'assets/img/subgames/balloon/catbush2.png',191,88,10);
-	this.load.spritesheet('treasures',      'assets/img/subgames/balloon/treasures.png', 75, 110, 6);
-
-	this.load.audio('birdheroAgentHmm',       LANG.SPEECH.AGENT.hmm);
+	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // audio sprite sheet
+	this.load.audio('birdheroAgentShow', LANG.SPEECH.AGENT.birdheroShow);
+	this.load.audio('birdheroAgentTry', LANG.SPEECH.AGENT.birdheroTry);
+	this.load.audio('birdheroAgentHmm', LANG.SPEECH.AGENT.hmm);
 	this.load.audio('birdheroAgentCorrected', LANG.SPEECH.AGENT.showMe);
-	this.load.audio('birdheroAgentOops',      LANG.SPEECH.AGENT.tryAgain);
+	this.load.audio('birdheroAgentOops', LANG.SPEECH.AGENT.tryAgain);
 
-	this.load.audio('beetleintro1', 'assets/audio/subgames/balloongame/beetleinstructions1.mp3');
-	this.load.audio('beetleintro2', 'assets/audio/subgames/balloongame/beetleinstructions2.mp3');
-	this.load.audio('beetleintro3', 'assets/audio/subgames/balloongame/beetleinstructions3.mp3');
-	this.load.audio('agentintro', 'assets/audio/subgames/balloongame/agentintro.mp3');
-	this.load.audio('newtreasure', 'assets/audio/subgames/balloongame/newtreasure.mp3');
-	this.load.audio('tryless', 'assets/audio/subgames/balloongame/tryless.mp3');
-	this.load.audio('trymore', 'assets/audio/subgames/balloongame/trymore.mp3');
-	this.load.audio('success', 'assets/audio/subgames/balloongame/trymore.mp3');
-	this.load.audio('agenthmm', 'assets/audio/subgames/balloongame/agenthmm1.mp3');
-	this.load.audio('agenttry', 'assets/audio/subgames/balloongame/agenttry.mp3');
-	this.load.audio('oops', 'assets/audio/subgames/balloongame/oops.mp3');
-	this.load.audio('isitwrong', 'assets/audio/subgames/balloongame/isitwrong.mp3');
-	this.load.audio('question', 'assets/audio/subgames/balloongame/agentquestion1.mp3');
-	this.load.audio('pop', 'assets/audio/subgames/balloongame/pop.mp3');
-	this.load.audio('catbushpurr', 'assets/audio/subgames/balloongame/catbushpurr.mp3');
-	this.load.audio('chestunlock', 'assets/audio/subgames/balloongame/chestunlock.mp3');
-	this.load.audio('sackjingle', 'assets/audio/subgames/balloongame/belljingle.mp3');
+	this.load.audio('birdheroMusic', ['assets/audio/subgames/birdhero/bg.ogg', 'assets/audio/subgames/birdhero/bg.mp3']);
+	this.load.audio('pop',           ['assets/audio/subgames/balloongame/pop.ogg', 'assets/audio/subgames/balloongame/pop.mp3']);
+	this.load.audio('catbushpurr',   ['assets/audio/subgames/balloongame/catbushpurr.ogg', 'assets/audio/subgames/balloongame/catbushpurr.mp3']);
+	this.load.audio('chestunlock',   ['assets/audio/subgames/balloongame/chestunlock.ogg', 'assets/audio/subgames/balloongame/chestunlock.mp3']);
+	this.load.audio('sackjingle',    ['assets/audio/subgames/balloongame/belljingle.ogg', 'assets/audio/subgames/balloongame/belljingle.mp3']);
 
-	this.load.image('sky',      'assets/img/subgames/balloon/sky.png');
-	this.load.image('background',      'assets/img/subgames/balloon/background.png');
-	this.load.image('balloon1',      'assets/img/subgames/balloon/b1.png');
-	this.load.image('balloon2',      'assets/img/subgames/balloon/b2.png');
-	this.load.image('balloon3',      'assets/img/subgames/balloon/b3.png');
-	this.load.image('balloon4',      'assets/img/subgames/balloon/b4.png');
-	this.load.image('balloon5',      'assets/img/subgames/balloon/b5.png');
-	this.load.image('balloon6',      'assets/img/subgames/balloon/b6.png');
-	this.load.image('balloon7',      'assets/img/subgames/balloon/b7.png');
-	this.load.image('balloon8',      'assets/img/subgames/balloon/b8.png');
-	this.load.image('balloon9',      'assets/img/subgames/balloon/b9.png');
+	this.load.spritesheet('spritesheet', 'assets/img/subgames/balloon/skatterna-i-berget-objekt.png',170,349,6);
+	this.load.spritesheet('catbush', 'assets/img/subgames/balloon/catbush2.png',191,88,10);
+	this.load.spritesheet('treasures', 'assets/img/subgames/balloon/treasures.png', 75, 110, 6);
+	this.load.spritesheet('anchor', 'assets/img/subgames/balloon/anchoratlas.png', 120,110,3);
+	this.load.atlasJSONHash('balloonsheet', 'assets/img/subgames/balloon/balloonsheet.png', 'assets/img/subgames/balloon/balloonsheet.json');
+
+	this.load.image('sky', 'assets/img/subgames/balloon/sky.png');
+	this.load.image('background', 'assets/img/subgames/balloon/background.png');
 	this.load.image('brokenballoon', 'assets/img/subgames/balloon/brokenballoon.png');
-	this.load.image('cloud1',      'assets/img/subgames/balloon/cloud1.png');
-	this.load.image('cloud2',      'assets/img/subgames/balloon/cloud2.png');
-	this.load.image('map',      'assets/img/subgames/balloon/map.png');
-	this.load.image('anchor',      'assets/img/subgames/balloon/anchor.png');
-	this.load.image('closedChest',      'assets/img/subgames/balloon/chest.png');
-	this.load.image('openChest',      'assets/img/subgames/balloon/chest_open.png');
-	this.load.image('sack',      'assets/img/subgames/balloon/sack.png');
-	
-
-	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.mp3', 'assets/audio/subgames/birdhero/bg.ogg']);
+	this.load.image('cloud1', 'assets/img/subgames/balloon/cloud1.png');
+	this.load.image('cloud2', 'assets/img/subgames/balloon/cloud2.png');
+	this.load.image('map', 'assets/img/subgames/balloon/map.png');
+	this.load.image('closedChest', 'assets/img/subgames/balloon/chest.png');
+	this.load.image('openChest', 'assets/img/subgames/balloon/chest_open.png');
+	this.load.image('sack', 'assets/img/subgames/balloon/sack.png');
+	this.load.image('groundedAnchor', 'assets/img/subgames/balloon/groundedanchor.png');
+	this.load.image('eyes', 'assets/img/subgames/balloon/eyes.png');
+	this.load.image('metalLoop', 'assets/img/subgames/balloon/metalloop.png');
 };
-	var background;
-	var sky;
-	var cloud1;
-	var cloud2;
-	var scale = 0.85;
-	var airballoons;
-	var cliff;
-	var metalLoop;
-	//var cave;
-	var chest;
-	var liftoffButton;
-	//var resetButton;
-	var balloons;
-	var balloonStack1;
-	var balloonStack2;
-	var eyes;
-	var treasure;
-	var balloonStock = 9;
-	var airBalloonStock = 0;
-	var direction = 'right';
-	var catBush;
-	var mapText;
-	var treasures = 0;
-	var map;
+
 	
 
 /* Phaser state function */
 BalloonGame.prototype.create = function () {
+
+	var tempgroup;
+	var background;
+	var sky;
+	var scale = 0.85;
+	var airballoons;
+	var cliff;
+	var metalLoop;
+	var chest;
+	var liftoffButton;
+	var eyes;
+	var treasure;
+	var balloonStack2;
+	var balloonStock = 9;
+	var airBalloonStock = 0;
+	var catBush;
+	var mapText;
+	var treasures = 0;
+	var map;
 	var _this = this; // Subscriptions to not have access to 'this' object
 	var stepSize = 9/this.amount;
+	var speech = this.add.audio('balloonSpeech');
+	var markers = LANG.SPEECH.balloongame.markers;
+	for (var marker in markers) {
+		speech.addMarker(marker, markers[marker][0], markers[marker][1]);
+	}
 
-	balloonStock = _this.amount;
-
+	this.direction = 'right';
+	balloonStock = this.amount;
 
 	var bgMusic = this.add.audio('birdheroMusic', 1, true);
 	
-	_this.disable(false);
+	this.disable(false);
 
 	var coords = {
 		balloons: {
@@ -127,42 +106,40 @@ BalloonGame.prototype.create = function () {
 
 	// Add main game
 	sky = this.add.sprite(0, 0, 'sky', null, this.gameGroup);
-	cloud1 = this.add.sprite(-200, 25, 'cloud1', null, this.gameGroup);
-	cloud2 = this.add.sprite(200, 200, 'cloud2', null, this.gameGroup);
+	this.cloud1 = this.add.sprite(-200, 25, 'cloud1', null, this.gameGroup);
+	this.cloud2 = this.add.sprite(200, 200, 'cloud2', null, this.gameGroup);
 	background = this.add.sprite(0, 0, 'background', null, this.gameGroup);
+	liftoffButton = game.add.button(850, 650, 'anchor', takeOff, this.hudgroup, 0, 1, 2);
 
 	
 	catBush = game.add.sprite(175, 420, 'catbush', 0, this.gameGroup);
 	catBush.animations.add('catBlink');
 	catBush.inputEnabled = true;
 	catBush.events.onInputDown.add(catBushPlay, this);
-	//catBush.scale.set(0.5);
 
 	function catBushPlay(){
 		var tl = new TimelineMax();
-		tl.addSound('catbushpurr', catBush);
+		catBush.inputEnabled = false;
+		tl.addSound('catbushpurr');
 		catBush.animations.play('catBlink', 8, false);
-		//TODO: Add sound.
 		catBush.events.onAnimationComplete.add(function(){
 			catBush.loadTexture('catbush', 0);
+			catBush.inputEnabled = true;
 		}, this);
 	}
 
 
-	// Adding the platforms on the cliff wall. -55*(amount)*scale*stepSize
+	// Adding the platforms on the cliff wall.
 	for (var i = 0; i < this.amount; i++){
 
-		if(i%2 === 0)
-		{
+		if(i%2 === 0) {
 			//Right
 			cliff = this.add.sprite(coords.cliff.rightx, 350 - (55 * scale * (i) * stepSize), 'spritesheet', 2, this.gameGroup);
-			//console.log('RIGHT: x= ' + cliff.x + ' y= ' + cliff.y);
 			cliff.scale.x = -scale;
 			cliff.scale.y = scale;
 		}else{
 			//Left
 			cliff = this.add.sprite(coords.cliff.leftx, 350 - (55 * scale * (i) * stepSize), 'spritesheet', 2, this.gameGroup);
-			//console.log('LEFT: x= ' + cliff.x + ' y= ' + cliff.y);
 			cliff.scale.x = scale;
 			cliff.scale.y = scale;
 		}
@@ -182,34 +159,34 @@ BalloonGame.prototype.create = function () {
 	chest.visible = false;
 	eyes = _this.add.sprite(1200, 900, 'eyes', 3, _this.gameGroup);
 
-
 	// Setting up balloon related sprites and groups.
+	tempgroup = this.add.group(this.gameGroup);
+
 	airballoons = this.add.group(this.gameGroup);
 	airballoons.x = 0;
 	airballoons.y = 0;
 
 	var beetle = this.add.sprite(coords.beetle.start.x, coords.beetle.start.y, 'spritesheet', 4, this.gameGroup);
 	beetle.scale.set(coords.beetle.scale);
-	//beetle.anchor.setTo(0, 0.5);
 	airballoons.add(beetle);
 
 	airballoons.basket = this.add.sprite(785, 510, 'spritesheet', 5, airballoons);
 	airballoons.basket.scale.set(0.7);
 
-	balloons = this.add.group(this.gameGroup);
-	balloons.x = 0;
-	balloons.y = 0;
+	this.balloons = this.add.group(this.gameGroup);
+	this.balloons.x = 0;
+	this.balloons.y = 0;
 
-	balloonStack1 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
-	balloonStack2 = _this.add.sprite(0, 0, 'balloon6', null, _this.gameGroup);
+	this.balloonStack1 = _this.add.sprite(0, 0, 'balloonsheet', 'b6', _this.gameGroup);
+	balloonStack2 = _this.add.sprite(0, 0, 'balloonsheet', 'b6', _this.gameGroup);
 	metalLoop = _this.add.sprite(0, 0, 'metalLoop', null, _this.gameGroup);
 
 	airballoons.add(balloonStack2);
 
-	balloonStack1.x = coords.balloons.x;
-	balloonStack1.y = coords.balloons.y;
+	this.balloonStack1.x = coords.balloons.x;
+	this.balloonStack1.y = coords.balloons.y;
 
-	balloonStack1.anchor.setTo(0.5, 1);
+	this.balloonStack1.anchor.setTo(0.5, 1);
 
 	metalLoop.x = coords.balloons.x-10;
 	metalLoop.y = coords.balloons.y;
@@ -231,72 +208,56 @@ BalloonGame.prototype.create = function () {
 	this.agent.thought.x = coords.agent.stop.x + 170;
 	this.agent.thought.y = coords.agent.stop.y - 170;
 	this.agent.thought.visible = false;
+
+	//Add more for Agent to move elsewhere.
+	this.agent.moveTo = {
+		start: function () {
+			if (_this.agent.x === coords.agent.stop.x &&
+				_this.agent.y === coords.agent.stop.y) {
+				return new TweenMax(_this.agent);
+			}
+			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
+		}
+	};
+
 	var thoughtBubble = this.add.sprite(0, 0, 'thought', null, this.agent.thought);
 	thoughtBubble.anchor.set(0.5);
 	thoughtBubble.scale.x = -0.7;
 	thoughtBubble.scale.y = 0.7;
 	this.gameGroup.bringToTop(this.agent);
-
 	map = game.add.sprite(coords.beetle.stop.x+70, coords.beetle.stop.y+60, 'map', null, _this.gameGroup);
-	map.scale.setTo(0.5, 0.5);
+	map.scale.setTo(0.8, 0.8);
 	map.visible = false;
-
 
 	//Kills the sprites not suppose to show up at the moment and revives those who are.
 	balloonStockUpdate();
 	airBalloonStockUpdate();
 
-	//Creates one draggable balloon at the stack.
-	//createBalloon();
-
-	// x = game.world.centerX
-	liftoffButton = game.add.button(110, 680, 'wood', takeOff, this);
-	liftoffButton.anchor.set(0.5, 0.5);
-	liftoffButton.visible = false;
-	this.hudGroup.add(liftoffButton);
-	var anchor = this.add.sprite(110, 680, 'anchor', null, this.hudGroup);
-	anchor.anchor.set(0.5, 0.5);
-	anchor.scale.set(0.5);
-	anchor.visible = false;
-
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		y: this.world.height-100, background: 'wood', onClick: pushYesno
+		x: 300, y: this.world.height-100, background: 'wood', onClick: pushYesno
 	});
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
 
-	var pluspanel = new ButtonPanel(9, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-		y: this.world.height-80, background: 'wood', onClick: pushPlus
+	var pluspanel = new ButtonPanel(this.amount, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
+		y: this.world.height-80, background: 'wood', onClick: pushPlus,
 	});
 	pluspanel.visible = false;
 	pluspanel.scale.setTo(0.65);
 	this.hudGroup.add(pluspanel);
 
-	var minuspanel = new ButtonPanel(9, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-		y: this.world.height-150, background: 'wood', onClick: pushMinus, min: -9, max: -1
-	});
-	minuspanel.visible = false;
-	minuspanel.scale.setTo(0.65);
-	this.hudGroup.add(minuspanel);
-
-	/*var plusminus = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.plusminus, {
-		y: this.world.height-100, background: 'wood', onClick: pushPlusminus, method: this.method
-	});
-	plusminus.visible = false;
-	this.hudGroup.add(plusminus);*/
-
-
 	var buttonOptions = {
 		background: 'wood',
-		y: this.world.height-100
+		y: this.world.height-100,
+		doNotAdapt: true
 	};
 
 	var plusminus = this.add.group(this.gameGroup);
-	buttonOptions.onClick = function () { removeBalloon(); };
-	buttonOptions.x = 400;
+	buttonOptions.onClick = function () { updateBalloon(0); };
+	buttonOptions.x = 300;
 	plusminus.add(new TextButton('-', buttonOptions));
-	buttonOptions.onClick = function () { addBalloon(); };
-	buttonOptions.x = 500;
+	buttonOptions.onClick = function () { updateBalloon(1); };
+	buttonOptions.x = 400;
 	plusminus.add(new TextButton('+', buttonOptions));
 	plusminus.visible = false;
 	this.hudGroup.add(plusminus);
@@ -308,40 +269,31 @@ BalloonGame.prototype.create = function () {
 	function showYesnos () {
 		yesnos.reset();
 		fade(liftoffButton, false);
-		fade(anchor, false);
 		fade(yesnos, true);
 		fade(plusminus, false);
 		fade(pluspanel, false);
-		fade(minuspanel, false);
-
 		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
 	}
 
 	function showLiftoff () {
 		
-		if((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && treasures)
-		{
+		if((_this.method === GLOBAL.METHOD.incrementalSteps) && treasures) {
 			fade(plusminus, true);
 			fade(liftoffButton, true);
-			fade(anchor, true);
-
-		} else if ((parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps) && !treasures)
-		{
+		} else if ((_this.method === GLOBAL.METHOD.incrementalSteps) && !treasures) {
 			fade(liftoffButton, true);
-			fade(anchor, true);
-		} else if (parseInt(_this.method) === GLOBAL.METHOD.addition)
-		{
+		} else if (_this.method === GLOBAL.METHOD.addition) {
+			pluspanel.setRange(1, _this.amount-airBalloonStock);
+			pluspanel.amount = _this.amount-airBalloonStock;
+			pluspanel.reset();
 			fade(pluspanel, true);
-
-		} else if (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction)
-		{
+		} else if (_this.method === GLOBAL.METHOD.additionSubtraction) {
+			pluspanel.setRange(1-airBalloonStock, _this.amount-airBalloonStock);
+			pluspanel.amount = _this.amount-1;
+			pluspanel.reset();
 			fade(pluspanel, true);
-			fade(minuspanel, true);
-
-		} else if (parseInt(_this.method) === GLOBAL.METHOD.count)
-		{
+		} else if (_this.method === GLOBAL.METHOD.count) {
 			fade(liftoffButton, true);
-			fade(anchor, true);
 		}
 
 		fade(yesnos, false);
@@ -352,7 +304,10 @@ BalloonGame.prototype.create = function () {
 	function pushYesno (value) {
 		//TODO add random sounds
 		if (!value) {
-			_this.agent.say('isitwrong').play();
+			_this.agent.say(speech).play('isitwrong');
+			if(_this.method === GLOBAL.METHOD.count){
+					enableBalloons();
+			}
 			_this.disable(false);
 			showLiftoff(0, 0);
 		}
@@ -361,31 +316,12 @@ BalloonGame.prototype.create = function () {
 	}
 
 	function pushPlus (value) {
-		console.log('pushPlus: ' + value);
-		if((airBalloonStock + value) > _this.amount)
-		{
+		if((airBalloonStock + value) > _this.amount) {
 			airBalloonStock = _this.amount;
-		}
-		else
-		{
-			airBalloonStock = airBalloonStock + value;
-		}
-		balloonStock = _this.amount-airBalloonStock;
-		balloonStockUpdate();
-		airBalloonStockUpdate();
-		takeOff();
-	}
-
-	function pushMinus (value) {
-		console.log('pushMinus: ' + value);
-		value = -value;
-		if((airBalloonStock - value) < 0)
-		{
+		} else if((airBalloonStock + value) < 0) {
 			airBalloonStock = 0;
-		}
-		else
-		{
-			airBalloonStock = airBalloonStock - value;
+		} else {
+			airBalloonStock = airBalloonStock + value;
 		}
 		balloonStock = _this.amount-airBalloonStock;
 		balloonStockUpdate();
@@ -402,144 +338,112 @@ BalloonGame.prototype.create = function () {
 		takeOff();
 	}
 
-	/*function pushPlusminus (value) {
-		if(value){
-			addBalloon();
-		} else {
-			removeBalloon();
-		}
-	}*/
-
-	function addBalloon()
+	function updateBalloon(change)
 	{
-		if(balloonStock > 0)
-		{
+		if((change === 1) && (balloonStock > 0)) {
 			airBalloonStock++;
 			balloonStock--;
 			airBalloonStockUpdate();
 			balloonStockUpdate();
-
-			if(balloonStock === 0)
-			{
-				deleteB();
-			}
-		}
-		console.log('# balloonstock: ' + balloonStock);
-		console.log('# airballoonstock: ' + airBalloonStock);
-	}
-
-	function removeBalloon()
-	{
-		if(airBalloonStock > 0)
-		{
+		} else if((change === 0) && (airBalloonStock > 0)) {
 			airBalloonStock--;
 			balloonStock++;
 			airBalloonStockUpdate();
 			balloonStockUpdate();
-
-			if(airBalloonStock === 0)
-			{
-				deleteAirB();
-			}
 		}
-		console.log('# balloonstock: ' + balloonStock);
-		console.log('# airballoonstock: ' + airBalloonStock);
+		if(balloonStock === 0) {
+			cleanUpBalloons(); //this makes sure that we delete any excess balloons that might have been created before we hide the stack.
+		}
+		if(airBalloonStock === 0) {
+			cleanUpAirBalloons(); //this makes sure that we delete any excess balloons that might have been created before we hide the stack.
+		}
 	}
 
 	//Creates one draggable balloon at the stack.
 	function createBalloon()
 	{
-		if (balloons.length < 1){
-			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloon'+balloonStock, null, _this.gameGroup);
+		if (_this.balloons.length < 1) {
+			var balloon = _this.add.sprite(coords.balloons.x, coords.balloons.y, 'balloonsheet', 'b'+balloonStock, _this.gameGroup);
 			balloon.x = coords.balloons.x;
 			balloon.y = coords.balloons.y;
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
 			balloon.events.onDragStart.add(release, _this);
-			balloon.events.onDragStop.add(attatchToBasket, _this);
-			balloons.add(balloon);
+			balloon.events.onDragStop.add(attachToBasket, _this);
+			_this.balloons.add(balloon);
 			balloon.anchor.setTo(0.5, 1);
 		}
 	}
 
 	function createAirBalloon()
 	{
-		if (airballoons.length < 3){
-			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloon'+airBalloonStock, null, _this.gameGroup);
+		if (airballoons.length < 3) {
+			var balloon = _this.add.sprite(coords.basketBalloons.x, coords.basketBalloons.y, 'balloonsheet', 'b'+airBalloonStock, _this.gameGroup);
 			balloon.inputEnabled = true;
 			balloon.input.enableDrag(false, true);
 			balloon.events.onDragStart.add(release, _this);
-			balloon.events.onDragStop.add(attatchToBasket, _this);
+			balloon.events.onDragStop.add(attachToBasket, _this);
 			airballoons.add(balloon);
 		}
 	}
 
-	//release and attatchToBasket control the dragging and snapping of balloons.
+	//release and atthchToBasket control the dragging and snapping of balloons.
 	function release(balloon) {
-		balloon.loadTexture('balloon1');
-		if(airballoons.getIndex(balloon) === -1)
-		{
+		balloon.loadTexture('balloonsheet', 'b1');
+		if(airballoons.getIndex(balloon) === -1) {
 			balloonStock -= 1;
-			_this.gameGroup.add(balloon);
+			tempgroup.add(balloon);
+			//_this.gameGroup.add(balloon);
 			balloonStockUpdate();
-		}
-		else
-		{
+		} else {
 			airBalloonStock -=1;
-			balloons.add(balloon);
+			tempgroup.add(balloon);
+			//balloons.add(balloon);
 			airBalloonStockUpdate();
 		}
 	}
 
 
 
-	function attatchToBasket(balloon){
+	function attachToBasket(balloon){
 		
 		var tl = new TimelineMax();
-		if(checkOverlap(balloon, airballoons))
-		{
+		if(checkOverlap(balloon, airballoons)) {
 			balloon.angle = 0;
-			airBalloonStock += 1;
-			airballoons.add(balloon);
-			tl.to(balloon, 1, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
+			tl.to(balloon, 0.5, {x: coords.basketBalloons.x, y: coords.basketBalloons.y});
 			tl.eventCallback('onComplete', function() {
+				airBalloonStock += 1;
+				airballoons.add(balloon);
 				airBalloonStockUpdate();
-				copyAirTexture();
 			});
 			balloonStockUpdate();
-		}
-		else
-		{
-			balloonStock += 1;
-			balloons.add(balloon);
+		} else {
 			tl.to(balloon, 1, {x: coords.balloons.x, y: coords.balloons.y});
 			tl.eventCallback('onComplete', function() {
+				balloonStock += 1;
+				_this.balloons.add(balloon);
 				balloonStockUpdate();
-				copyTexture();
-				//balloons.forEach(loadTexture, this, true, 'balloon'+balloonStock);
 			});
 			airBalloonStockUpdate();
 		}
-		console.log('# balloonstock: ' + balloonStock);
-		console.log('# airballoonstock: ' + airBalloonStock);
 	}
 
 	function copyTexture() {
 
-		var amount = balloons.length;
-
-		for (var i = 0; i < amount; i++){
-			var g = balloons.getAt(i);
-			g.loadTexture('balloon'+balloonStock);
+		var amount = _this.balloons.length;
+		
+		for (var i = 0; i < amount; i++) {
+			var g = _this.balloons.getAt(i);
+			g.loadTexture('balloonsheet', 'b'+balloonStock);
 		}
 	}
 
 	function copyAirTexture() {
-
+		
 		var amount = airballoons.length;
 
-		for (var i = 3; i < amount; i++){
-				airballoons.getAt(i).loadTexture('balloon'+airBalloonStock);
+		for (var i = 3; i < amount; i++) {
+				airballoons.getAt(i).loadTexture('balloonsheet', 'b'+airBalloonStock);
 		}
 	}
 
@@ -550,70 +454,58 @@ BalloonGame.prototype.create = function () {
 		return Phaser.Rectangle.intersects(boundsA, boundsB);
 	}
 
-	var speech = this.add.audio('beetleintro1');
-	speech.addMarker('yippi', 1.9, 1);
-
 	function takeOff() {
 
 		var amount = airBalloonStock;
+		liftoffButton.setFrames(0,1,2,1);
 		
-		
-		//var result = _this.tryNumber(amount);
-
-		
-		if (amount <= 0)
-		{
-			console.log('No balloons!');
-			//TODO: Add a voice saying you need to attatch balloons to the basket.
+		if (amount <= 0) {
+			//TODO: Add a voice saying you need to attach balloons to the basket.
+			return;
 		} else {
 			var tl = new TimelineMax();
 			tl.skippable();
 			var result = _this.tryNumber(amount);
-			//Ugly solution until I figure it out
-			if(this.amount === 9)
+
+			if(_this.amount === 9)
 			{
-				amount++;
+				amount++; //This makes the basket move differently on the 9 mode.
 			}
 			_this.agent.eyesFollowObject(airballoons.basket);
-			_this.disable(true);
+			disableBalloons();
 			liftoffButton.visible = false;
-			anchor.visible = false;
 			plusminus.visible = false;
-			minuspanel.visible = false;
 			pluspanel.visible = false;
 
 			if (beetle.x !== coords.beetle.basketStop.x && beetle.y !== coords.beetle.basketStop.y) {
 				tl.add( new TweenMax(beetle, 2, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power1.easeIn}));
 			}
 			tl.add( new TweenMax(airballoons, 2, {x: 0, y: -(55*(amount))*scale*stepSize, ease:Power1.easeInOut}));
-			if (!result)
-			{
-
+			if (!result) {
 				tl.eventCallback('onComplete', function(){
 					openChest();
 				});
-				
-				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
-				{
+
+				if(_this.method === GLOBAL.METHOD.incrementalSteps) {
 					treasures++;
-					disableBalloons();
 				}
+
+
 			} else {
-				if (result > 0)
-				{
-					tl.addSound('tryless', beetle);
+				if (result > 0) {
+					tl.addSound(speech, beetle, 'tryless');
 				} else {
-					tl.addSound('trymore', beetle);
+					tl.addSound(speech, beetle, 'trymore');
 				}
 				//Popping balloons and Basket going back down.
-				console.log('inte korrekt');
-				if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
-				{
+				if((!treasures) || (_this.method !== GLOBAL.METHOD.incrementalSteps)) {
 					popAndReturn(tl);
 				}
 
 				tl.eventCallback('onComplete', function(){
-					_this.disable(false);
+					if(_this.method === GLOBAL.METHOD.count) {
+						enableBalloons();
+					}
 					_this.agent.eyesFollowPointer();
 					_this.nextRound();
 				});
@@ -622,10 +514,10 @@ BalloonGame.prototype.create = function () {
 	}
 
 	function openChest() {
-		console.log('hej1');
 		var tl = new TimelineMax();
+		tl.skippable();
 		var watertl = new TimelineMax();
-		tl.addSound('chestunlock', chest);
+		tl.addSound('chestunlock');
 		fade(eyes, false);
 		fade(chest, true);
 		tl.eventCallback('onComplete', function(){
@@ -636,12 +528,11 @@ BalloonGame.prototype.create = function () {
 	}
 
 	function playRandomPrize() {
-		console.log('hej2');
 		treasure.x = chest.x;
 		treasure.y = chest.y+10;
 		var tl = new TimelineMax();
+		tl.skippable();
 		var tls = new TimelineMax();
-		var tla = new TimelineMax();
 		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: treasure.y-75, ease:Power1.easeOut}));
 		tl.add( new TweenMax(treasure, 1, {x: treasure.x, y: chest.y+10, ease:Power1.easeIn}));
 		fade(treasure, true);
@@ -650,35 +541,28 @@ BalloonGame.prototype.create = function () {
 		tl.addSound(speech, beetle, 'yippi');
 		tl.add( new TweenMax(treasure, 2, {x: coords.sack.x, y: coords.sack.y+10, ease:Power4.easeIn}));
 		tl.addCallback(function () {
-			tls.addSound('sackjingle', sack);
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y+3, ease:Power1.easeOut}));
-			tla.add( new TweenMax(sack, 0.2, {x: coords.sack.x, y: coords.sack.y, ease:Power1.easeIn}));
+			tls.addSound('sackjingle');
+			new TweenMax(sack, 0.2, {y: coords.sack.y+3, ease: Power1.easeInOut }).backForth(2);
 		});
 		
 		//Popping balloons and Basket going back down.
-		if((!treasures) || (parseInt(_this.method) !== GLOBAL.METHOD.incrementalSteps))
-		{
+		if((!treasures) || (_this.method !== GLOBAL.METHOD.incrementalSteps)) {
 			popAndReturn(tl);
 		}
 		tl.eventCallback('onComplete', function(){
-			_this.disable(false);
+			if(_this.method === GLOBAL.METHOD.count) {
+				enableBalloons();
+			}
 			_this.agent.eyesFollowPointer();
 			_this.nextRound();
 		});
 	}
 
 	function popAndReturn(tl) {
-		console.log('hej3');
 		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
 		tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
 		tl.addCallback(function () {
-			tls.addSound('pop', balloonStack2);
+			tls.addSound('pop');
 			resetBalloons();
 		});
 		tl.to(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y, ease:Power4.easeIn});
@@ -699,146 +583,93 @@ BalloonGame.prototype.create = function () {
 			balloonStockUpdate();
 		}
 
-		deleteAirB();
+		cleanUpAirBalloons();
 	
 		balloonStack2.revive();
 		balloonStack2.loadTexture('brokenballoon');
 	}
 
 	function randomBalloons(correctAnswer) {
-
-	if (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction)
-	{
-		console.log('additionSubtraction');
-		var answerIsHigher = game.rnd.integerInRange(0, 1);
-		if((correctAnswer === _this.amount) || answerIsHigher)
-		{	//if answerIsHigher = 1 put ballons below answer.
-			console.log('1');
+		disableBalloons();
+		if (_this.method === GLOBAL.METHOD.additionSubtraction) {
+			var answerIsHigher = game.rnd.integerInRange(0, 1);
+			if((correctAnswer === _this.amount) || answerIsHigher) {
+				//if answerIsHigher = 1 put ballons below answer.
+				airBalloonStock = game.rnd.integerInRange(0, correctAnswer-1);
+			} else {
+				airBalloonStock = game.rnd.integerInRange(correctAnswer+1, _this.amount-1);
+			}
+			
+		} else if (_this.method === GLOBAL.METHOD.addition) {
 			airBalloonStock = game.rnd.integerInRange(0, correctAnswer-1);
 		} else {
-			console.log('2');
-			airBalloonStock = game.rnd.integerInRange(correctAnswer+1, _this.amount);
+			airBalloonStock = this.amount-1;
 		}
-		
-	} else if (parseInt(_this.method) === GLOBAL.METHOD.addition)
-	{
-		airBalloonStock = game.rnd.integerInRange(0, correctAnswer-1);
-	} else {
-		airBalloonStock = this.amount;
-	}
-	console.log('3');
-	balloonStock = _this.amount - airBalloonStock;
-	balloonStockUpdate();
-	airBalloonStockUpdate();
+		balloonStock = _this.amount - airBalloonStock;
+		balloonStockUpdate();
+		airBalloonStockUpdate();
 
 	}
 
-
-/*
-	//Animation to float the balloons back. Not used anymore.
-	function returnBalloonsFrom(fromX, fromY) {
-		var tl = new TimelineMax();
-		var amount = airBalloonStock;
-		for (var i = 2; i < amount+2; i++){
-			tl.to(airballoons.getAt(i), 1, {x: balloonStack1.x-fromX, y: balloonStack1.y-fromY,
-				onStart:returnStart,
-				onComplete:deleteExcessSprite,
-				onCompleteParams:[airballoons.getAt(i)],
-				ease:Power1.easeOut});
-			//For some reason these happen before the above animation.
-			//These are different things I have tried but they all happen before the above animation which I though 'onComplete' was suppose to prevent.
-			//What we want to do is delete the sprite once it finishes moving. Alternatively hide it or move it to the balloons group. Neither of which I'm capable of doing AFTER the animation ends.
-			//tl.eventCallback('onComplete', airballoons.getAt(i).x = -1000);
-			//tl.eventCallback('onComplete', airballoons.getAt(i).y = -1000);
-			//tl.eventCallback('onComplete', airballoons.getAt(i).kill);
-			//tl.eventCallback('onComplete', airballoons.remove(airballoons.getAt(i)));
-			//tl.eventCallback('onComplete', balloons.add(airballoons.getAt(i)));
-		}
-		tl.to(airballoons, amount/2, {x: 0, y: 0, ease:Power1.easeOut});
-	}
-*/
-
-	function deleteAirB() {
-		for (var i = 0; i < 9; i++){
+	//this makes sure that we delete any excess balloons that might have been created before we hide the stack.
+	function cleanUpAirBalloons() {
+		for (var i = 0; i < 9; i++) {
 			deleteExcessSprite(airballoons.getAt(3));
 		}
 	}
 
-	function deleteB() {
-		for (var i = 0; i < 9; i++){
-			deleteExcessSprite(balloons.getAt(0));
+	//this makes sure that we delete any excess balloons that might have been created before we hide the stack.
+	function cleanUpBalloons() {
+		for (var i = 0; i < 9; i++) {
+			deleteExcessSprite(_this.balloons.getAt(0));
 		}
 	}
 
 	function disableBalloons() {
 		for (var i = 0; i < 9; i++){
-			//console.log('Disable balloon: ');
-			disableBalloon(balloons.getAt(0+i));
-			//console.log('Disable airballoon: ');
+			disableBalloon(_this.balloons.getAt(0+i));
 			disableBalloon(airballoons.getAt(3+i));
 		}
 	}
 
 	function enableBalloons() {
 		for (var i = 0; i < 9; i++){
-			//console.log('Enable balloon: ');
-			enableBalloon(balloons.getAt(0+i));
-			//console.log('Enable airballoon: ');
+			enableBalloon(_this.balloons.getAt(0+i));
 			enableBalloon(airballoons.getAt(3+i));
 		}
 	}
 
 	function enableBalloon(sprite) {
-		//console.log(sprite);
-		if(sprite !== -1)
-		{
+		if(sprite !== -1) {
 			sprite.inputEnabled = true;
 		}
 	}
 
 	function disableBalloon(sprite) {
-		//console.log(sprite);
-		if(sprite !== -1)
-		{
+		if(sprite !== -1) {
 			sprite.inputEnabled = false;
 		}
 	}
 
 	function deleteExcessSprite(sprite) {
-		//console.log(sprite);
-		if(sprite !== -1)
-		{
+		if(sprite !== -1) {
 			sprite.destroy();
 		}
 	}
 
-
-
-	//Add more for Agent to move elsewhere.
-	this.agent.moveTo = {
-		start: function () {
-			if (_this.agent.x === coords.agent.stop.x &&
-				_this.agent.y === coords.agent.stop.y) {
-				return new TweenMax(_this.agent);
-			}
-			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
-		}
-	};
-
 	function renderChest (correctAnswer) {
 
-		//Not using fade since that takes a long time and you can see the next solution.
-		chest.visible = false;
+		var tl = new TimelineMax();
+		tl.skippable();
+		tl.add(fade(chest,false));
 		chest.loadTexture('closedChest');
-		treasure.visible = false;
+		tl.add(fade(treasure,false));
 
-		if(correctAnswer % 2 === 1)
-			{
+		tl.addCallback(function () {
+			if(correctAnswer % 2 === 1) {
 				chest.x = coords.cliff.rightx-70;
 				eyes.x = coords.cliff.rightx-95;
-			}
-		else
-			{
+			} else {
 				chest.x = coords.cliff.leftx+75;
 				eyes.x = coords.cliff.leftx+50;
 			}
@@ -852,30 +683,29 @@ BalloonGame.prototype.create = function () {
 			fade(eyes, true);
 
 			if(parseInt(_this.representation) !== GLOBAL.NUMBER_REPRESENTATION.none){
-				
-				if(mapText)
-				{
-					mapText.destroy();
+				if(mapText) {
+					mapText.number = correctAnswer;
+				} else {
+					mapText = new NumberButton(correctAnswer, _this.representation, {
+								x: 680, y: 650, size: 70, min: 1, max: _this.amount
+					});
+					_this.gameGroup.add(mapText);
 				}
-
-				mapText = new NumberButton(correctAnswer, _this.representation, {
-							x: 690, y: 660, size: 38
-				});
-				_this.gameGroup.add(mapText);
 				eyes.y = -100;
 				eyes.x = -100;
 			}
-			if((parseInt(_this.method) === GLOBAL.METHOD.addition) || (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction))
-			{
-				randomBalloons(correctAnswer);
-			}
-
+		});
 	}
 
 	function agentGuess () {
 		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
+		disableBalloons();
+
 
 		var guess = _this.agent.lastGuess;
+		var balloonRepresentation = _this.add.sprite(10, 0, 'balloonsheet', 'b'+guess, _this.gameGroup);
+			balloonRepresentation.scale.set(0.4);
+			balloonRepresentation.anchor.setTo(0.5, 0.5);
 
 		return TweenMax.fromTo(_this.agent.thought.scale, 1.5,
 			{ x: 0, y: 0 },
@@ -885,44 +715,55 @@ BalloonGame.prototype.create = function () {
 					_this.agent.thought.visible = true;
 					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
 					//TODO: Random hmm
-					_this.agent.say('agenthmm').play();
+					_this.agent.say(speech).play('agenthmm1');
 				},
 				onComplete: function () {
-					if(parseInt(_this.representation) === GLOBAL.NUMBER_REPRESENTATION.none){
-						_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, 1, {
-							x: -50, y: -50, size: 100
-						});
-					}else{
-						console.log('hej');
-						if ((parseInt(_this.method) === GLOBAL.METHOD.addition) || (parseInt(_this.method) === GLOBAL.METHOD.additionSubtraction))
-						{
-								console.log('hej2 och guess: ' + guess);
-								guess -= airBalloonStock;
-								console.log('hej3 och guess: ' + guess);
+					if(_this.representation === GLOBAL.NUMBER_REPRESENTATION.none) {
+						_this.agent.thought.guess = balloonRepresentation;
+					} else {
+						if ((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
+								guess -= airBalloonStock; //If you skip too fast this part is skipped over before airBalloonStock is set.
 								_this.agent.thought.guess = new NumberButton(guess, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-									x: -50, y: -50, size: 100
+									x: -20, y: -25, size: 70
 								});
 						} else {
-							_this.agent.thought.guess = new NumberButton(guess, _this.representation, {
-								x: -50, y: -50, size: 100
-							});
+							_this.agent.thought.guess = balloonRepresentation;
 						}
 					}
-					console.log('hej4');
 					_this.agent.thought.add(_this.agent.thought.guess);
 					// TODO: Agent should say something here based on how sure it is.
-					_this.agent.say('question').play();
+					_this.agent.say(speech).play('agentquestion1');
 					showYesnos();
 				}
 			});
 	}
 
-	/*beetle.talk = TweenMax.to(beetle, 0.2, {
-		y: '+=5', repeat: -1, yoyo: true, paused: true
-	});*/
+	//Kills the sprites not suppose to show up at the moment and revives those who are.
+	function balloonStockUpdate() {
+		if (balloonStock === 0) {
+			cleanUpBalloons();
+			_this.balloonStack1.kill();
+		} else {
+			_this.balloonStack1.revive();
+			_this.balloonStack1.loadTexture('balloonsheet', 'b' + balloonStock);
+			copyTexture();
+			createBalloon();
+		}
+	}
+
+	function airBalloonStockUpdate() {
+		if (airBalloonStock === 0) {
+			cleanUpAirBalloons();
+			balloonStack2.kill();
+		} else {
+			balloonStack2.revive();
+			balloonStack2.loadTexture('balloonsheet', 'b' + airBalloonStock);
+			copyAirTexture();
+			createAirBalloon();
+		}
+	}
 
 	this.modeIntro = function () {
-		console.log('ModeIntro');
 		_this.disable(true);
 		bgMusic.play();
 		var tl = new TimelineMax();
@@ -932,11 +773,11 @@ BalloonGame.prototype.create = function () {
 			tl.addCallback(function () {
 				fade(map, true);
 			});
-			tl.addSound('beetleintro3', beetle);
-			tl.add( new TweenMax(map, 2, {x: 670, y: 640, ease:Power1.easeIn}));
+			tl.addSound(speech, beetle, 'beetleintro3');
+			tl.add( new TweenMax(map, 2, {x: 650, y: 620, ease:Power1.easeIn}));
 		}else{
-			tl.addSound('beetleintro1', beetle);
-			tl.addSound('beetleintro2', beetle);
+			tl.addSound(speech, beetle, 'beetleintro1');
+			tl.addSound(speech, beetle, 'beetleintro2');
 		}
 		tl.eventCallback('onComplete', function () {
 			_this.disable(false);
@@ -945,100 +786,103 @@ BalloonGame.prototype.create = function () {
 	};
 
 	this.modePlayerDo = function (intro, tries) {
+		var tl = new TimelineMax();
 		if (tries > 0) {
+			if((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
+				randomBalloons(_this.currentNumber);
+			}
 			showLiftoff();
 		} else { // if intro or first try	
-			var tl = new TimelineMax();
 			if (intro) {
-				console.log('modeplayerDoIntro');
-				console.log('correct answer= ' + _this.currentNumber);
 				renderChest(_this.currentNumber);
 			} else {
-				tl.addSound('newtreasure', beetle);
+				tl.addSound(speech, beetle, 'newtreasure');
 				renderChest(_this.currentNumber);
 			}
-		showLiftoff();
+			if((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
+				randomBalloons(_this.currentNumber);
+			}
+			tl.addCallback(function () {
+				showLiftoff();
+			});
 		}
 	};
 
 	this.modePlayerShow = function (intro, tries) {
 		if (tries > 0) {
+			if((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
+				randomBalloons(_this.currentNumber);
+			}
 			showLiftoff();
 		} else { // if intro or first try
 			var tl = new TimelineMax();
 			if (intro) {
 				treasures = 0;
-				enableBalloons();
-				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
-				{
+				if(_this.method === GLOBAL.METHOD.incrementalSteps) {
 					popAndReturn(tl);
+					enableBalloons();
 				}
+				renderChest(_this.currentNumber);
 				_this.disable(true);
 				tl.skippable();
 				tl.add(_this.agent.moveTo.start());
 				tl.addLabel('agentIntro');
-				tl.addSound('agentintro', _this.agent);
+				tl.addSound(speech, _this.agent, 'agentintro');
 				tl.add(_this.agent.wave(3, 1), 'agentIntro');
 				tl.eventCallback('onComplete', function () {
 					_this.sound.removeByKey('birdheroAgentShow');
-					renderChest(_this.currentNumber);
 					_this.disable(false);
 				});
 
 			} else {
-				tl.addSound('newtreasure', beetle);
+				tl.addSound(speech, beetle, 'newtreasure');
 				renderChest(_this.currentNumber);
 			}
-		tl.addCallback(showLiftoff);
+			if((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
+				randomBalloons(_this.currentNumber);
+			}
+			tl.addCallback(function () {
+				showLiftoff();
+			});
 		}
 	};
 
 	this.modeAgentTry = function (intro, tries) {
+		if((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
+			randomBalloons(_this.currentNumber);
+		}
 		var tl = new TimelineMax();
 		if (tries > 0) {
-			tl.addSound('oops', _this.agent);
+			tl.addSound(speech, _this.agent, 'oops');
 			tl.add(agentGuess());
 		} else { // if intro or first try
 			if (intro) {
 				treasures = 0;
-				enableBalloons();
-				if(parseInt(_this.method) === GLOBAL.METHOD.incrementalSteps)
-				{
+				if(_this.method === GLOBAL.METHOD.incrementalSteps) {
 					popAndReturn(tl);
 				}
+				renderChest(_this.currentNumber);
 				_this.disable(true);
+				disableBalloons();
 				tl.skippable();
-				console.log('modeAgentTry Intro');
-				console.log('correct answer= ' + _this.currentNumber);
 				tl.add(_this.agent.moveTo.start()); // Agent should be here already.
-				tl.addSound('agenttry', _this.agent);
+				tl.addSound(speech, _this.agent, 'agenttry');
 				tl.eventCallback('onComplete', function () {
-					renderChest(_this.currentNumber);
 					_this.sound.removeByKey('agenttry');
 					_this.disable(false);
 				});
 			} else {
-				tl.addSound('newtreasure', beetle);
+				tl.addSound(speech, beetle, 'newtreasure');
 				renderChest(_this.currentNumber);
 			}
-		tl.add(agentGuess());
-		}
-	};
-
-	this.modeAgentDo = function (intro, tries) {
-		if (tries > 0) {
-			liftoffButton.visible = true;
-			anchor.visible = true;
-			plusminus.visible = true;
-		} else { // if intro or first try
-			console.log('modeAgentDo Intro');
-			liftoffButton.visible = true;
-			anchor.visible = true;
-			plusminus.visible = true;
+			tl.addCallback(function () {
+				tl.add(agentGuess());
+			});
 		}
 	};
 
 	this.modeOutro = function () {
+		disableBalloons();
 		balloonStock = 6;
 		airBalloonStock = 0;
 		_this.agent.fistPump()
@@ -1049,73 +893,42 @@ BalloonGame.prototype.create = function () {
 			});
 	};
 
-	//Kills the sprites not suppose to show up at the moment and revives those who are.
-	function balloonStockUpdate() {
-		if (balloonStock === 0)
-		{
-			deleteB();
-			balloonStack1.kill();
-		} else {
-			balloonStack1.revive();
-			balloonStack1.loadTexture('balloon' + balloonStock);
-			copyTexture();
-			createBalloon();
-		}
-	}
-
-	function airBalloonStockUpdate() {
-		if (airBalloonStock === 0)
-		{
-			deleteAirB();
-			balloonStack2.kill();
-		} else {
-			balloonStack2.revive();
-			balloonStack2.loadTexture('balloon' + airBalloonStock);
-			copyAirTexture();
-			createAirBalloon();
-		}
-	}
-
 	// Make sure the call this when everything is set up.
 	this.startGame();
 };
 
 BalloonGame.prototype.update = function () {
-	if (balloonStack1.angle > 7 && direction === 'right'){
-		direction = 'left';
-	} else if (balloonStack1.angle < -7 && direction === 'left'){
-		direction = 'right';
+	if (this.balloonStack1.angle > 7 && this.direction === 'right') {
+		this.direction = 'left';
+	} else if (this.balloonStack1.angle < -7 && this.direction === 'left') {
+		this.direction = 'right';
 	}
-	if (direction === 'right'){
-		balloonStack1.angle += 0.3;
+	if (this.direction === 'right') {
+		this.balloonStack1.angle += 0.3;
 	} else {
-		balloonStack1.angle -= 0.3;
+		this.balloonStack1.angle -= 0.3;
 	}
-	balloons.forEach(syncAngle, this, true);
+	this.balloons.forEach(BalloonGame.prototype.syncAngle, this, true);
 
-	function syncAngle(b){
-		b.angle = balloonStack1.angle;
-	}
-
-	if (cloud1.x > 600){
-		cloud1.x = -cloud1.width;
-	}else{
-		cloud1.x += 0.3;
+	if (this.cloud1.x > 600) {
+		this.cloud1.x = -this.cloud1.width;
+	} else {
+		this.cloud1.x += 0.3;
 	}
 
-	if (cloud2.x > 600){
-		cloud2.x = -cloud2.width;
-	}else{
-		cloud2.x += 0.5;
+	if (this.cloud2.x > 600) {
+		this.cloud2.x = -this.cloud2.width;
+	} else {
+		this.cloud2.x += 0.5;
 	}
+};
+
+BalloonGame.prototype.syncAngle = function(b) {
+		b.angle = this.balloonStack1.angle;
 };
 
 
 BalloonGame.prototype.render = function () {
+	//Shows information for debugging.
 	//game.debug.spriteInfo(balloonStack1, 32, 100);
 };
-
-
-
-
-
