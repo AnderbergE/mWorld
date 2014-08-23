@@ -52,7 +52,7 @@ GardenState.prototype.create = function () {
 	var fields = this.gardenData.fields;
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
-			type = 1;
+			type = this.rnd.integerInRange(1, 3);
 			level = 0;
 			water = 0;
 
