@@ -5,15 +5,15 @@ Hedgehog.prototype.id = 'hedgehog'; // Reference for LANG files and asset files
 Hedgehog.prototype.agentName = LANG.TEXT.hedgehogName;
 
 /**
- * The panda agent.
- * The asset files are loaded in the boot state using key: Hedgehog.prototype.id.
+ * The hedgehog agent.
+ * The asset files are loaded in the boot state using key: *.prototype.id.
  * @return Itself
  */
 function Hedgehog () {
 	this.coords = {
 		arm: {
-			left: { x: -130, y: -80 },
-			right: { x: 130, y: -80 }
+			left: { x: -100, y: -80 },
+			right: { x: 100, y: -80 }
 		},
 		leg: {
 			left: { x: -150, y: 300 },
@@ -22,8 +22,8 @@ function Hedgehog () {
 		eye: {
 			left: { x: -53, y: -272 },
 			right: { x: 35, y: -272 },
-			depth: 10,
-			maxMove: 9
+			depth: 20,
+			maxMove: 7
 		},
 		mouth: {
 			x: -6, y: -205

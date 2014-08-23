@@ -103,7 +103,8 @@ LANG.english.text = {
 
 	/* Agents */
 	pandaName: 'Panders',
-	hedgehogName: 'Iggy'
+	hedgehogName: 'Igis',
+	mouseName: 'Mu'
 };
 
 LANG.english.speech = {
@@ -185,6 +186,16 @@ LANG.english.speech = {
 
 	// TODO: Add sounds!
 	hedgehog: {
+		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
+		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
+		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
+		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
+		birdheroShow: ['assets/audio/agent/panda/hello.ogg',     'assets/audio/agent/panda/hello.mp3'],
+		birdheroTry:  ['assets/audio/agent/panda/i_try.ogg',     'assets/audio/agent/panda/i_try.mp3']
+	},
+
+	// TODO: Add sounds!
+	mouse: {
 		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
 		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
 		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],

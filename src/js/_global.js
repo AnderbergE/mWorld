@@ -29,7 +29,7 @@ var GLOBAL = {
 	AGENT: {
 		0: Panda,
 		1: Hedgehog,
-		2: Panda,
+		2: Mouse,
 		3: Panda
 	},
 

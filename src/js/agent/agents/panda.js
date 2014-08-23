@@ -6,7 +6,7 @@ Panda.prototype.agentName = LANG.TEXT.pandaName;
 
 /**
  * The panda agent.
- * The asset files are loaded in the boot state using key: Panda.prototype.id.
+ * The asset files are loaded in the boot state using key: *.prototype.id.
  * @return Itself
  */
 function Panda () {
