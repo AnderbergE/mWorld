@@ -28,7 +28,7 @@ var GLOBAL = {
 	/* The different types of agents */
 	AGENT: {
 		0: Panda,
-		1: Panda,
+		1: Hedgehog,
 		2: Panda,
 		3: Panda
 	},
