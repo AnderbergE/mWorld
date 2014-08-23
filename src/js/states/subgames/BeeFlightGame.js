@@ -14,7 +14,7 @@ BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beeMusic', ['assets/audio/subgames/beeflight/music.ogg', 'assets/audio/subgames/beeflight/music.mp3']);
 
 	this.load.image('beeBg',     'assets/img/subgames/beeflight/bg.jpg');
-	this.load.image('beeBody',   'assets/img/subgames/beeflight/bumble.png');
+	this.load.image('beeBody',   'assets/img/subgames/beeflight/humfrid.png');
 	this.load.image('beeFlower', 'assets/img/subgames/beeflight/flower.png');
 };
 
