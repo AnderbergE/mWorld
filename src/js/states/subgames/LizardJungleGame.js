@@ -16,7 +16,7 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
 	this.load.image('lizardBody',    'assets/img/subgames/lizardjungle/body.png');
 	this.load.image('lizardHead',    'assets/img/subgames/lizardjungle/head.png');
-	this.load.image('lizardMouth',   'assets/img/subgames/lizardjungle/mouth.png');
+	this.load.image('lizardJaw',     'assets/img/subgames/lizardjungle/jaw.png');
 	this.load.image('lizardTounge',  'assets/img/subgames/lizardjungle/tounge.png');
 	this.load.image('lizardArrow',   'assets/img/objects/arrow.png');
 };
@@ -325,20 +325,20 @@ function LizardJungleLizard (x, y) {
 
 	this.body = game.add.sprite(48, 0, 'lizardBody', null, this);
 	this.head = game.add.group(this);
-	this.head.x = 70;
-	this.head.y = 55;
+	this.head.x = 110;
+	this.head.y = 75;
 
-	this.tounge = game.add.sprite(10, 15, 'lizardTounge', null, this.head);
-	this.tounge.anchor.set(1, 0);
+	this.tounge = game.add.sprite(-5, 17, 'lizardTounge', null, this.head);
+	this.tounge.anchor.set(1, 0.5);
 	this.tounge.width = 1;
 	this.tounge.height = 5;
 	this.forehead = game.add.sprite(17, 29, 'lizardHead', null, this.head);
 	this.forehead.anchor.set(1, 1);
-	this.mouth = game.add.sprite(16, 15, 'lizardMouth', null, this.head);
-	this.mouth.anchor.set(1, 0);
+	this.jaw = game.add.sprite(0, 18, 'lizardJaw', null, this.head);
+	this.jaw.anchor.set(1, 0);
 
 	this.talk = new TimelineMax({ repeat: -1, yoyo: true, paused: true });
-	this.talk.to(this.mouth, 0.2, { angle: -2 });
+	this.talk.to(this.jaw, 0.2, { angle: -2 });
 	this.talk.to(this.forehead, 0.2, { angle: 4 }, 0);
 
 	this.snore = game.add.text(this.head.x, this.head.y - 100, 'zzz', {
@@ -352,7 +352,7 @@ Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
 	set: function(value) {
 		this.body.tint = value;
 		this.forehead.tint = value;
-		this.mouth.tint = value;
+		this.jaw.tint = value;
 	}
 });
 
@@ -385,7 +385,7 @@ LizardJungleLizard.prototype.shoot = function (pos) {
 	var t = new TimelineMax();
 	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, headOrigin) });
 	t.to(this.forehead, 0.5, { angle: 10 });
-	t.to(this.mouth, 0.5, { angle: -5 }, '-=0.5');
+	t.to(this.jaw, 0.5, { angle: -5 }, '-=0.5');
 	t.to(this.tounge, 0.5, {
 		width: game.physics.arcade.distanceBetween(hit, this.tounge.world),
 		height: 18
@@ -393,7 +393,7 @@ LizardJungleLizard.prototype.shoot = function (pos) {
 	t.addLabel('stretched');
 	t.to(this.tounge, 0.5, { width: 1, height: 5 });
 	t.to(this.forehead, 0.2, { angle: 0 });
-	t.to(this.mouth, 0.2, { angle: 0 }, '-=0.2');
+	t.to(this.jaw, 0.2, { angle: 0 }, '-=0.2');
 	return t;
 };
 
