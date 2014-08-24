@@ -24,290 +24,282 @@ LizardJungleGame.prototype.preload = function () {
 /* Phaser state function */
 LizardJungleGame.prototype.create = function () {
 	var _this = this; // Subscriptions do not have access to 'this' object
-	var coords = {
-		tree: {
-			x: 200, y: 220, height: 550, offset: -10
-		},
-		agent: {
-			start: { x: 1300, y: 700 },
-			stop: { x: 700, y: 400 },
-			scale: 0.25
-		}
-	};
-	var tint = [
-		0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
-		0x0000ff, 0x555555, 0x3333cc, 0x33cc33, 0xcc3333
-	];
 
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
 
 	// Agent is added to the game in the superclass, so set up correct start point.
-	this.agent.x = coords.agent.start.x;
-	this.agent.y = coords.agent.start.y;
-	this.agent.scale.set(coords.agent.scale);
+	this.agent.x = this.pos.agent.start.x;
+	this.agent.y = this.pos.agent.start.y;
+	this.agent.scale.set(this.pos.agent.scale);
 	this.agent.visible = true;
-	// Adding thought bubble that is used in the agent try mode.
-	this.agent.thought = this.add.group(this.gameGroup);
-	this.agent.thought.x = coords.agent.stop.x - 200;
-	this.agent.thought.y = coords.agent.stop.y - 200;
-	this.agent.thought.visible = false;
-	var thoughtBubble = this.add.sprite(0, 0, 'thought', null, this.agent.thought);
-	thoughtBubble.anchor.set(0.5);
+	this.agent.addThought(this.representation[0]);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Setup tree and its branches
-	var tree = this.add.group(this.gameGroup);
-	tree.x = coords.tree.x;
-	tree.y = coords.tree.y;
-	this.add.sprite(0, 0, 'lizard', 'bole', tree).anchor.set(0.5);
+	this.tree = this.add.group(this.gameGroup);
+	this.tree.x = this.pos.tree.x;
+	this.tree.y = this.pos.tree.y;
+	this.add.sprite(0, 0, 'lizard', 'bole', this.tree).anchor.set(0.5);
 	for (var i = this.amount - 2; i >= 0; i--) {
-		this.add.sprite(0, tree.height + coords.tree.offset, 'lizard', 'bole', tree).anchor.set(0.5);
+		this.add.sprite(0, this.tree.height + this.pos.tree.offset, 'lizard', 'bole', this.tree).anchor.set(0.5);
 	}
-	tree.scale.set(coords.tree.height/tree.height);
-	this.add.sprite(tree.x - 40, tree.y + tree.height/tree.length, 'lizard', 'crown', this.gameGroup).anchor.set(0.5, 1);
+	this.tree.scale.set(this.pos.tree.height/this.tree.height);
+	this.add.sprite(this.tree.x - 40, this.tree.y + this.tree.height/this.tree.length, 'lizard', 'crown', this.gameGroup).anchor.set(0.5, 1);
 
 	// The target is set up in the newFood function
-	var target = this.add.sprite(0, 0, 'lizard', 'ant', this.gameGroup);
-	target.anchor.set(0.5);
-	target.visible = false;
+	this.target = this.add.sprite(0, 0, 'lizard', 'ant', this.gameGroup);
+	this.target.anchor.set(0.5);
+	this.target.visible = false;
 
 	// Setup lizard
-	var lizard = new LizardJungleLizard(575, 500);
-	this.gameGroup.add(lizard);
-
-	// Add HUD
-	var buttons = new ButtonPanel(this.amount, this.representation, {
-		method: this.method,
-		x: this.world.width-(this.representation.length*75)-25,
-		y: tree.y - tree.height / tree.length / 2,
-		vertical: true,
-		size: tree.height,
-		reversed: true,
-		onClick: pushNumber
-	});
-	buttons.visible = false;
-	this.hudGroup.add(buttons);
-	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		x: this.world.width-100,
-		vertical: true,
-		onClick: pushYesno
-	});
-	yesnos.visible = false;
-	this.hudGroup.add(yesnos);
+	this.lizard = new LizardJungleLizard(575, 500);
+	this.gameGroup.add(this.lizard);
 
 
 	// Add Timeline/Tween functions
 	this.agent.moveTo = {
 		start: function () {
-			if (_this.agent.x === coords.agent.stop.x &&
-				_this.agent.y === coords.agent.stop.y) {
+			if (_this.agent.x === _this.pos.agent.stop.x &&
+				_this.agent.y === _this.pos.agent.stop.y) {
 				return new TweenMax(_this.agent);
 			}
-			return _this.agent.move({ x: coords.agent.stop.x, y: coords.agent.stop.y }, 3);
+			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
 		}
 	};
 
 
+	// Add HUD
 	/* Function to trigger when a number button is pushed */
 	function pushNumber (number) {
-		_this.disable(true);
-		lizard.followPointer(false);
-		_this.agent.eyesFollowObject(lizard.tounge.world);
-
-		var result = _this.tryNumber(number);
-		var treePiece = tree.children[tree.length - number].world;
-		var hit = { x: treePiece.x, y: treePiece.y };
-
-		var t = new TimelineMax();
-		if (!result) { // Correct :)
-			t.add(lizard.shootObject(target));
-			t.addCallback(function () { target.visible = true; });
-			t.add(TweenMax.to(lizard, 1, { tint: target.tint }));
-		} else { // Incorrect :(
-			t.add(lizard.shoot(hit));
-		}
-		t.addCallback(function () { _this.nextRound(); });
-	}
-	/* Function to trigger when a yes/no button is pushed */
-	function pushYesno (value) {
-		if (!value) {
-			showNumbers();
-		}
-		else { pushNumber(_this.agent.lastGuess); }
+		return _this.lizardShoot(number)
+			.addCallback(_this.nextRound, null, null, _this);
 	}
 
-	/* Show the number panel, hide the yes/no panel and enable input */
-	function showNumbers () {
-		_this.disable(true);
-		buttons.reset();
-		fade(yesnos, false);
-		fade(buttons, true).eventCallback('onComplete', _this.disable, false, _this);
+	this.buttons = new ButtonPanel(this.amount, this.representation, {
+		method: this.method,
+		x: this.world.width-(this.representation.length*75)-25,
+		y: this.tree.y - this.tree.height / this.tree.length / 2,
+		vertical: true,
+		size: this.tree.height,
+		reversed: true,
+		onClick: pushNumber
+	});
+	this.buttons.visible = false;
+	this.hudGroup.add(this.buttons);
 
-		lizard.followPointer(true);
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
-	}
-	/* Show the yes/no panel, hide the number panel and enable input */
-	function showYesnos () {
-		_this.disable(true);
-		yesnos.reset();
-		fade(buttons, false);
-		fade(yesnos, true).eventCallback('onComplete', _this.disable, false, _this);
-
-		lizard.followPointer(true);
-		if (_this.agent.visible) { _this.agent.eyesFollowPointer(); }
-	}
-	/* Hide the number and yes/no panel */
-	function hideButtons () {
-		_this.disable(true);
-		fade(buttons, false);
-		fade(yesnos, false);
-
-		if (_this.agent.visible) { _this.agent.eyesStopFollow(); }
-	}
-
-	function newFood () {
-		target.x = tree.x;
-		target.y = game.world.height + target.height;
-		target.tint = tint[_this.currentNumber];
-
-		var t = new TimelineMax();
-		t.addCallback(function () { target.visible = true; });
-		t.add(new TweenMax(target, 1, { y: tree.children[tree.length - 1].world.y }));
-		for (var i = 1; i < _this.currentNumber; i++) {
-			t.add(new TweenMax(target, 0.8, { y: tree.children[tree.length - 1 - i].world.y }));
-		}
-		return t;
-	}
-
-	/* Have the agent guess a number */
-	function agentGuess () {
-		_this.agent.guessNumber(_this.currentNumber, 1, _this.amount);
-
-		return TweenMax.fromTo(_this.agent.thought.scale, 1.5,
-			{ x: 0, y: 0 },
-			{ x: 1, y: 1,
-				ease: Elastic.easeOut,
-				onStart: function () {
-					_this.agent.thought.visible = true;
-					if (_this.agent.thought.guess) { _this.agent.thought.guess.destroy(); }
-					_this.agent.say('lizardPlaceholder').play();
-				},
-				onComplete: function () {
-					_this.agent.thought.guess = new NumberButton(_this.agent.lastGuess, _this.representation, {
-						x: -60, y: -30, disabled: true
-					});
-					_this.agent.thought.add(_this.agent.thought.guess);
-					// TODO: Agent should say something here based on how sure it is.
-					showYesnos();
-				}
-			});
-	}
-
-	function pointAtBole (number) {
-		var first = tree.children[tree.length - 1];
-		var start = first.world;
-		var offset = 70;
-		var arrow = game.add.sprite(start.x + offset, start.y, 'lizardArrow', null, this.gameGroup);
-		arrow.anchor.set(0, 0.5);
-		arrow.visible = false;
-
-		var t = new TimelineMax();
-		t.addCallback(function () { arrow.visible = true; });
-		for (var i = 0; i < number; i++) {
-			var pos = tree.children[tree.length - 1 - i].world;
-			if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y })); }
-			t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
-		}
-		t.addCallback(function () { arrow.destroy(); }, '+=0.5');
-		return t;
-	}
-
-	function instructionIntro () {
-		var t = new TimelineMax();
-		//t.addSound(speech, bird, 'instruction1a');
-		t.add(pointAtBole(_this.currentNumber));
-		t.add(fade(buttons, true));
-		t.add(buttons.highlight(1));
-		//t.addSound(speech, bird, 'instruction1b');
-		return t;
-	}
-
-	this.modeIntro = function () {
-		// Most of the intro is in modePlayerDo. But we need a slight wait
-		// so that the game world can set up.
-		var t = new TimelineMax();
-		t.addSound('lizardPlaceholder', lizard);
-		t.addCallback(function () { _this.nextRound(); });
-	};
-
-	this.modePlayerDo = function (intro, tries) {
-		if (tries > 0) {
-			showNumbers();
-		} else { // if intro or first try
-			var t = new TimelineMax();
-			if (intro) {
-				t.skippable();
-				t.add(newFood());
-				//t.addSound('lizardPlaceholder', lizard);
-				var hit;
-				if (_this.currentNumber > 1) {
-					hit = { x: tree.x, y: tree.children[tree.length + 1 - _this.currentNumber].world.y };
-					t.add(lizard.shoot(hit));
-				}
-				if (_this.currentNumber < this.amount) {
-					hit = { x: tree.x, y: tree.children[tree.length - 1 - _this.currentNumber].world.y };
-					t.add(lizard.shoot(hit));
-				}
-				t.add(instructionIntro());
-			} else {
-				t.add(newFood());
+	this.yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
+		x: this.world.width-100,
+		vertical: true,
+		onClick: function (value) {
+			if (!value) {
+				_this.showNumbers();
 			}
-			t.addCallback(showNumbers);
-		}
-	};
-
-	this.modePlayerShow = function (intro, tries) {
-		if (tries > 0) {
-			showNumbers();
-		} else { // if intro or first try
-			var t = new TimelineMax();
-			if (intro) {
-				t.skippable();
-				t.eventCallback('onStart', function () { hideButtons(); });
-				t.add(_this.agent.moveTo.start());
-				t.addLabel('agentIntro');
-				//t.addSound('birdheroAgentShow', _this.agent);
-				t.add(_this.agent.wave(3, 1), 'agentIntro');
-				//t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentShow'); });
+			else {
+				pushNumber(_this.agent.lastGuess);
 			}
-			t.add(newFood());
-			t.addCallback(showNumbers);
 		}
-	};
+	});
+	this.yesnos.visible = false;
+	this.hudGroup.add(this.yesnos);
 
-	this.modeAgentTry = function (intro, tries) {
-		var t = new TimelineMax();
-		if (tries > 0) {
-			_this.agent.eyesStopFollow();
-			// TODO: Add more specified sounds?
-			//t.addSound('birdheroAgentOops', _this.agent);
-			t.add(agentGuess());
-		} else { // if intro or first try
-			if (intro) {
-				t.skippable();
-				t.eventCallback('onStart', function () { hideButtons(); });
-				t.add(_this.agent.moveTo.start()); // Agent should be here already.
-				//t.addSound('birdheroAgentTry', _this.agent);
-				//t.eventCallback('onComplete', function () { _this.sound.removeByKey('birdheroAgentTry'); });
-			}
-			t.add(newFood());
-			t.add(agentGuess());
-		}
-	};
 
 	// Everything is set up! Blast off!
 	this.startGame();
+};
+
+
+LizardJungleGame.prototype.pos = {
+	tree: {
+		x: 200, y: 220, height: 550, offset: -10
+	},
+	agent: {
+		start: { x: 1300, y: 500 },
+		stop: { x: 700, y: 400 },
+		scale: 0.35
+	}
+};
+
+LizardJungleGame.prototype.tint = [
+	0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
+	0x0000ff, 0x555555, 0x3333cc, 0x33cc33
+];
+
+LizardJungleGame.prototype.instructionIntro = function () {
+	var t = new TimelineMax();
+	//t.addSound(speech, bird, 'instruction1a');
+	t.add(this.pointAtBole(this.currentNumber));
+	t.add(fade(this.buttons, true));
+	t.add(this.buttons.highlight(1));
+	//t.addSound(speech, bird, 'instruction1b');
+	return t;
+};
+
+LizardJungleGame.prototype.pointAtBole = function (number) {
+	var first = this.tree.children[this.tree.length - 1];
+	var start = first.world;
+	var offset = 70;
+	var arrow = this.add.sprite(start.x + offset, start.y, 'lizardArrow', null, this.gameGroup);
+	arrow.anchor.set(0, 0.5);
+	arrow.visible = false;
+
+	var t = new TimelineMax();
+	t.addCallback(function () { arrow.visible = true; });
+	for (var i = 0; i < number; i++) {
+		var pos = this.tree.children[this.tree.length - 1 - i].world;
+		if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y })); }
+		t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
+	}
+	t.addCallback(function () { arrow.destroy(); }, '+=0.5');
+	return t;
+};
+
+/* Have the agent guess a number */
+LizardJungleGame.prototype.agentGuess = function () {
+	this.agent.guessNumber(this.currentNumber, 1, this.amount);
+	return this.agent.think();
+};
+
+/* Show the number panel, hide the yes/no panel and enable input */
+LizardJungleGame.prototype.showNumbers = function () {
+	this.disable(true);
+	this.buttons.reset();
+	fade(this.yesnos, false);
+	fade(this.buttons, true).eventCallback('onComplete', this.disable, false, this);
+
+	this.lizard.followPointer(true);
+	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
+};
+
+/* Show the yes/no panel, hide the number panel and enable input */
+LizardJungleGame.prototype.showYesnos = function () {
+	this.disable(true);
+	this.yesnos.reset();
+	fade(this.buttons, false);
+	fade(this.yesnos, true).eventCallback('onComplete', this.disable, false, this);
+
+	this.lizard.followPointer(true);
+	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
+};
+
+/* Hide the number and yes/no panel */
+LizardJungleGame.prototype.hideButtons = function () {
+	this.disable(true);
+	fade(this.buttons, false);
+	fade(this.yesnos, false);
+
+	if (this.agent.visible) { this.agent.eyesStopFollow(); }
+};
+
+LizardJungleGame.prototype.newFood = function () {
+	this.target.x = this.tree.x;
+	this.target.y = this.world.height + this.target.height;
+	this.target.tint = this.tint[this.currentNumber];
+
+	var t = new TimelineMax();
+	t.addCallback(function () { this.target.visible = true; }, null, null, this);
+	t.add(new TweenMax(this.target, 1, { y: this.tree.children[this.tree.length - 1].world.y }));
+	for (var i = 1; i < this.currentNumber; i++) {
+		t.add(new TweenMax(this.target, 0.8, { y: this.tree.children[this.tree.length - 1 - i].world.y }));
+	}
+	return t;
+};
+
+LizardJungleGame.prototype.lizardShoot = function (number) {
+	this.disable(true);
+	this.lizard.followPointer(false);
+	this.agent.eyesFollowObject(this.lizard.tounge.world);
+
+	var result = this.tryNumber(number);
+	var treePiece = this.tree.children[this.tree.length - number].world;
+	var hit = { x: treePiece.x, y: treePiece.y };
+
+	var t = new TimelineMax();
+	if (!result) { // Correct :)
+		t.addCallback(function () { this.hideButtons(); }, null, null, this);
+		t.add(this.lizard.shootObject(this.target));
+		t.addCallback(function () { this.target.visible = false; }, null, null, this);
+		t.add(TweenMax.to(this.lizard, 1, { tint: this.target.tint }));
+	} else { // Incorrect :(
+		t.add(this.lizard.shoot(hit));
+	}
+
+	return t;
+};
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                 Overshadowing Subgame mode functions                      */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+LizardJungleGame.prototype.modeIntro = function () {
+	// Most of the intro is in modePlayerDo. But we need a slight wait
+	// so that the game world can set up.
+	var t = new TimelineMax();
+	t.addSound('lizardPlaceholder', this.lizard);
+	t.addCallback(function () { this.nextRound(); }, null, null, this);
+};
+
+LizardJungleGame.prototype.modePlayerDo = function (intro, tries) {
+	if (tries > 0) {
+		this.showNumbers();
+	} else { // if intro or first try
+		var t = new TimelineMax();
+		if (intro) {
+			t.skippable();
+			t.add(this.newFood());
+			//t.addSound('lizardPlaceholder', this.lizard);
+			var hit;
+			if (this.currentNumber > 1) {
+				hit = { x: this.tree.x, y: this.tree.children[this.tree.length + 1 - this.currentNumber].world.y };
+				t.add(this.lizard.shoot(hit));
+			}
+			if (this.currentNumber < this.amount) {
+				hit = { x: this.tree.x, y: this.tree.children[this.tree.length - 1 - this.currentNumber].world.y };
+				t.add(this.lizard.shoot(hit));
+			}
+			t.add(this.instructionIntro());
+		} else {
+			t.add(this.newFood());
+		}
+		t.addCallback(this.showNumbers, null, null, this);
+	}
+};
+
+LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
+	if (tries > 0) {
+		this.showNumbers();
+	} else { // if intro or first try
+		var t = new TimelineMax();
+		if (intro) {
+			t.skippable();
+			t.add(this.agent.moveTo.start());
+			t.addLabel('agentIntro');
+			// t.addSound(this.speech, this.agent, 'agentIntro');
+			t.add(this.agent.wave(3, 1), 'agentIntro');
+		}
+		t.add(this.newFood());
+		t.addCallback(this.showNumbers, null, null, this);
+	}
+};
+
+LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
+	var t = new TimelineMax();
+	if (tries > 0) {
+		this.agent.eyesStopFollow();
+		// TODO: Add more specified sounds?
+		// t.addSound(this.speech, this.agent, 'agentTryAgain');
+		t.add(this.agentGuess());
+		t.addCallback(this.showYesnos, null, null, this);
+	} else { // if intro or first try
+		if (intro) {
+			t.skippable();
+			t.add(this.agent.moveTo.start()); // Agent should be here already.
+			// t.addSound(this.speech, this.agent, 'agentTry');
+		}
+		t.add(this.newFood());
+		t.add(this.agentGuess());
+		t.addCallback(this.showYesnos, null, null, this);
+	}
 };
 
 
