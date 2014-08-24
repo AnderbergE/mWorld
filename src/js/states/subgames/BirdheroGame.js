@@ -64,17 +64,7 @@ BirdheroGame.prototype.create = function () {
 	this.agent.y = this.pos.agent.start.y;
 	this.agent.scale.set(this.pos.agent.scale);
 	this.agent.visible = true;
-	// Adding thought bubble that is used in the agent try mode.
-	this.agent.thought = this.add.group(this.gameGroup);
-	this.agent.thought.x = this.pos.agent.stop.x + this.pos.agent.thought.x;
-	this.agent.thought.y = this.pos.agent.stop.y + this.pos.agent.thought.y;
-	this.agent.thought.visible = false;
-	var thoughtBubble = this.add.sprite(0, 0, 'thought', null, this.agent.thought);
-	thoughtBubble.anchor.set(0.5);
-	this.agent.thought.guess = new NumberButton(1, this.representation[0], {
-		x: -60, y: -30, min: 1, max: this.amount, disabled: true
-	});
-	this.agent.thought.add(this.agent.thought.guess);
+	this.agent.addThought(this.representation[0]);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Setup tree and its branches
@@ -249,8 +239,7 @@ BirdheroGame.prototype.pos = {
 	agent: {
 		start: { x: 250, y: 950 },
 		stop: { x: 450, y: 500 },
-		scale: 0.25,
-		thought: { x: -150, y: -100, scale: 0.5 } // offset to agent
+		scale: 0.25
 	},
 	bird: {
 		start: { x: -150, y: 700 },
@@ -308,24 +297,7 @@ BirdheroGame.prototype.instructionAgentTry = function () {
 /* Have the agent guess a number */
 BirdheroGame.prototype.agentGuess = function () {
 	this.agent.guessNumber(this.currentNumber, 1, this.amount);
-
-	var t = new TimelineMax({
-		onStart: function () {
-			this.agent.thought.visible = true;
-			this.agent.thought.guess.visible = false;
-			this.agent.thought.guess.number = this.agent.lastGuess;
-		},
-		onStartScope: this
-	});
-	t.addSound(this.speech, this.agent, 'agentHmm');
-	t.add(TweenMax.fromTo(this.agent.thought.scale, 1.5,
-		{ x: 0, y: 0 },
-		{ x: this.pos.agent.thought.scale, y: this.pos.agent.thought.scale, ease: Elastic.easeOut }
-	), 0);
-	t.add(fade(this.agent.thought.guess, true, 1), 0.5);
-	// TODO: Agent should say something here based on how sure it is.
-
-	return t;
+	return this.agent.think();
 };
 
 /* Show the number panel, hide the yes/no panel and enable input */

@@ -201,6 +201,56 @@ Agent.prototype.setSad = function () {
 	this.mouth.frameName = 'mouth3';
 };
 
+/**
+ * Add a thought bubble to the agent. Must be called to use the "think" function.
+ * @param {number} The representation of the guess.
+ * @param {boolean} If the thought bubble should be to the right instead of left (default false).
+ */
+Agent.prototype.addThought = function (representation, right) {
+	this.thought = game.add.group(this);
+	this.thought.x = right ? 550 : -550;
+	this.thought.y = -475;
+	this.thought.visible = false;
+	var bubble = this.thought.create(0, 0, 'thought');
+	bubble.scale.x = right ? -1 : 1;
+	bubble.anchor.set(0.5);
+	this.thought.guess = new NumberButton(1, representation, {
+		x: right ? 60 : -60,
+		y: right ? 30 : -30,
+		min: 1, max: 100, disabled: true
+	});
+	this.thought.add(this.thought.guess);
+};
+
+/**
+ * Animation: Think about the guessed number!
+ * NOTE: The addThought must have been called before this function.
+ * @param {boolean} If the agent should be silent while thinking (optional).
+ * @return {Object} The animation timeline.
+ */
+Agent.prototype.think = function (silent) {
+	if (typeof this.thought === 'undefined' || this.thought === null) {
+		return;
+	}
+
+	var t = new TimelineMax({
+		onStart: function () {
+			this.thought.visible = true;
+			this.thought.guess.visible = false;
+			this.thought.guess.number = this.lastGuess;
+		},
+		onStartScope: this
+	});
+	if (!silent) {
+		void(silent);
+		// TODO: t.addSound(this.speech, this, 'agentHmm');
+	}
+	t.add(TweenMax.fromTo(this.thought.scale, 1.5, { x: 0, y: 0 }, { x: 2, y: 2, ease: Elastic.easeOut }), 0);
+	t.add(fade(this.thought.guess, true, 1), 0.5);
+	// TODO: Agent should say something here based on how sure it is.
+
+	return t;
+};
 
 /**
  * Animation: Pump it up yeah!
