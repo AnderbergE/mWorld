@@ -159,6 +159,21 @@ function onShutDown () {
 }
 
 /**
+ * Randomize array element order in-place.
+ * Using Fisher-Yates shuffle algorithm.
+ * @param {Array} The array to shuffle. (Use .splice(0) if you need to copy an array.)
+ */
+Phaser.RandomDataGenerator.prototype.shuffle = function (array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+};
+
+/**
  * Check if all sound files have been decoded.
  * NOTE: This will not start decoding. So if you turn off autodecode you
  * need to start it yourself.
