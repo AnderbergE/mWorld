@@ -96,11 +96,6 @@ BirdheroGame.prototype.create = function () {
 	this.bird = new BirdheroBird();
 	this.bird.visible = false;
 	this.elevator.add(this.bird);
-	// Calculate positions for bird based on elevator.
-	this.pos.bird.start.x -= this.elevator.x;
-	this.pos.bird.start.y -= this.elevator.y;
-	this.pos.bird.stop.x -= this.elevator.x;
-	this.pos.bird.stop.y -= this.elevator.y;
 
 	var bucket = this.add.sprite(0, 0, 'birdhero', 'bucket', this.elevator);
 	bucket.scale.set(1.2);
@@ -115,7 +110,7 @@ BirdheroGame.prototype.create = function () {
 	// Add Timeline/Tween functions
 	this.bird.moveTo = {
 		initial: function () {
-			return _this.bird.move({ x: _this.pos.bird.stop.x, y: _this.pos.bird.stop.y }, 2, _this.pos.bird.scale);
+			return _this.bird.move({ x: _this.pos.bird.stop.x - _this.elevator.x, y: _this.pos.bird.stop.y - _this.elevator.origin }, 2, _this.pos.bird.scale);
 		},
 		elevator: function () {
 			return _this.bird.move({ x: 0, y: bucket.height*0.5 }, 2, _this.pos.bird.small);
@@ -345,8 +340,8 @@ BirdheroGame.prototype.newRound = function (silent) {
 	t.addCallback(function () {
 		this.bird.number = this.currentNumber;
 		this.bird.tint = this.tint[this.bird.number - 1];
-		this.bird.x = this.pos.bird.start.x;
-		this.bird.y = this.pos.bird.start.y;
+		this.bird.x = this.pos.bird.start.x - this.elevator.x;
+		this.bird.y = this.pos.bird.start.y - this.elevator.origin;
 		this.bird.scale.set(this.pos.bird.scale);
 		this.bird.visible = true;
 	}, null, null, this);
