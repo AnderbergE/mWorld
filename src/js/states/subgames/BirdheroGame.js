@@ -49,6 +49,9 @@ BirdheroGame.prototype.create = function () {
 		this.isRelative = true;
 	}
 
+	/* Setup tints by randomising those in the bank. */
+	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
+
 	// Add music and sounds
 	var elevatorAudio = this.add.audio('birdheroElevator', 1);
 	var elevatorAudioArrive = this.add.audio('birdheroElevatorArrive', 1);
@@ -244,7 +247,7 @@ BirdheroGame.prototype.pos = {
 };
 
 /* Do not use tint below 0x111120, or 0xXXXX20, it will not work on the bird */
-BirdheroGame.prototype.tint = [
+BirdheroGame.prototype.tintBank = [
 	0xff8888, 0x77ee77, 0x8888ff, 0xfed020, 0xfedcba,
 	0x11abba, 0xabcdef, 0xffffff, 0xed88ba
 ];
