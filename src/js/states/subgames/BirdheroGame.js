@@ -243,9 +243,9 @@ BirdheroGame.prototype.pos = {
 	}
 };
 
-/* Do not use tint below 0x111112, or 0xXXXX12, it will not work on the bird */
+/* Do not use tint below 0x111120, or 0xXXXX20, it will not work on the bird */
 BirdheroGame.prototype.tint = [
-	0xff8888, 0x77ee77, 0x8888ff, 0xfed012, 0xfedcba,
+	0xff8888, 0x77ee77, 0x8888ff, 0xfed020, 0xfedcba,
 	0x11abba, 0xabcdef, 0xffffff, 0xed88ba
 ];
 
@@ -825,7 +825,7 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 
 		/* For some reason the tint need to be changed to update the frame. */
 		// TODO: Update this when issue is solved in Phaser.
-		this.tint += this.tint % 2 === 0 ? 1 : -1;
+		this.tint -= 1;
 	}
 });
 
