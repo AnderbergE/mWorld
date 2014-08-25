@@ -222,11 +222,14 @@ LizardJungleGame.prototype.lizardShoot = function (number) {
 	var t = new TimelineMax();
 	if (!result) { // Correct :)
 		t.add(this.lizard.shootObject(this.target));
+		t.addLabel('afterShot');
 		t.addCallback(function () { this.target.visible = false; }, null, null, this);
 		t.addCallback(this.hideButtons, null, null, this);
-		t.add(TweenMax.to(this.lizard, 1, { tint: this.target.tint }));
+		t.addSound('lizardPlaceholder', this.lizard); // nom nom
+		t.add(TweenMax.to(this.lizard, 1, { tint: this.target.tint }), 'afterShot');
 	} else { // Incorrect :(
 		t.add(this.lizard.shoot(this.tree.children[this.tree.length - number].world));
+		// t.addSound(this.speech, this.bird, result < 0 ? 'higher' : 'lower');
 	}
 
 	return t;
@@ -290,6 +293,8 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 			t.addLabel('agentIntro');
 			// t.addSound(this.speech, this.agent, 'agentIntro');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
+			t.addSound('lizardPlaceholder', this.lizard); // helping to shoot
+			// t.addSound(this.speech, this.agent, 'agentIntro');
 		}
 		t.add(this.newFood());
 		t.addCallback(this.showNumbers, null, null, this);
@@ -316,6 +321,15 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 	}
 };
 
+LizardJungleGame.prototype.modeOutro = function () {
+	this.agent.thought.visible = false;
+	this.agent.eyesStopFollow();
+	this.agent.setHappy();
+	var t = new TimelineMax();
+	t.addSound('lizardPlaceholder', this.lizard); // finished
+	t.add(this.agent.fistPump(), 0);
+	t.addCallback(this.nextRound, null, null, this);
+};
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                        Lizard Jungle game objects                         */
