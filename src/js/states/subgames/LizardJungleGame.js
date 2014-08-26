@@ -9,6 +9,24 @@ function LizardJungleGame () {
 	Subgame.call(this); // Call parent constructor.
 }
 
+/* Position coordinates for the game */
+LizardJungleGame.prototype.pos = {
+	tree: {
+		x: 200, y: 220, height: 550, offset: -10
+	},
+	agent: {
+		start: { x: 1300, y: 500 },
+		stop: { x: 700, y: 400 },
+		scale: 0.35
+	}
+};
+
+LizardJungleGame.prototype.tintBank = [
+	0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
+	0x0000ff, 0x555555, 0x3333cc, 0x33cc33
+];
+
+
 /* Phaser state function */
 LizardJungleGame.prototype.preload = function () {
 	this.load.audio('lizardPlaceholder', LANG.SPEECH.AGENT.hmm);
@@ -99,23 +117,6 @@ LizardJungleGame.prototype.create = function () {
 	// Everything is set up! Blast off!
 	this.startGame();
 };
-
-
-LizardJungleGame.prototype.pos = {
-	tree: {
-		x: 200, y: 220, height: 550, offset: -10
-	},
-	agent: {
-		start: { x: 1300, y: 500 },
-		stop: { x: 700, y: 400 },
-		scale: 0.35
-	}
-};
-
-LizardJungleGame.prototype.tintBank = [
-	0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
-	0x0000ff, 0x555555, 0x3333cc, 0x33cc33
-];
 
 LizardJungleGame.prototype.instructionIntro = function () {
 	var t = new TimelineMax();
