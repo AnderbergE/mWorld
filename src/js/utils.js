@@ -133,6 +133,24 @@ function fade (what, typ, duration, to) {
 }
 
 /**
+ * Easily tween an objects tint. It tweens from the current tint value.
+ * @param {Object} what - The object to fade, needs to have an alpha property.
+ * @param {number} toColor - The color to fade to.
+ * @param {number} duration - Tween duration in seconds (default: 1).
+ * @return {Object} The animation TweenMax.
+ */
+function tweenTint (what, toColor, duration) {
+	duration = duration || 1;
+
+	return TweenMax.to(what, duration, {
+		onUpdate: function (start, end) {
+			what.tint = Phaser.Color.interpolateColor(start, end, 255, Math.floor(255*this.progress()));
+		},
+		onUpdateParams: [what.tint, toColor]
+	});
+}
+
+/**
  * Easily create an audio sheet.
  * @param {string} key - The key of the audio object.
  * @param {Object} markers - The Markers of the audio object.
