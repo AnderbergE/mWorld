@@ -40,7 +40,7 @@ function ButtonPanel (amount, representations, options) {
 	/* Set range of the panel, which will create the buttons. */
 	options.min = options.min || 1;
 	this.setRange(options.min, options.max || (options.min + amount - 1));
-	
+
 	return this;
 }
 
@@ -73,6 +73,7 @@ ButtonPanel.prototype._createButtons = function () {
 		buttonOptions.doNotAdapt = true;
 		var change = new NumberButton(1, this.representations, buttonOptions);
 		buttonOptions.keepDown = false;
+		buttonOptions[this.vertical ? 'x' : 'y'] = ((this.representations.length - 1) * buttonSize)/2;
 		buttonOptions.onClick = function () { change.number--; };
 		this.add(new TextButton('-', buttonOptions));
 		this.add(change);

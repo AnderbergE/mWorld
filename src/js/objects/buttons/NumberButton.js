@@ -20,8 +20,12 @@ function NumberButton (number, representations, options) {
 	if (typeof options.keepDown === 'undefined' || options.keepDown === null) {
 		options.keepDown = true;
 	}
+	this.vertical = options.vertical;
+	if (typeof this.vertical === 'undefined' || this.vertical === null) {
+		this.vertical = true;
+	}
 	this.representations = representations;
-	this.vertical = options.vertical || true;
+
 
 	GeneralButton.call(this, options); // Parent constructor.
 
