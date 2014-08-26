@@ -25,6 +25,9 @@ LizardJungleGame.prototype.preload = function () {
 LizardJungleGame.prototype.create = function () {
 	var _this = this; // Subscriptions do not have access to 'this' object
 
+	/* Setup tints by randomising those in the bank. */
+	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
+
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
 
@@ -107,7 +110,7 @@ LizardJungleGame.prototype.pos = {
 	}
 };
 
-LizardJungleGame.prototype.tint = [
+LizardJungleGame.prototype.tintBank = [
 	0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
 	0x0000ff, 0x555555, 0x3333cc, 0x33cc33
 ];
