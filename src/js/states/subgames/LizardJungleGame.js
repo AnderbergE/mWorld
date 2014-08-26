@@ -25,9 +25,6 @@ LizardJungleGame.prototype.preload = function () {
 LizardJungleGame.prototype.create = function () {
 	var _this = this; // Subscriptions do not have access to 'this' object
 
-	/* Setup tints by randomising those in the bank. */
-	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
-
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
 
@@ -204,7 +201,7 @@ LizardJungleGame.prototype.hideButtons = function () {
 LizardJungleGame.prototype.newFood = function () {
 	this.target.x = this.tree.x;
 	this.target.y = this.world.height + this.target.height;
-	this.target.tint = this.tint[this.currentNumber];
+	this.target.tint = this.rnd.pick(this.tintBank);
 
 	var t = new TimelineMax();
 	t.addCallback(function () { this.target.visible = true; }, null, null, this);
@@ -229,7 +226,7 @@ LizardJungleGame.prototype.lizardShoot = function (number) {
 		t.addCallback(function () { this.target.visible = false; }, null, null, this);
 		t.addCallback(this.hideButtons, null, null, this);
 		t.addSound('lizardPlaceholder', this.lizard); // nom nom
-		t.add(TweenMax.to(this.lizard, 1, { tint: this.target.tint }), 'afterShot');
+		t.add(tweenTint(this.lizard, this.target.tint), 'afterShot');
 	} else { // Incorrect :(
 		t.add(this.lizard.shoot(this.tree.children[this.tree.length - number].world));
 		// t.addSound(this.speech, this.bird, result < 0 ? 'higher' : 'lower');
