@@ -45,7 +45,12 @@ LizardJungleGame.prototype.create = function () {
 		this.add.sprite(0, this.tree.height + this.pos.tree.offset, 'lizard', 'bole', this.tree).anchor.set(0.5);
 	}
 	this.tree.scale.set(this.pos.tree.height/this.tree.height);
-	this.add.sprite(this.tree.x - 40, this.tree.y + this.tree.height/this.tree.length, 'lizard', 'crown', this.gameGroup).anchor.set(0.5, 1);
+	var crown = this.add.sprite(
+		this.tree.x - (this.tree.children[0].width * this.tree.scale.x) * 0.3,
+		this.tree.y - (this.tree.children[0].height * this.tree.scale.y) * 0.7,
+		'lizard', 'crown', this.gameGroup);
+	crown.scale.set(4/this.tree.length);
+	crown.anchor.set(0.5);
 
 	// The target is set up in the newFood function
 	this.target = this.add.sprite(0, 0, 'lizard', 'ant', this.gameGroup);
