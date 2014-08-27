@@ -148,12 +148,6 @@ LizardJungleGame.prototype.pointAtBole = function (number) {
 	return t;
 };
 
-/* Have the agent guess a number */
-LizardJungleGame.prototype.agentGuess = function () {
-	this.agent.guessNumber(this.currentNumber, 1, this.amount);
-	return this.agent.think();
-};
-
 
 /* Function to trigger when a button in the number panel is pushed */
 LizardJungleGame.prototype.pushNumber = function (number) {
