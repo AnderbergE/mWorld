@@ -119,12 +119,19 @@ ButtonPanel.prototype._updateButtons = function () {
 		button.min = this.min;
 		button.max = this.max;
 	} else {
-		var val = this.min;
+		var val, dir;
+		if (this.reversed) {
+			val = this.max;
+			dir = -1;
+		} else {
+			val = this.min;
+			dir = 1;
+		}
 		for (var key in this.children) {
 			this.children[key].min = this.min;
 			this.children[key].max = this.max;
 			this.children[key].number = val;
-			val++;
+			val += dir;
 		}
 	}
 };
