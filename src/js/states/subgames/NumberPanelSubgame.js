@@ -69,8 +69,12 @@ NumberPanelSubgame.prototype.create = function () {
 
 /* Have the agent guess a number */
 NumberPanelSubgame.prototype.agentGuess = function () {
-	this.agent.guessNumber(this.currentNumber, 1, this.amount);
-	return this.agent.think();
+	var t = new TimelineMax();
+	t.addCallback(function () {
+		this.agent.guessNumber(this.currentNumber, this.buttons.min, this.buttons.max);
+	}, 0, null, this);
+	t.add(this.agent.think());
+	return t;
 };
 
 /* Function to trigger when a button in the number panel is pushed */
