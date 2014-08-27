@@ -71,7 +71,7 @@ NumberPanelSubgame.prototype.create = function () {
 NumberPanelSubgame.prototype.agentGuess = function () {
 	var t = new TimelineMax();
 	t.addCallback(function () {
-		this.agent.guessNumber(this.currentNumber, this.buttons.min, this.buttons.max);
+		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0), this.buttons.min, this.buttons.max);
 	}, 0, null, this);
 	t.add(this.agent.think());
 	return t;
