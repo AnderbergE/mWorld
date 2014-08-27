@@ -262,6 +262,7 @@ BirdheroGame.prototype.newRound = function (silent) {
 	t.add(this.zoom(1), 0);
 	t.add(this.bird.moveTo.initial(), 0);
 
+	// We supply the tween as a parameter to get the labels correct.
 	this.doStartFunction(silent, t);
 
 	return t;
@@ -274,27 +275,24 @@ BirdheroGame.prototype.startStop = function (silent, t) {
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
 BirdheroGame.prototype.startBelow = function (silent, t) {
-	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1)));
+	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
 	if (!silent) {
 		t.addLabel('showWings');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
 BirdheroGame.prototype.startAbove = function (silent, t) {
-	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount)));
+	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
 	if (!silent) {
 		t.addLabel('showWings');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
 BirdheroGame.prototype.startThink = function (silent, t) {
@@ -304,12 +302,11 @@ BirdheroGame.prototype.startThink = function (silent, t) {
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
-BirdheroGame.prototype.runNumber = function (number) {
+BirdheroGame.prototype.runNumber = function (number, simulate) {
 	var origin = parseInt(this.elevator.text.text);
-	var result = this.tryNumber(number);
+	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
 	var branch = this.tree.branch[number-1];
 
 	var t = new TimelineMax();
