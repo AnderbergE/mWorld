@@ -3,10 +3,10 @@
 /* Representations: All
 /* Range:           1--4
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-LizardJungleGame.prototype = Object.create(Subgame.prototype);
+LizardJungleGame.prototype = Object.create(NumberPanelSubgame.prototype);
 LizardJungleGame.prototype.constructor = LizardJungleGame;
 function LizardJungleGame () {
-	Subgame.call(this); // Call parent constructor.
+	NumberPanelSubgame.call(this); // Call parent constructor.
 }
 
 /* Position coordinates for the game */
@@ -41,17 +41,10 @@ LizardJungleGame.prototype.preload = function () {
 
 /* Phaser state function */
 LizardJungleGame.prototype.create = function () {
-	var _this = this; // Subscriptions do not have access to 'this' object
+	NumberPanelSubgame.prototype.create.call(this);
 
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
-
-	// Agent is added to the game in the superclass, so set up correct start point.
-	this.agent.x = this.pos.agent.start.x;
-	this.agent.y = this.pos.agent.start.y;
-	this.agent.scale.set(this.pos.agent.scale);
-	this.agent.visible = true;
-	this.agent.addThought(this.representation[0]);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Setup tree and its branches
@@ -81,6 +74,7 @@ LizardJungleGame.prototype.create = function () {
 
 
 	// Add Timeline/Tween functions
+	var _this = this; // Subscriptions do not have access to 'this' object
 	this.agent.moveTo = {
 		start: function () {
 			if (_this.agent.x === _this.pos.agent.stop.x &&
@@ -91,31 +85,24 @@ LizardJungleGame.prototype.create = function () {
 		}
 	};
 
-
-	// Add HUD
-	this.buttons = new ButtonPanel(this.amount, this.representation, {
-		method: this.method,
-		x: this.world.width-(this.representation.length*75)-25,
-		y: this.tree.y - this.tree.height / this.tree.length / 2,
-		vertical: true,
-		size: this.tree.height,
-		reversed: true,
-		onClick: function (number) { _this.pushNumber(number); }
-	});
-	this.buttons.visible = false;
-	this.hudGroup.add(this.buttons);
-
-	this.yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		x: this.world.width-100,
-		vertical: true,
-		onClick: function (value) { _this.pushYesNo(value); }
-	});
-	this.yesnos.visible = false;
-	this.hudGroup.add(this.yesnos);
-
-
 	// Everything is set up! Blast off!
 	this.startGame();
+};
+
+LizardJungleGame.prototype.getOptions = function () {
+	return {
+		buttons: {
+			x: this.world.width - (this.representation.length*75) - 25,
+			y: this.pos.tree.y - 30,
+			vertical: true,
+			size: this.pos.tree.height,
+			reversed: true
+		},
+		yesnos: {
+			x: this.world.width - 100,
+			vertical: true
+		}
+	};
 };
 
 LizardJungleGame.prototype.instructionIntro = function () {
@@ -149,55 +136,6 @@ LizardJungleGame.prototype.pointAtBole = function (number) {
 };
 
 
-/* Function to trigger when a button in the number panel is pushed */
-LizardJungleGame.prototype.pushNumber = function (number) {
-	return this.lizardShoot(number)
-		.addCallback(this.nextRound, null, null, this);
-};
-
-/* Function to trigger when a button in the yes-no panel is pushed */
-LizardJungleGame.prototype.pushYesNo = function (value) {
-	if (!value) {
-		this.showNumbers();
-	}
-	else {
-		this.pushNumber(this.agent.lastGuess);
-	}
-};
-
-
-/* Show the number panel, hide the yes/no panel and enable input */
-LizardJungleGame.prototype.showNumbers = function () {
-	this.disable(true);
-	this.buttons.reset();
-	fade(this.yesnos, false);
-	fade(this.buttons, true).eventCallback('onComplete', this.disable, false, this);
-
-	this.lizard.followPointer(true);
-	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
-};
-
-/* Show the yes/no panel, hide the number panel and enable input */
-LizardJungleGame.prototype.showYesnos = function () {
-	this.disable(true);
-	this.yesnos.reset();
-	fade(this.buttons, false);
-	fade(this.yesnos, true).eventCallback('onComplete', this.disable, false, this);
-
-	this.lizard.followPointer(true);
-	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
-};
-
-/* Hide the number and yes/no panel */
-LizardJungleGame.prototype.hideButtons = function () {
-	this.disable(true);
-	fade(this.buttons, false);
-	fade(this.yesnos, false);
-
-	if (this.agent.visible) { this.agent.eyesStopFollow(); }
-};
-
-
 LizardJungleGame.prototype.newFood = function () {
 	this.target.x = this.tree.x;
 	this.target.y = this.world.height + this.target.height;
@@ -212,7 +150,25 @@ LizardJungleGame.prototype.newFood = function () {
 	return t;
 };
 
-LizardJungleGame.prototype.lizardShoot = function (number) {
+LizardJungleGame.prototype.startStop = function (silent, t) {
+	return t;
+};
+
+LizardJungleGame.prototype.startBelow = function (silent, t) {
+	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1)));
+	return t;
+};
+
+LizardJungleGame.prototype.startAbove = function (silent, t) {
+	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount)));
+	return t;
+};
+
+LizardJungleGame.prototype.startThink = function (silent, t) {
+	return t;
+};
+
+LizardJungleGame.prototype.runNumber = function (number) {
 	this.disable(true);
 	this.lizard.followPointer(false);
 	this.agent.eyesFollowObject(this.lizard.tounge.world);
@@ -233,6 +189,26 @@ LizardJungleGame.prototype.lizardShoot = function (number) {
 	}
 
 	return t;
+};
+
+LizardJungleGame.prototype.returnToStart = function (from) {
+	void(from);
+	return null;
+};
+
+LizardJungleGame.prototype.returnNone = function () {
+	return null;
+};
+
+LizardJungleGame.prototype.returnToPreviousIfHigher = function (from, to, diff) {
+	void(from);
+	void(to);
+	void(diff);
+	return null;
+};
+
+LizardJungleGame.prototype.returnToPreviousIfLower = function (from, to, diff) {
+	return this.returnToPreviousIfHigher(from, to, -diff);
 };
 
 
@@ -266,6 +242,7 @@ LizardJungleGame.prototype.modeIntro = function () {
 LizardJungleGame.prototype.modePlayerDo = function (intro, tries) {
 	if (tries > 0) {
 		this.showNumbers();
+		this.lizard.followPointer(true);
 	} else { // if intro or first try
 		var t = new TimelineMax();
 		if (intro) {
@@ -278,13 +255,17 @@ LizardJungleGame.prototype.modePlayerDo = function (intro, tries) {
 		} else {
 			t.add(this.newFood());
 		}
-		t.addCallback(this.showNumbers, null, null, this);
+		t.addCallback(function () {
+			this.showNumbers();
+			this.lizard.followPointer(true);
+		}, null, null, this);
 	}
 };
 
 LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 	if (tries > 0) {
 		this.showNumbers();
+		this.lizard.followPointer(true);
 	} else { // if intro or first try
 		var t = new TimelineMax();
 		if (intro) {
@@ -297,7 +278,10 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 			// t.addSound(this.speech, this.agent, 'agentIntro');
 		}
 		t.add(this.newFood());
-		t.addCallback(this.showNumbers, null, null, this);
+		t.addCallback(function () {
+			this.showNumbers();
+			this.lizard.followPointer(true);
+		}, null, null, this);
 	}
 };
 
@@ -307,8 +291,6 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 		this.agent.eyesStopFollow();
 		// TODO: Add more specified sounds?
 		// t.addSound(this.speech, this.agent, 'agentTryAgain');
-		t.add(this.agentGuess());
-		t.addCallback(this.showYesnos, null, null, this);
 	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
@@ -316,9 +298,13 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 			// t.addSound(this.speech, this.agent, 'agentTry');
 		}
 		t.add(this.newFood());
-		t.add(this.agentGuess());
-		t.addCallback(this.showYesnos, null, null, this);
 	}
+
+	t.add(this.agentGuess());
+	t.addCallback(function () {
+		this.showYesnos();
+		this.lizard.followPointer(true);
+	}, null, null, this);
 };
 
 LizardJungleGame.prototype.modeOutro = function () {

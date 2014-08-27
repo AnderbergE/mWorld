@@ -11,6 +11,7 @@ function NumberPanelSubgame () {
 /**
  * Phaser state function.
  * Make sure to have .pos.agent.start and .pos.agent.scale set before calling this function.
+ * Also have .getOptions for the button panels (option method and onClick is set in this function).
  *
  * This function will set the .isRelative property, as well as functions:
  * .doStartFunction and .doReturnFunction.
@@ -81,7 +82,9 @@ NumberPanelSubgame.prototype.pushNumber = function (number) {
 /* Function to trigger when a button in the yes-no panel is pushed */
 NumberPanelSubgame.prototype.pushYesNo = function (value) {
 	if (!value) {
-		this.agent.say(this.speech).play('agentCorrected');
+		if (this.speech) {
+			this.agent.say(this.speech).play('agentCorrected');
+		}
 		this.showNumbers();
 	} else {
 		this.pushNumber(this.agent.lastGuess);
