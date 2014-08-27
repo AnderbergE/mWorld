@@ -207,19 +207,8 @@ Agent.prototype.setSad = function () {
  * @param {boolean} If the thought bubble should be to the right instead of left (default false).
  */
 Agent.prototype.addThought = function (representation, right) {
-	this.thought = game.add.group(this);
-	this.thought.x = right ? 550 : -550;
-	this.thought.y = -475;
-	this.thought.visible = false;
-	var bubble = this.thought.create(0, 0, 'thought');
-	bubble.scale.x = right ? -1 : 1;
-	bubble.anchor.set(0.5);
-	this.thought.guess = new NumberButton(1, representation, {
-		x: right ? 60 : -60,
-		y: right ? 30 : -30,
-		min: -100, max: 100, disabled: true
-	});
-	this.thought.add(this.thought.guess);
+	Character.prototype.addThought.call(this, right ? 550 : -550, -475, representation, right);
+	this.thought.toScale = 2;
 };
 
 /**
@@ -233,22 +222,13 @@ Agent.prototype.think = function (silent) {
 		return;
 	}
 
-	var t = new TimelineMax({
-		onStart: function () {
-			this.thought.visible = true;
-			this.thought.guess.visible = false;
-			this.thought.guess.number = this.lastGuess;
-		},
-		onStartScope: this
-	});
+	var t = Character.prototype.think.call(this);
+	t.addCallback(function () { this.thought.guess.number = this.lastGuess; }, 0, null, this);
 	if (!silent) {
 		void(silent);
 		// TODO: t.addSound(this.speech, this, 'agentHmm');
 	}
-	t.add(TweenMax.fromTo(this.thought.scale, 1.5, { x: 0, y: 0 }, { x: 2, y: 2, ease: Elastic.easeOut }), 0);
-	t.add(fade(this.thought.guess, true, 1), 0.5);
 	// TODO: Agent should say something here based on how sure it is.
-
 	return t;
 };
 

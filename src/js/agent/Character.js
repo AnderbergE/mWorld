@@ -163,3 +163,59 @@ Character.prototype.moveTurn = function (direction) {
 	var newScale = (direction ? direction * Math.abs(this.scale.x) : -1 * this.scale.x);
 	return new TweenMax(this.scale, 0.2, { x: newScale });
 };
+
+
+/**
+ * Add a thought bubble to the agent. Must be called to use the "think" function.
+ * @param {number} The representation of the guess.
+ * @param {boolean} If the thought bubble should be to the right instead of left (default false).
+ */
+Character.prototype.addThought = function (x, y, representation, mirror) {
+	this.thought = game.add.group(this);
+	this.thought.x = x;
+	this.thought.y = y;
+	this.thought.visible = false;
+	this.thought.toScale = 1;
+	this.thought.bubble = this.thought.create(0, 0, 'thought');
+	this.thought.bubble.scale.x = 1;
+	this.thought.bubble.anchor.set(0.5);
+	this.thought.guess = new NumberButton(1, representation, {
+		x: -60,
+		y: -30,
+		min: -100, max: 100, disabled: true
+	});
+	this.thought.add(this.thought.guess);
+	if (mirror) {
+		this.mirrorThought();
+	}
+};
+
+Character.prototype.mirrorThought = function () {
+	this.thought.guess.x += (this.thought.guess.x > -60) ? -50 : 50;
+	this.thought.bubble.scale.x *= -1;
+};
+
+/**
+ * Animation: Think about the guessed number!
+ * NOTE: The addThought must have been called before this function.
+ * @param {boolean} If the agent should be silent while thinking (optional).
+ * @return {Object} The animation timeline.
+ */
+Character.prototype.think = function () {
+	if (typeof this.thought === 'undefined' || this.thought === null) {
+		return;
+	}
+
+	var t = new TimelineMax();
+	t.addCallback(function () {
+		this.thought.visible = true;
+		this.thought.guess.visible = false;
+	}, null, null, this);
+	t.add(TweenMax.fromTo(this.thought.scale, 1.5,
+		{ x: 0, y: 0 },
+		{ x: this.thought.toScale, y: this.thought.toScale, ease: Elastic.easeOut }
+	));
+	t.add(fade(this.thought.guess, true, 1), 0.5);
+
+	return t;
+};
