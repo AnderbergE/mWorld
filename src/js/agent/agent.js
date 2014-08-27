@@ -217,7 +217,7 @@ Agent.prototype.addThought = function (representation, right) {
 	this.thought.guess = new NumberButton(1, representation, {
 		x: right ? 60 : -60,
 		y: right ? 30 : -30,
-		min: 1, max: 100, disabled: true
+		min: -100, max: 100, disabled: true
 	});
 	this.thought.add(this.thought.guess);
 };
