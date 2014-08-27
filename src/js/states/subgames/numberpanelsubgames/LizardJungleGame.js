@@ -73,6 +73,9 @@ LizardJungleGame.prototype.create = function () {
 
 	// Setup lizard
 	this.lizard = new LizardJungleLizard(575, 500);
+	if (this.method === GLOBAL.METHOD.additionSubtraction) {
+		this.lizard.addThought(-100, -75, this.representation[0]);
+	}
 	this.gameGroup.add(this.lizard);
 
 
@@ -171,13 +174,21 @@ LizardJungleGame.prototype.startAbove = function (t) {
 };
 
 LizardJungleGame.prototype.startThink = function (t) {
-	return t;
+	t.addCallback(function () {
+		this.addToNumber = this.rnd.integerInRange(1, this.amount);
+		this.lizard.thought.guess.number = this.addToNumber;
+		this.updateButtons();
+	}, null, null, this);
+	t.add(this.lizard.think());
 };
 
 LizardJungleGame.prototype.runNumber = function (number, simulate) {
 	this.disable(true);
 	this.lizard.followPointer(false);
 	this.agent.eyesFollowObject(this.lizard.tounge.world);
+	if (this.lizard.thought) {
+		this.lizard.thought.visible = false;
+	}
 
 	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
 
@@ -217,7 +228,7 @@ LizardJungleGame.prototype.returnNone = function (number) {
 LizardJungleGame.prototype.returnToPreviousIfHigher = function (number, diff) {
 	var t = new TimelineMax();
 	if (diff > 0) {
-		t.addSound('lizardPlaceholder', this.lizard); // I think that is too high.
+		t.addSound('lizardPlaceholder'); // I think that is too high. Mouth is open, no animation.
 	} else {
 		t.add(this.returnNone(number));
 	}
@@ -227,7 +238,7 @@ LizardJungleGame.prototype.returnToPreviousIfHigher = function (number, diff) {
 LizardJungleGame.prototype.returnToPreviousIfLower = function (number, diff) {
 	var t = new TimelineMax();
 	if (diff < 0) {
-		t.addSound('lizardPlaceholder', this.lizard); // I think that is too low.
+		t.addSound('lizardPlaceholder'); // I think that is too low. Mouth is open, no animation.
 	} else {
 		t.add(this.returnNone(number));
 	}
