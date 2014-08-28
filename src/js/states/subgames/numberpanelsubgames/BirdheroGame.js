@@ -94,6 +94,10 @@ BirdheroGame.prototype.create = function () {
 	// Since the bird is in the elevator group, we need to offset for that when moving it.
 	this.bird = new BirdheroBird();
 	this.bird.visible = false;
+	if (this.method === GLOBAL.METHOD.additionSubtraction) {
+		this.bird.addThought(450, -250, this.representation[0], true);
+		this.bird.thought.toScale = 1.3;
+	}
 	this.elevator.add(this.bird);
 
 	var bucket = this.add.sprite(0, 0, 'birdhero', 'bucket', this.elevator);
@@ -300,14 +304,23 @@ BirdheroGame.prototype.startThink = function (silent, t) {
 		t.addSound(this.speech, this.bird, 'thisFloor1');
 		t.addLabel('showWings');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
+	t.addCallback(function () {
+		this.addToNumber = this.rnd.integerInRange(1, this.amount);
+		this.bird.thought.guess.number = this.addToNumber;
+		this.updateButtons();
+	}, null, null, this);
+	t.add(this.bird.think());
+	t.addSound(this.speech, this.bird, 'thisFloor2'); // This is where I think I should go.
 };
 
 BirdheroGame.prototype.runNumber = function (number, simulate) {
 	var origin = parseInt(this.elevator.text.text);
 	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
 	var branch = this.tree.branch[number-1];
+	if (this.bird.thought) {
+		this.bird.thought.visible = false;
+	}
 
 	var t = new TimelineMax();
 	t.skippable(); // TODO: Remove: this should not be skippable!
