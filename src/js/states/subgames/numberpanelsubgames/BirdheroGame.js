@@ -138,7 +138,8 @@ BirdheroGame.prototype.create = function () {
 					(_this.tree.branch[target-1].y + _this.tree.branch[target-1].visit().y - bucket.height*0.6)),
 				ease: Power1.easeInOut,
 				onComplete: function () {
-					_this.elevator.text.text = target.toString();
+					_this.atValue = target;
+					_this.elevator.text.text = _this.atValue.toString();
 				}
 			});
 		},
@@ -146,7 +147,7 @@ BirdheroGame.prototype.create = function () {
 		branch: function (target, direct, from) {
 			var t = new TimelineMax();
 
-			var currentFloor = from || parseInt(_this.elevator.text.text);
+			var currentFloor = from || _this.atValue;
 			if (currentFloor !== target) {
 				var dir =  currentFloor < target ? 1 : -1;
 
@@ -174,16 +175,6 @@ BirdheroGame.prototype.create = function () {
 		}
 	};
 
-	this.agent.moveTo = {
-		start: function () {
-			if (_this.agent.x === _this.pos.agent.stop.x &&
-				_this.agent.y === _this.pos.agent.stop.y) {
-				return new TweenMax(_this.agent);
-			}
-			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
-		}
-	};
-
 	/* Play music on the first mode that is not the intro. */
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 	function playMusic (mode) {
@@ -192,6 +183,7 @@ BirdheroGame.prototype.create = function () {
 			EventSystem.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
 		}
 	}
+
 
 	// Everything is set up! Blast off!
 	this.startGame();
@@ -315,7 +307,7 @@ BirdheroGame.prototype.startThink = function (silent, t) {
 };
 
 BirdheroGame.prototype.runNumber = function (number, simulate) {
-	var origin = parseInt(this.elevator.text.text);
+	var origin = this.atValue;
 	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
 	var branch = this.tree.branch[number-1];
 	if (this.bird.thought) {
@@ -367,15 +359,8 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 		t.add(this.doReturnFunction(number, origin, result));
 	}
 
-	if (this.isRelative) {
-		t.addCallback(function () {
-			this.addToNumber = parseInt(this.elevator.text.text);
-			this.updateButtons();
-		}, null, null, this);
-	}
-
 	t.addCallback(this.agent.setNeutral, null, null, this.agent);
-
+	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
 

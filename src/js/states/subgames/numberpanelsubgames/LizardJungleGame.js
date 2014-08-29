@@ -43,9 +43,6 @@ LizardJungleGame.prototype.preload = function () {
 LizardJungleGame.prototype.create = function () {
 	NumberPanelSubgame.prototype.create.call(this);
 
-	// This is used to know where the tounge is.
-	this.atValue = 0;
-
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
 	this.gameGroup.bringToTop(this.agent);
@@ -78,18 +75,6 @@ LizardJungleGame.prototype.create = function () {
 	}
 	this.gameGroup.add(this.lizard);
 
-
-	// Add Timeline/Tween functions
-	var _this = this; // Subscriptions do not have access to 'this' object
-	this.agent.moveTo = {
-		start: function () {
-			if (_this.agent.x === _this.pos.agent.stop.x &&
-				_this.agent.y === _this.pos.agent.stop.y) {
-				return new TweenMax(_this.agent);
-			}
-			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
-		}
-	};
 
 	// Everything is set up! Blast off!
 	this.startGame();
@@ -205,13 +190,7 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 		t.add(this.doReturnFunction(number, result));
 	}
 
-	if (this.isRelative) {
-		t.addCallback(function () {
-			this.addToNumber = parseInt(this.atValue);
-			this.updateButtons();
-		}, null, null, this);
-	}
-
+	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
 

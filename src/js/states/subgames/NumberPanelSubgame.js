@@ -20,12 +20,7 @@ function NumberPanelSubgame () {
  * returnToStart, returnNone, returnToPreviousIfHigher, returnToPreviousIfLower
  */
 NumberPanelSubgame.prototype.create = function () {
-	// Agent is added to the game in the superclass, so set up correct start point.
-	this.agent.x = this.pos.agent.start.x;
-	this.agent.y = this.pos.agent.start.y;
-	this.agent.scale.set(this.pos.agent.scale);
-	this.agent.visible = true;
-	this.agent.addThought(this.representation[0]);
+	var _this = this; // Subscriptions to not have access to 'this' object
 
 	// Setup gameplay differently depending on situation.
 	this.isRelative = false;
@@ -49,11 +44,32 @@ NumberPanelSubgame.prototype.create = function () {
 		this.isRelative = true;
 	}
 
-	// Add HUD
+	/* This is used to add to the number of the button pushes. */
 	/* This should be modified only when isRelative is set to true. */
 	this.addToNumber = 0;
+	
+	/* This should be used to save the current position. */
+	this.atValue = 0;
 
-	var _this = this; // Subscriptions to not have access to 'this' object
+
+	// Agent is added to the game in the superclass, but we set it up here.
+	this.agent.x = this.pos.agent.start.x;
+	this.agent.y = this.pos.agent.start.y;
+	this.agent.scale.set(this.pos.agent.scale);
+	this.agent.visible = true;
+	this.agent.addThought(this.representation[0]);
+
+	this.agent.moveTo = {
+		start: function () {
+			if (_this.agent.x === _this.pos.agent.stop.x &&
+				_this.agent.y === _this.pos.agent.stop.y) {
+				return new TweenMax(_this.agent);
+			}
+			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
+		}
+	};
+
+	// Add HUD
 	var options = this.getOptions();
 	options.buttons.method = this.method;
 	options.buttons.onClick = function (number) { _this.pushNumber(number); };
@@ -132,5 +148,13 @@ NumberPanelSubgame.prototype.updateButtons = function () {
 		this.buttons.setRange(1 - this.addToNumber, -1);
 	} else {
 		this.buttons.setRange(1 - this.addToNumber, this.amount - this.addToNumber);
+	}
+};
+
+/* Update the relative value */
+NumberPanelSubgame.prototype.updateRelative = function () {
+	if (this.isRelative) {
+		this.addToNumber = this.atValue;
+		this.updateButtons();
 	}
 };

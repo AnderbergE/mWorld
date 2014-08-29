@@ -37,9 +37,6 @@ BeeFlightGame.prototype.preload = function () {
 BeeFlightGame.prototype.create = function () {
 	NumberPanelSubgame.prototype.create.call(this);
 
-	// This is used to know where the bee is.
-	this.atValue = 0;
-
 	// Add music
 	this.add.audio('beeMusic', 1, true).play();
 
@@ -78,15 +75,6 @@ BeeFlightGame.prototype.create = function () {
 			t.add(_this.bee.move({ x: _this.flowers[number].x }, 3));
 			t.add(_this.bee.move({ y: _this.flowers[number].y }, 1));
 			return t;
-		}
-	};
-	this.agent.moveTo = {
-		start: function () {
-			if (_this.agent.x === _this.pos.agent.stop.x &&
-				_this.agent.y === _this.pos.agent.stop.y) {
-				return new TweenMax(_this.agent);
-			}
-			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
 		}
 	};
 
@@ -165,13 +153,7 @@ BeeFlightGame.prototype.runNumber = function (number) {
 		this.doReturnFunction(t, number, result);
 	}
 
-	if (this.isRelative) {
-		t.addCallback(function () {
-			this.addToNumber = parseInt(this.atValue);
-			this.updateButtons();
-		}, null, null, this);
-	}
-
+	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
 
