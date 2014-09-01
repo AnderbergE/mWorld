@@ -56,7 +56,8 @@ BeeFlightGame.prototype.create = function () {
 	// Setup bee
 	this.bee = new BeeFlightBee(this.pos.bee.x, this.pos.bee.y);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
-		this.bee.addThought(-100, -75, this.representation[0]);
+		this.bee.addThought(170, -75, this.representation[0], true);
+		this.bee.thought.toScale = 0.7;
 	}
 	this.gameGroup.add(this.bee);
 
@@ -112,6 +113,7 @@ BeeFlightGame.prototype.instructionIntro = function () {
 BeeFlightGame.prototype.newFlower = function () {
 	var t = new TimelineMax();
 	t.add(new TweenMax(this.flowers[this.currentNumber-1], 1, { tint: '0x33ffff' }));
+	this.doStartFunction(t);
 	return t;
 };
 

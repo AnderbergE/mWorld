@@ -167,6 +167,7 @@ Character.prototype.moveTurn = function (direction) {
 
 /**
  * Add a thought bubble to the agent. Must be called to use the "think" function.
+ * NOTE: You can change the scale for the think function by setting the toScale property.
  * @param {number} The representation of the guess.
  * @param {boolean} If the thought bubble should be to the right instead of left (default false).
  */
