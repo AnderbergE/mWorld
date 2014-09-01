@@ -87,7 +87,6 @@ Subgame.prototype.init = function (options) {
 
 	this.hudGroup = this.add.group();
 
-	//  TODO: Is there an easier way to disable all input, except the menu?
 	var disabler = new Cover('#ffffff', 0);
 	this.world.add(disabler);
 	this.disable = function (value) {
