@@ -160,13 +160,13 @@ GardenState.prototype.create = function () {
 	t.add(agent.move({ x: this.world.centerX }, 3));
 	/*
 	if (player.water > 0) {
-		if (anything grows) { // TODO
+		if (this.gardenData.fields.length > 0) {
 			t.addSound(speech, agent, 'whereTo');
 		} else {
 			t.addSound(speech, agent, 'haveWater');
 		}
 	} else {
-		if (anything grows) { // TODO
+		if (this.gardenData.fields.length > 0) {
 			t.addSound(speech, agent, 'welcomeBack'); // TODO: Perhaps a welcome back?
 		} else {
 			t.addSound(speech, agent, 'intro');
