@@ -11,10 +11,13 @@ function BeeFlightGame () {
 
 BeeFlightGame.prototype.pos = {
 	flowers: {
-		start: 300, stopOffset: -50
+		start: 350, stopOffset: -50
+	},
+	home: {
+		x: 110, y: 600
 	},
 	bee: {
-		x: 100, y: 300
+		x: 111, y: 300
 	},
 	agent: {
 		start: { x: -200, y: 700 },
@@ -40,6 +43,8 @@ BeeFlightGame.prototype.create = function () {
 
 	// Add background
 	this.add.sprite(0, 0, 'bee', 'bg', this.gameGroup);
+	var home = this.add.sprite(this.pos.home.x, this.pos.home.y, 'bee', 'home', this.gameGroup);
+	home.anchor.set(0.5, 1);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Setup flowers
@@ -52,7 +57,8 @@ BeeFlightGame.prototype.create = function () {
 	}
 
 	// Setup bee
-	this.bee = new BeeFlightBee(this.pos.bee.x, this.pos.bee.y);
+	this.bee = new BeeFlightBee(this.pos.home.x, this.pos.home.y);
+	this.bee.scale.set(this.pos.home.scale);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bee.addThought(170, -75, this.representation[0], true);
 		this.bee.thought.toScale = 0.7;
@@ -61,12 +67,16 @@ BeeFlightGame.prototype.create = function () {
 
 
 	// Add Timeline/Tween functions
-	var _this = this; // Subscriptions do not have access to 'this' object
+	var _this = this;
 	this.bee.moveTo = {
+		home: function () {
+			var t = new TimelineMax();
+			t.add(_this.bee.move(_this.pos.home, 3, 0.1));
+			return t;
+		},
 		start: function () {
 			var t = new TimelineMax();
-			t.add(_this.bee.move(_this.pos.bee, 3));
-			t.add(_this.bee.moveTurn(1));
+			t.add(_this.bee.move(_this.pos.bee, 3, 1));
 			return t;
 		},
 		flower: function (number) {
@@ -111,6 +121,7 @@ BeeFlightGame.prototype.instructionIntro = function () {
 BeeFlightGame.prototype.newFlower = function () {
 	var t = new TimelineMax();
 	t.add(new TweenMax(this.flowers[this.currentNumber-1], 1, { tint: '0x33ffff' }));
+	t.add(this.bee.moveTo.start());
 	this.doStartFunction(t);
 	return t;
 };
@@ -147,7 +158,7 @@ BeeFlightGame.prototype.runNumber = function (number) {
 	if (!result) { // Correct :)
 		t.addCallback(this.hideButtons, null, null, this);
 		t.add(new TweenMax(this.flowers[current], 1, { tint: '0xffffff' }));
-		t.add(this.bee.moveTo.start());
+		t.add(this.bee.moveTo.home());
 	} else { // Incorrect :(
 		t.add(new TweenMax(this.flowers[current], 1, { tint: '0xff33ff' }));
 		this.doReturnFunction(t, number, result);
@@ -160,6 +171,7 @@ BeeFlightGame.prototype.runNumber = function (number) {
 BeeFlightGame.prototype.returnToStart = function (t) {
 	this.atValue = 0;
 	t.add(this.bee.moveTo.start());
+	t.add(this.bee.moveTurn(1));
 };
 
 BeeFlightGame.prototype.returnNone = function (t, number) {
