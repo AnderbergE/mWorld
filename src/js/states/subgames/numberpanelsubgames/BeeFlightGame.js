@@ -14,10 +14,10 @@ BeeFlightGame.prototype.pos = {
 		start: 350, stopOffset: -50
 	},
 	home: {
-		x: 110, y: 600
+		x: 110, y: 575
 	},
 	bee: {
-		x: 111, y: 300
+		x: 120, y: 300
 	},
 	agent: {
 		start: { x: -200, y: 700 },
@@ -120,8 +120,10 @@ BeeFlightGame.prototype.instructionIntro = function () {
 
 BeeFlightGame.prototype.newFlower = function () {
 	var t = new TimelineMax();
-	t.add(new TweenMax(this.flowers[this.currentNumber-1], 1, { tint: '0x33ffff' }));
 	t.add(this.bee.moveTo.start());
+	t.addCallback(function () {
+		this.flowers[this.currentNumber - 1].frameName = 'flower' + this.currentNumber;
+	}, null, null, this);
 	this.doStartFunction(t);
 	return t;
 };
@@ -156,11 +158,12 @@ BeeFlightGame.prototype.runNumber = function (number) {
 	var t = new TimelineMax();
 	t.add(this.bee.moveTo.flower(number-1));
 	if (!result) { // Correct :)
-		t.addCallback(this.hideButtons, null, null, this);
-		t.add(new TweenMax(this.flowers[current], 1, { tint: '0xffffff' }));
+		t.addCallback(function () {
+			this.hideButtons();
+			this.flowers[current].frameName = 'flower';
+		}, null, null, this);
 		t.add(this.bee.moveTo.home());
 	} else { // Incorrect :(
-		t.add(new TweenMax(this.flowers[current], 1, { tint: '0xff33ff' }));
 		this.doReturnFunction(t, number, result);
 	}
 
