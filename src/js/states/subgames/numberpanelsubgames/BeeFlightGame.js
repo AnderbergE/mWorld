@@ -28,9 +28,7 @@ BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beeMusic', ['assets/audio/subgames/beeflight/music.ogg', 'assets/audio/subgames/beeflight/music.mp3']);
 	this.load.audio('beePlaceholder', LANG.SPEECH.AGENT.hmm);
 
-	this.load.image('beeBg',     'assets/img/subgames/beeflight/bg.png');
-	this.load.image('beeBody',   'assets/img/subgames/beeflight/humfrid.png');
-	this.load.image('beeFlower', 'assets/img/subgames/beeflight/flower.png');
+	this.load.atlasJSONHash('bee', 'assets/img/subgames/beeflight/atlas.png', 'assets/img/subgames/beeflight/atlas.json');
 };
 
 /* Phaser state function */
@@ -41,7 +39,7 @@ BeeFlightGame.prototype.create = function () {
 	this.add.audio('beeMusic', 1, true).play();
 
 	// Add background
-	this.add.sprite(0, 0, 'beeBg', null, this.gameGroup);
+	this.add.sprite(0, 0, 'bee', 'bg', this.gameGroup);
 	this.gameGroup.bringToTop(this.agent);
 
 	// Setup flowers
@@ -49,7 +47,7 @@ BeeFlightGame.prototype.create = function () {
 	var width = size / this.amount;
 	this.flowers = [];
 	for (var i = 0; i < this.amount; i++) {
-		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, 400, 'beeFlower', null, this.gameGroup));
+		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, 400, 'bee', 'flower', this.gameGroup));
 		this.flowers[i].anchor.set(0.5, 0);
 	}
 
@@ -257,6 +255,6 @@ function BeeFlightBee (x, y) {
 	this.x = x || 0;
 	this.y = y || 0;
 
-	this.body = game.add.sprite(0, 0, 'beeBody', null, this);
+	this.body = game.add.sprite(0, 0, 'bee', 'humfrid', this);
 	this.body.anchor.set(0.5);
 }
