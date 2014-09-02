@@ -16,6 +16,7 @@ BeeFlightGame.prototype.pos = {
 	home: {
 		x: 110, y: 575
 	},
+	homeScale: 0.2,
 	bee: {
 		x: 120, y: 300
 	},
@@ -58,7 +59,7 @@ BeeFlightGame.prototype.create = function () {
 
 	// Setup bee
 	this.bee = new BeeFlightBee(this.pos.home.x, this.pos.home.y);
-	this.bee.scale.set(this.pos.home.scale);
+	this.bee.scale.set(this.pos.homeScale);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bee.addThought(170, -75, this.representation[0], true);
 		this.bee.thought.toScale = 0.7;
@@ -71,7 +72,7 @@ BeeFlightGame.prototype.create = function () {
 	this.bee.moveTo = {
 		home: function () {
 			var t = new TimelineMax();
-			t.add(_this.bee.move(_this.pos.home, 3, 0.1));
+			t.add(_this.bee.move(_this.pos.home, 3, _this.pos.homeScale));
 			return t;
 		},
 		start: function () {
@@ -81,8 +82,12 @@ BeeFlightGame.prototype.create = function () {
 		},
 		flower: function (number) {
 			var t = new TimelineMax();
-			t.add(_this.bee.move({ x: _this.flowers[number].x }, 3));
-			t.add(_this.bee.move({ y: _this.flowers[number].y }, 1));
+			var flow = _this.flowers[number - 1];
+			if (_this.bee.y > 300) {
+				t.add(_this.bee.move({ y: _this.pos.bee.y }, 1));
+			}
+			t.add(_this.bee.move({ x: flow.x }, 2));
+			t.add(_this.bee.move({ y: flow.y }, 0.75));
 			return t;
 		}
 	};
@@ -156,7 +161,7 @@ BeeFlightGame.prototype.runNumber = function (number) {
 	var result = this.tryNumber(number);
 
 	var t = new TimelineMax();
-	t.add(this.bee.moveTo.flower(number-1));
+	t.add(this.bee.moveTo.flower(number));
 	if (!result) { // Correct :)
 		t.addCallback(function () {
 			this.hideButtons();
@@ -184,7 +189,7 @@ BeeFlightGame.prototype.returnNone = function (t, number) {
 
 BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
 	if (diff > 0) {
-		t.addSound('beePlaceholder'); // I think that is too high. Mouth is open, no animation.
+		t.add(this.bee.moveTo.flower(this.atValue));
 	} else {
 		this.returnNone(t, number);
 	}
@@ -192,7 +197,7 @@ BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
 
 BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 	if (diff < 0) {
-		t.addSound('beePlaceholder'); // I think that is too low. Mouth is open, no animation.
+		t.add(this.bee.moveTo.flower(this.atValue));
 	} else {
 		this.returnNone(t, number);
 	}
