@@ -40,7 +40,7 @@ function ButtonPanel (amount, representations, options) {
 	/* Set range of the panel, which will create the buttons. */
 	options.min = options.min || 1;
 	this.setRange(options.min, options.max || (options.min + amount - 1));
-	
+
 	return this;
 }
 
@@ -73,6 +73,7 @@ ButtonPanel.prototype._createButtons = function () {
 		buttonOptions.doNotAdapt = true;
 		var change = new NumberButton(1, this.representations, buttonOptions);
 		buttonOptions.keepDown = false;
+		buttonOptions[this.vertical ? 'x' : 'y'] = ((this.representations.length - 1) * buttonSize)/2;
 		buttonOptions.onClick = function () { change.number--; };
 		this.add(new TextButton('-', buttonOptions));
 		this.add(change);
@@ -118,12 +119,19 @@ ButtonPanel.prototype._updateButtons = function () {
 		button.min = this.min;
 		button.max = this.max;
 	} else {
-		var val = this.min;
+		var val, dir;
+		if (this.reversed) {
+			val = this.max;
+			dir = -1;
+		} else {
+			val = this.min;
+			dir = 1;
+		}
 		for (var key in this.children) {
 			this.children[key].min = this.min;
 			this.children[key].max = this.max;
 			this.children[key].number = val;
-			val++;
+			val += dir;
 		}
 	}
 };

@@ -117,11 +117,9 @@ BootState.prototype.preload = function () {
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	/* Agent related assets */
-	for (var key in GLOBAL.AGENT) {
-		this.load.atlasJSONHash(GLOBAL.AGENT[key].prototype.id,
-			'assets/img/agent/' + GLOBAL.AGENT[key].prototype.id + '/atlas.png',
-			'assets/img/agent/' + GLOBAL.AGENT[key].prototype.id + '/atlas.json');
-	}
+	this.load.atlasJSONHash(Panda.prototype.id, 'assets/img/agent/panda/atlas.png', 'assets/img/agent/panda/atlas.json');
+	this.load.atlasJSONHash(Hedgehog.prototype.id, 'assets/img/agent/hedgehog/atlas.png', 'assets/img/agent/hedgehog/atlas.json');
+	this.load.atlasJSONHash(Mouse.prototype.id, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
 
 	/* Common game assets */
 	this.load.image('thought',    'assets/img/agent/thoughtbubble.png');

@@ -53,10 +53,12 @@ AgentSetupState.prototype.create = function () {
 	}
 
 	function fadeInterface (value) {
+		confirm.text = LANG.TEXT.confirmFriend + a.agentName + '?';
 		fade(title, !value, value ? 0.2 : 0.5);
-		fade(color, value, !value ? 0.2 : 0.5);
+		fade(confirm, value, !value ? 0.2 : 0.5);
 		fade(noToAgent, value);
 		fade(yesToAgent, value);
+		fade(color, value);
 	}
 
 	function pickAgent () {
@@ -87,36 +89,6 @@ AgentSetupState.prototype.create = function () {
 
 
 	this.add.image(0, 0, 'entryBg');
-	var title = this.add.text(this.world.centerX, 75, LANG.TEXT.pickFriend, fontStyle);
-	title.anchor.set(0.5);
-
-	var color = new TextButton(LANG.TEXT.changeColor, {
-		x: this.world.centerX - 150,
-		y: 25,
-		fontSize: 30,
-		onClick: function () { a.tint = game.rnd.integerInRange(0x000000, 0xffffff); }
-	});
-	color.visible = false;
-	this.world.add(color);
-
-	var noToAgent = new NumberButton(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		x: this.world.centerX - 275,
-		y: this.world.centerY*0.6,
-		size: 75,
-		onClick: cancelAgent
-	});
-	noToAgent.visible = false;
-	this.world.add(noToAgent);
-
-	var yesToAgent = new NumberButton(1, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		x: this.world.centerX + 200,
-		y: this.world.centerY*0.6,
-		size: 75,
-		onClick: chooseAgent
-	});
-	yesToAgent.visible = false;
-	this.world.add(yesToAgent);
-
 
 	var agents = this.add.group();
 	agents.x = spacing;
@@ -135,6 +107,39 @@ AgentSetupState.prototype.create = function () {
 		agents.add(a);
 	}
 
+	var title = this.add.text(this.world.centerX, 75, LANG.TEXT.pickFriend, fontStyle);
+	title.anchor.set(0.5);
+
+	var confirm = this.add.text(this.world.centerX, 75, '', fontStyle);
+	confirm.anchor.set(0.5);
+	confirm.visible = false;
+
+	var noToAgent = new NumberButton(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
+		x: this.world.centerX - 275,
+		y: this.world.centerY*0.5,
+		size: 75,
+		onClick: cancelAgent
+	});
+	noToAgent.visible = false;
+	this.world.add(noToAgent);
+
+	var yesToAgent = new NumberButton(1, GLOBAL.NUMBER_REPRESENTATION.yesno, {
+		x: this.world.centerX + 200,
+		y: this.world.centerY*0.5,
+		size: 75,
+		onClick: chooseAgent
+	});
+	yesToAgent.visible = false;
+	this.world.add(yesToAgent);
+
+	var color = new TextButton(LANG.TEXT.changeColor, {
+		x: this.world.centerX - 150,
+		y: this.world.height - 75,
+		fontSize: 30,
+		onClick: function () { a.tint = game.rnd.integerInRange(0x000000, 0xffffff); }
+	});
+	color.visible = false;
+	this.world.add(color);
 
 	this.world.add(new Menu());
 

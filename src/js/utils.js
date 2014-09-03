@@ -133,6 +133,24 @@ function fade (what, typ, duration, to) {
 }
 
 /**
+ * Easily tween an objects tint. It tweens from the current tint value.
+ * @param {Object} what - The object to fade, needs to have an alpha property.
+ * @param {number} toColor - The color to fade to.
+ * @param {number} duration - Tween duration in seconds (default: 1).
+ * @return {Object} The animation TweenMax.
+ */
+function tweenTint (what, toColor, duration) {
+	duration = duration || 1;
+
+	return TweenMax.to(what, duration, {
+		onUpdate: function (start, end) {
+			what.tint = Phaser.Color.interpolateColor(start, end, 255, Math.floor(255*this.progress()));
+		},
+		onUpdateParams: [what.tint, toColor]
+	});
+}
+
+/**
  * Easily create an audio sheet.
  * @param {string} key - The key of the audio object.
  * @param {Object} markers - The Markers of the audio object.
@@ -159,6 +177,21 @@ function onShutDown () {
 }
 
 /**
+ * Randomize array element order in-place.
+ * Using Fisher-Yates shuffle algorithm.
+ * @param {Array} The array to shuffle. (Use .splice(0) if you need to copy an array.)
+ */
+Phaser.RandomDataGenerator.prototype.shuffle = function (array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+};
+
+/**
  * Check if all sound files have been decoded.
  * NOTE: This will not start decoding. So if you turn off autodecode you
  * need to start it yourself.
@@ -175,6 +208,8 @@ Phaser.SoundManager.prototype.checkSoundsDecoded = function () {
 
 /**
  * Run a function when all sounds have been decoded.
+ * NOTE: If you debug between loading audio and decoding, this function does
+ * not work. Reason is unknown.
  * @param {function} func - The function to run.
  */
 Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {

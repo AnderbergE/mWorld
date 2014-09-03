@@ -201,6 +201,36 @@ Agent.prototype.setSad = function () {
 	this.mouth.frameName = 'mouth3';
 };
 
+/**
+ * Add a thought bubble to the agent. Must be called to use the "think" function.
+ * @param {number} The representation of the guess.
+ * @param {boolean} If the thought bubble should be to the right instead of left (default false).
+ */
+Agent.prototype.addThought = function (representation, right) {
+	Character.prototype.addThought.call(this, right ? 550 : -550, -475, representation, right);
+	this.thought.toScale = 2;
+};
+
+/**
+ * Animation: Think about the guessed number!
+ * NOTE: The addThought must have been called before this function.
+ * @param {boolean} If the agent should be silent while thinking (optional).
+ * @return {Object} The animation timeline.
+ */
+Agent.prototype.think = function (silent) {
+	if (typeof this.thought === 'undefined' || this.thought === null) {
+		return;
+	}
+
+	var t = Character.prototype.think.call(this);
+	t.addCallback(function () { this.thought.guess.number = this.lastGuess; }, 0, null, this);
+	if (!silent) {
+		void(silent);
+		// TODO: t.addSound(this.speech, this, 'agentHmm');
+	}
+	// TODO: Agent should say something here based on how sure it is.
+	return t;
+};
 
 /**
  * Animation: Pump it up yeah!
@@ -266,54 +296,40 @@ Agent.prototype.wave = function (duration, arm) {
 /**
  * Animation: Water with a water can.
  * @param {number} Duration in seconds (default 3).
- * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0).
+ * @param {number} 1 < left arm, otherwise right arm (default 0).
  * @return {Object} The animation timeline.
  */
 Agent.prototype.water = function (duration, arm) {
 	duration = duration || 3;
 	arm = arm || 0;
+	var obj, dir;
+	if (arm < 1) {
+		obj = this.leftArm;
+		dir = 1;
+	} else {
+		obj = this.rightArm;
+		dir = -1;
+	}
 
-	var origin = this.coords.anim.arm.origin;
-	var water = this.coords.anim.arm.water;
+	var w  = new WaterCan(-obj.children[0].width + dir * 60, -100);
+	w.scale.set(-dir * 3, 3);
+	w.rotation = 0;
+	w.visible = false;
+	obj.add(w);
 
-	// TODO: This could probably be refactored.
 	var t = new TimelineMax();
-	if (arm <= 0) {
-		var w1 = new WaterCan(-this.leftArm.children[0].width+60, -100);
-		w1.scale.set(-3, 3);
-		w1.rotation = 0;
-		w1.visible = false;
-		this.leftArm.add(w1);
-		t.add(new TweenMax(this.leftArm, water.durBack, { rotation: water.back, ease: Power1.easeIn }));
-		t.addCallback(function () { w1.visible = true; });
-		t.add(new TweenMax(this.leftArm, water.durUp, { rotation: water.angle, ease: Power1.easeOut }));
-		t.add(new TweenMax(w1, water.durCan, { rotation: water.canAngle }));
-		t.addCallback(this.eyesFollowObject, null, [w1.can], this);
-		t.addLabel('watering');
-		t.add(w1.pour(duration));
-		t.addCallback(this.eyesStopFollow, null, null, this);
-		t.add(new TweenMax(this.leftArm, water.durUp, { rotation: water.back, ease: Power1.easeIn }));
-		t.addCallback(function () { w1.destroy(); });
-		t.add(new TweenMax(this.leftArm, water.durBack, { rotation: origin, ease: Power1.easeOut }));
-	}
-	if (arm >= 0) {
-		var w2 = new WaterCan(-this.rightArm.children[0].width-60, -100);
-		w2.scale.set(3, 3);
-		w2.rotation = 0;
-		w2.visible = false;
-		this.rightArm.add(w2);
-		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -water.back, ease: Power1.easeIn }));
-		t.addCallback(function () { w2.visible = true; });
-		t.add(new TweenMax(this.rightArm, water.durUp, { rotation: -water.angle, ease: Power1.easeOut }));
-		t.add(new TweenMax(w2, water.durCan, { rotation: -water.canAngle }));
-		t.addCallback(this.eyesFollowObject, null, [w2.can], this);
-		t.addLabel('watering');
-		t.add(w2.pour(duration));
-		t.addCallback(this.eyesStopFollow, null, null, this);
-		t.add(new TweenMax(this.rightArm, water.durUp, { rotation: -water.back, ease: Power1.easeIn }));
-		t.addCallback(function () { w2.destroy(); });
-		t.add(new TweenMax(this.rightArm, water.durBack, { rotation: -origin, ease: Power1.easeOut }));
-	}
+	var water = this.coords.anim.arm.water;
+	t.add(new TweenMax(obj, water.durBack, { rotation: dir * water.back, ease: Power1.easeIn }));
+	t.addCallback(function () { w.visible = true; });
+	t.add(new TweenMax(obj, water.durUp, { rotation: dir * water.angle, ease: Power1.easeOut }));
+	t.add(new TweenMax(w, water.durCan, { rotation: dir * water.canAngle }));
+	t.addCallback(this.eyesFollowObject, null, [w.can], this);
+	t.addLabel('watering');
+	t.add(w.pour(duration));
+	t.addCallback(this.eyesStopFollow, null, null, this);
+	t.add(new TweenMax(obj, water.durUp, { rotation: dir * water.back, ease: Power1.easeIn }));
+	t.addCallback(function () { w.destroy(); });
+	t.add(new TweenMax(obj, water.durBack, { rotation: dir * this.coords.anim.arm.origin, ease: Power1.easeOut }));
 	return t;
 };
 

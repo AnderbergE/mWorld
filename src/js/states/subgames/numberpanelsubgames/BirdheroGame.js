@@ -3,11 +3,37 @@
 /* Representations: All
 /* Range:           1--9
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-BirdheroGame.prototype = Object.create(Subgame.prototype);
+BirdheroGame.prototype = Object.create(NumberPanelSubgame.prototype);
 BirdheroGame.prototype.constructor = BirdheroGame;
 function BirdheroGame () {
-	Subgame.call(this); // Call parent constructor.
+	NumberPanelSubgame.call(this); // Call parent constructor.
 }
+
+/* Position coordinates for the game */
+BirdheroGame.prototype.pos = {
+	tree: {
+		x: 640, y: 15, center: 140,
+		branch: { start: 500, end: 70 },
+		elevator: -60
+	},
+	agent: {
+		start: { x: 250, y: 950 },
+		stop: { x: 450, y: 500 },
+		scale: 0.25
+	},
+	bird: {
+		start: { x: -150, y: 700 },
+		stop: { x: 180, y: 550 },
+		scale: 0.3, elevator: 0.135, small: 0.06
+	}
+};
+
+/* Do not use tint below 0x111120, or 0xXXXX20, it will not work on the bird */
+BirdheroGame.prototype.tintBank = [
+	0xff8888, 0x77ee77, 0x8888ff, 0xfed020, 0xfedcba,
+	0x11abba, 0xabcdef, 0xffffff, 0xed88ba
+];
+
 
 /* Phaser state function */
 BirdheroGame.prototype.preload = function () {
@@ -24,30 +50,10 @@ BirdheroGame.prototype.preload = function () {
 
 /* Phaser state function */
 BirdheroGame.prototype.create = function () {
-	var _this = this; // Subscriptions to not have access to 'this' object
+	NumberPanelSubgame.prototype.create.call(this);
 
-	/* Setup gameplay differently depending on situation. */
-	this.doInstructions = true;
-	this.isRelative = false;
-	if (this.method === GLOBAL.METHOD.count) {
-		this.doStartFunction = this.startStop;
-		this.doReturnFunction = this.rideReturn;
-	} else if (this.method === GLOBAL.METHOD.incrementalSteps) {
-		this.doStartFunction = this.startStop;
-		this.doReturnFunction = this.rideNoReturn;
-	} else if (this.method === GLOBAL.METHOD.addition) {
-		this.doStartFunction = this.startBelow;
-		this.doReturnFunction = this.rideToPreviousIfHigher;
-		this.isRelative = true;
-	} else if (this.method === GLOBAL.METHOD.subtraction) {
-		this.doStartFunction = this.startAbove;
-		this.doReturnFunction = this.rideToPreviousIfLower;
-		this.isRelative = true;
-	} else {
-		this.doStartFunction = this.startThink;
-		this.doReturnFunction = this.rideNoReturn;
-		this.isRelative = true;
-	}
+	/* Setup tints by randomising those in the bank. */
+	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
 
 	// Add music and sounds
 	var elevatorAudio = this.add.audio('birdheroElevator', 1);
@@ -55,27 +61,10 @@ BirdheroGame.prototype.create = function () {
 	var elevatorAudioDown = this.add.audio('birdheroElevatorDown', 1);
 	this.speech = createAudioSheet('birdheroSpeech', LANG.SPEECH.birdhero.markers);
 
-
 	// Add background
 	this.add.sprite(0, 0, 'birdhero', 'bg', this.gameGroup);
-
-	// Agent is added to the game in the superclass, so set up correct start point.
-	this.agent.x = this.pos.agent.start.x;
-	this.agent.y = this.pos.agent.start.y;
-	this.agent.scale.set(this.pos.agent.scale);
-	this.agent.visible = true;
-	// Adding thought bubble that is used in the agent try mode.
-	this.agent.thought = this.add.group(this.gameGroup);
-	this.agent.thought.x = this.pos.agent.stop.x + this.pos.agent.thought.x;
-	this.agent.thought.y = this.pos.agent.stop.y + this.pos.agent.thought.y;
-	this.agent.thought.visible = false;
-	var thoughtBubble = this.add.sprite(0, 0, 'thought', null, this.agent.thought);
-	thoughtBubble.anchor.set(0.5);
-	this.agent.thought.guess = new NumberButton(1, this.representation[0], {
-		x: -60, y: -30, min: 1, max: this.amount, disabled: true
-	});
-	this.agent.thought.add(this.agent.thought.guess);
 	this.gameGroup.bringToTop(this.agent);
+
 
 	// Setup tree and its branches
 	this.add.sprite(this.pos.tree.x-90, this.pos.tree.y-25, 'birdhero', 'crown', this.gameGroup);
@@ -105,12 +94,11 @@ BirdheroGame.prototype.create = function () {
 	// Since the bird is in the elevator group, we need to offset for that when moving it.
 	this.bird = new BirdheroBird();
 	this.bird.visible = false;
+	if (this.method === GLOBAL.METHOD.additionSubtraction) {
+		this.bird.addThought(450, -250, this.representation[0], true);
+		this.bird.thought.toScale = 1.3;
+	}
 	this.elevator.add(this.bird);
-	// Calculate positions for bird based on elevator.
-	this.pos.bird.start.x -= this.elevator.x;
-	this.pos.bird.start.y -= this.elevator.y;
-	this.pos.bird.stop.x -= this.elevator.x;
-	this.pos.bird.stop.y -= this.elevator.y;
 
 	var bucket = this.add.sprite(0, 0, 'birdhero', 'bucket', this.elevator);
 	bucket.scale.set(1.2);
@@ -123,9 +111,10 @@ BirdheroGame.prototype.create = function () {
 
 
 	// Add Timeline/Tween functions
+	var _this = this; // Subscriptions to not have access to 'this' object
 	this.bird.moveTo = {
 		initial: function () {
-			return _this.bird.move({ x: _this.pos.bird.stop.x, y: _this.pos.bird.stop.y }, 2, _this.pos.bird.scale);
+			return _this.bird.move({ x: _this.pos.bird.stop.x - _this.elevator.x, y: _this.pos.bird.stop.y - _this.elevator.origin }, 2, _this.pos.bird.scale);
 		},
 		elevator: function () {
 			return _this.bird.move({ x: 0, y: bucket.height*0.5 }, 2, _this.pos.bird.small);
@@ -149,7 +138,8 @@ BirdheroGame.prototype.create = function () {
 					(_this.tree.branch[target-1].y + _this.tree.branch[target-1].visit().y - bucket.height*0.6)),
 				ease: Power1.easeInOut,
 				onComplete: function () {
-					_this.elevator.text.text = target.toString();
+					_this.atValue = target;
+					_this.elevator.text.text = _this.atValue.toString();
 				}
 			});
 		},
@@ -157,7 +147,7 @@ BirdheroGame.prototype.create = function () {
 		branch: function (target, direct, from) {
 			var t = new TimelineMax();
 
-			var currentFloor = from || parseInt(_this.elevator.text.text);
+			var currentFloor = from || _this.atValue;
 			if (currentFloor !== target) {
 				var dir =  currentFloor < target ? 1 : -1;
 
@@ -185,47 +175,6 @@ BirdheroGame.prototype.create = function () {
 		}
 	};
 
-	this.agent.moveTo = {
-		start: function () {
-			if (_this.agent.x === _this.pos.agent.stop.x &&
-				_this.agent.y === _this.pos.agent.stop.y) {
-				return new TweenMax(_this.agent);
-			}
-			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
-		}
-	};
-
-
-	// Add HUD
-	function pushNumber (number) {
-		return _this.rideElevator(number + _this.addToNumber)
-			.addCallback(_this.nextRound, null, null, _this);
-	}
-	/* This is modified only when isRelative is set to true. */
-	this.addToNumber = 0;
-
-	this.buttons = new ButtonPanel(this.amount, this.representation, {
-		method: this.method,
-		y: this.world.height-(this.representation.length*75)-25,
-		onClick: pushNumber
-	});
-	this.buttons.visible = false;
-	this.hudGroup.add(this.buttons);
-
-	this.yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		y: this.world.height-100,
-		onClick: function (value) {
-			if (!value) {
-				_this.agent.say(_this.speech).play('agentCorrected');
-				_this.showNumbers();
-			}
-			else { pushNumber(_this.agent.lastGuess); }
-		}
-	});
-	this.yesnos.visible = false;
-	this.hudGroup.add(this.yesnos);
-
-
 	/* Play music on the first mode that is not the intro. */
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 	function playMusic (mode) {
@@ -235,37 +184,26 @@ BirdheroGame.prototype.create = function () {
 		}
 	}
 
+
 	// Everything is set up! Blast off!
 	this.startGame();
 };
 
-
-BirdheroGame.prototype.pos = {
-	tree: {
-		x: 640, y: 15, center: 140,
-		branch: { start: 500, end: 70 },
-		elevator: -60
-	},
-	agent: {
-		start: { x: 250, y: 950 },
-		stop: { x: 450, y: 500 },
-		scale: 0.25,
-		thought: { x: -150, y: -100, scale: 0.5 } // offset to agent
-	},
-	bird: {
-		start: { x: -150, y: 700 },
-		stop: { x: 180, y: 550 },
-		scale: 0.3, elevator: 0.135, small: 0.06
-	}
+BirdheroGame.prototype.getOptions = function () {
+	return {
+		buttons: {
+			y: this.world.height - (this.representation.length*75) - 25
+		},
+		yesnos: {
+			y: this.world.height - 100
+		}
+	};
 };
 
-/* Do not use tint below 0x111112, or 0xXXXX12, it will not work on the bird */
-BirdheroGame.prototype.tint = [
-	0xff8888, 0x77ee77, 0x8888ff, 0xfed012, 0xfedcba,
-	0x11abba, 0xabcdef, 0xffffff, 0xed88ba
-];
-
-
+/**
+ * Zoom in on a certain place.
+ * @param {number} ins - 1 = the start pos, 2 = the tree, else zoom out.
+ */
 BirdheroGame.prototype.zoom = function (ins) {
 	var t = new TimelineMax();
 	if (ins === 1) {
@@ -305,76 +243,14 @@ BirdheroGame.prototype.instructionAgentTry = function () {
 	return t;
 };
 
-/* Have the agent guess a number */
-BirdheroGame.prototype.agentGuess = function () {
-	this.agent.guessNumber(this.currentNumber, 1, this.amount);
-
-	var t = new TimelineMax({
-		onStart: function () {
-			this.agent.thought.visible = true;
-			this.agent.thought.guess.visible = false;
-			this.agent.thought.guess.number = this.agent.lastGuess;
-		},
-		onStartScope: this
-	});
-	t.addSound(this.speech, this.agent, 'agentHmm');
-	t.add(TweenMax.fromTo(this.agent.thought.scale, 1.5,
-		{ x: 0, y: 0 },
-		{ x: this.pos.agent.thought.scale, y: this.pos.agent.thought.scale, ease: Elastic.easeOut }
-	), 0);
-	t.add(fade(this.agent.thought.guess, true, 1), 0.5);
-	// TODO: Agent should say something here based on how sure it is.
-
-	return t;
-};
-
-/* Show the number panel, hide the yes/no panel and enable input */
-BirdheroGame.prototype.showNumbers = function () {
-	this.disable(true);
-	this.buttons.reset();
-	fade(this.yesnos, false);
-	fade(this.buttons, true).eventCallback('onComplete', this.disable, false, this);
-
-	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
-};
-
-/* Show the yes/no panel, hide the number panel and enable input */
-BirdheroGame.prototype.showYesnos = function () {
-	this.disable(true);
-	this.yesnos.reset();
-	fade(this.buttons, false);
-	fade(this.yesnos, true).eventCallback('onComplete', this.disable, false, this);
-
-	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
-};
-
-/* Hide the number and yes/no panel */
-BirdheroGame.prototype.hideButtons = function () {
-	this.disable(true);
-	fade(this.buttons, false);
-	fade(this.yesnos, false);
-
-	if (this.agent.visible) { this.agent.eyesStopFollow(); }
-};
-
-BirdheroGame.prototype.updateButtons = function () {
-	if (this.method === GLOBAL.METHOD.addition) {
-		this.buttons.setRange(1, this.amount - this.addToNumber);
-	} else if (this.method === GLOBAL.METHOD.subtraction) {
-		this.buttons.setRange(1 - this.addToNumber, -1);
-	} else {
-		this.buttons.setRange(1 - this.addToNumber, this.amount - this.addToNumber);
-	}
-};
-
 /* Start a new round, aka: introduce a new bird */
 BirdheroGame.prototype.newRound = function (silent) {
 	var t = new TimelineMax();
 	t.addCallback(function () {
 		this.bird.number = this.currentNumber;
 		this.bird.tint = this.tint[this.bird.number - 1];
-		this.bird.x = this.pos.bird.start.x;
-		this.bird.y = this.pos.bird.start.y;
+		this.bird.x = this.pos.bird.start.x - this.elevator.x;
+		this.bird.y = this.pos.bird.start.y - this.elevator.origin;
 		this.bird.scale.set(this.pos.bird.scale);
 		this.bird.visible = true;
 	}, null, null, this);
@@ -382,6 +258,7 @@ BirdheroGame.prototype.newRound = function (silent) {
 	t.add(this.zoom(1), 0);
 	t.add(this.bird.moveTo.initial(), 0);
 
+	// We supply the tween as a parameter to get the labels correct.
 	this.doStartFunction(silent, t);
 
 	return t;
@@ -394,47 +271,48 @@ BirdheroGame.prototype.startStop = function (silent, t) {
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
 BirdheroGame.prototype.startBelow = function (silent, t) {
-	t.add(this.rideElevator(this.rnd.integerInRange(1, this.currentNumber - 1)));
+	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
 	if (!silent) {
 		t.addLabel('showWings');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
 BirdheroGame.prototype.startAbove = function (silent, t) {
-	t.add(this.rideElevator(this.rnd.integerInRange(this.currentNumber + 1, this.amount)));
+	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
 	if (!silent) {
 		t.addLabel('showWings');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
 		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
 };
 
 BirdheroGame.prototype.startThink = function (silent, t) {
-	t.addCallback(function () {
-		this.addToNumber = 0;
-		this.updateButtons();
-	}, null, null, this);
 	if (!silent) {
 		t.addSound(this.speech, this.bird, 'thisFloor1');
 		t.addLabel('showWings');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addSound(this.speech, this.bird, 'thisFloor2');
 	}
-	return t;
+	t.addCallback(function () {
+		this.addToNumber = this.rnd.integerInRange(1, this.amount);
+		this.bird.thought.guess.number = this.addToNumber;
+		this.updateButtons();
+	}, null, null, this);
+	t.add(this.bird.think());
+	t.addSound(this.speech, this.bird, 'thisFloor2'); // This is where I think I should go.
 };
 
-BirdheroGame.prototype.rideElevator = function (number) {
-	var origin = parseInt(this.elevator.text.text);
-	var result = this.tryNumber(number);
+BirdheroGame.prototype.runNumber = function (number, simulate) {
+	var origin = this.atValue;
+	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
 	var branch = this.tree.branch[number-1];
+	if (this.bird.thought) {
+		this.bird.thought.visible = false;
+	}
 
 	var t = new TimelineMax();
 	t.skippable(); // TODO: Remove: this should not be skippable!
@@ -479,21 +357,14 @@ BirdheroGame.prototype.rideElevator = function (number) {
 		t.add(this.bird.moveTo.peak(true));
 
 		t.add(this.doReturnFunction(number, origin, result));
-
-		if (this.isRelative) {
-			t.addCallback(function () {
-				this.addToNumber = parseInt(this.elevator.text.text);
-				this.updateButtons();
-			}, null, null, this);
-		}
 	}
 
 	t.addCallback(this.agent.setNeutral, null, null, this.agent);
-
+	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
 
-BirdheroGame.prototype.rideReturn = function (from) {
+BirdheroGame.prototype.returnToStart = function (from) {
 	var t = new TimelineMax();
 	t.add(this.elevator.moveTo.branch(0, true, from));
 	t.add(this.bird.moveTo.peak(false));
@@ -504,21 +375,21 @@ BirdheroGame.prototype.rideReturn = function (from) {
 	return t;
 };
 
-BirdheroGame.prototype.rideNoReturn = function () {
+BirdheroGame.prototype.returnNone = function () {
 	return this.zoom(2);
 };
 
-BirdheroGame.prototype.rideToPreviousIfHigher = function (from, to, diff) {
+BirdheroGame.prototype.returnToPreviousIfHigher = function (from, to, diff) {
 	var t = new TimelineMax();
-	t.add(this.rideNoReturn());
+	t.add(this.returnNone());
 	if (diff > 0) {
 		t.add(this.elevator.moveTo.branch(to, true, from), 0);
 	}
 	return t;
 };
 
-BirdheroGame.prototype.rideToPreviousIfLower = function (from, to, diff) {
-	return this.rideToPreviousIfHigher(from, to, -diff);
+BirdheroGame.prototype.returnToPreviousIfLower = function (from, to, diff) {
+	return this.returnToPreviousIfHigher(from, to, -diff);
 };
 
 
@@ -858,7 +729,7 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 
 		/* For some reason the tint need to be changed to update the frame. */
 		// TODO: Update this when issue is solved in Phaser.
-		this.tint += this.tint % 2 === 0 ? 1 : -1;
+		this.tint -= 1;
 	}
 });
 

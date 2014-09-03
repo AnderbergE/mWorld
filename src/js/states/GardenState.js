@@ -160,13 +160,13 @@ GardenState.prototype.create = function () {
 	t.add(agent.move({ x: this.world.centerX }, 3));
 	/*
 	if (player.water > 0) {
-		if (anything grows) { // TODO
+		if (this.gardenData.fields.length > 0) {
 			t.addSound(speech, agent, 'whereTo');
 		} else {
 			t.addSound(speech, agent, 'haveWater');
 		}
 	} else {
-		if (anything grows) { // TODO
+		if (this.gardenData.fields.length > 0) {
 			t.addSound(speech, agent, 'welcomeBack'); // TODO: Perhaps a welcome back?
 		} else {
 			t.addSound(speech, agent, 'intro');
@@ -288,13 +288,13 @@ GardenPlant.prototype.down = function () {
 
 	/* The interface for the plant is set up when needed. */
 	if (!this.infoGroup) {
-		// TODO: A lot of hard coded values here dude...
+		var height = 100;
 		this.infoGroup = game.add.group(this);
 		this.infoGroup.x = 0;
-		this.infoGroup.y = -100;
+		this.infoGroup.y = -height;
 		this.infoGroup.visible = false;
 
-		var bmd = game.add.bitmapData(this.width, 100);
+		var bmd = game.add.bitmapData(this.width, height);
 		bmd.ctx.fillStyle = '#ffffff';
 		bmd.ctx.globalAlpha = 0.5;
 		bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
@@ -302,9 +302,9 @@ GardenPlant.prototype.down = function () {
 
 		/* The button to push when adding water. */
 		this.waterButton = new SpriteButton('watercan', null, {
-			x: this.width - 90,
+			x: this.width - (height - 10),
 			y: 10,
-			size: 80,
+			size: height - 20,
 			keepDown: true,
 			onClick: function () {
 				/* Water is added to the plant when animation runs. */
@@ -316,7 +316,7 @@ GardenPlant.prototype.down = function () {
 		/* Water management */
 		var maxLevel = function () {
 			_this.waterButton.destroy();
-			game.add.text(_this.width/2, 50, LANG.TEXT.maxLevel, {
+			game.add.text(_this.width/2, height/2, LANG.TEXT.maxLevel, {
 				font: '60pt ' +  GLOBAL.FONT,
 				fill: '#5555ff'
 			}, _this.infoGroup).anchor.set(0.5);
