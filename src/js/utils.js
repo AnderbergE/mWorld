@@ -208,6 +208,8 @@ Phaser.SoundManager.prototype.checkSoundsDecoded = function () {
 
 /**
  * Run a function when all sounds have been decoded.
+ * NOTE: If you debug between loading audio and decoding, this function does
+ * not work. Reason is unknown.
  * @param {function} func - The function to run.
  */
 Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
