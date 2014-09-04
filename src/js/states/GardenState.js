@@ -30,14 +30,28 @@ GardenState.prototype.create = function () {
 	}));
 
 	// TODO: Update graphics
+	var sure = false;
 	this.world.add(new TextButton('>', {
 		x: 800,
 		y: 100,
 		doNotAdapt: true,
 		onClick: function () {
-			var scen = Backend.getScenario();
-			if (scen) {
-				game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
+			if (player.water > player.maxWater - 6 && !sure) {
+				agent.say(speech, 'ok').play('ok'); // TODO: Are you sure? If so, press again.
+				sure = true;
+				var sub = EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function () {
+					sure = false;
+					EventSystem.unsubscribe(sub);
+				});
+			} else {
+				var scen = Backend.getScenario();
+				if (scen) {
+					var t = new TimelineMax();
+					t.addSound(speech, agent, 'ok'); // TODO: Let's go!
+					t.addCallback(function () {
+						game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
+					});
+				}
 			}
 		}
 	}));
@@ -132,7 +146,7 @@ GardenState.prototype.create = function () {
 			t.addCallback(function () {
 				player.water--;
 				plant.water.value++;
-				agent.say(speech).play('growing');
+				agent.say(speech, 'growing').play('growing');
 			}, 'watering');
 			if (plant.water.left === 1 && plant.level.left === 1) {
 				t.addSound(speech, agent, 'fullGrown');
