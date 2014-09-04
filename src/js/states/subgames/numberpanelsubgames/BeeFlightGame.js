@@ -11,12 +11,12 @@ function BeeFlightGame () {
 
 BeeFlightGame.prototype.pos = {
 	flowers: {
-		start: 350, stopOffset: 0
+		start: 325, stopOffset: 0
 	},
 	home: {
-		x: 110, y: 575
+		x: 110, y: 700
 	},
-	homeScale: 0.2,
+	homeScale: 0.3,
 	bee: {
 		x: 120, y: 300
 	},
@@ -51,9 +51,14 @@ BeeFlightGame.prototype.create = function () {
 	// Setup flowers
 	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	var width = size / this.amount;
+	var yOffset = this.amount > 5 ? 50 : 0;
 	this.flowers = [];
 	for (var i = 0; i < this.amount; i++) {
-		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, 400, 'bee', 'flower', this.gameGroup));
+		var row = (i % 3);
+		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, 450 + yOffset * row, 'bee', 'flower', this.gameGroup));
+		if (!row) {
+			this.gameGroup.moveDown(this.flowers[i]);
+		}
 		this.flowers[i].anchor.set(0.5, 0);
 	}
 
