@@ -11,7 +11,7 @@ function BeeFlightGame () {
 
 BeeFlightGame.prototype.pos = {
 	flowers: {
-		start: 350, stopOffset: -50
+		start: 350, stopOffset: 0
 	},
 	home: {
 		x: 110, y: 575
@@ -98,17 +98,16 @@ BeeFlightGame.prototype.create = function () {
 };
 
 BeeFlightGame.prototype.getOptions = function () {
-	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	return {
 		buttons: {
-			x: this.pos.flowers.start,
+			x: 150,
 			y: 25,
-			size: size,
+			size: this.world.width - 300
 		},
 		yesnos: {
-			x: this.pos.flowers.start,
+			x: 150,
 			y: 25,
-			size: size,
+			size: this.world.width - 300
 		}
 	};
 };
