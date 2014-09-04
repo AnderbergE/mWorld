@@ -141,7 +141,7 @@ GardenState.prototype.create = function () {
 	EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
 		var t;
 		if (player.water > 0) {
-			var side = ((plant.x + plant.width) <= agent.x) ? -1 : 1;
+			var side = ((plant.x + plant.width/3) <= agent.x) ? -1 : 1;
 			t = agent.water(2, side);
 			t.addCallback(function () {
 				player.water--;
