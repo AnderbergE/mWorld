@@ -21,9 +21,9 @@ BeeFlightGame.prototype.pos = {
 		x: 120, y: 300
 	},
 	agent: {
-		start: { x: -200, y: 700 },
-		stop: { x: 300, y: 500 },
-		scale: 0.25
+		start: { x: 1200, y: 400 },
+		stop: { x: 777, y: 360 },
+		scale: 0.35
 	}
 };
 
@@ -51,15 +51,22 @@ BeeFlightGame.prototype.create = function () {
 	// Setup flowers
 	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	var width = size / this.amount;
+	var yPos = this.amount > 5 ? 450 : 550;
 	var yOffset = this.amount > 5 ? 50 : 0;
 	this.flowers = [];
-	for (var i = 0; i < this.amount; i++) {
-		var row = (i % 3);
-		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, 450 + yOffset * row, 'bee', 'flower', this.gameGroup));
-		if (!row) {
+	var i, v, c, row;
+	for (i = 0; i < this.amount; i++) {
+		row = (i % 3);
+		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos + yOffset * row, 'bee', 'flower', this.gameGroup));
+		if (!row && i !== 0) { // So that the flower nearest is on top of farest.
 			this.gameGroup.moveDown(this.flowers[i]);
 		}
 		this.flowers[i].anchor.set(0.5, 0);
+
+		// Calculate tint
+		v = this.rnd.integerInRange(150, 230);
+		c = this.rnd.integerInRange(1, 3);
+		this.flowers[i].tint = Phaser.Color.getColor(c === 1 ? v : 255, c === 2 ? v : 255, c === 3 ? v : 255);
 	}
 
 	// Setup bee
