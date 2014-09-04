@@ -9,8 +9,8 @@ NumberButton.prototype.constructor = NumberButton;
  * @param {number} number - The number for the button.
  * @param {number|Array} representations - The representations of the button (see GLOBAL.NUMBER_REPRESENTATION).
  * @param {Object} options - A list of options (in addition to GeneralButton):
- *        {number} min: The minimum value of the button (default number parameter).
- *        {number} max: The maximum value of the button (default number parameter).
+ *        {number} min: The minimum value of the button.
+ *        {number} max: The maximum value of the button.
  *        {number} size: the small side of the button (the other depend on representation amount) (default 75).
  *        {boolean} vertical: stretch button vertically if many representations, otherwise horisontally (default true).
  * @return {Object} Itself.
@@ -29,8 +29,8 @@ function NumberButton (number, representations, options) {
 
 	GeneralButton.call(this, options); // Parent constructor.
 
-	this.min = options.min || number;
-	this.max = options.max || number;
+	this.min = options.min || null;
+	this.max = options.max || null;
 	this._number = 0;
 	this.number = number;
 
@@ -71,8 +71,8 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 	},
 	set: function (value) {
 		/* Chcek boundaries */
-		if (value < this.min) { value = this.min; }
-		if (value > this.max) { value = this.max; }
+		if (this.min && value < this.min) { value = this.min; }
+		if (this.max && value > this.max) { value = this.max; }
 		if (value === this._number) { return; }
 
 		this._number = value;
@@ -109,7 +109,7 @@ NumberButton.prototype.updateGraphics = function () {
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 			offset = this.size/6;
-			this.add(new StrikeRepresentation(useNum, x+offset, y+offset, this.size-offset*2, this.color, this.max));
+			this.add(new StrikeRepresentation(useNum, x+offset, y+offset, this.size-offset*2, this.color, this.max - this.min));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 			this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));

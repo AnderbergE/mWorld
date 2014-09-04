@@ -183,7 +183,7 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 	this.thought.guess = new NumberButton(1, representation, {
 		x: -60,
 		y: -30,
-		min: -100, max: 100, disabled: true
+		disabled: true
 	});
 	this.thought.add(this.thought.guess);
 	if (mirror) {
