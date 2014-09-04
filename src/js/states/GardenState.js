@@ -111,6 +111,8 @@ GardenState.prototype.create = function () {
 		var y = plant.y + plant.plantHeight - agent.height/2;
 		var x = plant.x;
 		if (agent.x > x) {
+			// If these are changed, you need to update the values for the side variable
+			// in the waterPlant subscription.
 			x += plant.width * 1.3;
 		} else {
 			x -= plant.width * 0.3;
