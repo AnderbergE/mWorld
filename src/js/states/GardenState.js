@@ -44,7 +44,7 @@ GardenState.prototype.create = function () {
 
 	/* Setup the garden fields */
 	var rows = 3;
-	var columns = 5;
+	var columns = 8;
 	var startPos = 200;
 	var width = this.world.width/columns;
 	var height = (this.world.height - startPos)/rows;
@@ -96,18 +96,30 @@ GardenState.prototype.create = function () {
 	EventSystem.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
 		var y = plant.y + plant.plantHeight - agent.height/2;
 		var x = plant.x;
-		if (agent.x > x) { x += plant.width; }
-		if (agent.x === x && agent.y === y ) { return; }
+		if (agent.x > x) {
+			x += plant.width * 1.3;
+		} else {
+			x -= plant.width * 0.3;
+		}
+		if (agent.x === x && agent.y === y ) {
+			return;
+		}
 
-		if (currentMove) { currentMove.kill(); }
+		if (currentMove) {
+			currentMove.kill();
+		}
 
 		currentMove = new TimelineMax();
-		if (agent.x !== x && agent.x % width > 10) {
+		if (agent.x !== x && agent.x % width > 10 && agent.y !== y) {
 			var move = agent.x + (agent.x > x ? -agent.x % width : width - agent.x % width) ;
 			currentMove.add(agent.move({ x: move }, Math.abs((agent.x - move)/width)));
 		}
-		if (agent.y !== y) { currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height))); }
-		if (agent.x !== x) { currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width))); }
+		if (agent.y !== y) {
+			currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height)));
+		}
+		if (agent.x !== x) {
+			currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width)));
+		}
 		currentMove.addSound(speech, agent, 'ok', 0);
 	});
 
@@ -302,7 +314,7 @@ GardenPlant.prototype.down = function () {
 
 		/* The button to push when adding water. */
 		this.waterButton = new SpriteButton('watercan', null, {
-			x: this.width - (height - 10),
+			x: this.width - (height - 15),
 			y: 10,
 			size: height - 20,
 			keepDown: true,
@@ -317,7 +329,7 @@ GardenPlant.prototype.down = function () {
 		var maxLevel = function () {
 			_this.waterButton.destroy();
 			game.add.text(_this.width/2, height/2, LANG.TEXT.maxLevel, {
-				font: '60pt ' +  GLOBAL.FONT,
+				font: '40pt ' +  GLOBAL.FONT,
 				fill: '#5555ff'
 			}, _this.infoGroup).anchor.set(0.5);
 		};
