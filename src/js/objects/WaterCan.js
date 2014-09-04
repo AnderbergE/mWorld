@@ -14,7 +14,7 @@ function WaterCan (x, y, amount) {
 	this.y = y || 0;
 	this.amount = amount || player.water;
 	var origin = 52;
-	var waterStep = 5;
+	var waterStep = 45 / player.maxWater;
 
 	/* Add water level */
 	var bmd = game.add.bitmapData(55, 1);

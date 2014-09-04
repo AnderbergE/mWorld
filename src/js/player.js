@@ -40,6 +40,11 @@ function Player () {
 }
 
 /**
+ * @property {number} maxWater - The maximum amount of water the player can have.
+ */
+Player.prototype.maxWater = 12;
+
+/**
  * @property {number} water - The amount of water the player has.
  *                            Publishes waterAdded event when changed.
  */
@@ -49,6 +54,7 @@ Object.defineProperty(Player.prototype, 'water', {
 	},
 	set: function(value) {
 		if (value >= 0) {
+			value = value > this.maxWater ? this.maxWater : value;
 			var diff = value - this._water;
 			this._water = value;
 			EventSystem.publish(GLOBAL.EVENT.waterAdded, [this._water, diff]);
