@@ -159,6 +159,9 @@ BeeFlightGame.prototype.runNumber = function (number) {
 
 	var current = this.currentNumber-1;
 	var result = this.tryNumber(number);
+	if (this.bee.thought) {
+		this.bee.thought.visible = false;
+	}
 
 	var t = new TimelineMax();
 	t.add(this.bee.moveTo.flower(number));
