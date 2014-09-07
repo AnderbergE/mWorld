@@ -11,19 +11,19 @@ function BeeFlightGame () {
 
 BeeFlightGame.prototype.pos = {
 	flowers: {
-		start: 350, stopOffset: -50
+		start: 325, stopOffset: 0
 	},
 	home: {
-		x: 110, y: 575
+		x: 110, y: 700
 	},
-	homeScale: 0.2,
+	homeScale: 0.3,
 	bee: {
 		x: 120, y: 300
 	},
 	agent: {
-		start: { x: -200, y: 700 },
-		stop: { x: 300, y: 500 },
-		scale: 0.25
+		start: { x: 1200, y: 400 },
+		stop: { x: 777, y: 360 },
+		scale: 0.35
 	}
 };
 
@@ -51,10 +51,22 @@ BeeFlightGame.prototype.create = function () {
 	// Setup flowers
 	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	var width = size / this.amount;
+	var yPos = this.amount > 5 ? 450 : 550;
+	var yOffset = this.amount > 5 ? 50 : 0;
 	this.flowers = [];
-	for (var i = 0; i < this.amount; i++) {
-		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, 400, 'bee', 'flower', this.gameGroup));
+	var i, v, c, row;
+	for (i = 0; i < this.amount; i++) {
+		row = (i % 3);
+		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos + yOffset * row, 'bee', 'flower', this.gameGroup));
+		if (!row && i !== 0) { // So that the flower nearest is on top of farest.
+			this.gameGroup.moveDown(this.flowers[i]);
+		}
 		this.flowers[i].anchor.set(0.5, 0);
+
+		// Calculate tint
+		v = this.rnd.integerInRange(150, 230);
+		c = this.rnd.integerInRange(1, 3);
+		this.flowers[i].tint = Phaser.Color.getColor(c === 1 ? v : 255, c === 2 ? v : 255, c === 3 ? v : 255);
 	}
 
 	// Setup bee
@@ -98,17 +110,16 @@ BeeFlightGame.prototype.create = function () {
 };
 
 BeeFlightGame.prototype.getOptions = function () {
-	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	return {
 		buttons: {
-			x: this.pos.flowers.start,
+			x: 150,
 			y: 25,
-			size: size,
+			size: this.world.width - 300
 		},
 		yesnos: {
-			x: this.pos.flowers.start,
+			x: 150,
 			y: 25,
-			size: size,
+			size: this.world.width - 300
 		}
 	};
 };
@@ -159,6 +170,9 @@ BeeFlightGame.prototype.runNumber = function (number) {
 
 	var current = this.currentNumber-1;
 	var result = this.tryNumber(number);
+	if (this.bee.thought) {
+		this.bee.thought.visible = false;
+	}
 
 	var t = new TimelineMax();
 	t.add(this.bee.moveTo.flower(number));
