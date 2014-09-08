@@ -491,11 +491,9 @@ BalloonGame.prototype.create = function () {
 	function takeOff() {
 
 		var amount = airBalloonStock;
-		console.log('amount: ' + amount);
 		liftoffButton.setFrames(0,1,2,1);
 		
 		if (amount <= 0) {
-			console.log('hej');
 			//TODO: Add a voice saying you need to attach balloons to the basket.
 			return;
 		} else {
@@ -525,10 +523,8 @@ BalloonGame.prototype.create = function () {
 				if(_this.method === GLOBAL.METHOD.incrementalSteps) {
 					treasures++;
 					if(airBalloonStock > 7) {
-						console.log('successappear');
 						fade(magnifyGroup, true);
 					} else {
-						console.log('successfade');
 						fade(magnifyGroup, false);
 					}
 				}
@@ -544,10 +540,8 @@ BalloonGame.prototype.create = function () {
 				if((!treasures) || (_this.method !== GLOBAL.METHOD.incrementalSteps)) {
 					popAndReturn(tl);
 				} else if(airBalloonStock > 7) {
-					console.log('failappear');
 					fade(magnifyGroup, true);
 				} else {
-					console.log('failfade');
 					fade(magnifyGroup, false);
 				}
 
@@ -605,7 +599,6 @@ BalloonGame.prototype.create = function () {
 
 	//Makes the beetle jump up and pop the balloons, causing them all to fall down to the ground.
 	function popAndReturn(tl) {
-		console.log('popfade');
 		fade(magnifyGroup, false);
 		var tls = new TimelineMax(); //For the popping sound so it can better be synced with the animation.
 		tl.add( new TweenMax(beetle, 0.5, {x: coords.beetle.basketStop.x, y: coords.beetle.basketStop.y-50, ease:Power4.easeIn}));
