@@ -92,14 +92,16 @@ NumberButton.prototype.updateGraphics = function () {
 		this.removeBetween(1, this.children.length-1, true);
 	}
 
-	if (this._number > 0) {
-		this.bg.frameName = 'buttonP-0';
-	} else if (this._number < 0) {
-		this.bg.frameName = 'buttonM-0';
-	} else {
-		this.bg.frameName = 'buttonZ-0';
+	if (this.representations[0] !== GLOBAL.NUMBER_REPRESENTATION.yesno) {
+		if (this._number > 0) {
+			this.bg.frameName = 'buttonP-0';
+		} else if (this._number < 0) {
+			this.bg.frameName = 'buttonM-0';
+		} else {
+			this.bg.frameName = 'buttonZ-0';
+		}
+		this.setSize();
 	}
-	this.setSize();
 
 	/* Add new graphics. */
 	var x = 0;
