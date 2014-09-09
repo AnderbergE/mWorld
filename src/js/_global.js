@@ -48,7 +48,7 @@ var GLOBAL = {
 		balloonGame:  'Balloon',
 		4:            'BeeFlight',
 		beeGame:      'BeeFlight',
-		debug:        'Debug'
+		scenario:     'Scenario'
 	},
 
 	/* Method for scenario */

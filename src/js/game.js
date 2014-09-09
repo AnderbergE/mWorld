@@ -45,7 +45,7 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
 		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
-		game.state.add(GLOBAL.STATE.debug,        DebugState);
+		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
 
 		game.state.start('Boot');
 	}
@@ -159,8 +159,8 @@ BootState.prototype.bootGame = function () {
 
 		if (window.location.hostname.toLowerCase() === 'localhost' ||
 			window.location.hostname === '127.0.0.1') {
-			console.log('You are running on localhost, entering debug mode :)');
-			game.state.start(GLOBAL.STATE.debug);
+			console.log('You are running on localhost, sneaking into choose scenario state :)');
+			game.state.start(GLOBAL.STATE.scenario);
 
 		} else {
 			game.state.start(GLOBAL.STATE.entry);

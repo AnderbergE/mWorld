@@ -28,7 +28,7 @@ GardenState.prototype.create = function () {
 		onClick: function () {
 			// This happens either on local machine or on "trial" version of the game.
 			if (typeof Routes === 'undefined' || Routes === null) {
-				game.state.start(GLOBAL.STATE.debug, true, false);
+				game.state.start(GLOBAL.STATE.scenario, true, false);
 				return;
 			}
 
