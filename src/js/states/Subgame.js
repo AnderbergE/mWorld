@@ -212,12 +212,14 @@ Subgame.prototype.nextRound = function () {
  * The offset of the last try is stored in this.lastTry.
  * Publishes tryNumber event.
  * @param {number} The number to try.
+ * @param {number} The offset to the number (example if you start at 2).
  * @return {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
  */
-Subgame.prototype.tryNumber = function (number) {
-	EventSystem.publish(GLOBAL.EVENT.tryNumber, [number, this.currentNumber]);
+Subgame.prototype.tryNumber = function (number, offset) {
+	var sum = number + (offset || 0);
+	EventSystem.publish(GLOBAL.EVENT.tryNumber, [sum, this.currentNumber, number, offset]);
 	this._currentTries++;
-	this.lastTry = number - this.currentNumber;
+	this.lastTry = sum - this.currentNumber;
 
 	if (!this.lastTry) {
 		this._counter.value++; // This will trigger next mode if we loop.

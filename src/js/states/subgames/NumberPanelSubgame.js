@@ -95,7 +95,7 @@ NumberPanelSubgame.prototype.agentGuess = function () {
 
 /* Function to trigger when a button in the number panel is pushed */
 NumberPanelSubgame.prototype.pushNumber = function (number) {
-	return this.runNumber(number + this.addToNumber)
+	return this.runNumber(number)
 		.addCallback(this.nextRound, null, null, this);
 };
 

@@ -177,7 +177,8 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 		this.lizard.thought.visible = false;
 	}
 
-	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
+	var sum = number + this.addToNumber;
+	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
 
 	var t = new TimelineMax();
 	if (!result) { // Correct :)
@@ -189,7 +190,7 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 		t.add(tweenTint(this.lizard, this.target.tint), 'afterShot');
 		this.atValue = 0;
 	} else { // Incorrect :(
-		t.add(this.doReturnFunction(number, result));
+		t.add(this.doReturnFunction(sum, result));
 	}
 
 	t.addCallback(this.updateRelative, null, null, this);

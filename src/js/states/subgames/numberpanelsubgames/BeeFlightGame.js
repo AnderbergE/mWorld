@@ -165,17 +165,18 @@ BeeFlightGame.prototype.startThink = function (t) {
 	t.add(this.bee.think());
 };
 
-BeeFlightGame.prototype.runNumber = function (number) {
+BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	this.disable(true);
 
 	var current = this.currentNumber-1;
-	var result = this.tryNumber(number);
+	var sum = number + this.addToNumber;
+	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
 	if (this.bee.thought) {
 		this.bee.thought.visible = false;
 	}
 
 	var t = new TimelineMax();
-	t.add(this.bee.moveTo.flower(number));
+	t.add(this.bee.moveTo.flower(sum));
 	if (!result) { // Correct :)
 		t.addCallback(function () {
 			this.hideButtons();
@@ -183,7 +184,7 @@ BeeFlightGame.prototype.runNumber = function (number) {
 		}, null, null, this);
 		t.add(this.bee.moveTo.home());
 	} else { // Incorrect :(
-		this.doReturnFunction(t, number, result);
+		this.doReturnFunction(t, sum, result);
 	}
 
 	t.addCallback(this.updateRelative, null, null, this);

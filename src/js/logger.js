@@ -37,13 +37,21 @@
 		}
 	}
 
-	function trialData (guess, correct) {
+	function trialData (guess, correct, pushed, start) {
 		var modeResults = session.modes[session.modes.length-1].results;
 		if (modeResults.length <= 0 || wasCorrect) {
 			modeResults.push({ target: correct, trials: [] });
 		}
 
 		trial.try = guess;
+		if (guess !== pushed) {
+			if (pushed) {
+				trial.chosenValue = pushed;
+			}
+			if (start) {
+				trial.startValue = start;
+			}
+		}
 		trial.time = Date.now() - time;
 		modeResults[modeResults.length-1].trials.push(trial);
 
@@ -90,7 +98,7 @@
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange,
 		function (mode) { modeChange(mode); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.tryNumber,
-		function (guess, correct) { trialData(guess, correct); }, true);
+		function (guess, correct, chosen, start) { trialData(guess, correct, chosen, start); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.agentGuess,
 		function (guess/*, correct*/) { agentGuess(guess); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.waterAdded,
