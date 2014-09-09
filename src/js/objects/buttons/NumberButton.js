@@ -20,14 +20,19 @@ function NumberButton (number, representations, options) {
 	if (typeof options.keepDown === 'undefined' || options.keepDown === null) {
 		options.keepDown = true;
 	}
-	this.vertical = options.vertical;
-	if (typeof this.vertical === 'undefined' || this.vertical === null) {
-		this.vertical = true;
-	}
 	this.representations = representations;
 
 
 	GeneralButton.call(this, options); // Parent constructor.
+
+	this.vertical = options.vertical;
+	if (typeof this.vertical === 'undefined' || this.vertical === null) {
+		this.vertical = true;
+	}
+	if (!this.vertical) {
+		this.bg.rotation = -Math.PI/2;
+		this.bg.y += this.bg.width;
+	}
 
 	this.min = options.min || null;
 	this.max = options.max || null;
@@ -97,6 +102,7 @@ NumberButton.prototype.updateGraphics = function () {
 	} else {
 		this.bg.frameName = 'buttonZ-0';
 	}
+	this.setSize();
 
 	/* Add new graphics. */
 	var x = 0;
@@ -112,22 +118,22 @@ NumberButton.prototype.updateGraphics = function () {
 
 		if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
 			offset = this.calcOffset(20);
-			this.add(new DotsRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o*4, this.color));
+			this.add(new DotsRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.fingers) {
 			offset = this.calcOffset(24);
-			this.add(new FingerRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o*4, this.color));
+			this.add(new FingerRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 			offset = this.calcOffset(12);
-			this.add(new StrikeRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o*4, this.color, this.max - this.min));
+			this.add(new StrikeRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color, this.max - this.min));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 			this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dice) {
 			offset = this.calcOffset(12);
-			this.add(new DiceRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o*4, this.color));
+			this.add(new DiceRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.signedNumbers) {
 			this.add(new SignedNumberRepresentation(this._number, x, y, this.size/2, this.color));
@@ -147,12 +153,13 @@ NumberButton.prototype.calcOffset = function (offset) {
 	var t = {};
 	t.o = this.size/offset;
 	if (this.vertical) {
-		t.x = (this._number > 0 ? t.o : this._number < 0 ? 4 * t.o : 2 * t.o);
+		t.x = t.o*(this._number >= 0 ? 1 : 3);
 		t.y = t.o*2;
 	} else {
 		t.x = t.o*2;
-		t.y = (this._number > 0 ? t.o : this._number < 0 ? 4 * t.o : 2 * t.o);
+		t.y = t.o*(this._number >= 0 ? 3 : 1);
 	}
+	t.o *= 4;
 	return t;
 };
 
@@ -161,7 +168,7 @@ NumberButton.prototype.calcOffset = function (offset) {
  * @param {Number} The new size.
  */
 NumberButton.prototype.setSize = function (size) {
-	GeneralButton.prototype.setSize.call(this, size);
+	GeneralButton.prototype.setSize.call(this, size || this.size);
 
 	if (this.vertical) {
 		this.bg.height *= this.representations.length;
