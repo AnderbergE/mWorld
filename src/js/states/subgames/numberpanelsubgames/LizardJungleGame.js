@@ -42,6 +42,7 @@ LizardJungleGame.prototype.preload = function () {
 /* Phaser state function */
 LizardJungleGame.prototype.create = function () {
 	NumberPanelSubgame.prototype.create.call(this);
+	this.agent.thought.guess.setDirection(true);
 
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
@@ -72,6 +73,7 @@ LizardJungleGame.prototype.create = function () {
 	this.lizard = new LizardJungleLizard(575, 500);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.lizard.addThought(-100, -75, this.representation[0]);
+		this.lizard.thought.guess.setDirection(true);
 	}
 	this.gameGroup.add(this.lizard);
 

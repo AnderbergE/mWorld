@@ -51,6 +51,7 @@ BirdheroGame.prototype.preload = function () {
 /* Phaser state function */
 BirdheroGame.prototype.create = function () {
 	NumberPanelSubgame.prototype.create.call(this);
+	this.agent.thought.guess.setDirection(true);
 
 	/* Setup tints by randomising those in the bank. */
 	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
@@ -96,6 +97,7 @@ BirdheroGame.prototype.create = function () {
 	this.bird.visible = false;
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bird.addThought(450, -250, this.representation[0], true);
+		this.bird.thought.guess.setDirection(true);
 		this.bird.thought.toScale = 1.3;
 	}
 	this.elevator.add(this.bird);

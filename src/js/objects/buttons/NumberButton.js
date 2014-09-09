@@ -29,10 +29,7 @@ function NumberButton (number, representations, options) {
 	if (typeof this.vertical === 'undefined' || this.vertical === null) {
 		this.vertical = true;
 	}
-	if (!this.vertical) {
-		this.bg.rotation = -Math.PI/2;
-		this.bg.y += this.bg.width;
-	}
+	this.setDirection(!this.vertical);
 
 	this.min = options.min || null;
 	this.max = options.max || null;
@@ -174,5 +171,20 @@ NumberButton.prototype.setSize = function (size) {
 		this.bg.height *= this.representations.length;
 	} else {
 		this.bg.width *= this.representations.length;
+	}
+};
+
+/**
+ * Set the direction of the background button.
+ * @param {Boolean} val - True = vertical, false = horizontal.
+ */
+NumberButton.prototype.setDirection = function (val) {
+	if (val) {
+		this.bg.rotation = -Math.PI/2;
+		this.bg.y += this.bg.width;
+		this.bg.adjusted = this.bg.width;
+	} else {
+		this.bg.rotation = 0;
+		this.bg.y -= this.bg.adjusted || 0;
 	}
 };
