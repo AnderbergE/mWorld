@@ -152,11 +152,11 @@ NumberButton.prototype.calcOffset = function (offset) {
 	var t = {};
 	t.o = this.size/offset;
 	if (this.vertical) {
-		t.x = t.o*(this._number >= 0 ? 1 : 3);
+		t.x = t.o*(this._number >= 0 ? 1 : 3.5);
 		t.y = t.o*2;
 	} else {
 		t.x = t.o*2;
-		t.y = t.o*(this._number >= 0 ? 3 : 1);
+		t.y = t.o*(this._number >= 0 ? 3.5 : 1);
 	}
 	t.o *= 4;
 	return t;
