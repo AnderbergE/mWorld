@@ -116,7 +116,7 @@ NumberButton.prototype.updateGraphics = function () {
 		}
 
 		if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
-			offset = this.calcOffset(20);
+			offset = this.calcOffset(16);
 			this.add(new DotsRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.fingers) {
@@ -151,12 +151,14 @@ NumberButton.prototype.updateGraphics = function () {
 NumberButton.prototype.calcOffset = function (offset) {
 	var t = {};
 	t.o = this.size/offset;
+	// This means that the button grows up or down (depending on amount of representations).
+	// So this.vertical = true means that the button background is pointing left or right.
 	if (this.vertical) {
-		t.x = t.o*(this._number >= 0 ? 1 : 3.5);
+		t.x = t.o*(this._number >= 0 ? 1 : 3.3);
 		t.y = t.o*2;
 	} else {
 		t.x = t.o*2;
-		t.y = t.o*(this._number >= 0 ? 3.5 : 1);
+		t.y = t.o*(this._number >= 0 ? 3.3 : 1);
 	}
 	t.o *= 4;
 	return t;
