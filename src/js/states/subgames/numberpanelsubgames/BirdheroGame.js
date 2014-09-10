@@ -213,7 +213,7 @@ BirdheroGame.prototype.zoom = function (ins) {
 		t.add(TweenMax.to(this.gameGroup.scale, 2, { x: 2, y: 2 }), 0);
 	} else if (ins === 2) {
 		t.add(TweenMax.to(this.gameGroup, 2, { x: -350, y: -110 }), 0);
-		t.add(TweenMax.to(this.gameGroup.scale, 2, { x: 1.5, y: 1.5 }), 0);
+		t.add(TweenMax.to(this.gameGroup.scale, 2, { x: 1.4, y: 1.4 }), 0);
 	} else {
 		t.add(TweenMax.to(this.gameGroup, 1.5, { x: 0, y: 0 }), 0);
 		t.add(TweenMax.to(this.gameGroup.scale, 1.5, { x: 1, y: 1 }), 0);
