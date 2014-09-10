@@ -208,23 +208,29 @@ LizardJungleGame.prototype.returnNone = function (number) {
 };
 
 LizardJungleGame.prototype.returnToPreviousIfHigher = function (number, diff) {
-	var t = new TimelineMax();
 	if (diff > 0) {
-		t.addSound('lizardPlaceholder'); // I think that is too high. Mouth is open, no animation.
+		var t = new TimelineMax();
+		t.add(this.lizard.shootMiss(
+			this.tree.children[this.tree.length - number].world,
+			this.tree.children[this.tree.length - this.atValue].world));
+		t.addSound('lizardPlaceholder'); // That was too high.
+		return t;
 	} else {
-		t.add(this.returnNone(number));
+		return this.returnNone(number);
 	}
-	return t;
 };
 
 LizardJungleGame.prototype.returnToPreviousIfLower = function (number, diff) {
-	var t = new TimelineMax();
 	if (diff < 0) {
-		t.addSound('lizardPlaceholder'); // I think that is too low. Mouth is open, no animation.
+		var t = new TimelineMax();
+		t.add(this.lizard.shootMiss(
+			this.tree.children[this.tree.length - number].world,
+			this.tree.children[this.tree.length - this.atValue].world));
+		t.addSound('lizardPlaceholder'); // That was too low.
+		return t;
 	} else {
-		t.add(this.returnNone(number));
+		return this.returnNone(number);
 	}
-	return t;
 };
 
 
@@ -431,6 +437,27 @@ LizardJungleLizard.prototype.shootReturn = function () {
 	t.to(this.forehead, 0.2, { angle: 0 });
 	t.to(this.jaw, 0.2, { angle: 0 }, '-=0.2');
 	t.addCallback(function () { this.stuck = false; }, null, null, this);
+	return t;
+};
+
+LizardJungleLizard.prototype.shootMiss = function (aim, hit) {
+	var headOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
+	var t = new TimelineMax();
+	if (this.stuck) {
+		t.add(this.shootReturn());
+	}
+	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(aim, headOrigin) });
+	t.to(this.forehead, 0.5, { angle: 10 });
+	t.to(this.jaw, 0.5, { angle: -5 }, '-=0.5');
+	t.to(this.tounge, 0.5, {
+		width: game.physics.arcade.distanceBetween(aim, this.tounge.world)*1.4,
+		height: 18
+	});
+	t.to(this.head, 1.2, { rotation: game.physics.arcade.angleBetween(hit, headOrigin) }, '-=0.2');
+	t.to(this.tounge, 1, { width: game.physics.arcade.distanceBetween(hit, this.tounge.world), }, '-=1');
+
+	t.addLabel('stretched');
+	t.addCallback(function () { this.stuck = true; }, null, null, this);
 	return t;
 };
 
