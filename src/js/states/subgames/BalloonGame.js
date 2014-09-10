@@ -769,7 +769,7 @@ BalloonGame.prototype.create = function () {
 					if(_this.representation === GLOBAL.NUMBER_REPRESENTATION.none) {
 						_this.agent.thought.guess = balloonRepresentation;
 						balloonRepresentation.x = 10;
-						balloonRepresentation.x = 0;
+						balloonRepresentation.y = 0;
 					} else {
 						if ((_this.method === GLOBAL.METHOD.addition) || (_this.method === GLOBAL.METHOD.additionSubtraction)) {
 								guess -= airBalloonStock; //If you skip too fast this part is skipped over before airBalloonStock is set.
