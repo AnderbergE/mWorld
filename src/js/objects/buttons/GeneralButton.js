@@ -25,9 +25,9 @@ function GeneralButton (options) {
 	this.keepDown = options.keepDown || false;
 
 	if (typeof options.background === 'undefined') {
-		options.background = 'wood';
+		options.background = 'buttonD-0';
 	}
-	this.bg = this.create(0, 0, options.background);
+	this.bg = this.create(0, 0, 'buttons', options.background);
 	this.bg.inputEnabled = true;
 
 	this.bg.events.onInputDown.add(function () {

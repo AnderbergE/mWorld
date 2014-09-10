@@ -51,6 +51,7 @@ BirdheroGame.prototype.preload = function () {
 /* Phaser state function */
 BirdheroGame.prototype.create = function () {
 	NumberPanelSubgame.prototype.create.call(this);
+	this.agent.thought.guess.setDirection(true);
 
 	/* Setup tints by randomising those in the bank. */
 	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
@@ -96,6 +97,7 @@ BirdheroGame.prototype.create = function () {
 	this.bird.visible = false;
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bird.addThought(450, -250, this.representation[0], true);
+		this.bird.thought.guess.setDirection(true);
 		this.bird.thought.toScale = 1.3;
 	}
 	this.elevator.add(this.bird);
@@ -308,8 +310,9 @@ BirdheroGame.prototype.startThink = function (silent, t) {
 
 BirdheroGame.prototype.runNumber = function (number, simulate) {
 	var origin = this.atValue;
-	var result = simulate ? number - this.currentNumber : this.tryNumber(number);
-	var branch = this.tree.branch[number-1];
+	var sum = number + this.addToNumber;
+	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
+	var branch = this.tree.branch[sum-1];
 	if (this.bird.thought) {
 		this.bird.thought.visible = false;
 	}
@@ -327,9 +330,9 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 		t.add(this.bird.moveTo.elevator(), 0);
 		t.add(this.bird.moveTo.peak(true));
 	}
-	t.add(this.elevator.moveTo.branch(number));
+	t.add(this.elevator.moveTo.branch(sum));
 	t.add(this.bird.moveTo.peak(false));
-	t.add(this.bird.moveTo.nest(number));
+	t.add(this.bird.moveTo.nest(sum));
 
 	/* Correct :) */
 	if (!result) {
@@ -344,7 +347,7 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 		t.addLabel('celebrate');
 		t.add(branch.celebrate(2), 'celebrate');
 		t.add(this.addWater(branch.x + (branch.mother.x - 10) * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
-		t.add(this.elevator.moveTo.branch(0, true, number));
+		t.add(this.elevator.moveTo.branch(0, true, sum));
 
 	/* Incorrect :( */
 	} else {
@@ -356,7 +359,7 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 		t.add(this.bird.moveTo.elevator());
 		t.add(this.bird.moveTo.peak(true));
 
-		t.add(this.doReturnFunction(number, origin, result));
+		t.add(this.doReturnFunction(sum, origin, result));
 	}
 
 	t.addCallback(this.agent.setNeutral, null, null, this.agent);

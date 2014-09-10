@@ -45,7 +45,7 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
 		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
-		game.state.add(GLOBAL.STATE.debug,        DebugState);
+		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
 
 		game.state.start('Boot');
 	}
@@ -122,11 +122,12 @@ BootState.prototype.preload = function () {
 	this.load.atlasJSONHash(Mouse.prototype.id, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
 
 	/* Common game assets */
-	this.load.image('thought',    'assets/img/agent/thoughtbubble.png');
+	this.load.audio('click', ['assets/audio/click.ogg', 'assets/audio/click.mp3']);
+	this.load.image('thought',    'assets/img/objects/thoughtbubble.png');
 	this.load.image('watercan',   'assets/img/objects/wateringcan.png');
 	this.load.spritesheet('drop', 'assets/img/objects/drop.png', 35, 70, 2);
 	this.load.spritesheet('wood', 'assets/img/objects/wood.png', 58, 56, 2);
-	this.load.audio('click', ['assets/audio/click.ogg', 'assets/audio/click.mp3']);
+	this.load.atlasJSONHash('buttons', 'assets/img/objects/buttons.png', 'assets/img/objects/buttons.json');
 
 	/* Load the entry state assets as well, no need to do two loaders. */
 	this.load.image('entryBg', 'assets/img/jungle.png');
@@ -159,8 +160,8 @@ BootState.prototype.bootGame = function () {
 
 		if (window.location.hostname.toLowerCase() === 'localhost' ||
 			window.location.hostname === '127.0.0.1') {
-			console.log('You are running on localhost, entering debug mode :)');
-			game.state.start(GLOBAL.STATE.debug);
+			console.log('You are running on localhost, sneaking into choose scenario state :)');
+			game.state.start(GLOBAL.STATE.scenario);
 
 		} else {
 			game.state.start(GLOBAL.STATE.entry);

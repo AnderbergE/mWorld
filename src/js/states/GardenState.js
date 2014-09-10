@@ -19,16 +19,6 @@ GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'gardenBg');
 	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
-	// TODO: Remove eventually, for debugging
-	this.world.add(new TextButton('D', {
-		x: 700,
-		y: 100,
-		doNotAdapt: true,
-		onClick: function () {
-			game.state.start(GLOBAL.STATE.debug, true, false);
-		}
-	}));
-
 	// TODO: Update graphics
 	var sure = false;
 	this.world.add(new TextButton('>', {
@@ -36,6 +26,12 @@ GardenState.prototype.create = function () {
 		y: 100,
 		doNotAdapt: true,
 		onClick: function () {
+			// This happens either on local machine or on "trial" version of the game.
+			if (typeof Routes === 'undefined' || Routes === null) {
+				game.state.start(GLOBAL.STATE.scenario, true, false);
+				return;
+			}
+
 			if (player.water > player.maxWater - 6 && !sure) {
 				agent.say(speech, 'ok').play('ok'); // TODO: Are you sure? If so, press again.
 				sure = true;
@@ -66,7 +62,7 @@ GardenState.prototype.create = function () {
 	var fields = this.gardenData.fields;
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
-			type = this.rnd.integerInRange(1, 3);
+			type = this.rnd.integerInRange(1, 5);
 			level = 0;
 			water = 0;
 
