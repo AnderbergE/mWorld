@@ -183,6 +183,7 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 			this.flowers[current].frameName = 'flower';
 		}, null, null, this);
 		t.add(this.bee.moveTo.home());
+		this.atValue = 0;
 	} else { // Incorrect :(
 		this.doReturnFunction(t, sum, result);
 	}
