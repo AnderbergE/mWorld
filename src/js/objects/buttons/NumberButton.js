@@ -125,7 +125,7 @@ NumberButton.prototype.updateGraphics = function () {
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 			offset = this.calcOffset(12);
-			this.add(new StrikeRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color, this.max - this.min));
+			this.add(new StrikeRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color, this.max - this.min + 1));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 			this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
