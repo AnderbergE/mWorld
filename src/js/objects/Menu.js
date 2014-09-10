@@ -44,7 +44,9 @@ function Menu () {
 	this.add(skipButton);
 
 	EventSystem.subscribe(GLOBAL.EVENT.skippable, function (timeline) {
-		skipper = timeline;
+		if (!skipper || skipper.getChildren().indexOf(timeline) < 0) {
+			skipper = timeline;
+		}
 		skipButton.visible = !!timeline;
 	});
 
