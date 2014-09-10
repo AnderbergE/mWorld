@@ -115,6 +115,9 @@ NumberPanelSubgame.prototype.pushYesNo = function (value) {
 NumberPanelSubgame.prototype.showNumbers = function () {
 	this.disable(true);
 	this.buttons.reset();
+	if (this.isRelative) {
+		this.updateButtons();
+	}
 	fade(this.yesnos, false);
 	fade(this.buttons, true).eventCallback('onComplete', this.disable, false, this);
 
@@ -155,6 +158,5 @@ NumberPanelSubgame.prototype.updateButtons = function () {
 NumberPanelSubgame.prototype.updateRelative = function () {
 	if (this.isRelative) {
 		this.addToNumber = this.atValue;
-		this.updateButtons();
 	}
 };
