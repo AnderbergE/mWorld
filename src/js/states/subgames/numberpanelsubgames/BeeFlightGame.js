@@ -92,13 +92,30 @@ BeeFlightGame.prototype.create = function () {
 			t.add(_this.bee.move(_this.pos.bee, 3, 1));
 			return t;
 		},
-		flower: function (number) {
+		flower: function (target, direct) {
 			var t = new TimelineMax();
-			var flow = _this.flowers[number - 1];
 			if (_this.bee.y > 300) {
 				t.add(_this.bee.move({ y: _this.pos.bee.y }, 1));
 			}
-			t.add(_this.bee.move({ x: flow.x }, 2));
+
+			var flow = _this.flowers[target - 1];
+			if (this.atValue !== target) {
+				if (direct) {
+					t.add(_this.bee.move({ x: flow.x }, 2));
+				} else {
+					var dir = target < _this.atValue ? -1 : 1;
+					var i = _this.atValue + dir;
+					t.addLabel('flow' + i);
+					while (i !== target + dir) {
+						t.add(_this.bee.move({ x: _this.flowers[i - 1].x }, 1), 'flow' + i);
+						i += dir;
+						t.addLabel('flow' + i);
+						t.addLabel('flows' + i, '-=0.5');
+						t.addSound('beePlaceholder', _this.bee, null, 'flows' + i);
+					}
+				}
+			}
+
 			t.add(_this.bee.move({ y: flow.y }, 0.75));
 			return t;
 		}
@@ -205,7 +222,7 @@ BeeFlightGame.prototype.returnNone = function (t, number) {
 
 BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
 	if (diff > 0) {
-		t.add(this.bee.moveTo.flower(this.atValue));
+		t.add(this.bee.moveTo.flower(this.atValue, true));
 	} else {
 		this.returnNone(t, number);
 	}
@@ -213,7 +230,7 @@ BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
 
 BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 	if (diff < 0) {
-		t.add(this.bee.moveTo.flower(this.atValue));
+		t.add(this.bee.moveTo.flower(this.atValue, true));
 	} else {
 		this.returnNone(t, number);
 	}
