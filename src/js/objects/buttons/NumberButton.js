@@ -21,7 +21,7 @@ function NumberButton (number, representations, options) {
 		options.keepDown = true;
 	}
 	this.representations = representations;
-
+	this.background = options.background;
 
 	GeneralButton.call(this, options); // Parent constructor.
 
@@ -92,7 +92,7 @@ NumberButton.prototype.updateGraphics = function () {
 		this.removeBetween(1, this.children.length-1, true);
 	}
 
-	if (this.representations[0] !== GLOBAL.NUMBER_REPRESENTATION.yesno) {
+	if (typeof this.background === 'undefined' && this.representations[0] !== GLOBAL.NUMBER_REPRESENTATION.yesno) {
 		if (this._number > 0) {
 			this.bg.frameName = 'buttonP-0';
 		} else if (this._number < 0) {
