@@ -247,21 +247,20 @@ BalloonGame.prototype.create = function () {
 
 	//The buttons used when the agent guesses
 	var yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, {
-		x: 0, y: this.world.height-100, background: 'wood', onClick: pushYesno
+		x: 0, y: this.world.height-100, onClick: pushYesno
 	});
 	yesnos.visible = false;
 	this.hudGroup.add(yesnos);
 
 	//The panel used for addition and SubtractionAddition
 	var pluspanel = new ButtonPanel(this.amount, GLOBAL.NUMBER_REPRESENTATION.signedNumbers, {
-		y: this.world.height-80, background: 'wood', onClick: pushPlus,
+		y: this.world.height-80, onClick: pushPlus,
 	});
 	pluspanel.visible = false;
 	pluspanel.scale.setTo(0.65);
 	this.hudGroup.add(pluspanel);
 
 	var buttonOptions = {
-		background: 'wood',
 		y: this.world.height-100,
 		doNotAdapt: true
 	};
@@ -734,7 +733,7 @@ BalloonGame.prototype.create = function () {
 					mapText.number = correctAnswer;
 				} else {
 					mapText = new NumberButton(correctAnswer, _this.representation, {
-								x: 680, y: 650, size: 70, min: 1, max: _this.amount, background: null, disable: true
+								x: 680, y: 650, size: 70, min: 1, max: _this.amount, background: null, disabled: true
 					});
 					_this.gameGroup.add(mapText);
 				}
