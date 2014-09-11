@@ -84,16 +84,20 @@ BeeFlightGame.prototype.create = function () {
 	this.bee.moveTo = {
 		home: function () {
 			var t = new TimelineMax();
+			t.addCallback(_this.bee.flap, null, [true], _this.bee);
 			t.add(_this.bee.move(_this.pos.home, 3, _this.pos.homeScale));
+			t.addCallback(_this.bee.flap, null, [false], _this.bee);
 			return t;
 		},
 		start: function () {
 			var t = new TimelineMax();
+			t.addCallback(_this.bee.flap, null, [true], _this.bee);
 			t.add(_this.bee.move(_this.pos.bee, 3, 1));
 			return t;
 		},
 		flower: function (target, direct) {
 			var t = new TimelineMax();
+			t.addCallback(_this.bee.flap, null, [true], _this.bee);
 			if (_this.bee.y > 300) {
 				t.add(_this.bee.move({ y: _this.pos.bee.y }, 1));
 			}
@@ -117,6 +121,7 @@ BeeFlightGame.prototype.create = function () {
 			}
 
 			t.add(_this.bee.move({ y: flow.y }, 0.75));
+			t.addCallback(_this.bee.flap, null, [false], _this.bee);
 			return t;
 		}
 	};
@@ -344,8 +349,6 @@ function BeeFlightBee (x, y) {
 	this._flap = TweenMax.to(this.wings, 0.1, {
 		frame: this.wings.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
-
-	this.flap(true);
 }
 
 BeeFlightBee.prototype.flap = function (on) {
