@@ -111,7 +111,7 @@ BeeFlightGame.prototype.create = function () {
 						i += dir;
 						t.addLabel('flow' + i);
 						t.addLabel('flows' + i, '-=0.5');
-						t.addSound('beePlaceholder', _this.bee, null, 'flows' + i);
+						t.addSound('beePlaceholder', _this.bee, null, 'flows' + i); // Counting
 					}
 				}
 			}
@@ -143,11 +143,13 @@ BeeFlightGame.prototype.getOptions = function () {
 
 BeeFlightGame.prototype.instructionIntro = function () {
 	var t = new TimelineMax();
-	//t.addSound(speech, bird, 'instruction1a');
+	t.addSound('beePlaceholder', this.bee); // How to find the flower with nectar.
 	// t.add(pointAtBole(_this.currentNumber));
-	t.add(fade(this.buttons, true));
-	t.add(this.buttons.highlight(1));
-	//t.addSound(speech, bird, 'instruction1b');
+	t.addLabel('useButtons');
+	t.addLabel('flashButtons', '+=0.5');
+	t.addSound('beePlaceholder', this.bee); // Use the buttons.
+	t.add(fade(this.buttons, true), 'useButtons');
+	t.add(this.buttons.highlight(1), 'flashButtons');
 	return t;
 };
 
@@ -167,10 +169,14 @@ BeeFlightGame.prototype.startStop = function (t) {
 
 BeeFlightGame.prototype.startBelow = function (t) {
 	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
+	t.addSound('beePlaceholder', this.bee); // I thought it was here.
+	t.addSound('beePlaceholder', this.bee); // Didn't fly long enough.
 };
 
 BeeFlightGame.prototype.startAbove = function (t) {
 	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
+	t.addSound('beePlaceholder', this.bee); // I thought it was here.
+	t.addSound('beePlaceholder', this.bee); // Flew too far.
 };
 
 BeeFlightGame.prototype.startThink = function (t) {
@@ -179,7 +185,9 @@ BeeFlightGame.prototype.startThink = function (t) {
 		this.bee.thought.guess.number = this.addToNumber;
 		this.updateButtons();
 	}, null, null, this);
+	t.addSound('beePlaceholder', this.bee); // I think I am going to...
 	t.add(this.bee.think());
+	t.addSound('beePlaceholder', this.bee); // Number
 };
 
 BeeFlightGame.prototype.runNumber = function (number, simulate) {
@@ -193,13 +201,20 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	}
 
 	var t = new TimelineMax();
+	if (this.relative && !simulate) {
+		t.addSound('beePlaceholder', this.bee); // X more.
+	}
+	t.addSound('beePlaceholder', this.bee); // Let's go!
 	t.add(this.bee.moveTo.flower(sum));
 	if (!result) { // Correct :)
 		t.addCallback(function () {
 			this.hideButtons();
 			this.flowers[current].frameName = 'flower';
 		}, null, null, this);
-		t.add(this.bee.moveTo.home());
+		t.addSound('beePlaceholder', this.bee); // Lots of nectar.
+		t.addLabel('goingHome');
+		t.addSound('beePlaceholder', this.bee, null, 'goingHome'); // Going home.
+		t.add(this.bee.moveTo.home(), 'goingHome');
 		this.atValue = 0;
 	} else { // Incorrect :(
 		this.doReturnFunction(t, sum, result);
@@ -211,17 +226,20 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 
 BeeFlightGame.prototype.returnToStart = function (t) {
 	this.atValue = 0;
+	t.addSound('beePlaceholder', this.bee); // No nectar.
 	t.add(this.bee.moveTo.start());
 	t.add(this.bee.moveTurn(1));
 };
 
 BeeFlightGame.prototype.returnNone = function (t, number) {
 	this.atValue = number;
-	// Do nothing else
+	t.addSound('beePlaceholder', this.bee); // No nectar.
 };
 
 BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
 	if (diff > 0) {
+		t.addSound('beePlaceholder', this.bee); // Too far.
+		t.addSound('beePlaceholder', this.bee); // Go back again.
 		t.add(this.bee.moveTo.flower(this.atValue, true));
 	} else {
 		this.returnNone(t, number);
@@ -230,6 +248,8 @@ BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
 
 BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 	if (diff < 0) {
+		t.addSound('beePlaceholder', this.bee); // Too close to home.
+		t.addSound('beePlaceholder', this.bee); // Go back again.
 		t.add(this.bee.moveTo.flower(this.atValue, true));
 	} else {
 		this.returnNone(t, number);
@@ -241,8 +261,7 @@ BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 /*                 Overshadowing Subgame mode functions                      */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BeeFlightGame.prototype.modeIntro = function () {
-	var t = new TimelineMax();
-	t.addCallback(this.nextRound, null, null, this);
+	this.nextRound();
 };
 
 BeeFlightGame.prototype.modePlayerDo = function (intro, tries) {
@@ -252,9 +271,12 @@ BeeFlightGame.prototype.modePlayerDo = function (intro, tries) {
 		var t = new TimelineMax();
 		if (intro) {
 			t.skippable();
+			t.addSound('beePlaceholder', this.bee); // How to find the flower with nectar.
 			t.add(this.newFlower());
+			t.addSound('beePlaceholder', this.bee); // You there.
 			t.add(this.instructionIntro());
 		} else {
+			t.addSound('beePlaceholder', this.bee); // Get more.
 			t.add(this.newFlower());
 		}
 		t.addCallback(this.showNumbers, null, null, this);
@@ -327,8 +349,10 @@ function BeeFlightBee (x, y) {
 }
 
 BeeFlightBee.prototype.flap = function (on) {
-	if (on && this._flap.paused()) {
-		this._flap.restart(0);
+	if (on) {
+		if (this._flap.paused()) {
+			this._flap.restart(0);
+		}
 	} else {
 		this._flap.pause(0);
 	}
