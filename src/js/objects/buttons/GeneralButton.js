@@ -24,10 +24,11 @@ function GeneralButton (options) {
 	this.disabled = options.disabled || false;
 	this.keepDown = options.keepDown || false;
 
-	if (typeof options.background === 'undefined') {
-		options.background = 'buttonD-0';
+	var background = options.background;
+	if (typeof background === 'undefined') {
+		background = 'buttonD-0';
 	}
-	this.bg = this.create(0, 0, (options.background === null ? null : 'buttons'), options.background);
+	this.bg = this.create(0, 0, (background === null ? null : 'buttons'), background);
 	this.bg.inputEnabled = true;
 
 	this.bg.events.onInputDown.add(function () {
