@@ -120,12 +120,16 @@ LizardJungleGame.prototype.pointAtBole = function (number) {
 	var t = new TimelineMax();
 	t.addCallback(function () { arrow.visible = true; });
 	for (var i = 0; i < number; i++) {
-		var pos = this.tree.children[this.tree.length - 1 - i].world;
+		var pos = this.getTargetPos(1 + i);
 		if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y })); }
 		t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
 	}
 	t.addCallback(function () { arrow.destroy(); }, '+=0.5');
 	return t;
+};
+
+LizardJungleGame.prototype.getTargetPos = function (number) {
+	return this.tree.children[this.tree.length - number].world;
 };
 
 
@@ -136,9 +140,9 @@ LizardJungleGame.prototype.newFood = function (silent) {
 
 	var t = new TimelineMax();
 	t.addCallback(function () { this.target.visible = true; }, null, null, this);
-	t.add(new TweenMax(this.target, 1, { y: this.tree.children[this.tree.length - 1].world.y }));
+	t.add(new TweenMax(this.target, 1, { y: this.getTargetPos(1).y }));
 	for (var i = 1; i < this.currentNumber; i++) {
-		t.add(new TweenMax(this.target, 0.8, { y: this.tree.children[this.tree.length - 1 - i].world.y }));
+		t.add(new TweenMax(this.target, 0.8, { y: this.getTargetPos(1 + i).y }));
 	}
 	
 	if (!silent) {
@@ -199,20 +203,20 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 
 LizardJungleGame.prototype.returnToStart = function (number) {
 	this.atValue = 0;
-	return this.lizard.shoot(this.tree.children[this.tree.length - number].world);
+	return this.lizard.shoot(this.getTargetPos(number));
 };
 
 LizardJungleGame.prototype.returnNone = function (number) {
 	this.atValue = number;
-	return this.lizard.shoot(this.tree.children[this.tree.length - number].world, true);
+	return this.lizard.shoot(this.getTargetPos(number), true);
 };
 
 LizardJungleGame.prototype.returnToPreviousIfHigher = function (number, diff) {
 	if (diff > 0) {
 		var t = new TimelineMax();
 		t.add(this.lizard.shootMiss(
-			this.tree.children[this.tree.length - number].world,
-			this.tree.children[this.tree.length - this.atValue].world));
+			this.getTargetPos(number),
+			this.getTargetPos(this.atValue)));
 		t.addSound('lizardPlaceholder'); // That was too high.
 		return t;
 	} else {
@@ -224,8 +228,8 @@ LizardJungleGame.prototype.returnToPreviousIfLower = function (number, diff) {
 	if (diff < 0) {
 		var t = new TimelineMax();
 		t.add(this.lizard.shootMiss(
-			this.tree.children[this.tree.length - number].world,
-			this.tree.children[this.tree.length - this.atValue].world));
+			this.getTargetPos(number),
+			this.getTargetPos(this.atValue)));
 		t.addSound('lizardPlaceholder'); // That was too low.
 		return t;
 	} else {
@@ -250,11 +254,11 @@ LizardJungleGame.prototype.modeIntro = function () {
 		t.add(this.newFood(true));
 		t.addSound('lizardPlaceholder', this.lizard); // ant
 		if (this.currentNumber > 1) {
-			t.add(this.lizard.shoot(this.tree.children[this.tree.length + 1 - this.currentNumber].world));
+			t.add(this.lizard.shoot(this.getTargetPos(this.currentNumber - 1)));
 			t.addSound('lizardPlaceholder', this.lizard); // miss
 		}
 		if (this.currentNumber < this.amount) {
-			t.add(this.lizard.shoot(this.tree.children[this.tree.length - 1 - this.currentNumber].world));
+			t.add(this.lizard.shoot(this.getTargetPos(this.currentNumber + 1)));
 			t.addSound('lizardPlaceholder', this.lizard); // miss
 		}
 		t.addCallback(this.nextRound, null, null, this);
@@ -366,6 +370,10 @@ function LizardJungleLizard (x, y) {
 	this.jaw = game.add.sprite(0, 18, 'lizardJaw', null, this.head);
 	this.jaw.anchor.set(1, 0);
 
+	this.origin = {
+		x: this.x + this.head.x + this.tounge.x,
+		y: this.y + this.head.y + this.tounge.y
+	};
 	this.stuck = false;
 
 	this.talk = new TimelineMax({ repeat: -1, yoyo: true, paused: true });
@@ -410,16 +418,20 @@ LizardJungleLizard.prototype.followPointer = function (on) {
 	}
 };
 
-LizardJungleLizard.prototype.shoot = function (hit, stuck) {
-	var headOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
+LizardJungleLizard.prototype.startShoot = function (hit) {
 	var t = new TimelineMax();
 	if (this.stuck) {
 		t.add(this.shootReturn());
 	}
-	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, headOrigin) });
+	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, this.origin) });
 	t.to(this.forehead, 0.5, { angle: 10 });
 	t.to(this.jaw, 0.5, { angle: -5 }, '-=0.5');
-	t.to(this.tounge, 0.5, {
+	return t;
+};
+
+LizardJungleLizard.prototype.shoot = function (hit, stuck) {
+	var t = this.startShoot(hit);
+	t.to(this.tounge, 0.75, {
 		width: game.physics.arcade.distanceBetween(hit, this.tounge.world),
 		height: 18
 	});
@@ -441,22 +453,15 @@ LizardJungleLizard.prototype.shootReturn = function () {
 };
 
 LizardJungleLizard.prototype.shootMiss = function (aim, hit) {
-	var headOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
-	var t = new TimelineMax();
-	if (this.stuck) {
-		t.add(this.shootReturn());
-	}
-	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(aim, headOrigin) });
-	t.to(this.forehead, 0.5, { angle: 10 });
-	t.to(this.jaw, 0.5, { angle: -5 }, '-=0.5');
-	t.to(this.tounge, 0.5, {
+	var t = this.startShoot(aim);
+	t.to(this.tounge, 1, {
 		width: game.physics.arcade.distanceBetween(aim, this.tounge.world)*1.4,
 		height: 18
 	});
-	t.to(this.head, 1.2, { rotation: game.physics.arcade.angleBetween(hit, headOrigin) }, '-=0.2');
+
+	t.to(this.head, 1.4, { rotation: game.physics.arcade.angleBetween(hit, this.origin) }, '-=0.4');
 	t.to(this.tounge, 1, { width: game.physics.arcade.distanceBetween(hit, this.tounge.world), }, '-=1');
 
-	t.addLabel('stretched');
 	t.addCallback(function () { this.stuck = true; }, null, null, this);
 	return t;
 };
