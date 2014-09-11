@@ -52,11 +52,11 @@ BeeFlightGame.prototype.create = function () {
 	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	var width = size / this.amount;
 	var yPos = this.amount > 5 ? 450 : 550;
-	var yOffset = this.amount > 5 ? 50 : 0;
+	var yOffset = this.amount > 5 ? 100 : 0;
 	this.flowers = [];
 	var i, v, c, row;
 	for (i = 0; i < this.amount; i++) {
-		row = (i % 3);
+		row = (i % 2);
 		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos + yOffset * row, 'bee', 'flower', this.gameGroup));
 		if (!row && i !== 0) { // So that the flower nearest is on top of farest.
 			this.gameGroup.moveDown(this.flowers[i]);
