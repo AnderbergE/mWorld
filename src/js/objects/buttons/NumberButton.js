@@ -151,14 +151,12 @@ NumberButton.prototype.updateGraphics = function () {
 NumberButton.prototype.calcOffset = function (offset) {
 	var t = {};
 	t.o = this.size/offset;
-	// This means that the button grows up or down (depending on amount of representations).
-	// So this.vertical = true means that the button background is pointing left or right.
-	if (this.vertical) {
+	if (this.direction) { /* Up/Down */
+		t.x = t.o*1.8;
+		t.y = t.o*(this._number >= 0 ? 3.3 : 1);
+	} else { /* Left/Right */
 		t.x = t.o*(this._number >= 0 ? 1 : 3.3);
 		t.y = t.o*2;
-	} else {
-		t.x = t.o*2;
-		t.y = t.o*(this._number >= 0 ? 3.3 : 1);
 	}
 	t.o *= 4;
 	return t;
@@ -180,9 +178,10 @@ NumberButton.prototype.setSize = function (size) {
 
 /**
  * Set the direction of the background button.
- * @param {Boolean} val - True = vertical, false = horizontal.
+ * @param {Boolean} val - True = up/down, false = left/right.
  */
 NumberButton.prototype.setDirection = function (val) {
+	this.direction = val;
 	if (val) {
 		this.bg.rotation = -Math.PI/2;
 		this.bg.y += this.bg.width;
@@ -190,5 +189,9 @@ NumberButton.prototype.setDirection = function (val) {
 	} else {
 		this.bg.rotation = 0;
 		this.bg.y -= this.bg.adjusted || 0;
+	}
+
+	if (this.number) {
+		this.updateGraphics();
 	}
 };
