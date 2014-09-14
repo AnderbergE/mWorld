@@ -220,6 +220,7 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		t.addLabel('goingHome');
 		t.addSound('beePlaceholder', this.bee, null, 'goingHome'); // Going home.
 		t.add(this.bee.moveTo.home(), 'goingHome');
+		t.add(this.addWater(this.pos.home.x, this.pos.home.y));
 		this.atValue = 0;
 	} else { // Incorrect :(
 		this.doReturnFunction(t, sum, result);

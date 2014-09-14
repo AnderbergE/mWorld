@@ -191,6 +191,7 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 		t.addCallback(function () { this.target.visible = false; }, null, null, this);
 		t.addCallback(this.hideButtons, null, null, this);
 		t.addSound('lizardPlaceholder', this.lizard); // nom nom
+		t.add(this.addWater(this.lizard.tounge.world.x, this.lizard.tounge.world.y), 'afterShot');
 		t.add(tweenTint(this.lizard, this.target.tint), 'afterShot');
 		this.atValue = 0;
 	} else { // Incorrect :(
