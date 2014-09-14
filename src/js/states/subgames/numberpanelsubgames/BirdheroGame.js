@@ -54,7 +54,7 @@ BirdheroGame.prototype.create = function () {
 	this.agent.thought.guess.setDirection(true);
 
 	/* Setup tints by randomising those in the bank. */
-	this.tint = this.rnd.shuffle(this.tintBank.splice(0));
+	this.tint = this.rnd.shuffle(this.tintBank.slice());
 
 	// Add music and sounds
 	var elevatorAudio = this.add.audio('birdheroElevator', 1);
