@@ -14,7 +14,7 @@
  * startThink: When round start by guessing something. Used in add/subt method.
 
  * runNumber:  The function to run when a number has been chosen.
- 
+
  * returnToStart:            When returning to the start position on incorrect answer.
  * returnNone:               When the game stays at the incorrect answer position.
  * returnToPreviousIfHigher: When returning to previous value if the incorrect answer was too high.
@@ -192,16 +192,20 @@ NumberGame.prototype.agentGuess = function () {
  */
 NumberGame.prototype.setupButtons = function (options) {
 	var _this = this;
-	options.buttons.method = this.method;
-	options.buttons.onClick = function (number) { _this.pushNumber(number); };
-	this.buttons = new ButtonPanel(this.amount, this.representation, options.buttons);
-	this.buttons.visible = false;
-	this.hudGroup.add(this.buttons);
+	if (options.buttons) {
+		options.buttons.method = this.method;
+		options.buttons.onClick = function (number) { _this.pushNumber(number); };
+		this.buttons = new ButtonPanel(this.amount, this.representation, options.buttons);
+		this.buttons.visible = false;
+		this.hudGroup.add(this.buttons);
+	}
 
-	options.yesnos.onClick = function (value) { _this.pushYesNo(value); };
-	this.yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, options.yesnos);
-	this.yesnos.visible = false;
-	this.hudGroup.add(this.yesnos);
+	if (options.yesnos) {
+		options.yesnos.onClick = function (value) { _this.pushYesNo(value); };
+		this.yesnos = new ButtonPanel(2, GLOBAL.NUMBER_REPRESENTATION.yesno, options.yesnos);
+		this.yesnos.visible = false;
+		this.hudGroup.add(this.yesnos);
+	}
 };
 
 /* Function to trigger when a button in the number panel is pushed. */
