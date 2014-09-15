@@ -110,8 +110,7 @@ LizardJungleGame.prototype.instructionIntro = function () {
 };
 
 LizardJungleGame.prototype.pointAtBole = function (number) {
-	var first = this.tree.children[this.tree.length - 1];
-	var start = first.world;
+	var start = this.tree.children[this.tree.length - 1].world;
 	var offset = 70;
 	var arrow = this.add.sprite(start.x + offset, start.y, 'lizardArrow', null, this.gameGroup);
 	arrow.anchor.set(0, 0.5);
@@ -119,6 +118,7 @@ LizardJungleGame.prototype.pointAtBole = function (number) {
 
 	var t = new TimelineMax();
 	t.addCallback(function () { arrow.visible = true; });
+	t.addCallback(function () {}, '+=0.5');
 	for (var i = 0; i < number; i++) {
 		var pos = this.getTargetPos(1 + i);
 		if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y })); }
