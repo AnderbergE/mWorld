@@ -1,8 +1,8 @@
 /* Balloon Game */
-BalloonGame.prototype = Object.create(Subgame.prototype);
+BalloonGame.prototype = Object.create(NumberGame.prototype);
 BalloonGame.prototype.constructor = BalloonGame;
 function BalloonGame () {
-	Subgame.call(this); // Call parent constructor.
+	NumberGame.call(this); // Call parent constructor.
 }
 
 /* Phaser state function */

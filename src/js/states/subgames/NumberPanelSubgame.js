@@ -1,11 +1,11 @@
-NumberPanelSubgame.prototype = Object.create(Subgame.prototype);
+NumberPanelSubgame.prototype = Object.create(NumberGame.prototype);
 NumberPanelSubgame.prototype.constructor = NumberPanelSubgame;
 
 /**
  * Superclass for games using number panels.
  */
 function NumberPanelSubgame () {
-	Subgame.call(this); // Call parent constructor.
+	NumberGame.call(this); // Call parent constructor.
 }
 
 /**

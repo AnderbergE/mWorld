@@ -1,11 +1,7 @@
 /**
- * Holds shared logic for subgames.
- *
- * How to use:
- * Number amount:        this.amount
- * Representation:       this.representation
- * The method:           this.method
- * The number to answer: this.currentNumber (updates automatically)
+ * Superclass for all games.
+ * Holds shared logic for mode and round handling. Also some graphic setups.
+ * Also see subclass NumberGame.
  *
  * Add game objects to:     this.gameGroup
  * Add buttons and HUD to:  this.hudGroup
@@ -14,7 +10,6 @@
  * Start game:              this.startGame()
  * Disable/Enable input:    this.disable(true/false) - default = true = disabled (publishes disabled event)
  * Run next round:          this.nextRound() - will change mode automatically when needed
- * Try a number:            this.tryNumber(number) - when testing a guess against this.currentNumber
  * Add water to the can:    this.addWater(fromX, fromY) - Adds a water drop to the can
  *
  *
@@ -26,16 +21,6 @@
  * modeAgentTry   // TA is guessing and the player is helping out
  * modeAgentDo    // TA only
  * modeOutro      // The game is finished, celebrate!
- *
- *
- * Typical game flow:
- * this.startGame();    // the first mode, this.modeIntro, will be called
- * this.nextRound();    // start next round (will automatically start next mode)
- * this.disable(false); // make it possible to interact with anything
- * this.tryNumber(x);   // try a number against the current one
- * this.nextRound();    // do this regardless if right or wrong,
- *                      // it takes care of mode switching and function calls for you
- * // Repeat last two functions until game is over.
  */
 function Subgame () {}
 
@@ -68,16 +53,7 @@ Subgame.prototype.init = function (options) {
 	this._totalTries = 0;
 
 	/* Public variables */
-	this.method = parseInt(options.method || GLOBAL.METHOD.count);
-	this.representation = options.representation;
-	this.amount = GLOBAL.NUMBER_RANGE[options.range];
-	/* The current number to answer */
-	this.currentNumber = null;
-	/* The current mode running */
-	this.currentMode = null;
-	/* Stores the offset of the last try, can be used to judge last try */
-	/* Ex: -1 means that last try was one less than currentNumber */
-	this.lastTry = 0;
+	this.currentMode = null; // The current mode running
 
 	/* Setup game objects */
 	this.gameGroup = this.add.group();
@@ -99,24 +75,9 @@ Subgame.prototype.init = function (options) {
 	/* Setup menu objects */
 	this._menuGroup = this.add.group();
 	this._menuGroup.visible = false;
-
 	this._waterCan = new WaterCan(this.world.width - 100, 10);
 	this._menuGroup.add(this._waterCan);
-
 	this._menuGroup.add(new Menu());
-
-	/* Numbers for randomisation. */
-	this._weighted = this.amount > 4 && this.method === GLOBAL.METHOD.count;
-	this._numberMin = 1;
-	this._numberMax = this.amount;
-	if (this.method === GLOBAL.METHOD.addition) {
-		this._numberMin++;
-	}
-	if (this.method === GLOBAL.METHOD.subtraction) {
-		this._numberMax--;
-	}
-
-	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [options.type || 0, this._token]);
 };
 
 /* Phaser state function */
@@ -157,20 +118,6 @@ Subgame.prototype._decideMode = function (mode) {
 	}
 };
 
-/** Change this.currentNumber to a new one (resets the tries). */
-Subgame.prototype._nextNumber = function () {
-	// Should we allow the same number again?
-	this._totalTries += this._currentTries;
-	this._currentTries = 0;
-
-	// Weighted randomisation if applicable
-	if (this._weighted && this.rnd.frac() < 0.2) {
-		this.currentNumber = this.rnd.integerInRange(5, this._numberMax);
-	} else {
-		this.currentNumber = this.rnd.integerInRange(this._numberMin, this._numberMax);
-	}
-};
-
 /** Skip the current mode. */
 Subgame.prototype._skipMode = function () {
 	this._nextMode();
@@ -208,27 +155,6 @@ Subgame.prototype.nextRound = function () {
 };
 
 /**
- * Try a number against this.currentNumber.
- * The offset of the last try is stored in this.lastTry.
- * Publishes tryNumber event.
- * @param {number} The number to try.
- * @param {number} The offset to the number (example if you start at 2).
- * @return {boolean} The offset of the last try (0 is correct, -x is too low, +x is too high).
- */
-Subgame.prototype.tryNumber = function (number, offset) {
-	var sum = number + (offset || 0);
-	EventSystem.publish(GLOBAL.EVENT.tryNumber, [sum, this.currentNumber, number, offset]);
-	this._currentTries++;
-	this.lastTry = sum - this.currentNumber;
-
-	if (!this.lastTry) {
-		this._counter.value++; // This will trigger next mode if we loop.
-		this._nextNumber();
-	}
-	return this.lastTry;
-};
-
-/**
  * Adds water to the water can.
  * Water will only be added in modes playerShow, agentTry and agentDo.
  * @param {number} The x position where the drop will begin.
@@ -261,11 +187,13 @@ Subgame.prototype.addWater = function (x, y, force) {
 
 /** Start the game! */
 Subgame.prototype.startGame = function () {
+	/* Send event that subgame is started. */
+	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [game.state.current, this._token]);
+
 	var _this = this;
 	this.sound.whenSoundsDecoded(function () {
 		_this._menuGroup.visible = true;
 		_this._nextMode();
-		_this._nextNumber();
 		_this.nextRound();
 	});
 };
