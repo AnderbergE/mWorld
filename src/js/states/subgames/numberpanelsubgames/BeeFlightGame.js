@@ -3,10 +3,10 @@
 /* Representations: All
 /* Range:           1--4
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-BeeFlightGame.prototype = Object.create(NumberPanelSubgame.prototype);
+BeeFlightGame.prototype = Object.create(NumberGame.prototype);
 BeeFlightGame.prototype.constructor = BeeFlightGame;
 function BeeFlightGame () {
-	NumberPanelSubgame.call(this); // Call parent constructor.
+	NumberGame.call(this); // Call parent constructor.
 }
 
 BeeFlightGame.prototype.pos = {
@@ -38,7 +38,19 @@ BeeFlightGame.prototype.preload = function () {
 
 /* Phaser state function */
 BeeFlightGame.prototype.create = function () {
-	NumberPanelSubgame.prototype.create.call(this);
+	// Setup additional game objects on top of NumberGame.init
+	this.setupButtons({
+		buttons: {
+			x: 150,
+			y: 25,
+			size: this.world.width - 300
+		},
+		yesnos: {
+			x: 150,
+			y: 25,
+			size: this.world.width - 300
+		}
+	});
 
 	// Add music
 	this.add.audio('beeMusic', 1, true).play();
@@ -130,21 +142,6 @@ BeeFlightGame.prototype.create = function () {
 
 	// Everything is set up! Blast off!
 	this.startGame();
-};
-
-BeeFlightGame.prototype.getOptions = function () {
-	return {
-		buttons: {
-			x: 150,
-			y: 25,
-			size: this.world.width - 300
-		},
-		yesnos: {
-			x: 150,
-			y: 25,
-			size: this.world.width - 300
-		}
-	};
 };
 
 BeeFlightGame.prototype.instructionIntro = function () {

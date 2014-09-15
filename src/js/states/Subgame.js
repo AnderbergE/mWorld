@@ -3,24 +3,25 @@
  * Holds shared logic for mode and round handling. Also some graphic setups.
  * Also see subclass NumberGame.
  *
+ * SETUP THESE IN THE SUBCLASS:
+ * They are called with two parameters (ifFirstTime, triesSoFar).
+ * modeIntro:      Introduce the game, call nextRound to start next mode.
+ * modePlayerDo:   Player only
+ * modePlayerShow: Player is showing the TA
+ * modeAgentTry:   TA is guessing and the player is helping out
+ * modeAgentDo:    TA only
+ * modeOutro:      The game is finished, celebrate!
+ *
+ * VARIABLES THE SUBCLASS CAN USE:
  * Add game objects to:     this.gameGroup
  * Add buttons and HUD to:  this.hudGroup
  * Use agent with:          this.agent (default visibility = false)
  *
+ * FUNCTIONS THE SUBCLASS CAN USE:
  * Start game:              this.startGame()
  * Disable/Enable input:    this.disable(true/false) - default = true = disabled (publishes disabled event)
  * Run next round:          this.nextRound() - will change mode automatically when needed
  * Add water to the can:    this.addWater(fromX, fromY) - Adds a water drop to the can
- *
- *
- * These function _should_ be overshadowed by the subgame:
- * They are called with two parameters (ifFirstTime, triesSoFar).
- * modeIntro      // Introduce the game, call nextRound to start next mode.
- * modePlayerDo   // Player only
- * modePlayerShow // Player is showing the TA
- * modeAgentTry   // TA is guessing and the player is helping out
- * modeAgentDo    // TA only
- * modeOutro      // The game is finished, celebrate!
  */
 function Subgame () {}
 

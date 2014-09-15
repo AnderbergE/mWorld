@@ -3,10 +3,10 @@
 /* Representations: All
 /* Range:           1--4
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-LizardJungleGame.prototype = Object.create(NumberPanelSubgame.prototype);
+LizardJungleGame.prototype = Object.create(NumberGame.prototype);
 LizardJungleGame.prototype.constructor = LizardJungleGame;
 function LizardJungleGame () {
-	NumberPanelSubgame.call(this); // Call parent constructor.
+	NumberGame.call(this); // Call parent constructor.
 }
 
 /* Position coordinates for the game */
@@ -41,7 +41,20 @@ LizardJungleGame.prototype.preload = function () {
 
 /* Phaser state function */
 LizardJungleGame.prototype.create = function () {
-	NumberPanelSubgame.prototype.create.call(this);
+	// Setup additional game objects on top of NumberGame.init
+	this.setupButtons({
+		buttons: {
+			x: this.world.width - (this.representation.length*75) - 25,
+			y: this.pos.tree.y - 30,
+			vertical: true,
+			size: this.pos.tree.height,
+			reversed: true
+		},
+		yesnos: {
+			x: this.world.width - 100,
+			vertical: true
+		}
+	});
 	this.agent.thought.guess.setDirection(true);
 
 	// Add main game
@@ -80,22 +93,6 @@ LizardJungleGame.prototype.create = function () {
 
 	// Everything is set up! Blast off!
 	this.startGame();
-};
-
-LizardJungleGame.prototype.getOptions = function () {
-	return {
-		buttons: {
-			x: this.world.width - (this.representation.length*75) - 25,
-			y: this.pos.tree.y - 30,
-			vertical: true,
-			size: this.pos.tree.height,
-			reversed: true
-		},
-		yesnos: {
-			x: this.world.width - 100,
-			vertical: true
-		}
-	};
 };
 
 LizardJungleGame.prototype.instructionIntro = function () {

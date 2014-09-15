@@ -3,10 +3,10 @@
 /* Representations: All
 /* Range:           1--9
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-BirdheroGame.prototype = Object.create(NumberPanelSubgame.prototype);
+BirdheroGame.prototype = Object.create(NumberGame.prototype);
 BirdheroGame.prototype.constructor = BirdheroGame;
 function BirdheroGame () {
-	NumberPanelSubgame.call(this); // Call parent constructor.
+	NumberGame.call(this); // Call parent constructor.
 }
 
 /* Position coordinates for the game */
@@ -50,10 +50,18 @@ BirdheroGame.prototype.preload = function () {
 
 /* Phaser state function */
 BirdheroGame.prototype.create = function () {
-	NumberPanelSubgame.prototype.create.call(this);
+	// Setup additional game objects on top of NumberGame.init
+	this.setupButtons({
+		buttons: {
+			y: this.world.height - (this.representation.length*75) - 25
+		},
+		yesnos: {
+			y: this.world.height - 100
+		}
+	});
 	this.agent.thought.guess.setDirection(true);
 
-	/* Setup tints by randomising those in the bank. */
+	// Setup tints by randomising those in the bank.
 	this.tint = this.rnd.shuffle(this.tintBank.slice());
 
 	// Add music and sounds
@@ -189,17 +197,6 @@ BirdheroGame.prototype.create = function () {
 
 	// Everything is set up! Blast off!
 	this.startGame();
-};
-
-BirdheroGame.prototype.getOptions = function () {
-	return {
-		buttons: {
-			y: this.world.height - (this.representation.length*75) - 25
-		},
-		yesnos: {
-			y: this.world.height - 100
-		}
-	};
 };
 
 /**

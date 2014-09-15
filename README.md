@@ -15,8 +15,8 @@ As long as grunt is running the server will be active. If you make changes in th
 UPDATED: 2014-09-05
 
 Creating a new subgame?
-Start by reading the documentation in: src/js/states/Subgame.js.
-Be inspired by NumberPanelSubgame.js and BirdheroGame.js.
+Start by reading the documentation in: src/js/states/Subgame.js and src/js/states/NumberGame.js.
+Be inspired by BirdheroGame.js.
 You need to add your subgame/state in game.js.
 (If you want easy access to the subgame, modify DebugState.js).
 
@@ -27,16 +27,16 @@ CORE FILES:
 _global.js -   Holds most globals in the game. Such as for events, states, subgames and font. Creates global: 'GLOBAL'.
 _language.js - Holds language operations and default language. Creates global: 'LANG'.
 _pubsub -      Event system, publication-subscription kind. Creates global: 'EventSystem'.
-game.js -    Sets up and boots the game. Creates globals: 'game', 'player'.
-backend.js - All backend communication is executed in this file, just call the proper function. Creates global: 'Backend'.
-player.js -  Handles the player related data, such as agent type and water amount.
-logger.js -  Takes care of results logging, sends it via backend when relevant. Relies on events to work.
-utils.js -   Common objects, functions and object extensions.
+game.js -      Sets up and boots the game. Creates globals: 'game', 'player'.
+backend.js -   All backend communication is executed in this file, just call the proper function. Creates global: 'Backend'.
+player.js -    Handles the player related data, such as agent type and water amount.
+logger.js -    Takes care of results logging, sends it via backend when relevant. Relies on events to work.
+utils.js -     Common objects, functions and object extensions.
 
 SUBGAME/STATE FILES (folder states):
-Subgame.js -            Super class for subgames, holds the core functions. See more documentation in the file.
-NumberPanelSubgame.js - Holds shared functions for games that rely on number panels.
-DebugState.js -         Used for easy access to the games and their properties. Should not be available in final game.
+Subgame.js -    Super class for subgames, holds the core functions. See more documentation in the file.
+NumberGame.js - Holds shared functions for games that has a single number as target. See more documentation in the file.
+DebugState.js - Used for easy access to the games and their properties. Should not be available in final game.
 - The rest of the files are self-explanatory.
 - First time procedure:  EntryState -> AgentSetupState -> GardenState -> Subgame + [A subgame] -> (back to GardenState).
 - Normal game procedure: EntryState -> GardenState -> Subgame + [A subgame] -> (back to GardenState).
