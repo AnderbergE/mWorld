@@ -33,6 +33,7 @@ BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beePlaceholder', LANG.SPEECH.AGENT.hmm);
 
 	this.load.atlasJSONHash('bee', 'assets/img/subgames/beeflight/atlas.png', 'assets/img/subgames/beeflight/atlas.json');
+	this.load.image('beeArrow',    'assets/img/objects/arrow.png');
 };
 
 /* Phaser state function */
@@ -149,12 +150,32 @@ BeeFlightGame.prototype.getOptions = function () {
 BeeFlightGame.prototype.instructionIntro = function () {
 	var t = new TimelineMax();
 	t.addSound('beePlaceholder', this.bee); // How to find the flower with nectar.
-	// t.add(pointAtBole(_this.currentNumber));
+	t.add(this.pointAtFlowers(this.currentNumber));
 	t.addLabel('useButtons');
 	t.addLabel('flashButtons', '+=0.5');
 	t.addSound('beePlaceholder', this.bee); // Use the buttons.
 	t.add(fade(this.buttons, true), 'useButtons');
 	t.add(this.buttons.highlight(1), 'flashButtons');
+	return t;
+};
+
+BeeFlightGame.prototype.pointAtFlowers = function (number) {
+	var startY = this.pos.bee.y;
+	var arrow = this.gameGroup.create(this.flowers[0].x, startY, 'beeArrow');
+	arrow.anchor.set(0, 0.5);
+	arrow.rotation = -Math.PI/2;
+	arrow.visible = false;
+
+	var t = new TimelineMax();
+	t.addCallback(function () { arrow.visible = true; });
+	t.addCallback(function () {}, '+=0.5');
+	for (var i = 0; i < number; i++) {
+		if (i !== 0) {
+			t.add(new TweenMax(arrow, 0.75, { x: this.flowers[i].x, y: startY }));
+		}
+		t.add(new TweenMax(arrow, 1, { y: this.flowers[i].y }));
+	}
+	t.addCallback(function () { arrow.destroy(); }, '+=0.5');
 	return t;
 };
 
