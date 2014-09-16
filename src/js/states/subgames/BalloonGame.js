@@ -177,7 +177,10 @@ BalloonGame.prototype.create = function () {
 			if (amount <= 0) {
 				// TODO: Add a voice saying you need to attach balloons to the bucket.
 				void(amount);
-			} else {
+			} if (amount === _this.atValue) {
+				// TODO: Add a voice saying you need to change balloons.
+				void(amount);
+			}else {
 				_this.pushNumber(amount);
 			}
 		}
@@ -212,11 +215,12 @@ BalloonGame.prototype.create = function () {
 		var t = new TimelineMax();
 		// Check for ovelap with bucket balloons.
 		if (Phaser.Rectangle.intersects(balloon.getBounds(), _this.actionGroup.getBounds())) {
+			var current = _this.bucketBalloons.amount;
 			_this.bucketBalloons.pending++;
 			t.to(balloon, 0.5, { x: _this.actionGroup.x + _this.bucketBalloons.x, y: _this.actionGroup.y + _this.bucketBalloons.y });
 			t.addCallback(function () {
 				_this.bucketBalloons.pending--;
-				_this.bucketBalloons.updateBalloons(_this.bucketBalloons.amount + 1);
+				_this.bucketBalloons.updateBalloons(current + 1);
 			});
 		} else {
 			t.to(balloon, 1, _this.pos.balloons);
@@ -232,14 +236,39 @@ BalloonGame.prototype.create = function () {
 	this.startGame();
 };
 
-// Makes it so we can't click the balloons.
+/**
+ * Reset the balloons.
+ * @param {integer} value - If the bucket balloons should have a specific amount (default 0).
+ */
+BalloonGame.prototype.resetBalloons = function (inBucket) {
+	inBucket = inBucket || 0;
+	this.bucketBalloons.updateBalloons(inBucket);
+	this.balloonStack.updateBalloons(this.amount - inBucket); // TODO: Maybe a nice "blow up" animation?
+};
+
+/**
+ * Makes it so we can't click the balloons.
+ * @param {boolean} value - true is disabled, false is enabled.
+ */
 BalloonGame.prototype.disableBalloons = function (value) {
 	this.balloonStack.balloons.inputEnabled = !value;
 	this.bucketBalloons.balloons.inputEnabled = !value;
 	this.liftoffButton.disabled = value;
 };
 
-// TODO: showYesnos should not show liftoffbutton
+/**
+ * Pops the balloons attached to the bucket.
+ * @return {Object} The animation timeline.
+ */
+BalloonGame.prototype.popBalloons = function () {
+	var t = new TimelineMax();
+	t.addCallback(function () {
+		this.bucketBalloons.popBalloons(); // Will set amount to 0.
+		this.balloonStack.updateBalloons(this.amount); // TODO: Maybe a nice "blow up" animation?
+	}, null, null, this);
+	t.addSound('pop');
+	return t;
+};
 
 BalloonGame.prototype.showNumbers = function () {
 	if (this.buttons) {
@@ -254,10 +283,10 @@ BalloonGame.prototype.showNumbers = function () {
 
 // This creates a new treasure to search for.
 BalloonGame.prototype.newTreasure = function () {
-	var t = new TimelineMax().skippable();
+	var t = new TimelineMax();
 	if (this.eyes) {
-		this.eyes.x = this.caves[this.currentNumber - 1].x + 40;
-		this.eyes.y = this.caves[this.currentNumber - 1].y + 55;
+		this.eyes.x = this.caves[this.currentNumber - 1].x + 30;
+		this.eyes.y = this.caves[this.currentNumber - 1].y + 30;
 		t.add(fade(this.eyes, true));
 	}
 	if (this.map) {
@@ -275,40 +304,34 @@ BalloonGame.prototype.newTreasure = function () {
 	return t;
 };
 
-BeeFlightGame.prototype.startStop = function () {
+BalloonGame.prototype.startWithBalloons = function (min, max) {
+	this.addToNumber = this.rnd.integerInRange(min, max);
+	this.atValue = this.addToNumber;
+	this.resetBalloons(this.addToNumber);
+};
+
+BalloonGame.prototype.startStop = function () {
 	// Do nothing.
 };
 
-BeeFlightGame.prototype.startBelow = function (t) {
-	t.addCallback(function () {
-		this.addToNumber = this.rnd.integerInRange(0, this.currentNumber - 1);
-		this.balloonStack.updateBalloons(this.amount - this.addToNumber);
-		this.bucketBalloons.updateBalloons(this.addToNumber);
-	}, null, null, this);
+BalloonGame.prototype.startBelow = function (t) {
+	t.addCallback(this.startWithBalloons, null, [0, this.currentNumber - 1], this);
 };
 
-BeeFlightGame.prototype.startAbove = function (t) {
-	t.addCallback(function () {
-		this.addToNumber = this.rnd.integerInRange(this.currentNumber + 1, this.amount);
-		this.balloonStack.updateBalloons(this.amount - this.addToNumber);
-		this.bucketBalloons.updateBalloons(this.addToNumber);
-	}, null, null, this);
+BalloonGame.prototype.startAbove = function (t) {
+	t.addCallback(this.startWithBalloons, null, [this.currentNumber + 1, this.amount], this);
 };
 
-BeeFlightGame.prototype.startThink = function (t) {
-	t.addCallback(function () {
-		this.addToNumber = this.rnd.integerInRange(1, this.amount);
-		// this.bee.thought.guess.number = this.addToNumber;
-	}, null, null, this);
-	// t.add(this.bee.think());
+BalloonGame.prototype.startThink = function (t) {
+	t.addCallback(this.startWithBalloons, null, [1, this.amount], this);
 };
 
 // When you press the anchor this happens.
 BalloonGame.prototype.runNumber = function (amount) {
-	this.balloonStack.updateBalloons(this.amount - amount);
-	this.bucketBalloons.updateBalloons(amount);
-
-	var result = this.tryNumber(amount);
+	var sum = amount + this.addToNumber;
+	this.balloonStack.updateBalloons(this.amount - sum);
+	this.bucketBalloons.updateBalloons(sum);
+	var result = this.tryNumber(sum);
 
 	var t = new TimelineMax().skippable();
 	t.addCallback(function () {
@@ -320,10 +343,11 @@ BalloonGame.prototype.runNumber = function (amount) {
 		t.add(new TweenMax(this.beetle, 2, { x: 0, y: 0, ease: Power1.easeIn }));
 	}
 
-	t.add(new TweenMax(this.actionGroup, 2, { y: this.caves[amount - 1].y, ease: Power1.easeInOut }));
+	t.add(new TweenMax(this.actionGroup, 2, { y: this.caves[sum - 1].y, ease: Power1.easeInOut }));
 
 	if (!result) { // If we guessed correctly
-		t.add(this.openChest(amount));
+		t.add(this.openChest(sum));
+		this.returnToStart(t);
 
 	} else { // If we guessed wrong
 		if (result > 0) {
@@ -331,17 +355,19 @@ BalloonGame.prototype.runNumber = function (amount) {
 		} else {
 			t.addSound(this.speech, this.beetle, 'trymore');
 		}
+		this.doReturnFunction(t, sum, result);
 	}
 
 	// Popping balloons and going back down.
-	if(this.method !== GLOBAL.METHOD.incrementalSteps) {
-		t.add(this.popAndReturn());
-	} else if (this.bucketBalloons.amount > 7) {
-		fade(this.magnifyGroup, true);
-	} else {
-		fade(this.magnifyGroup, false);
+	if (this.method === GLOBAL.METHOD.incrementalSteps) {
+		if (this.bucketBalloons.sum > 7) {
+			fade(this.magnifyGroup, true);
+		} else {
+			fade(this.magnifyGroup, false);
+		}
 	}
 
+	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
 
@@ -385,20 +411,43 @@ BalloonGame.prototype.playRandomPrize = function () {
 	return t;
 };
 
-// Makes the beetle jump up and pop the balloons, causing them all to fall down to the ground.
-BalloonGame.prototype.popAndReturn = function () {
-	var t = new TimelineMax();
-	t.to(this.beetle, 0.5, { y: '-=50', ease: Power4.easeIn });
-	t.addCallback(function () {
-		this.bucketBalloons.popBalloons(); // Will set amount to 0.
-		this.balloonStack.updateBalloons(this.amount); // TODO: Maybe a nice "blow up" animation?
-	}, null, null, this);
-	t.addSound('pop');
+/* Pop the balloons and go back down. */
+BalloonGame.prototype.popAndReturn = function (t) {
+	t.add(fade(this.magnifyGroup, false));
+	t.to(this.beetle, 0.5, { y: '-=50', ease: Power4.easeIn }, '-=0.5');
+	t.add(this.popBalloons());
 	t.to(this.beetle, 0.5, { y: '+=50', ease: Power4.easeIn });
 	t.addCallback(this.bucketBalloons.updateBalloons, null, null, this.bucketBalloons);
 	t.to(this.actionGroup, 2, { y: this.pos.bucket.y, ease: Bounce.easeOut });
-	t.add(fade(this.magnifyGroup, false), 0);
-	return t;
+};
+
+BalloonGame.prototype.returnToStart = function (t) {
+	this.atValue = 0;
+	this.popAndReturn(t);
+};
+
+BalloonGame.prototype.returnNone = function (t, number) {
+	this.atValue = number;
+};
+
+BalloonGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
+	if (diff > 0) {
+		this.popAndReturn(t);
+		t.addCallback(this.resetBalloons, null, [this.atValue], this);
+		// TODO: Say something
+	} else {
+		this.returnNone(t, number);
+	}
+};
+
+BalloonGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
+	if (diff < 0) {
+		this.popAndReturn(t);
+		t.addCallback(this.resetBalloons, null, [this.atValue], this);
+		// TODO: Say something
+	} else {
+		this.returnNone(t, number);
+	}
 };
 
 
@@ -407,7 +456,7 @@ BalloonGame.prototype.popAndReturn = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BalloonGame.prototype.modeIntro = function () {
 	var t = new TimelineMax().skippable();
-	t.add( new TweenMax(this.beetle, 3, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
+	t.add(new TweenMax(this.beetle, 3, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
 	if (this.map) {
 		t.addLabel('mapping');
 		t.addSound(this.speech, this.beetle, 'beetleintro3');
@@ -417,9 +466,7 @@ BalloonGame.prototype.modeIntro = function () {
 		t.addSound(this.speech, this.beetle, 'beetleintro1');
 		t.addSound(this.speech, this.beetle, 'beetleintro2');
 	}
-	t.addCallback(function () {
-		this.nextRound();
-	}, null, null, this);
+	t.addCallback(this.nextRound, null, null, this);
 };
 
 BalloonGame.prototype.modePlayerDo = function (intro, tries) {
