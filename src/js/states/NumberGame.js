@@ -87,7 +87,7 @@ NumberGame.prototype.init = function (options) {
 	this.agent.y = this.pos.agent.start.y;
 	this.agent.scale.set(this.pos.agent.scale);
 	this.agent.visible = true;
-	this.agent.addThought(this.representation[0]);
+	this.agent.addThought(this.representation[0], this.pos.agent.mirror || false);
 
 	var _this = this;
 	this.agent.moveTo = {
@@ -178,7 +178,9 @@ NumberGame.prototype.tryNumber = function (number, offset) {
 NumberGame.prototype.agentGuess = function () {
 	var t = new TimelineMax();
 	t.addCallback(function () {
-		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0), this.buttons.min, this.buttons.max);
+		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0),
+			this.buttons ? this.buttons.min : 1,
+			this.buttons ? this.buttons.max : this.amount);
 	}, 0, null, this);
 	t.add(this.agent.think());
 	return t;
@@ -229,12 +231,16 @@ NumberGame.prototype.pushYesNo = function (value) {
 /* Show the number panel, hide the yes/no panel and enable input. */
 NumberGame.prototype.showNumbers = function () {
 	this.disable(true);
-	this.buttons.reset();
-	if (this.isRelative) {
-		this.updateButtons();
+	if (this.buttons) {
+		this.buttons.reset();
+		if (this.isRelative) {
+			this.updateButtons();
+		}
+		fade(this.buttons, true).eventCallback('onComplete', this.disable, false, this);
 	}
-	fade(this.yesnos, false);
-	fade(this.buttons, true).eventCallback('onComplete', this.disable, false, this);
+	if (this.yesnos) {
+		fade(this.yesnos, false);
+	}
 
 	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
 };
@@ -242,9 +248,13 @@ NumberGame.prototype.showNumbers = function () {
 /* Show the yes/no panel, hide the number panel and enable input. */
 NumberGame.prototype.showYesnos = function () {
 	this.disable(true);
-	this.yesnos.reset();
-	fade(this.buttons, false);
-	fade(this.yesnos, true).eventCallback('onComplete', this.disable, false, this);
+	if (this.buttons) {
+		fade(this.buttons, false);
+	}
+	if (this.yesnos) {
+		this.yesnos.reset();
+		fade(this.yesnos, true).eventCallback('onComplete', this.disable, false, this);
+	}
 
 	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
 };
@@ -252,8 +262,12 @@ NumberGame.prototype.showYesnos = function () {
 /* Hide the number and yes/no panel. */
 NumberGame.prototype.hideButtons = function () {
 	this.disable(true);
-	fade(this.buttons, false);
-	fade(this.yesnos, false);
+	if (this.buttons) {
+		fade(this.buttons, false);
+	}
+	if (this.yesnos) {
+		fade(this.yesnos, false);
+	}
 
 	if (this.agent.visible) { this.agent.eyesStopFollow(); }
 };
