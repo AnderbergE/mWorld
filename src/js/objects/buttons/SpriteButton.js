@@ -5,7 +5,7 @@ SpriteButton.prototype.constructor = SpriteButton;
  * A button with a sprite on it.
  * @param {string} key - The sprite key.
  * @param {string} frame - The frame of the sprite (optional).
- * @param {Object} options - A list of options (in addition to GeneralButton):
+ * @param {Object} options - A list of options (see GeneralButton).
  * @return {Object} Itself.
  */
 function SpriteButton (key, frame, options) {

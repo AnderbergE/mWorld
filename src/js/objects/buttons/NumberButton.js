@@ -13,6 +13,9 @@ NumberButton.prototype.constructor = NumberButton;
  *        {number} max: The maximum value of the button.
  *        {number} size: the small side of the button (the other depend on representation amount) (default 75).
  *        {boolean} vertical: stretch button vertically if many representations, otherwise horisontally (default true).
+ *        {string} spriteKey: Used for sprite representation only. The key to the sprite.
+ *        {string} spriteFrame: Used for sprite representation only. The framename in the sprite.
+                                NOTE: Used like this: spriteFrame + this.number
  * @return {Object} Itself.
  */
 function NumberButton (number, representations, options) {
@@ -22,6 +25,8 @@ function NumberButton (number, representations, options) {
 	}
 	this.representations = representations;
 	this.background = options.background;
+	this.spriteKey = options.spriteKey;
+	this.spriteFrame = options.spriteFrame;
 
 	GeneralButton.call(this, options); // Parent constructor.
 
@@ -137,6 +142,13 @@ NumberButton.prototype.updateGraphics = function () {
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.signedNumbers) {
 			this.add(new SignedNumberRepresentation(this._number, x, y, this.size/2, this.color));
 
+		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.sprite) {
+			var s = this.create(x, y, this.spriteKey, (this.spriteFrame ? this.spriteFrame + Math.abs(this._number) : null));
+			var scale = this.size/(s.width > s.height ? s.width : s.height)*0.8;
+			s.scale.set(scale);
+			s.x = (!this.direction ? (this._number > 0 ? this.size * 0.8 : this.size * 1.2) : this.size)/2 - s.width/2;
+			s.y = (this.direction ? (this._number > 0 ? this.size * 1.2 : this.size * 0.8) : this.size)/2 - s.height/2;
+
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 			this._number = this._number % 2;
 			this.add(new YesnoRepresentation(this._number, x, y, this.size/2, this.color));
@@ -174,6 +186,8 @@ NumberButton.prototype.setSize = function (size) {
 	} else {
 		this.bg.width *= this.representations.length;
 	}
+
+	return this;
 };
 
 /**
@@ -194,4 +208,6 @@ NumberButton.prototype.setDirection = function (val) {
 	if (this.number) {
 		this.updateGraphics();
 	}
+
+	return this;
 };

@@ -70,6 +70,7 @@ var GLOBAL = {
 		numbers:        5,
 		dice:           6,
 		signedNumbers: 10,
+		sprite:        11,
 		yesno:         15 // Special for yes/no: odd values = yes, even values = no
 	},
 
