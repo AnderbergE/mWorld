@@ -119,7 +119,7 @@ BalloonGame.prototype.create = function () {
 	if (this.representation[0] === GLOBAL.NUMBER_REPRESENTATION.none) {
 		this.agent.thought.guess.spriteKey = 'balloon';
 		this.agent.thought.guess.spriteFrame = 'b';
-		this.agent.thought.guess.representations = GLOBAL.NUMBER_REPRESENTATION.sprite;
+		this.agent.thought.guess.representations = GLOBAL.NUMBER_REPRESENTATION.objects;
 	}
 
 	// The stack to grab balloons from

@@ -13,8 +13,8 @@ NumberButton.prototype.constructor = NumberButton;
  *        {number} max: The maximum value of the button.
  *        {number} size: the small side of the button (the other depend on representation amount) (default 75).
  *        {boolean} vertical: stretch button vertically if many representations, otherwise horisontally (default true).
- *        {string} spriteKey: Used for sprite representation only. The key to the sprite.
- *        {string} spriteFrame: Used for sprite representation only. The framename in the sprite.
+ *        {string} spriteKey: Used for object representation only. The key to the sprite.
+ *        {string} spriteFrame: Used for object representation only. The framename in the sprite.
                                 NOTE: Used like this: spriteFrame + this.number
  * @return {Object} Itself.
  */
@@ -132,22 +132,19 @@ NumberButton.prototype.updateGraphics = function () {
 			offset = this.calcOffset(12);
 			this.add(new StrikeRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color, this.max - this.min + 1));
 
+		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.objects) {
+			var s = this.create(x, y, this.spriteKey, (this.spriteFrame ? this.spriteFrame + Math.abs(this._number) : null));
+			var scale = this.size/(s.width > s.height ? s.width : s.height)*0.8;
+			s.scale.set(scale);
+			s.x = (!this.direction ? (this._number > 0 ? this.size * 0.8 : this.size * 1.2) : this.size)/2 - s.width/2;
+			s.y = (this.direction ? (this._number > 0 ? this.size * 1.2 : this.size * 0.8) : this.size)/2 - s.height/2;
+
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 			this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dice) {
 			offset = this.calcOffset(12);
 			this.add(new DiceRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
-
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.signedNumbers) {
-			this.add(new SignedNumberRepresentation(this._number, x, y, this.size/2, this.color));
-
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.sprite) {
-			var s = this.create(x, y, this.spriteKey, (this.spriteFrame ? this.spriteFrame + Math.abs(this._number) : null));
-			var scale = this.size/(s.width > s.height ? s.width : s.height)*0.8;
-			s.scale.set(scale);
-			s.x = (!this.direction ? (this._number > 0 ? this.size * 0.8 : this.size * 1.2) : this.size)/2 - s.width/2;
-			s.y = (this.direction ? (this._number > 0 ? this.size * 1.2 : this.size * 0.8) : this.size)/2 - s.height/2;
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 			this._number = this._number % 2;
