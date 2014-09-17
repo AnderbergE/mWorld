@@ -11,7 +11,8 @@ function Menu () {
 	var centerY = game.world.centerY;
 
 	/* Add menu button. */
-	var button = game.add.button(5, 5, 'wood', function () { showMenu(true); }, this, 0, 0, 1, 0, this);
+	var button = new GeneralButton({ x: 5, y: 5, size: 56, onClick: function () { showMenu(true); } });
+	this.add(button);
 	var menuSplit = Math.ceil(LANG.TEXT.menu.length/2);
 	var menuText = game.add.text(
 		button.x + button.width/2,

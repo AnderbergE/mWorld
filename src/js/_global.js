@@ -88,6 +88,6 @@ var GLOBAL = {
 		outro:      11,
 	},
 
-
+	BUTTON_COLOR: 0xc2a12d,
 	FONT: 'The Girl Next Door'
 };

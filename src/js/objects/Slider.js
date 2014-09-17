@@ -24,13 +24,15 @@ function Slider (x, y, width, height, onChange, initial) {
 
 	/* Add the line. */
 	// TODO: This should perhaps not be 'wood'...
-	var line = this.create(0, 0, 'wood');
+	var line = this.create(0, 0, 'objects', 'button');
+	line.tint = GLOBAL.BUTTON_COLOR;
 	line.anchor.set(0, 0.5);
 	line.height = height/10;
 	line.width = width;
 
 	/* Add the handle. */
-	this.handle = this.create(0, 0, 'wood');
+	this.handle = this.create(0, 0, 'objects', 'button');
+	this.handle.tint = GLOBAL.BUTTON_COLOR;
 	this.handle.anchor.set(0.5);
 	this.handle.width = height;
 	this.handle.height = height;
@@ -49,7 +51,7 @@ function Slider (x, y, width, height, onChange, initial) {
 
 	trigger.events.onInputDown.add(function () {
 		var _this = this; // _this is the whole slider
-		this.handle.frame++;
+		this.handle.tint -= 0x1e1e1e;
 		this.handle.update = function () {
 			// this will be the handle in this scope.
 
@@ -66,7 +68,7 @@ function Slider (x, y, width, height, onChange, initial) {
 
 	trigger.events.onInputUp.add(function () {
 		this.handle.update = function () {};
-		this.handle.frame--;
+		this.handle.tint += 0x1e1e1e;
 	}, this);
 }
 

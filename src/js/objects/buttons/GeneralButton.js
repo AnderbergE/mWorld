@@ -21,7 +21,7 @@ function GeneralButton (options) {
 	options = options || {};
 	this.x = options.x || 0;
 	this.y = options.y || 0;
-	this.color = options.color || 0xc2a12d;
+	this.color = options.color || GLOBAL.BUTTON_COLOR;
 	if (options.colorPressed) {
 		this.colorPressed = options.colorPressed;
 	} else {
