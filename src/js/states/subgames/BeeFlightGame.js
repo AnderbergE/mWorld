@@ -1,7 +1,8 @@
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                             Bee Flight game                               */
-/* Representations: All
-/* Range:           1--4
+/*                             Bee Flight game
+/* Methods:         All
+/* Representations: All, except "none".
+/* Range:           1--4, 1--9
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BeeFlightGame.prototype = Object.create(NumberGame.prototype);
 BeeFlightGame.prototype.constructor = BeeFlightGame;

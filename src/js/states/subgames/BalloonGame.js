@@ -1,4 +1,9 @@
-/* Balloon Game */
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                              Balloon game
+/* Methods:         All
+/* Representations: All. "none" only in count and step-by-step method.
+/* Range:           1--4, 1--9
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BalloonGame.prototype = Object.create(NumberGame.prototype);
 BalloonGame.prototype.constructor = BalloonGame;
 function BalloonGame () {

@@ -1,7 +1,8 @@
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                             Bird Hero game                                */
-/* Representations: All
-/* Range:           1--9
+/*                             Bird Hero game
+/* Methods:         All
+/* Representations: All, except "none".
+/* Range:           1--4, 1--9
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BirdheroGame.prototype = Object.create(NumberGame.prototype);
 BirdheroGame.prototype.constructor = BirdheroGame;

@@ -1,7 +1,8 @@
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                           Lizard Jungle game                              */
-/* Representations: All
-/* Range:           1--4
+/*                           Lizard Jungle game
+/* Methods:         All
+/* Representations: All, except "none".
+/* Range:           1--4, 1--9
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 LizardJungleGame.prototype = Object.create(NumberGame.prototype);
 LizardJungleGame.prototype.constructor = LizardJungleGame;
