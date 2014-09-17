@@ -7,8 +7,10 @@ GeneralButton.prototype.constructor = GeneralButton;
  *        {number} x: the x position (default 0).
  *        {number} y: the y position (default 0).
  *        {number} size: the side of the button (default 75).
- *        {string} background: the background for the button (default 'wood').
- *        {string} color: the color of the content (default '#000000').
+ *        {string} background: the frame of the background (default 'button').
+                               NOTE: Needs to be in the 'objects' atlas.
+ *        {number} color: the color of the button (default 0xb2911d).
+ *        {number} colorPressed: the color when the button is pressed (default darker color).
  *        {function} onClick: a function to run when a button is clicked.
  *        {boolean} disabled: true if the button should be disabled (default false).
  *        {boolean} keepDown: true if the button should not auto raise when clicked (default false).
@@ -19,24 +21,33 @@ function GeneralButton (options) {
 	options = options || {};
 	this.x = options.x || 0;
 	this.y = options.y || 0;
-	this.color = options.color || '#000000';
+	this.color = options.color || 0xc2a12d;
+	if (options.colorPressed) {
+		this.colorPressed = options.colorPressed;
+	} else {
+		var col = Phaser.Color.getRGB(this.color);
+		col.red -= col.red < 30 ? col.red : 30;
+		col.green -= col.green < 30 ? col.green : 30;
+		col.blue -= col.blue < 30 ? col.blue : 30;
+		this.colorPressed = Phaser.Color.getColor(col.red, col.green, col.blue);
+	}
 	this.onClick = options.onClick;
 	this.disabled = options.disabled || false;
 	this.keepDown = options.keepDown || false;
 
 	var background = options.background;
 	if (typeof background === 'undefined') {
-		background = 'buttonD-0';
+		background = 'button';
 	}
-	this.bg = this.create(0, 0, (background === null ? null : 'buttons'), background);
+	this.bg = this.create(0, 0, (background === null ? null : 'objects'), background);
 	this.bg.inputEnabled = true;
 
 	this.bg.events.onInputDown.add(function () {
-		if (this.disabled || this.bg.frame % 2 !== 0) {
+		if (this.disabled || this.bg.tint === this.colorPressed) {
 			return;
 		}
 
-		this.bg.frame++;
+		this.bg.tint = this.colorPressed;
 		game.add.audio('click').play();
 
 		if (this.onClick) {
@@ -50,7 +61,7 @@ function GeneralButton (options) {
 		}
 	}, this);
 
-
+	this.reset();
 	this.setSize(options.size || 75);
 
 	return this;
@@ -70,7 +81,15 @@ GeneralButton.prototype.setSize = function (size) {
  * Reset the buttons to "up" state.
  */
 GeneralButton.prototype.reset = function () {
-	this.bg.frame -= this.bg.frame % 2;
+	this.bg.tint = this.color;
+};
+
+/**
+ * Set the buttons to "down" state.
+ * NOTE: This does not fire the click functions.
+ */
+GeneralButton.prototype.setDown = function () {
+	this.bg.tint = this.colorPressed;
 };
 
 /**

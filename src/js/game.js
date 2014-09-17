@@ -127,7 +127,7 @@ BootState.prototype.preload = function () {
 	this.load.image('watercan',   'assets/img/objects/wateringcan.png');
 	this.load.spritesheet('drop', 'assets/img/objects/drop.png', 35, 70, 2);
 	this.load.spritesheet('wood', 'assets/img/objects/wood.png', 58, 56, 2);
-	this.load.atlasJSONHash('buttons', 'assets/img/objects/buttons.png', 'assets/img/objects/buttons.json');
+	this.load.atlasJSONHash('objects', 'assets/img/objects/objects.png', 'assets/img/objects/objects.json');
 
 	/* Load the entry state assets as well, no need to do two loaders. */
 	this.load.image('entryBg', 'assets/img/jungle.png');

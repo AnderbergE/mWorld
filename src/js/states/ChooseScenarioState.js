@@ -182,32 +182,32 @@ ChooseScenarioState.prototype.create = function () {
 	/* If we have been in this state before, we try to preset the correct buttons. */
 	switch (localStorage.chooseSubgame) {
 		case GLOBAL.STATE.balloonGame:
-			gameButtons[0].bg.frame++;
+			gameButtons[0].setDown();
 			subgame = gameButtons[0];
 			break;
 		case GLOBAL.STATE.birdheroGame:
-			gameButtons[1].bg.frame++;
+			gameButtons[1].setDown();
 			subgame = gameButtons[1];
 			break;
 		case GLOBAL.STATE.lizardGame:
-			gameButtons[2].bg.frame++;
+			gameButtons[2].setDown();
 			subgame = gameButtons[2];
 			break;
 		case GLOBAL.STATE.beeGame:
-			gameButtons[3].bg.frame++;
+			gameButtons[3].setDown();
 			subgame = gameButtons[3];
 			break;
 	}
 	if (localStorage.chooseRange) {
-		rangeButtons[parseInt(localStorage.chooseRange)].bg.frame++;
+		rangeButtons[parseInt(localStorage.chooseRange)].setDown();
 		range = rangeButtons[parseInt(localStorage.chooseRange)];
 	}
 	if (localStorage.chooseRepresentation) {
-		representationButtons[parseInt(localStorage.chooseRepresentation)].bg.frame++;
+		representationButtons[parseInt(localStorage.chooseRepresentation)].setDown();
 		representation = representationButtons[parseInt(localStorage.chooseRepresentation)];
 	}
 	if (localStorage.chooseMethod) {
-		methodButtons[parseInt(localStorage.chooseMethod)].bg.frame++;
+		methodButtons[parseInt(localStorage.chooseMethod)].setDown();
 		method = methodButtons[parseInt(localStorage.chooseMethod)];
 	}
 };
