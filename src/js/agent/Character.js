@@ -183,8 +183,9 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 	this.thought.bubble.scale.x = 1;
 	this.thought.bubble.anchor.set(0.5);
 	this.thought.guess = new NumberButton(1, representation, {
-		x: -60,
-		y: -30,
+		x: -80,
+		y: -50,
+		size: 115,
 		disabled: true
 	});
 	this.thought.add(this.thought.guess);
