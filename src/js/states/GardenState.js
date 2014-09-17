@@ -244,7 +244,6 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	this.type = type;
 	var plant = null;
 
-	// this.water = new Counter(level+1, true, water); // For plant leveling
 	this.water = new Counter(1, true, water);
 
 	this.level = new Counter(5, false, level);
@@ -326,7 +325,7 @@ GardenPlant.prototype.down = function () {
 
 		/* The button to push when adding water. */
 		this.waterButton = new SpriteButton('watercan', null, {
-			x: this.width - (height - 15),
+			x: this.width/2 - (height - 20)/2,
 			y: 10,
 			size: height - 20,
 			keepDown: true,
@@ -348,20 +347,10 @@ GardenPlant.prototype.down = function () {
 
 		/* Check if this plant can be upgraded more. */
 		if (this.level.left > 0) {
-			var waterGroup = game.add.group(this.infoGroup);
-			this.water.onAdd = function (current, diff, left) {
-				waterGroup.removeAll(true);
-				for (var i = 0; i < (current + left); i++) {
-					game.add.sprite(5 + i*36, 15, 'drop', (i >= current ? 1 : 0), waterGroup);
-				}
-			};
 			this.water.onMax = function () {
 				_this.level.value++;
-				//_this.water.max = _this.level.value + 1;  // For plant leveling
 				if (_this.level.value === _this.level.max) {
-					_this.water.onAdd = null;
 					_this.water.onMax = null;
-					waterGroup.removeAll(true);
 					maxLevel();
 				}
 			};
