@@ -206,7 +206,6 @@ BeeFlightGame.prototype.startThink = function (t) {
 	t.addCallback(function () {
 		this.addToNumber = this.rnd.integerInRange(1, this.amount);
 		this.bee.thought.guess.number = this.addToNumber;
-		this.updateButtons();
 	}, null, null, this);
 	t.addSound('beePlaceholder', this.bee); // I think I am going to...
 	t.add(this.bee.think());

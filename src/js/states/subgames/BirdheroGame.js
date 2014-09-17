@@ -299,7 +299,6 @@ BirdheroGame.prototype.startThink = function (silent, t) {
 	t.addCallback(function () {
 		this.addToNumber = this.rnd.integerInRange(1, this.amount);
 		this.bird.thought.guess.number = this.addToNumber;
-		this.updateButtons();
 	}, null, null, this);
 	t.add(this.bird.think());
 	t.addSound(this.speech, this.bird, 'thisFloor2'); // This is where I think I should go.

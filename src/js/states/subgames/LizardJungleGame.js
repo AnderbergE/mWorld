@@ -165,7 +165,6 @@ LizardJungleGame.prototype.startThink = function (t) {
 	t.addCallback(function () {
 		this.addToNumber = this.rnd.integerInRange(1, this.amount);
 		this.lizard.thought.guess.number = this.addToNumber;
-		this.updateButtons();
 	}, null, null, this);
 	t.add(this.lizard.think());
 };
