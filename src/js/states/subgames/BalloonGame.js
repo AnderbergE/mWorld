@@ -62,6 +62,8 @@ BalloonGame.prototype.create = function () {
 			y: this.world.height - 100,
 			size: this.world.width
 		};
+	} else {
+		delete this.buttons;
 	}
 	this.setupButtons(buttonOptions);
 
