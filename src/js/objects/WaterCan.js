@@ -3,21 +3,21 @@ WaterCan.prototype.constructor = WaterCan;
 
 /**
  * The graphical representation of the watering can.
- * @param {number} x - X position (default is 0).
- * @param {number} y - Y position (default is 0).
+ * @param {number} x - X position (default is game.width - 150).
+ * @param {number} y - Y position (default is 5).
  * @param {number} amount - amount of water in the can (default player amount).
  * @return {Object} Itself.
  */
 function WaterCan (x, y, amount) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	this.x = x || 0;
-	this.y = y || 0;
+	this.x = x || game.width - 125;
+	this.y = y || 5;
 	this.amount = amount || player.water;
-	var origin = 52;
-	var waterStep = 45 / player.maxWater;
+	var origin = 87;
+	var waterStep = 54 / player.maxWater;
 
 	/* Add water level */
-	var bmd = game.add.bitmapData(55, 1);
+	var bmd = game.add.bitmapData(62, 1);
 	bmd.ctx.fillStyle = '#0000ff';
 	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
 	var water = this.create(20, origin, bmd);
@@ -25,7 +25,8 @@ function WaterCan (x, y, amount) {
 	water.y -= water.height;
 
 	/* Add can */
-	this.can = this.create(0, 0, 'watercan');
+	this.can = this.create(0, 0, 'objects', 'watering_can');
+	this.can.tint = 0xbb3333;
 
 	/* Keep track of when the player's water changes */
 	this._sub = EventSystem.subscribe(GLOBAL.EVENT.waterAdded, function (total) {

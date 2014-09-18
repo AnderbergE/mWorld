@@ -97,10 +97,10 @@ function Menu () {
 			localStorage.mainVolume = value;
 
 			if (value > 0) {
-				muteButton.sprite.frame = 0;
+				muteButton.sprite.frameName = 'volume';
 				muteButton.muteValue = value;
 			} else {
-				muteButton.sprite.frame = 1;
+				muteButton.sprite.frameName = 'volume_mute';
 			}
 		},
 		game.sound.volume
@@ -108,18 +108,19 @@ function Menu () {
 	menuGroup.add(volumeSlider);
 
 	// TODO: Change graphics to volume object
-	var muteButton = new SpriteButton('drop', game.sound.volume > 0 ? 0 : 1, {
+	var muteButton = new SpriteButton('objects', game.sound.volume > 0 ? 'volume' : 'volume_mute', {
 		x: centerX - bmd.width*0.35,
 		y: volumeSlider.y - volumeSlider.height*0.75,
 		size: volumeSlider.height*1.5,
 		onClick: function () {
-			if (this.sprite.frame === 1) {
+			if (this.sprite.frameName === 'volume_mute') {
 				volumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
 			} else {
 				volumeSlider.value = 0;
 			}
 		}
 	});
+	muteButton.sprite.scale.set(0.6);
 	muteButton.muteValue = volumeSlider.value;
 	menuGroup.add(muteButton);
 

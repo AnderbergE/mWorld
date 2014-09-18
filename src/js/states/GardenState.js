@@ -9,14 +9,13 @@ GardenState.prototype.preload = function() {
 	this.load.audio('gardenSpeech', LANG.SPEECH.garden.speech); // audio sprite sheet
 
 	this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
-	this.load.image('gardenBg', 'assets/img/garden/bg.png');
 
 	this.gardenData = Backend.getGarden() || { fields: [] };
 };
 
 /* Phaser state function */
 GardenState.prototype.create = function () {
-	this.add.sprite(0, 0, 'gardenBg');
+	this.add.sprite(0, 0, 'garden', 'bg');
 	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
 	// TODO: Update graphics
@@ -90,7 +89,7 @@ GardenState.prototype.create = function () {
 	var currentMove = null;
 
 	/* Add the water can */
-	this.world.add(new WaterCan(this.game.width - 100, 10));
+	this.world.add(new WaterCan());
 	var firstWatering = true;
 
 	/* Add disabler. */
@@ -324,7 +323,7 @@ GardenPlant.prototype.down = function () {
 		game.add.sprite(0, 0, bmd, null, this.infoGroup).inputEnabled = true;
 
 		/* The button to push when adding water. */
-		this.waterButton = new SpriteButton('watercan', null, {
+		this.waterButton = new SpriteButton('objects', 'watering_can', {
 			x: this.width/2 - (height - 20)/2,
 			y: 10,
 			size: height - 20,
@@ -334,6 +333,7 @@ GardenPlant.prototype.down = function () {
 				EventSystem.publish(GLOBAL.EVENT.waterPlant, [_this]);
 			}
 		});
+		this.waterButton.sprite.tint = 0xbb3333;
 		this.infoGroup.add(this.waterButton);
 
 		/* Water management */

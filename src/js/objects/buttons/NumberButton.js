@@ -99,11 +99,11 @@ NumberButton.prototype.updateGraphics = function () {
 
 	if (typeof this.background === 'undefined' && this.representations[0] !== GLOBAL.NUMBER_REPRESENTATION.yesno) {
 		if (this._number > 0) {
-			this.bg.frameName = 'buttonPlus';
+			this.bg.frameName = 'button_plus';
 		} else if (this._number < 0) {
-			this.bg.frameName = 'buttonMinus';
+			this.bg.frameName = 'button_minus';
 		} else {
-			this.bg.frameName = 'buttonZero';
+			this.bg.frameName = 'button_zero';
 		}
 		this.setSize();
 	}

@@ -76,7 +76,7 @@ Subgame.prototype.init = function (options) {
 	/* Setup menu objects */
 	this._menuGroup = this.add.group();
 	this._menuGroup.visible = false;
-	this._waterCan = new WaterCan(this.world.width - 100, 10);
+	this._waterCan = new WaterCan();
 	this._menuGroup.add(this._waterCan);
 	this._menuGroup.add(new Menu());
 };
@@ -169,14 +169,14 @@ Subgame.prototype.addWater = function (x, y, force) {
 		this.currentMode === GLOBAL.MODE.agentTry ||
 		this.currentMode === GLOBAL.MODE.agentDo ||
 		force) {
-		var drop = this.add.sprite(x, y, 'drop', 0, this._menuGroup);
+		var drop = this.add.sprite(x, y, 'objects', 'drop', this._menuGroup);
 		drop.anchor.set(0.5);
-		drop.scale.y = 0;
+		drop.scale.set(0.7, 0);
 
 		// Show drop
-		t.to(drop.scale, 1.5, { y: 1, ease:Elastic.easeOut })
+		t.to(drop.scale, 1.5, { y: 0.7, ease:Elastic.easeOut })
 			// Move drop
-			.to(drop, 1.5, { x: this._waterCan.x + 30, y: this._waterCan.y, ease:Power2.easeOut })
+			.to(drop, 1.5, { x: this._waterCan.x + 50, y: this._waterCan.y + 30, ease:Power2.easeOut })
 			// Hide drop and add water
 			.to(drop, 0.5, { height: 0,
 				onStart: function () { player.water++; },

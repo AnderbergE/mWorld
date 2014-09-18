@@ -23,7 +23,6 @@ function Slider (x, y, width, height, onChange, initial) {
 	initial = initial || 0;
 
 	/* Add the line. */
-	// TODO: This should perhaps not be 'wood'...
 	var line = this.create(0, 0, 'objects', 'button');
 	line.tint = GLOBAL.BUTTON_COLOR;
 	line.anchor.set(0, 0.5);
