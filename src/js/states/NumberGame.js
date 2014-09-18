@@ -276,12 +276,14 @@ NumberGame.prototype.hideButtons = function () {
 
 /* Update the values of the button panel. */
 NumberGame.prototype.updateButtons = function () {
-	if (this.method === GLOBAL.METHOD.addition) {
-		this.buttons.setRange(1, this.amount - this.addToNumber);
-	} else if (this.method === GLOBAL.METHOD.subtraction) {
-		this.buttons.setRange(1 - this.addToNumber, -1);
-	} else {
-		this.buttons.setRange(1 - this.addToNumber, this.amount - this.addToNumber);
+	if (this.buttons) {
+		if (this.method === GLOBAL.METHOD.addition) {
+			this.buttons.setRange(1, this.amount - this.addToNumber);
+		} else if (this.method === GLOBAL.METHOD.subtraction) {
+			this.buttons.setRange(1 - this.addToNumber, -1);
+		} else {
+			this.buttons.setRange(1 - this.addToNumber, this.amount - this.addToNumber);
+		}
 	}
 };
 
