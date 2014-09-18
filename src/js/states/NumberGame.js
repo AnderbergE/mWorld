@@ -178,6 +178,7 @@ NumberGame.prototype.tryNumber = function (number, offset) {
 NumberGame.prototype.agentGuess = function () {
 	var t = new TimelineMax();
 	t.addCallback(function () {
+		this.updateButtons();
 		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0),
 			this.buttons ? this.buttons.min : 1,
 			this.buttons ? this.buttons.max : this.amount);
