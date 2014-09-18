@@ -37,7 +37,6 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.image('lizardHead',    'assets/img/subgames/lizardjungle/head.png');
 	this.load.image('lizardJaw',     'assets/img/subgames/lizardjungle/jaw.png');
 	this.load.image('lizardTounge',  'assets/img/subgames/lizardjungle/tounge.png');
-	this.load.image('lizardArrow',   'assets/img/objects/arrow.png');
 };
 
 /* Phaser state function */
@@ -110,7 +109,8 @@ LizardJungleGame.prototype.instructionIntro = function () {
 LizardJungleGame.prototype.pointAtBole = function (number) {
 	var start = this.tree.children[this.tree.length - 1].world;
 	var offset = 70;
-	var arrow = this.add.sprite(start.x + offset, start.y, 'lizardArrow', null, this.gameGroup);
+	var arrow = this.add.sprite(start.x + offset, start.y, 'objects', 'arrow', this.gameGroup);
+	arrow.tint = 0xf0f000;
 	arrow.anchor.set(0, 0.5);
 	arrow.visible = false;
 

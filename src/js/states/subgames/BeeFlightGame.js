@@ -34,7 +34,6 @@ BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beePlaceholder', LANG.SPEECH.AGENT.hmm);
 
 	this.load.atlasJSONHash('bee', 'assets/img/subgames/beeflight/atlas.png', 'assets/img/subgames/beeflight/atlas.json');
-	this.load.image('beeArrow',    'assets/img/objects/arrow.png');
 };
 
 /* Phaser state function */
@@ -159,7 +158,8 @@ BeeFlightGame.prototype.instructionIntro = function () {
 
 BeeFlightGame.prototype.pointAtFlowers = function (number) {
 	var startY = this.pos.bee.y;
-	var arrow = this.gameGroup.create(this.flowers[0].x, startY, 'beeArrow');
+	var arrow = this.gameGroup.create(this.flowers[0].x, startY, 'objects', 'arrow');
+	arrow.tint = 0xf0f000;
 	arrow.anchor.set(0, 0.5);
 	arrow.rotation = -Math.PI/2;
 	arrow.visible = false;

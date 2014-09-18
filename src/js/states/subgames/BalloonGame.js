@@ -39,8 +39,6 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('sackjingle',    ['assets/audio/subgames/balloongame/belljingle.ogg', 'assets/audio/subgames/balloongame/belljingle.mp3']);
 
 	this.load.atlasJSONHash('balloon', 'assets/img/subgames/balloon/atlas.png', 'assets/img/subgames/balloon/atlas.json');
-	this.load.image('cloud1', 'assets/img/objects/cloud1.png');
-	this.load.image('cloud2', 'assets/img/objects/cloud2.png');
 };
 
 /* Phaser state function */
@@ -69,14 +67,14 @@ BalloonGame.prototype.create = function () {
 	this.speech = createAudioSheet('balloonSpeech', LANG.SPEECH.balloongame.markers);
 
 	// Add background
-	this.gameGroup.add(new Cover('#689cca'));
-	this.cloud1 = this.gameGroup.create(0, 25, 'cloud1');
-	this.cloud2 = this.gameGroup.create(0, 200, 'cloud2');
+	this.gameGroup.add(new Cover('#68acea'));
+	this.cloud1 = this.gameGroup.create(0, 25, 'objects', 'cloud1');
+	this.cloud2 = this.gameGroup.create(0, 200, 'objects', 'cloud2');
 	// This is needed, otherwise the clouds can be seen slightly to the right of the bg.
 	this.gameGroup.create(0, 0, 'balloon', 'bg').width = this.world.width + 1;
 	// Make the clouds move.
-	TweenMax.fromTo(this.cloud1, 70, { x: -this.cloud1.width }, { x: this.world.width, repeat: -1 });
-	TweenMax.fromTo(this.cloud2, 50, { x: -this.cloud2.width }, { x: this.world.width, repeat: -1 });
+	TweenMax.fromTo(this.cloud1, 60, { x: -this.cloud1.width }, { x: 600, repeat: -1 });
+	TweenMax.fromTo(this.cloud2, 40, { x: -this.cloud2.width }, { x: 600, repeat: -1 });
 
 	// The interactable bush.
 	// TODO: Create better synced graphics.
@@ -170,7 +168,7 @@ BalloonGame.prototype.create = function () {
 		this.map.y = this.actionGroup.y + this.pos.beetle.stop.y - 14;
 		this.map.visible = false;
 		this.map.create(0, 0, 'balloon', 'map'); // Background for map
-		this.map.target = new NumberButton(this.correctAnswer, this.representation, { // Representation on map
+		this.map.target = new NumberButton(0, this.representation, { // Representation on map
 			x: 30, y: 30, size: 70, background: null, disabled: true
 		});
 		this.map.add(this.map.target);

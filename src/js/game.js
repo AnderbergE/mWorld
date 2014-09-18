@@ -123,7 +123,6 @@ BootState.prototype.preload = function () {
 
 	/* Common game assets */
 	this.load.audio('click', ['assets/audio/click.ogg', 'assets/audio/click.mp3']);
-	this.load.image('thought',    'assets/img/objects/thoughtbubble.png');
 	this.load.atlasJSONHash('objects', 'assets/img/objects/objects.png', 'assets/img/objects/objects.json');
 
 	/* Load the entry state assets as well, no need to do two loaders. */
