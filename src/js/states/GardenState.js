@@ -84,7 +84,7 @@ GardenState.prototype.create = function () {
 	var agent = player.createAgent();
 	agent.scale.set(0.2);
 	agent.x = -100;
-	agent.y = startPos - agent.body.height * agent.scale.y/2;
+	agent.y = startPos + height - agent.height/2;
 	this.world.add(agent);
 	var currentMove = null;
 
@@ -225,6 +225,7 @@ GardenPlant.prototype.constructor = GardenPlant;
 function GardenPlant (column, row, x, y, width, height, type, level, water) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
 	var _this = this;
+	var maxLevel = 5;
 	this.column = column;
 	this.row = row;
 	this.x = x;
@@ -233,19 +234,26 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 
 	/* The pushable area of the field */
 	var bmd = game.add.bitmapData(width, height);
-	bmd.ctx.fillStyle = '#ffffff';
-	bmd.ctx.globalAlpha = 0.2;
+	bmd.ctx.globalAlpha = 0;
 	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
 	var trigger = this.create(0, 0, bmd);
 	trigger.inputEnabled = true;
 	trigger.events.onInputDown.add(this.down, this);
+
+	if (level !== maxLevel) {
+		var hl = game.add.bitmapData(width - 6, height * 0.6);
+		hl.ctx.fillStyle = '#ccaaaa';
+		hl.ctx.globalAlpha = 0.4;
+		hl.ctx.roundRect(0, 0, hl.width, hl.height, 10).fill();
+		this.highlight = this.create(3, height * 0.4, hl);
+	}
 
 	this.type = type;
 	var plant = null;
 
 	this.water = new Counter(1, true, water);
 
-	this.level = new Counter(5, false, level);
+	this.level = new Counter(maxLevel, false, level);
 	this.level.onAdd = function (current, diff) {
 		if (current <= 0) {
 			if (plant) { plant.destroy(); }
@@ -339,6 +347,7 @@ GardenPlant.prototype.down = function () {
 		/* Water management */
 		var maxLevel = function () {
 			_this.waterButton.destroy();
+			_this.highlight.destroy();
 			game.add.text(_this.width/2, height/2, LANG.TEXT.maxLevel, {
 				font: '40pt ' +  GLOBAL.FONT,
 				fill: '#5555ff'
