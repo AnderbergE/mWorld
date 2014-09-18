@@ -18,38 +18,34 @@ GardenState.prototype.create = function () {
 	this.add.sprite(0, 0, 'garden', 'bg');
 	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
-	// TODO: Update graphics
 	var sure = false;
-	this.world.add(new TextButton('>', {
-		x: 800,
-		y: 100,
-		doNotAdapt: true,
-		onClick: function () {
-			// This happens either on local machine or on "trial" version of the game.
-			if (typeof Routes === 'undefined' || Routes === null) {
-				game.state.start(GLOBAL.STATE.scenario, true, false);
-				return;
-			}
+	var sign = this.add.sprite(750, 100, 'garden', 'sign');
+	sign.inputEnabled = true;
+	sign.events.onInputDown.add(function () {
+		// This happens either on local machine or on "trial" version of the game.
+		if (typeof Routes === 'undefined' || Routes === null) {
+			game.state.start(GLOBAL.STATE.scenario, true, false);
+			return;
+		}
 
-			if (player.water > player.maxWater - 6 && !sure) {
-				agent.say(speech, 'ok').play('ok'); // TODO: Are you sure? If so, press again.
-				sure = true;
-				var sub = EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function () {
-					sure = false;
-					EventSystem.unsubscribe(sub);
+		if (player.water > player.maxWater - 6 && !sure) {
+			agent.say(speech, 'ok').play('ok'); // TODO: Are you sure? If so, press again.
+			sure = true;
+			var sub = EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function () {
+				sure = false;
+				EventSystem.unsubscribe(sub);
+			});
+		} else {
+			var scen = Backend.getScenario();
+			if (scen) {
+				var t = new TimelineMax();
+				t.addSound(speech, agent, 'ok'); // TODO: Let's go!
+				t.addCallback(function () {
+					game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
 				});
-			} else {
-				var scen = Backend.getScenario();
-				if (scen) {
-					var t = new TimelineMax();
-					t.addSound(speech, agent, 'ok'); // TODO: Let's go!
-					t.addCallback(function () {
-						game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
-					});
-				}
 			}
 		}
-	}));
+	}, this);
 
 	/* Setup the garden fields */
 	var rows = 3;
