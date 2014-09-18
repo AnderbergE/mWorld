@@ -105,12 +105,11 @@ GardenState.prototype.create = function () {
 	EventSystem.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
 		var y = plant.y + plant.plantHeight - agent.height/2;
 		var x = plant.x;
+		// If this is changed: update the side variable in the waterPlant subscription.
+		var side = -plant.width * 0.3;
 		if (agent.x > x) {
-			// If these are changed, you need to update the values for the side variable
-			// in the waterPlant subscription.
-			x += plant.width * 1.3;
-		} else {
-			x -= plant.width * 0.3;
+			x += plant.width;
+			side *= -1;
 		}
 		if (agent.x === x && agent.y === y ) {
 			return;
@@ -121,15 +120,16 @@ GardenState.prototype.create = function () {
 		}
 
 		currentMove = new TimelineMax();
-		if (agent.x !== x && agent.x % width > 10 && agent.y !== y) {
-			var move = agent.x + (agent.x > x ? -agent.x % width : width - agent.x % width) ;
-			currentMove.add(agent.move({ x: move }, Math.abs((agent.x - move)/width)));
-		}
+		var distance = agent.x - x;
 		if (agent.y !== y) {
+			if (agent.y % (plant.plantHeight - agent.height/2) < 10) {
+				distance = 0;
+				currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width)));
+			}
 			currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height)));
 		}
-		if (agent.x !== x) {
-			currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width)));
+		if (agent.x !== x + side || agent.y !== y) {
+			currentMove.add(agent.move({ x: x + side }, Math.abs((distance + side)/width)));
 		}
 		currentMove.addSound(speech, agent, 'ok', 0);
 	});
