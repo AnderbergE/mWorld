@@ -29,6 +29,8 @@ BirdheroGame.prototype.pos = {
 	}
 };
 
+BirdheroGame.prototype.buttonColor = 0xeaea00;
+
 /* Do not use tint below 0x111120, or 0xXXXX20, it will not work on the bird */
 BirdheroGame.prototype.tintBank = [
 	0xff8888, 0x77ee77, 0x8888ff, 0xfed020, 0xfedcba,

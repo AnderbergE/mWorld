@@ -24,14 +24,14 @@ function Slider (x, y, width, height, onChange, initial) {
 
 	/* Add the line. */
 	var line = this.create(0, 0, 'objects', 'button');
-	line.tint = GLOBAL.BUTTON_COLOR;
+	line.tint = GeneralButton.prototype.buttonColor;
 	line.anchor.set(0, 0.5);
 	line.height = height/10;
 	line.width = width;
 
 	/* Add the handle. */
 	this.handle = this.create(0, 0, 'objects', 'button');
-	this.handle.tint = GLOBAL.BUTTON_COLOR;
+	this.handle.tint = GeneralButton.prototype.buttonColor;
 	this.handle.anchor.set(0.5);
 	this.handle.width = height;
 	this.handle.height = height;

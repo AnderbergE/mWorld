@@ -51,6 +51,7 @@ function NumberGame () {
  */
 NumberGame.prototype.init = function (options) {
 	Subgame.prototype.init.call(this, options);
+	GeneralButton.prototype.buttonColor = this.buttonColor || GLOBAL.BUTTON_COLOR;
 
 	/* Public variables */
 	this.method = parseInt(options.method || GLOBAL.METHOD.count);

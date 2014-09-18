@@ -29,6 +29,8 @@ BalloonGame.prototype.pos = {
 	liftoff: { x: 850, y: 650 }
 };
 
+BalloonGame.prototype.buttonColor = 0xf0a020;
+
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
 	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // audio sprite sheet

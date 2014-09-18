@@ -22,6 +22,8 @@ LizardJungleGame.prototype.pos = {
 	}
 };
 
+LizardJungleGame.prototype.buttonColor = 0xb07010;
+
 LizardJungleGame.prototype.tintBank = [
 	0xffff00, 0xff00ff, 0x00ffff, 0xff0000, 0x00ff00,
 	0x0000ff, 0x555555, 0x3333cc, 0x33cc33

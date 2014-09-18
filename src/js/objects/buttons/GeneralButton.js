@@ -1,5 +1,6 @@
 GeneralButton.prototype = Object.create(Phaser.Group.prototype);
 GeneralButton.prototype.constructor = GeneralButton;
+GeneralButton.prototype.buttonColor = GLOBAL.BUTTON_COLOR;
 
 /**
  * A general button.
@@ -10,6 +11,7 @@ GeneralButton.prototype.constructor = GeneralButton;
  *        {string} background: the frame of the background (default 'button').
                                NOTE: Needs to be in the 'objects' atlas.
  *        {number} color: the color of the button (default 0xb2911d).
+ *                        NOTE: You can also set the prototype property buttonColor.
  *        {number} colorPressed: the color when the button is pressed (default darker color).
  *        {function} onClick: a function to run when a button is clicked.
  *        {boolean} disabled: true if the button should be disabled (default false).
@@ -21,14 +23,14 @@ function GeneralButton (options) {
 	options = options || {};
 	this.x = options.x || 0;
 	this.y = options.y || 0;
-	this.color = options.color || GLOBAL.BUTTON_COLOR;
+	this.color = options.color || this.buttonColor;
 	if (options.colorPressed) {
 		this.colorPressed = options.colorPressed;
 	} else {
 		var col = Phaser.Color.getRGB(this.color);
-		col.red -= col.red < 30 ? col.red : 30;
-		col.green -= col.green < 30 ? col.green : 30;
-		col.blue -= col.blue < 30 ? col.blue : 30;
+		col.red -= col.red < 40 ? col.red : 40;
+		col.green -= col.green < 40 ? col.green : 40;
+		col.blue -= col.blue < 40 ? col.blue : 40;
 		this.colorPressed = Phaser.Color.getColor(col.red, col.green, col.blue);
 	}
 	this.onClick = options.onClick;

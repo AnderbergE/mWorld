@@ -174,6 +174,7 @@ function onShutDown () {
 	this.sound.onSoundDecode.removeAll();
 	EventSystem.publish(GLOBAL.EVENT.stateShutDown, this);
 	EventSystem.clear();
+	GeneralButton.prototype.buttonColor = GLOBAL.BUTTON_COLOR;
 }
 
 /**

@@ -28,6 +28,8 @@ BeeFlightGame.prototype.pos = {
 	}
 };
 
+BeeFlightGame.prototype.buttonColor = 0xeaea00;
+
 /* Phaser state function */
 BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beeMusic', ['assets/audio/subgames/beeflight/music.ogg', 'assets/audio/subgames/beeflight/music.mp3']);
