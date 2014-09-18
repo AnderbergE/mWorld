@@ -26,10 +26,11 @@ BalloonGame.prototype.pos = {
 	bucket: { x: 780, y: 540 },
 	cave: { left: 670, right: 860, y: 450, height: 420 },
 	sack: { x: 950, y: 600 },
-	liftoff: { x: 850, y: 650 }
+	map: { x: 500, y: 530 },
+	liftoff: { x: 779, y: 670 }
 };
 
-BalloonGame.prototype.buttonColor = 0xf0a020;
+BalloonGame.prototype.buttonColor = 0xe06020;
 
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
@@ -49,8 +50,8 @@ BalloonGame.prototype.create = function () {
 	var buttonOptions = {
 		yesnos: {
 			x: 0,
-			y: this.world.height-100,
-			size: this.world.width - 300
+			y: this.world.height - 100,
+			size: this.world.width
 		}
 	};
 	if (this.method === GLOBAL.METHOD.addition ||
@@ -58,8 +59,8 @@ BalloonGame.prototype.create = function () {
 		this.method === GLOBAL.METHOD.additionSubtraction) {
 		buttonOptions.buttons = {
 			x: 0,
-			y: this.world.height-80,
-			size: this.world.width - 300
+			y: this.world.height - 100,
+			size: this.world.width
 		};
 	}
 	this.setupButtons(buttonOptions);
@@ -382,6 +383,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 	}
 
 	if (!result) { // CORRECT :)
+		t.addCallback(this.hideButtons, null, null, this);
 		t.add(this.openChest(sum));
 		this.returnToStart(t);
 
@@ -501,7 +503,7 @@ BalloonGame.prototype.modeIntro = function () {
 		t.addLabel('mapping');
 		t.addSound(this.speech, this.beetle, 'beetleintro3');
 		t.add(fade(this.map, true), 'mapping');
-		t.add(new TweenMax(this.map, 2, { x: 650, y: 620, ease: Power1.easeIn }));
+		t.add(new TweenMax(this.map, 2, { x: this.pos.map.x, y: this.pos.map.y, ease: Power1.easeIn }));
 	} else {
 		t.addSound(this.speech, this.beetle, 'beetleintro1');
 		t.addSound(this.speech, this.beetle, 'beetleintro2');
