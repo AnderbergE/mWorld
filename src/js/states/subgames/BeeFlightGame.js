@@ -61,6 +61,7 @@ BeeFlightGame.prototype.create = function () {
 	this.add.sprite(0, 0, 'bee', 'bg', this.gameGroup);
 	var home = this.add.sprite(this.pos.home.x, this.pos.home.y, 'bee', 'home', this.gameGroup);
 	home.anchor.set(0.5, 1);
+	this.agent.thought.y += 100;
 	this.gameGroup.bringToTop(this.agent);
 
 	// Setup flowers

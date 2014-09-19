@@ -178,11 +178,9 @@ NumberButton.prototype.calcOffset = function (offset) {
 NumberButton.prototype.setSize = function (size) {
 	GeneralButton.prototype.setSize.call(this, size || this.size);
 
-	if (this.vertical) {
-		this.bg.height *= this.representations.length;
-	} else {
-		this.bg.width *= this.representations.length;
-	}
+	// If the button should expand horizontally it will be rotated.
+	// So we always want to change height, not width.
+	this.bg.height *= this.representations.length;
 
 	return this;
 };

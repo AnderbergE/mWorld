@@ -26,7 +26,7 @@ BalloonGame.prototype.pos = {
 	bucket: { x: 780, y: 540 },
 	cave: { left: 670, right: 860, y: 450, height: 420 },
 	sack: { x: 950, y: 600 },
-	map: { x: 500, y: 530 },
+	map: { x: 500, y: 500 },
 	liftoff: { x: 779, y: 670 }
 };
 
@@ -59,7 +59,7 @@ BalloonGame.prototype.create = function () {
 		this.method === GLOBAL.METHOD.additionSubtraction) {
 		buttonOptions.buttons = {
 			x: 0,
-			y: this.world.height - 100,
+			y: this.world.height - (this.representation.length*75) - 15,
 			size: this.world.width
 		};
 	} else {
@@ -173,7 +173,7 @@ BalloonGame.prototype.create = function () {
 		this.map.y = this.actionGroup.y + this.pos.beetle.stop.y - 14;
 		this.map.visible = false;
 		this.map.create(0, 0, 'balloon', 'map'); // Background for map
-		this.map.target = new NumberButton(0, this.representation, { // Representation on map
+		this.map.target = new NumberButton(0, this.representation[0], { // Representation on map
 			x: 30, y: 30, size: 70, background: null, disabled: true
 		});
 		this.map.add(this.map.target);
