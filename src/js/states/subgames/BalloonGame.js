@@ -216,7 +216,7 @@ BalloonGame.prototype.makeDraggable = function (stack) {
 		if (stack.amount > 0) {
 			stack.updateBalloons(stack.amount - 1);
 
-			var b = this.gameGroup.create(0, 0, 'balloon', 'b1');
+			var b = this.gameGroup.create(game.input.activePointer.x, game.input.activePointer.y, 'balloon', 'b1');
 			b.anchor.set(0.5, 1);
 			b.update = function () {
 				this.x = game.input.activePointer.x;
@@ -239,15 +239,14 @@ BalloonGame.prototype.makeDraggable = function (stack) {
  */
 BalloonGame.prototype.stopDrag = function (balloon) {
 	var t = new TimelineMax();
-	// Check for ovelap with bucket balloons.
-	if (Phaser.Rectangle.intersects(balloon.getBounds(), this.actionGroup.getBounds())) {
+	// Add balloons to bucket if on the righter side of the screen.
+	if (balloon.x > this.world.width/2) {
 		// Add to the buckets. Using a pending value in case lift off is clicked during transition.
-		var current = this.bucketBalloons.amount;
 		this.bucketBalloons.pending++;
 		t.to(balloon, 0.5, { x: this.actionGroup.x + this.bucketBalloons.x, y: this.actionGroup.y + this.bucketBalloons.y });
 		t.addCallback(function () {
 			this.bucketBalloons.pending--;
-			this.bucketBalloons.updateBalloons(current + 1);
+			this.bucketBalloons.updateBalloons(this.bucketBalloons.amount + 1);
 		}, null, null, this);
 
 	} else {
@@ -432,7 +431,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 		this.disable(true);
 	}, null, null, this);
 
-	if (this.bucketBalloons.amount !== sum) {
+	if ((this.bucketBalloons.amount + this.bucketBalloons.pending) !== sum) {
 		t.add(this.moveBalloons(sum - this.bucketBalloons.amount));
 	}
 
