@@ -422,6 +422,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 	var sum = amount + this.addToNumber;
 	var result = this.tryNumber(sum);
 
+	// TODO: This should not be skippable.
 	var t = new TimelineMax().skippable();
 	t.addCallback(function () {
 		this.agent.eyesFollowObject(this.beetle);

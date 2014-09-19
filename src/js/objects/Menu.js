@@ -107,7 +107,6 @@ function Menu () {
 	);
 	menuGroup.add(volumeSlider);
 
-	// TODO: Change graphics to volume object
 	var muteButton = new SpriteButton('objects', game.sound.volume > 0 ? 'volume' : 'volume_mute', {
 		x: centerX - bmd.width*0.35,
 		y: volumeSlider.y - volumeSlider.height*0.75,
