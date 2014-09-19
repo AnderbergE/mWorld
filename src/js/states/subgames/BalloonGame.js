@@ -169,8 +169,8 @@ BalloonGame.prototype.create = function () {
 		this.eyes.visible = false;
 	} else {
 		this.map = this.add.group(this.gameGroup);
-		this.map.x = this.actionGroup.x + this.pos.beetle.stop.x + this.beetle.width - 3;
-		this.map.y = this.actionGroup.y + this.pos.beetle.stop.y - 14;
+		this.map.x = this.pos.map.x;
+		this.map.y = this.pos.map.y;
 		this.map.visible = false;
 		this.map.create(0, 0, 'balloon', 'map'); // Background for map
 		this.map.target = new NumberButton(0, this.representation[0], { // Representation on map
@@ -366,16 +366,19 @@ BalloonGame.prototype.instructionDrag = function () {
 /** This creates a new treasure to search for. */
 BalloonGame.prototype.newTreasure = function () {
 	var t = new TimelineMax();
+	t.addSound(this.speech, this.beetle, 'newtreasure');
+
 	if (this.eyes) {
 		this.eyes.x = this.caves[this.currentNumber - 1].x + 30;
 		this.eyes.y = this.caves[this.currentNumber - 1].y + 30;
 		t.add(fade(this.eyes, true));
 	}
 	if (this.map) {
-		this.map.target.number = this.currentNumber;
+		t.add(fade(this.map.target, false), 0);
+		t.addCallback(function () { this.map.target.number = this.currentNumber; }, 0.5, null, this);
+		t.add(fade(this.map.target, true), 0.5);
 	}
 
-	t.addSound(this.speech, this.beetle, 'newtreasure');
 	this.doStartFunction(t);
 
 	t.addCallback(function () {
@@ -448,7 +451,9 @@ BalloonGame.prototype.runNumber = function (amount) {
 			this.agent.setHappy();
 		}, null, null, this);
 		t.add(this.openChest(sum));
-		this.returnToStart(t);
+		if (this.method !== GLOBAL.METHOD.incrementalSteps) {
+			this.returnToStart(t);
+		}
 
 	/* Incorrect :( */
 	} else {
@@ -565,7 +570,6 @@ BalloonGame.prototype.modeIntro = function () {
 		t.addLabel('mapping');
 		t.addSound(this.speech, this.beetle, 'beetleintro3');
 		t.add(fade(this.map, true), 'mapping');
-		t.add(new TweenMax(this.map, 2, { x: this.pos.map.x, y: this.pos.map.y, ease: Power1.easeIn }));
 	} else {
 		t.addSound(this.speech, this.beetle, 'beetleintro1');
 		t.addSound(this.speech, this.beetle, 'beetleintro2');
@@ -589,9 +593,6 @@ BalloonGame.prototype.modePlayerShow = function (intro, tries) {
 	if (tries === 0) { // New round.
 		if (intro) {
 			t.skippable();
-			if(this.method === GLOBAL.METHOD.incrementalSteps) {
-				t.add(this.popAndReturn());
-			}
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
 			t.addSound(this.speech, this.agent, 'agentintro');
@@ -611,9 +612,6 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
-			if(this.method === GLOBAL.METHOD.incrementalSteps) {
-				t.add(this.popAndReturn());
-			}
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
 			t.addSound(this.speech, this.agent, 'agenttry');
 		}
