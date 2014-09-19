@@ -441,17 +441,19 @@ BalloonGame.prototype.runNumber = function (amount) {
 		t.add(new TweenMax(this.actionGroup, 2, { y: this.caves[sum - 1].y, ease: Power1.easeInOut }));
 	}
 
-	if (!result) { // CORRECT :)
-		t.addCallback(this.hideButtons, null, null, this);
+	/* Correct :) */
+	if (!result) {
+		t.addCallback(function () {
+			this.hideButtons();
+			this.agent.setHappy();
+		}, null, null, this);
 		t.add(this.openChest(sum));
 		this.returnToStart(t);
 
-	} else { // INCORRECT :(
-		if (result > 0) {
-			t.addSound(this.speech, this.beetle, 'tryless');
-		} else {
-			t.addSound(this.speech, this.beetle, 'trymore');
-		}
+	/* Incorrect :( */
+	} else {
+		t.addCallback(this.agent.setSad, null, null, this.agent);
+		t.addSound(this.speech, this.beetle, result > 0 ? 'tryless' : 'trymore');
 		this.doReturnFunction(t, sum, result);
 	}
 
@@ -464,6 +466,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 		}
 	}
 
+	t.addCallback(this.agent.setNeutral, null, null, this.agent);
 	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
@@ -603,6 +606,7 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 	this.disableBalloons(true);
 	var t = new TimelineMax();
 	if (tries > 0) {
+		this.agent.eyesStopFollow();
 		t.addSound(this.speech, this.agent, 'oops');
 	} else { // if intro or first try
 		if (intro) {
@@ -620,8 +624,10 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 };
 
 BalloonGame.prototype.modeOutro = function () {
-	this.disable(true);
+	this.agent.thought.visible = false;
+	this.agent.eyesStopFollow();
 	this.agent.fistPump()
+		.addCallback(this.agent.setHappy, 0, null, this.agent)
 		.addCallback(this.nextRound, null, null, this);
 };
 

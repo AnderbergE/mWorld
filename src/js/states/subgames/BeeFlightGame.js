@@ -217,11 +217,12 @@ BeeFlightGame.prototype.startThink = function (t) {
 };
 
 BeeFlightGame.prototype.runNumber = function (number, simulate) {
-	this.disable(true);
-
 	var current = this.currentNumber-1;
 	var sum = number + this.addToNumber;
 	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
+
+	this.disable(true);
+	this.agent.eyesFollowObject(this.bee);
 	if (this.bee.thought) {
 		this.bee.thought.visible = false;
 	}
@@ -232,10 +233,13 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	}
 	t.addSound('beePlaceholder', this.bee); // Let's go!
 	t.add(this.bee.moveTo.flower(sum));
-	if (!result) { // Correct :)
+	
+	/* Correct :) */
+	if (!result) {
 		t.addCallback(function () {
 			this.hideButtons();
 			this.flowers[current].frameName = 'flower';
+			this.agent.setHappy();
 		}, null, null, this);
 		t.addSound('beePlaceholder', this.bee); // Lots of nectar.
 		t.addLabel('goingHome');
@@ -243,10 +247,14 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		t.add(this.bee.moveTo.home(), 'goingHome');
 		t.add(this.addWater(this.pos.home.x, this.pos.home.y));
 		this.atValue = 0;
-	} else { // Incorrect :(
+	
+	/* Incorrect :( */
+	} else {
+		t.addCallback(this.agent.setSad, null, null, this.agent);
 		this.doReturnFunction(t, sum, result);
 	}
 
+	t.addCallback(this.agent.setNeutral, null, null, this.agent);
 	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
@@ -343,6 +351,13 @@ BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 	t.addCallback(this.showYesnos, null, null, this);
 };
 
+BeeFlightGame.prototype.modeOutro = function () {
+	this.agent.thought.visible = false;
+	this.agent.eyesStopFollow();
+	this.agent.fistPump()
+		.addCallback(this.agent.setHappy, 0, null, this.agent)
+		.addCallback(this.nextRound, null, null, this);
+};
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                          Bee Flight game objects                          */

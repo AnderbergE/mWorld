@@ -312,17 +312,16 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 	var sum = number + this.addToNumber;
 	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
 	var branch = this.tree.branch[sum-1];
+
+	this.disable(true);
+	this.agent.eyesFollowObject(this.bird.beak);
 	if (this.bird.thought) {
 		this.bird.thought.visible = false;
 	}
 
 	var t = new TimelineMax();
 	t.skippable(); // TODO: Remove: this should not be skippable!
-	t.addCallback(function () {
-		this.disable(true);
-		this.agent.eyesFollowObject(this.bird.beak.world);
-		this.bird.showWings(false);
-	}, null, null, this);
+	t.addCallback(this.bird.showWings, null, [false], this.bird);
 
 	t.add(this.zoom(0), 0);
 	if (!origin) {
@@ -337,13 +336,12 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 	if (!result) {
 		t.addCallback(function () {
 			this.hideButtons();
-
 			this.bird.visible = false;
 			branch.chicks++;
-			this.speech.play('correct');
 			this.agent.setHappy();
 		}, null, null, this);
 		t.addLabel('celebrate');
+		t.addSound(this.speech, null, 'correct', 'celebrate');
 		t.add(branch.celebrate(2), 'celebrate');
 		t.add(this.addWater(branch.x + (branch.mother.x - 10) * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
 		t.add(this.elevator.moveTo.branch(0, true, sum));
@@ -351,10 +349,9 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 	/* Incorrect :( */
 	} else {
 		t.addLabel('wrong');
+		t.addCallback(this.agent.setSad, 'wrong', null, this.agent);
 		t.addSound(this.speech, this.bird, result < 0 ? 'higher' : 'lower');
 		t.add(branch.confused(), 'wrong');
-		t.addCallback(this.agent.setSad, 'wrong', null, this.agent);
-
 		t.add(this.bird.moveTo.elevator());
 		t.add(this.bird.moveTo.peak(true));
 

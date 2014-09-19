@@ -173,30 +173,39 @@ LizardJungleGame.prototype.startThink = function (t) {
 };
 
 LizardJungleGame.prototype.runNumber = function (number, simulate) {
+	var sum = number + this.addToNumber;
+	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
+
 	this.disable(true);
+	this.agent.eyesFollowObject(this.target);
 	this.lizard.followPointer(false);
-	this.agent.eyesFollowObject(this.lizard.tounge.world);
 	if (this.lizard.thought) {
 		this.lizard.thought.visible = false;
 	}
 
-	var sum = number + this.addToNumber;
-	var result = simulate ? sum - this.currentNumber : this.tryNumber(number, this.addToNumber);
-
 	var t = new TimelineMax();
-	if (!result) { // Correct :)
+
+	/* Correct :) */
+	if (!result) {
 		t.add(this.lizard.shootObject(this.target));
 		t.addLabel('afterShot');
-		t.addCallback(function () { this.target.visible = false; }, null, null, this);
-		t.addCallback(this.hideButtons, null, null, this);
+		t.addCallback(function () {
+			this.hideButtons();
+			this.target.visible = false;
+			this.agent.setHappy();
+		}, null, null, this);
 		t.addSound('lizardPlaceholder', this.lizard); // nom nom
 		t.add(this.addWater(this.lizard.tounge.world.x, this.lizard.tounge.world.y), 'afterShot');
 		t.add(tweenTint(this.lizard, this.target.tint), 'afterShot');
 		this.atValue = 0;
-	} else { // Incorrect :(
+
+	/* Incorrect :( */
+	} else {
+		t.addCallback(this.agent.setSad, null, null, this.agent);
 		t.add(this.doReturnFunction(sum, result));
 	}
 
+	t.addCallback(this.agent.setNeutral, null, null, this.agent);
 	t.addCallback(this.updateRelative, null, null, this);
 	return t;
 };
