@@ -92,7 +92,7 @@ BootState.prototype.preload = function () {
 	}, true);
 
 	EventSystem.subscribe(GLOBAL.EVENT.connectionLost, function () {
-		game.world.add(new Modal(LANG.TEXT.connectionLost, 40, function () {
+		game.world.add(new Modal(LANG.TEXT.connectionLostMessage, 20, function () {
 			document.querySelector('.loading').style.display = 'none';
 			game.state.start(GLOBAL.STATE.entry);
 		}));

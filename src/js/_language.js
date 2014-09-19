@@ -7,7 +7,7 @@
  *
  * It was developed with switching languages in mind.
  * To do so use function LANG.change.
- * English is the default language and can be used as a
+ * Swedish is the default language and should be used as a
  * template for other languages.
  *
  * NOTE: GLOBAL.FONT specifies which font that is used.
@@ -69,38 +69,39 @@ LANG.setAgent = function (id) {
 };
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                        English language (default)                         */
+/*                        Swedish language (default)                         */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
-LANG.english = {};
-LANG.english.text = {
+LANG.swedish = {};
+LANG.swedish.text = {
 	/* Entry state */
 	title: 'Magical Garden',
-	start: 'Start playing',
-	continuePlaying: 'Continue playing',
-	changeAgent: 'Play with another friend',
-	credits: 'Credits',
-	anonymous: 'Anonymous',
-	logOut: 'Log out',
+	start: 'Starta!',
+	continuePlaying: 'Fortsätt',
+	changeAgent: 'Byt ut ', // Followed by agent name
+	credits: 'Skapat av',
+	anonymous: 'Anonym',
+	logOut: 'Logga ut',
 
 	/* General */
 	ok: 'Ok',
-	continue: 'Continue playing',
-	connectionLost: 'Connection lost',
+	decoding: 'Snart klar...', // When decoding sound files
+	connectionLost: 'Ingen anslutning',
+	connectionLostMessage: 'Ajdå. Vi tappade anslutningen till servern.',
 
 	/* Garden state */
 	maxLevel: 'MAX!',
 
 	/* Player setup state */
-	pickFriend: 'Who will be your friend?',
-	confirmFriend: 'Choose ',
-	changeColor: 'Change colour',
+	pickFriend: 'Vem vill du bli kompis med?',
+	confirmFriend: 'Välj ', // Followed by agent name
+	changeColor: 'Byt färg',
 
 	/* Menu items */
-	menu: 'MENU',
-	resume: 'Resume',
-	gotoGarden: 'Go to garden',
-	quit: 'Quit',
+	menu: 'MENY',
+	resume: 'Fortsätt',
+	gotoGarden: 'Gå till trädgården',
+	quit: 'Avsluta spelet',
 
 	/* Agents */
 	pandaName: 'Panders',
@@ -108,7 +109,7 @@ LANG.english.text = {
 	mouseName: 'Mu'
 };
 
-LANG.english.speech = {
+LANG.swedish.speech = {
 	/* Garden */
 	garden: {
 		speech: ['assets/audio/garden/speech.ogg', 'assets/audio/garden/speech.mp3'],
@@ -206,6 +207,6 @@ LANG.english.speech = {
 	}
 };
 
-LANG.TEXT = LANG.english.text;
-LANG.SPEECH = LANG.english.speech;
+LANG.TEXT = LANG.swedish.text;
+LANG.SPEECH = LANG.swedish.speech;
 LANG.SPEECH.AGENT = LANG.SPEECH.panda;

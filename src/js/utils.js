@@ -220,7 +220,7 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
 	} else {
 		var loader = document.querySelector('.loading').style;
 		loader.display = 'block';
-		document.querySelector('.progress').innerHTML = 'Decoding';
+		document.querySelector('.progress').innerHTML = LANG.TEXT.decoding;
 
 		var c = function () {
 			if (this.checkSoundsDecoded()) {

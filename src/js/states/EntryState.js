@@ -25,7 +25,7 @@ EntryState.prototype.create = function () {
 	start.inputEnabled = true;
 
 	var changeAgent = this.add.text(this.world.centerX, this.world.centerY*1.4, '', {
-		font: '40pt ' +  GLOBAL.FONT,
+		font: '35pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
 	changeAgent.anchor.set(0.5);
@@ -35,7 +35,7 @@ EntryState.prototype.create = function () {
 		// Player has played before, we go to garden directly and show the agent change option.
 		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.garden); }, this);
 
-		changeAgent.text = LANG.TEXT.changeAgent;
+		changeAgent.text = LANG.TEXT.changeAgent + player.agent.prototype.agentName;
 		changeAgent.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.agentSetup); }, this);
 
 	} else {

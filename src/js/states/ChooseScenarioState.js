@@ -165,7 +165,7 @@ ChooseScenarioState.prototype.create = function () {
 	this.world.add(startButton);
 
 	/* In case you want to check out garden instead. */
-	var gotoGarden = new TextButton('Go to garden', {
+	var gotoGarden = new TextButton(LANG.TEXT.gotoGarden, {
 		x: 75,
 		y: 5,
 		size: 56,
