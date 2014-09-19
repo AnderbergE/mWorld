@@ -349,6 +349,20 @@ BalloonGame.prototype.showNumbers = function () {
 	}
 };
 
+BalloonGame.prototype.instructions = function () {
+	return this.instructionDrag();
+};
+
+BalloonGame.prototype.instructionDrag = function () {
+	var arrow = this.gameGroup.create(this.balloonStack.x + this.balloonStack.width*0.25, this.balloonStack.y - this.balloonStack.height*0.5, 'objects', 'arrow');
+	arrow.anchor.set(0, 0.5);
+	arrow.tint = this.buttonColor;
+	arrow.visible = false;
+	return new TimelineMax({ onStart: function () { arrow.visible = true; } })
+		.to(arrow, 3, { x: this.actionGroup.x + 20, y: this.actionGroup.y + 20, angle: 180, ease: Power1.easeInOut }, '+=1')
+		.addCallback(arrow.destroy, '+=1', null, arrow);
+};
+
 /** This creates a new treasure to search for. */
 BalloonGame.prototype.newTreasure = function () {
 	var t = new TimelineMax();
@@ -558,6 +572,9 @@ BalloonGame.prototype.modeIntro = function () {
 BalloonGame.prototype.modePlayerDo = function (intro, tries) {
 	var t = new TimelineMax();
 	if (tries === 0) { // New round.
+		if (intro) {
+			t.add(this.instructions());
+		}
 		t.add(this.newTreasure());
 	}
 	t.addCallback(this.showNumbers, null, null, this);
