@@ -183,7 +183,7 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 	this.thought.bubble.scale.x = 1;
 	this.thought.bubble.anchor.set(0.5);
 	this.thought.guess = new NumberButton(1, representation, {
-		x: -50,
+		x: -60,
 		y: -55,
 		size: 100,
 		disabled: true
@@ -195,7 +195,7 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 };
 
 Character.prototype.mirrorThought = function () {
-	this.thought.guess.x += (this.thought.guess.x > -50) ? -10 : 10;
+	this.thought.guess.x += (this.thought.guess.x > -60) ? -20 : 20;
 	this.thought.bubble.scale.x *= -1;
 };
 
