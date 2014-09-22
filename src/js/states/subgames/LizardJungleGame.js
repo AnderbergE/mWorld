@@ -105,7 +105,7 @@ LizardJungleGame.prototype.instructionIntro = function () {
 
 LizardJungleGame.prototype.pointAtBole = function (number) {
 	var start = this.tree.children[this.tree.length - 1].world;
-	var offset = 70;
+	var offset = 150;
 	var arrow = this.add.sprite(start.x + offset, start.y, 'objects', 'arrow', this.gameGroup);
 	arrow.tint = 0xf0f000;
 	arrow.anchor.set(0, 0.5);
@@ -116,7 +116,7 @@ LizardJungleGame.prototype.pointAtBole = function (number) {
 	t.addCallback(function () {}, '+=0.5');
 	for (var i = 0; i < number; i++) {
 		var pos = this.getTargetPos(1 + i);
-		if (i !== 0) { t.add(new TweenMax(arrow, 1, { x: '+=' + offset, y: pos.y })); }
+		if (i !== 0) { t.add(new TweenMax(arrow, 0.6, { x: '+=' + offset, y: pos.y })); }
 		t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
 	}
 	t.addCallback(function () { arrow.destroy(); }, '+=0.5');
