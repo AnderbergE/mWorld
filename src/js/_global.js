@@ -29,8 +29,7 @@ var GLOBAL = {
 	AGENT: {
 		0: Panda,
 		1: Hedgehog,
-		2: Mouse,
-		3: Panda
+		2: Mouse
 	},
 
 	/* The different Phaser states, some are the subgames for scenarios */
