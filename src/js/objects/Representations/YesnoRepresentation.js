@@ -1,4 +1,4 @@
-YesnoRepresentation.prototype = Object.create(Phaser.Text.prototype);
+YesnoRepresentation.prototype = Object.create(Phaser.Sprite.prototype);
 YesnoRepresentation.prototype.constructor = YesnoRepresentation;
 
 /**
@@ -7,20 +7,17 @@ YesnoRepresentation.prototype.constructor = YesnoRepresentation;
  * @param {number} x - X position.
  * @param {number} y - Y position.
  * @param {number} size - Font size of the representation (default 50).
- * @param {string} color - The color of the representation (default '#000000').
  * @return {Object} Itself.
  */
-function YesnoRepresentation (yes, x, y, size, color) {
+function YesnoRepresentation (yes, x, y, size) {
 	size = size || 50;
-	color = color || '#000000';
+	var typ = yes ? 'yes' : 'no';
 
-	Phaser.Text.call(this, game, x+size, y+size, (yes ? 'y' : 'n'), {
-		font: size + 'pt ' + GLOBAL.FONT,
-		fill: color,
-		stroke: color,
-		strokeThickness: 3
-	}); // Parent constructor.
-	this.anchor.set(0.5);
+	Phaser.Sprite.call(this, game, x, y, 'objects', typ + 1);
+	this.width = size;
+	this.height = size;
+
+	this.animations.add('cycle', [typ + 1, typ + 2, typ + 1, typ + 3, typ + 1], 5, true).play();
 
 	return this;
 }
