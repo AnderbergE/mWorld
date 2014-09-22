@@ -211,14 +211,12 @@ Character.prototype.think = function () {
 	}
 
 	var t = new TimelineMax();
-	t.addCallback(function () {
-		this.thought.visible = true;
-		this.thought.guess.visible = false;
-	}, null, null, this);
+	t.addCallback(function () { this.thought.guess.visible = false; }, null, null, this);
+	t.add(fade(this.thought, true));
 	t.add(TweenMax.fromTo(this.thought.scale, 1.5,
 		{ x: 0, y: 0 },
 		{ x: this.thought.toScale, y: this.thought.toScale, ease: Elastic.easeOut }
-	));
+	), 0);
 	t.add(fade(this.thought.guess, true, 1), 0.5);
 
 	return t;

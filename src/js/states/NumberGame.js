@@ -244,7 +244,10 @@ NumberGame.prototype.showNumbers = function () {
 		fade(this.yesnos, false);
 	}
 
-	if (this.agent.visible) { this.agent.eyesFollowPointer(); }
+	if (this.agent.visible) {
+		fade(this.agent.thought, false);
+		this.agent.eyesFollowPointer();
+	}
 };
 
 /* Show the yes/no panel, hide the number panel and enable input. */
