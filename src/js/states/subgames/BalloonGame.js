@@ -345,7 +345,17 @@ BalloonGame.prototype.showNumbers = function () {
 		this.hideButtons();
 		this.disable(false);
 		this.disableBalloons(false);
+		fade(this.liftoffButton, true);
 	}
+};
+
+/**
+ * Overshadowed from NumberGame.
+ * Shows either the panel or makes it possible to drag the balloons.
+ */
+BalloonGame.prototype.showYesnos = function () {
+	fade(this.liftoffButton, false);
+	NumberGame.prototype.showYesnos.call(this);
 };
 
 BalloonGame.prototype.instructions = function () {
@@ -580,6 +590,7 @@ BalloonGame.prototype.modePlayerDo = function (intro, tries) {
 	var t = new TimelineMax();
 	if (tries === 0) { // New round.
 		if (intro) {
+			t.skippable();
 			t.add(this.instructions());
 		}
 		t.add(this.newTreasure());
