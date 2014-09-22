@@ -32,7 +32,6 @@ BeeFlightGame.prototype.buttonColor = 0xeaea00;
 
 /* Phaser state function */
 BeeFlightGame.prototype.preload = function () {
-	this.load.audio('beeMusic', ['assets/audio/subgames/beeflight/music.ogg', 'assets/audio/subgames/beeflight/music.mp3']);
 	this.load.audio('beePlaceholder', LANG.SPEECH.AGENT.hmm);
 
 	this.load.atlasJSONHash('bee', 'assets/img/subgames/beeflight/atlas.png', 'assets/img/subgames/beeflight/atlas.json');
@@ -55,7 +54,7 @@ BeeFlightGame.prototype.create = function () {
 	});
 
 	// Add music
-	this.add.audio('beeMusic', 1, true).play();
+	// this.add.audio('beeMusic', 1, true).play();
 
 	// Add background
 	this.add.sprite(0, 0, 'bee', 'bg', this.gameGroup);
