@@ -378,7 +378,7 @@ function BeeFlightBee (x, y) {
 	this.body.anchor.set(0.5);
 	this.mouth = this.create(50, 35, 'bee', 'mouth_happy');
 	this.mouth.anchor.set(0.5);
-	this.wings = this.create(-25, -43, 'bee', 'wings0');
+	this.wings = this.create(-25, -43, 'bee', 'wings1');
 	this.wings.anchor.set(0.5);
 
 	this.talk = TweenMax.to(this.mouth, 0.2, {
@@ -388,6 +388,7 @@ function BeeFlightBee (x, y) {
 	this._flap = TweenMax.to(this.wings, 0.1, {
 		frame: this.wings.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
+	this.wings.frameName = 'wings0';
 }
 
 BeeFlightBee.prototype.flap = function (on) {
@@ -397,5 +398,6 @@ BeeFlightBee.prototype.flap = function (on) {
 		}
 	} else {
 		this._flap.pause(0);
+		this.wings.frameName = 'wings0';
 	}
 };
