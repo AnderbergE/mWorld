@@ -185,6 +185,8 @@ BeeFlightGame.prototype.newFlower = function () {
 	t.add(this.bee.moveTo.start());
 	t.addCallback(function () {
 		this.flowers[this.currentNumber - 1].frameName = 'flower' + this.currentNumber;
+		// TODO: This tint is due to a bug in Pixi, remove when bug is fixed.
+		this.flowers[this.currentNumber - 1].tint--;
 	}, null, null, this);
 	this.doStartFunction(t);
 	return t;
@@ -239,6 +241,8 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		t.addCallback(function () {
 			this.hideButtons();
 			this.flowers[current].frameName = 'flower';
+			// TODO: This tint is due to a bug in Pixi, remove when bug is fixed.
+			this.flowers[current].tint++;
 			this.agent.setHappy();
 		}, null, null, this);
 		t.addSound('beePlaceholder', this.bee); // Lots of nectar.
