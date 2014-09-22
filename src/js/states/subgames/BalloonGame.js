@@ -604,9 +604,10 @@ BalloonGame.prototype.modePlayerShow = function (intro, tries) {
 
 BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 	this.disableBalloons(true);
+	this.agent.eyesStopFollow();
+
 	var t = new TimelineMax();
 	if (tries > 0) {
-		this.agent.eyesStopFollow();
 		t.addSound(this.speech, this.agent, 'oops');
 	} else { // if intro or first try
 		if (intro) {

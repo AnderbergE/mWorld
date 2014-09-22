@@ -322,12 +322,12 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 };
 
 LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
+	this.agent.eyesStopFollow();
+
 	var t = new TimelineMax();
-	if (tries > 0) {
-		this.agent.eyesStopFollow();
 		// TODO: Add more specified sounds?
 		// t.addSound(this.speech, this.agent, 'agentTryAgain');
-	} else { // if intro or first try
+	if (tries <= 0) { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.

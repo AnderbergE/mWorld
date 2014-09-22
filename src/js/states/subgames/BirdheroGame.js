@@ -502,10 +502,11 @@ BirdheroGame.prototype.modePlayerShow = function (intro, tries) {
 };
 
 BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
+	this.agent.eyesStopFollow();
+
 	var t = new TimelineMax();
 	if (tries > 0) {
 		this.bird.showWings();
-		this.agent.eyesStopFollow();
 		// TODO: Add more specified sounds?
 		t.addSound(this.speech, this.agent, 'agentTryAgain');
 		t.add(this.agentGuess());

@@ -339,9 +339,8 @@ BeeFlightGame.prototype.modePlayerShow = function (intro, tries) {
 
 BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 	var t = new TimelineMax();
-	if (tries > 0) {
 		this.agent.eyesStopFollow();
-	} else { // if intro or first try
+	if (tries <= 0) { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
