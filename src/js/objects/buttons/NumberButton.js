@@ -107,15 +107,15 @@ NumberButton.prototype.updateGraphics = function () {
 		if (this._number > 0) {
 			this.bg.frameName = 'button_plus';
 			this.color = this.originColor + 1*this.colorAdd;
-			this.colorPressed = this.originPressed + 1*this.colorAdd;
+			this.colorPressed = this.originPressed + 1;
 		} else if (this._number < 0) {
 			this.bg.frameName = 'button_minus';
 			this.color = this.originColor + 2*this.colorAdd;
-			this.colorPressed = this.originPressed + 2*this.colorAdd;
+			this.colorPressed = this.originPressed + 2;
 		} else {
 			this.bg.frameName = 'button_zero';
 			this.color = this.originColor + 3*this.colorAdd;
-			this.colorPressed = this.originPressed + 3*this.colorAdd;
+			this.colorPressed = this.originPressed + 3;
 		}
 		this.setSize();
 		this.reset();
@@ -161,7 +161,8 @@ NumberButton.prototype.updateGraphics = function () {
 
 		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 			this._number = this._number % 2;
-			this.add(new YesnoRepresentation(this._number, x, y, this.size/2, this.color));
+			offset = this.size*0.1;
+			this.add(new YesnoRepresentation(this._number, x + offset, y + offset, this.size - offset*2));
 		}
 	}
 };
