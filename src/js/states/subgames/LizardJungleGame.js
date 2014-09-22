@@ -349,6 +349,7 @@ LizardJungleGame.prototype.modeOutro = function () {
 	t.addCallback(this.nextRound, null, null, this);
 };
 
+
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                        Lizard Jungle game objects                         */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
@@ -363,17 +364,18 @@ function LizardJungleLizard (x, y) {
 
 	this.body = game.add.sprite(48, 0, 'lizard', 'body', this);
 	this.head = game.add.group(this);
-	this.head.x = 90;
-	this.head.y = 75;
+	this.head.x = 130;
+	this.head.y = 60;
 
 	this.tounge = game.add.sprite(-5, 17, 'lizard', 'tounge', this.head);
 	this.tounge.anchor.set(1, 0.5);
 	this.tounge.width = 1;
 	this.tounge.height = 5;
-	this.jaw = game.add.sprite(35, -5, 'lizard', 'jaw', this.head);
-	this.jaw.anchor.set(1, 0);
-	this.forehead = game.add.sprite(190, 35, 'lizard', 'head', this.head);
+	this.jaw = game.add.sprite(20, 23, 'lizard', 'jaw', this.head);
+	this.jaw.anchor.set(1, 0.4);
+	this.forehead = game.add.sprite(125, 35, 'lizard', 'head', this.head);
 	this.forehead.anchor.set(1, 1);
+	this.tint = 0x00aa00;
 
 	this.origin = {
 		x: this.x + this.head.x + this.tounge.x,
@@ -382,7 +384,7 @@ function LizardJungleLizard (x, y) {
 	this.stuck = false;
 
 	this.talk = new TimelineMax({ repeat: -1, yoyo: true, paused: true });
-	this.talk.to(this.jaw, 0.2, { angle: -11 });
+	this.talk.to(this.jaw, 0.2, { angle: -6 });
 	this.talk.to(this.forehead, 0.2, { angle: 2 }, 0);
 
 	this.snore = game.add.text(this.head.x, this.head.y - 100, 'zzz', {
@@ -429,8 +431,8 @@ LizardJungleLizard.prototype.startShoot = function (hit) {
 		t.add(this.shootReturn());
 	}
 	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, this.origin) });
-	t.to(this.forehead, 0.5, { angle: 4 });
-	t.to(this.jaw, 0.5, { angle: -12 }, '-=0.5');
+	t.to(this.forehead, 0.5, { angle: 7 });
+	t.to(this.jaw, 0.5, { angle: -4 }, '-=0.5');
 	return t;
 };
 
