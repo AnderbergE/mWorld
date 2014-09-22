@@ -30,7 +30,7 @@ BalloonGame.prototype.pos = {
 	liftoff: { x: 779, y: 670 }
 };
 
-BalloonGame.prototype.buttonColor = 0xe06020;
+BalloonGame.prototype.buttonColor = 0xa3e9a4;
 
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
