@@ -102,7 +102,7 @@ NumberButton.prototype.updateGraphics = function () {
 		if (typeof this.originColor === 'undefined' || this.originColor === null) {
 			this.originColor = this.color;
 			this.originPressed = this.colorPressed;
-			this.colorAdd = this.color % 0xff > 3 ? 1 : -1;
+			this.colorAdd = Phaser.Color.getBlue(this.color) > 3 ? -1 : 1;
 		}
 		if (this._number > 0) {
 			this.bg.frameName = 'button_plus';
