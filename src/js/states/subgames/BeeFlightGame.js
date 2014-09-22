@@ -28,7 +28,7 @@ BeeFlightGame.prototype.pos = {
 	}
 };
 
-BeeFlightGame.prototype.buttonColor = 0xeaea00;
+BeeFlightGame.prototype.buttonColor = 0xface3d;
 
 /* Phaser state function */
 BeeFlightGame.prototype.preload = function () {
