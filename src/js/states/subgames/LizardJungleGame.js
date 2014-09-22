@@ -35,10 +35,6 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.audio('lizardPlaceholder', LANG.SPEECH.AGENT.hmm);
 
 	this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
-	this.load.image('lizardBody',    'assets/img/subgames/lizardjungle/body.png');
-	this.load.image('lizardHead',    'assets/img/subgames/lizardjungle/head.png');
-	this.load.image('lizardJaw',     'assets/img/subgames/lizardjungle/jaw.png');
-	this.load.image('lizardTounge',  'assets/img/subgames/lizardjungle/tounge.png');
 };
 
 /* Phaser state function */
@@ -73,11 +69,10 @@ LizardJungleGame.prototype.create = function () {
 	}
 	this.tree.scale.set(this.pos.tree.height/this.tree.height);
 	var crown = this.add.sprite(
-		this.tree.x - (this.tree.children[0].width * this.tree.scale.x) * 0.3,
-		this.tree.y - (this.tree.children[0].height * this.tree.scale.y) * 0.7,
+		this.tree.x,
+		this.tree.y - (this.tree.children[0].height*this.tree.scale.y)/2,
 		'lizard', 'crown', this.gameGroup);
-	crown.scale.set(4/this.tree.length);
-	crown.anchor.set(0.5);
+	crown.anchor.set(0.5, 0.6);
 
 	// The target is set up in the newFood function
 	this.target = this.add.sprite(0, 0, 'lizard', 'ant', this.gameGroup);
@@ -365,19 +360,19 @@ function LizardJungleLizard (x, y) {
 	this.x = x || 0;
 	this.y = y || 0;
 
-	this.body = game.add.sprite(48, 0, 'lizardBody', null, this);
+	this.body = game.add.sprite(48, 0, 'lizard', 'body', this);
 	this.head = game.add.group(this);
-	this.head.x = 110;
+	this.head.x = 90;
 	this.head.y = 75;
 
-	this.tounge = game.add.sprite(-5, 17, 'lizardTounge', null, this.head);
+	this.tounge = game.add.sprite(-5, 17, 'lizard', 'tounge', this.head);
 	this.tounge.anchor.set(1, 0.5);
 	this.tounge.width = 1;
 	this.tounge.height = 5;
-	this.forehead = game.add.sprite(17, 29, 'lizardHead', null, this.head);
-	this.forehead.anchor.set(1, 1);
-	this.jaw = game.add.sprite(0, 18, 'lizardJaw', null, this.head);
+	this.jaw = game.add.sprite(35, -5, 'lizard', 'jaw', this.head);
 	this.jaw.anchor.set(1, 0);
+	this.forehead = game.add.sprite(190, 35, 'lizard', 'head', this.head);
+	this.forehead.anchor.set(1, 1);
 
 	this.origin = {
 		x: this.x + this.head.x + this.tounge.x,
@@ -386,8 +381,8 @@ function LizardJungleLizard (x, y) {
 	this.stuck = false;
 
 	this.talk = new TimelineMax({ repeat: -1, yoyo: true, paused: true });
-	this.talk.to(this.jaw, 0.2, { angle: -2 });
-	this.talk.to(this.forehead, 0.2, { angle: 4 }, 0);
+	this.talk.to(this.jaw, 0.2, { angle: -11 });
+	this.talk.to(this.forehead, 0.2, { angle: 2 }, 0);
 
 	this.snore = game.add.text(this.head.x, this.head.y - 100, 'zzz', {
 		font: '40pt ' +  GLOBAL.FONT,
@@ -433,8 +428,8 @@ LizardJungleLizard.prototype.startShoot = function (hit) {
 		t.add(this.shootReturn());
 	}
 	t.to(this.head, 0.2, { rotation: game.physics.arcade.angleBetween(hit, this.origin) });
-	t.to(this.forehead, 0.5, { angle: 10 });
-	t.to(this.jaw, 0.5, { angle: -5 }, '-=0.5');
+	t.to(this.forehead, 0.5, { angle: 4 });
+	t.to(this.jaw, 0.5, { angle: -12 }, '-=0.5');
 	return t;
 };
 
