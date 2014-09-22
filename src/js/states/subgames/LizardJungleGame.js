@@ -50,7 +50,8 @@ LizardJungleGame.prototype.create = function () {
 		},
 		yesnos: {
 			x: this.world.width - 100,
-			vertical: true
+			vertical: true,
+			color: 0xd6c068
 		}
 	});
 	this.agent.thought.guess.setDirection(true);
