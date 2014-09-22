@@ -238,8 +238,8 @@ function GardenPlant (column, row, x, y, width, height, type, level, water) {
 
 	if (level !== maxLevel) {
 		var hl = game.add.bitmapData(width - 6, height * 0.6);
-		hl.ctx.fillStyle = '#ccaaaa';
-		hl.ctx.globalAlpha = 0.4;
+		hl.ctx.fillStyle = '#6b3e09';
+		hl.ctx.globalAlpha = 0.2;
 		hl.ctx.roundRect(0, 0, hl.width, hl.height, 10).fill();
 		this.highlight = this.create(3, height * 0.4, hl);
 	}
