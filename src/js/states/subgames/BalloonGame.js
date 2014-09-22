@@ -375,7 +375,7 @@ BalloonGame.prototype.newTreasure = function () {
 	if (this.map) {
 		t.add(fade(this.map.target, false), 0);
 		t.addCallback(function () { this.map.target.number = this.currentNumber; }, 0.5, null, this);
-		t.add(fade(this.map.target, true), 0.5);
+		t.add(fade(this.map.target, true), 1);
 	}
 
 	this.doStartFunction(t);
