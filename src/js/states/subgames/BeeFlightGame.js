@@ -394,6 +394,7 @@ function BeeFlightBee (x, y) {
 BeeFlightBee.prototype.flap = function (on) {
 	if (on) {
 		if (this._flap.paused()) {
+			this.wings.frameName = 'wings1';
 			this._flap.restart(0);
 		}
 	} else {
