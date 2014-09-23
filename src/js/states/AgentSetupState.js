@@ -22,6 +22,7 @@ AgentSetupState.prototype.create = function () {
 		stroke: '#000000',
 		strokeThickness: 5
 	};
+	var waving;
 
 
 	function clickAgent () {
@@ -42,7 +43,7 @@ AgentSetupState.prototype.create = function () {
 				onStart: function () { stopTalk(); },
 				onComplete: function () {
 					a.say(a.itsame).play();
-					a.wave(2, 1);
+					waving = a.wave(2, 1);
 				}
 			});
 		}
@@ -76,6 +77,7 @@ AgentSetupState.prototype.create = function () {
 
 	function chooseAgent () {
 		_this.input.disabled = true;
+		waving.kill();
 		fadeInterface(false);
 		a.fistPump()
 			.addCallback(function () {
