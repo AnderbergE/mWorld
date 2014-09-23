@@ -132,6 +132,17 @@ NumberButton.prototype.updateGraphics = function () {
 		} else {
 			x = this.size * i;
 		}
+		if (i > 0) {
+			var bmd = this.vertical ? game.add.bitmapData(this.size - 10, 3) : game.add.bitmapData(3, this.size - 10);
+			bmd.ctx.fillStyle = '#000000';
+			bmd.ctx.globalAlpha = 0.2;
+			bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 2).fill();
+			if (this.vertical) {
+				this.create(x + 5, y - 1, bmd);
+			} else {
+				this.create(x - 1, y + 5, bmd);
+			}
+		}
 
 		if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
 			offset = this.calcOffset(16);
