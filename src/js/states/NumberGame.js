@@ -149,6 +149,17 @@ NumberGame.prototype._nextNumber = function () {
 	}
 };
 
+NumberGame.prototype._getRange = function () {
+	if (this.method === GLOBAL.METHOD.addition) {
+		return { min: 1, max: this.amount - this.addToNumber };
+	} else if (this.method === GLOBAL.METHOD.subtraction) {
+		return { min: 1 - this.addToNumber, max: -1 };
+	} else if (this.method === GLOBAL.METHOD.additionSubtraction) {
+		return { min: 1 - this.addToNumber, max: this.amount - this.addToNumber };
+	} else {
+		return { min: 1, max: this.amount };
+	}
+};
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                            Public functions                               */
@@ -179,10 +190,8 @@ NumberGame.prototype.tryNumber = function (number, offset) {
 NumberGame.prototype.agentGuess = function () {
 	var t = new TimelineMax();
 	t.addCallback(function () {
-		this.updateButtons();
-		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0),
-			this.buttons ? this.buttons.min : 1,
-			this.buttons ? this.buttons.max : this.amount);
+		var range = this._getRange();
+		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0), range.min, range.max);
 	}, 0, null, this);
 	t.add(this.agent.think());
 	return t;
@@ -280,13 +289,8 @@ NumberGame.prototype.hideButtons = function () {
 /* Update the values of the button panel. */
 NumberGame.prototype.updateButtons = function () {
 	if (this.buttons) {
-		if (this.method === GLOBAL.METHOD.addition) {
-			this.buttons.setRange(1, this.amount - this.addToNumber);
-		} else if (this.method === GLOBAL.METHOD.subtraction) {
-			this.buttons.setRange(1 - this.addToNumber, -1);
-		} else {
-			this.buttons.setRange(1 - this.addToNumber, this.amount - this.addToNumber);
-		}
+		var range = this._getRange();
+		this.buttons.setRange(range.min, range.max);
 	}
 };
 
