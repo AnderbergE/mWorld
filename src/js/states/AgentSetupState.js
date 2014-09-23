@@ -29,8 +29,10 @@ AgentSetupState.prototype.create = function () {
 			/* Agent was already active, go into coloring mode */
 			pickAgent();
 		} else {
-			cancelAgent();
-			TweenMax.to(a.scale, slideTime, scale); // Scale down the old agent
+			if (a) {
+				cancelAgent();
+				TweenMax.to(a.scale, slideTime, scale); // Scale down the old agent
+			}
 			a = this;
 			TweenMax.to(a.scale, slideTime, scaleActive); // Scale up the new agent
 			// Move the agent group to get the sliding effect on all agents
@@ -106,6 +108,7 @@ AgentSetupState.prototype.create = function () {
 		a.key = key;
 		agents.add(a);
 	}
+	a = null;
 
 	var title = this.add.text(this.world.centerX, 75, LANG.TEXT.pickFriend, fontStyle);
 	title.anchor.set(0.5);
