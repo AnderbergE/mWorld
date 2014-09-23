@@ -33,6 +33,10 @@ window.onload = function () {
 	if (document.querySelector('#game')) {
 		// Do not start game if the element does not exist.
 
+		if (window.location.hostname.toLowerCase() === 'localhost' || window.location.hostname === '127.0.0.1') {
+			GLOBAL.debug = true;
+		}
+
 		player = new Player();
 
 		game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
@@ -154,9 +158,8 @@ BootState.prototype.bootGame = function () {
 			console.warn('You are missing a route to the server, no data will be fetched or sent.');
 		}
 
-		if (window.location.hostname.toLowerCase() === 'localhost' ||
-			window.location.hostname === '127.0.0.1') {
-			console.log('You are running on localhost, sneaking into choose scenario state :)');
+		if (GLOBAL.debug) {
+			console.log('You are running in debug mode, sneaking into choose scenario state :)');
 			game.state.start(GLOBAL.STATE.scenario);
 
 		} else {
