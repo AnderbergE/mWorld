@@ -90,7 +90,6 @@ GardenState.prototype.create = function () {
 
 	/* Add disabler. */
 	var disabler = new Cover('#ffffff', 0);
-	disabler.visible = false;
 	this.world.add(disabler);
 
 	/* Add the menu */
@@ -177,6 +176,7 @@ GardenState.prototype.create = function () {
 	/* When the state starts: */
 	var t = new TimelineMax();
 	t.add(agent.move({ x: this.world.centerX }, 3));
+	t.addCallback(function () { disabler.visible = false; });
 	/*
 	if (player.water > 0) {
 		if (this.gardenData.fields.length > 0) {
