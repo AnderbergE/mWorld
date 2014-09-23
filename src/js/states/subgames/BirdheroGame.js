@@ -130,13 +130,13 @@ BirdheroGame.prototype.create = function () {
 			return _this.bird.move({ x: _this.pos.bird.stop.x - _this.elevator.x, y: _this.pos.bird.stop.y - _this.elevator.origin }, 2, _this.pos.bird.scale);
 		},
 		elevator: function () {
-			return _this.bird.move({ x: 0, y: bucket.height*0.5 }, 2, _this.pos.bird.small);
+			return _this.bird.move({ x: 0, y: bucket.height*0.4 }, 2, _this.pos.bird.small);
 		},
 		peak: function (up) {
 			if (up) {
-				return _this.bird.move({ y: '-=50' }, 1, _this.pos.bird.elevator);
+				return _this.bird.move({ y: '-=40' }, 1, _this.pos.bird.elevator);
 			}
-			return _this.bird.move({ y: '+=50' }, 1, _this.pos.bird.small);
+			return _this.bird.move({ y: '+=40' }, 1, _this.pos.bird.small);
 		},
 		nest: function (target) {
 			return _this.bird.move({ x: _this.tree.branch[target-1].visit().x }, 1, _this.pos.bird.small);
@@ -148,7 +148,7 @@ BirdheroGame.prototype.create = function () {
 			return new TweenMax(_this.elevator, 1, {
 				y: (target === 0 ?
 					_this.elevator.origin :
-					(_this.tree.branch[target-1].y + _this.tree.branch[target-1].visit().y - bucket.height*0.6)),
+					(_this.tree.branch[target-1].y + _this.tree.branch[target-1].visit().y - bucket.height*0.5)),
 				ease: Power1.easeInOut,
 				onComplete: function () {
 					_this.atValue = target;
