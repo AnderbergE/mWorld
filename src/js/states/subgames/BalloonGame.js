@@ -266,34 +266,42 @@ BalloonGame.prototype.stopDrag = function (balloon) {
  * @param {Object} to - The stack to move to (default bucketBalloons).
  */
 BalloonGame.prototype.moveBalloons = function (number) {
-	function start () {
-		this.visible = true;
-		from.updateBalloons(from.amount - 1);
-	}
-	function complete () {
-		this.destroy();
-		to.updateBalloons(to.amount + 1);
-	}
-
 	number = number || 0;
 	// We cannot use world coordinates since the balloons may not have any.
-	var from, to, fromX, fromY, toX, toY;
+	var from, to, fromX, fromY;
 	if (number > 0) {
 		from = this.balloonStack;
 		to = this.bucketBalloons;
 		fromX = this.balloonStack.x;
 		fromY = this.balloonStack.y;
-		toX = this.actionGroup.x + this.bucketBalloons.x;
-		toY = this.actionGroup.y + this.bucketBalloons.y;
 	} else {
 		from = this.bucketBalloons;
 		to = this.balloonStack;
 		fromX = this.actionGroup.x + this.bucketBalloons.x;
 		fromY = this.actionGroup.y + this.bucketBalloons.y;
-		toX = this.balloonStack.x;
-		toY = this.balloonStack.y;
 	}
 	number = Math.abs(number);
+
+	var _this = this;
+	function start (balloon) {
+		balloon.visible = true;
+		from.updateBalloons(from.amount - 1);
+		if (to === _this.bucketBalloons) {
+			this.updateTo({
+				x: _this.actionGroup.x + _this.bucketBalloons.x,
+				y: _this.actionGroup.y + _this.bucketBalloons.y
+			});
+		} else {
+			this.updateTo({
+				x: _this.balloonStack.x,
+				y: _this.balloonStack.y
+			});
+		}
+	}
+	function complete () {
+		this.destroy();
+		to.updateBalloons(to.amount + 1);
+	}
 
 	var t = new TimelineMax();
 	for (var i = 0; i < number; i++) {
@@ -301,8 +309,7 @@ BalloonGame.prototype.moveBalloons = function (number) {
 		balloon.anchor.set(0.5, 1);
 		balloon.visible = false;
 		t.add(TweenMax.to(balloon, 1, {
-			x: toX, y: toY,
-			onStart: start, onStartScope: balloon,
+			onStart: start, onStartParams: [balloon],
 			onComplete: complete, onCompleteScope: balloon
 		}, i * 0.5));
 	}
