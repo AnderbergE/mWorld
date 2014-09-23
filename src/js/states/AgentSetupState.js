@@ -138,11 +138,12 @@ AgentSetupState.prototype.create = function () {
 	this.world.add(yesToAgent);
 
 	var color = new TextButton(LANG.TEXT.changeColor, {
-		x: this.world.centerX - 150,
+		x: this.world.centerX,
 		y: this.world.height - 75,
 		fontSize: 30,
 		onClick: function () { a.tint = game.rnd.integerInRange(0x000000, 0xffffff); }
 	});
+	color.x -= color.width/2;
 	color.visible = false;
 	this.world.add(color);
 
