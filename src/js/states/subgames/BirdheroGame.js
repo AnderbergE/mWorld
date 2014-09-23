@@ -229,13 +229,14 @@ BirdheroGame.prototype.instructionIntro = function () {
 	this.bird.number = this.currentNumber; // Make sure bird has a number.
 
 	var t = new TimelineMax();
+	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, this.bird, 'instruction1a');
 	t.add(this.bird.countFeathers());
 	t.addLabel('useButtons');
 	t.addLabel('flashButtons', '+=0.7');
 	t.addSound(this.speech, this.bird, 'instruction1b');
 	t.add(fade(this.buttons, true), 'useButtons');
-	t.add(this.buttons.highlight(1), 'flashButtons');
+	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
 	return t;
 };
 
@@ -308,7 +309,9 @@ BirdheroGame.prototype.startThink = function (silent, t) {
 		this.bird.thought.guess.number = this.addToNumber;
 	}, null, null, this);
 	t.add(this.bird.think());
-	t.addSound(this.speech, this.bird, 'thisFloor2'); // This is where I think I should go.
+	if (!silent) {
+		t.addSound(this.speech, this.bird, 'thisFloor2'); // This is where I think I should go.
+	}
 };
 
 BirdheroGame.prototype.runNumber = function (number, simulate) {

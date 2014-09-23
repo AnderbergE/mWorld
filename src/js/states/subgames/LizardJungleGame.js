@@ -98,12 +98,13 @@ LizardJungleGame.prototype.create = function () {
 
 LizardJungleGame.prototype.instructionIntro = function () {
 	var t = new TimelineMax();
+	t.addCallback(this.updateButtons, null, null, this);
 	//t.addSound(speech, bird, 'instruction1a'); // Help by counting
 	t.add(this.pointAtBole(this.currentNumber));
 	t.add(fade(this.buttons, true));
 	t.addLabel('highlight');
 	//t.addSound(speech, bird, 'instruction1b'); // Choose button
-	t.add(this.buttons.highlight(1), 'highlight');
+	t.addCallback(this.buttons.highlight, 'highlight', [1], this.buttons);
 	return t;
 };
 

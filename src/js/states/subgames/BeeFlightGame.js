@@ -152,13 +152,14 @@ BeeFlightGame.prototype.create = function () {
 
 BeeFlightGame.prototype.instructionIntro = function () {
 	var t = new TimelineMax();
+	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound('beePlaceholder', this.bee); // How to find the flower with nectar.
 	t.add(this.pointAtFlowers(this.currentNumber));
 	t.addLabel('useButtons');
 	t.addLabel('flashButtons', '+=0.5');
 	t.addSound('beePlaceholder', this.bee); // Use the buttons.
 	t.add(fade(this.buttons, true), 'useButtons');
-	t.add(this.buttons.highlight(1), 'flashButtons');
+	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
 	return t;
 };
 
