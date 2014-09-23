@@ -234,6 +234,8 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	}
 
 	var t = new TimelineMax();
+	if (GLOBAL.debug) { t.skippable(); }
+
 	if (this.relative && !simulate) {
 		t.addSound('beePlaceholder', this.bee); // X more.
 	}

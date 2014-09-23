@@ -327,7 +327,8 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 	}
 
 	var t = new TimelineMax();
-	t.skippable(); // TODO: Remove: this should not be skippable!
+	if (GLOBAL.debug) { t.skippable(); } // NOTE: This malfunctions in add/subt methods.
+
 	t.addCallback(this.bird.showWings, null, [false], this.bird);
 
 	t.add(this.zoom(0), 0);

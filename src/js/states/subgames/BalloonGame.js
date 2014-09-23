@@ -441,12 +441,11 @@ BalloonGame.prototype.runNumber = function (amount) {
 	var sum = amount + this.addToNumber;
 	var result = this.tryNumber(sum);
 
-	// TODO: This should not be skippable.
-	var t = new TimelineMax().skippable();
-	t.addCallback(function () {
-		this.agent.eyesFollowObject(this.beetle);
-		this.disable(true);
-	}, null, null, this);
+	this.disable(true);
+	this.agent.eyesFollowObject(this.beetle);
+
+	var t = new TimelineMax();
+	if (GLOBAL.debug) { t.skippable(); }
 
 	if ((this.bucketBalloons.amount + this.bucketBalloons.pending) !== sum) {
 		t.add(this.moveBalloons(sum - this.bucketBalloons.amount));

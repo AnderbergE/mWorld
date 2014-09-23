@@ -184,6 +184,7 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 	}
 
 	var t = new TimelineMax();
+	if (GLOBAL.debug) { t.skippable(); }
 
 	/* Correct :) */
 	if (!result) {
