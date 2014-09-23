@@ -75,6 +75,8 @@ BirdheroGame.prototype.create = function () {
 
 	// Add background
 	this.add.sprite(0, 0, 'birdhero', 'bg', this.gameGroup);
+	var cloud1 = this.gameGroup.create(-1000, 50, 'objects', 'cloud1');
+	var cloud2 = this.gameGroup.create(-1000, 225, 'objects', 'cloud2');
 	this.gameGroup.bringToTop(this.agent);
 
 
@@ -188,11 +190,13 @@ BirdheroGame.prototype.create = function () {
 		}
 	};
 
-	/* Play music on the first mode that is not the intro. */
+	/* Play music and move clouds on the first mode that is not the intro. */
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 	function playMusic (mode) {
 		if (mode !== GLOBAL.MODE.intro) {
 			_this.add.audio('birdheroMusic', 1, true).play();
+			TweenMax.fromTo(cloud1, 350, { x: -cloud1.width }, { x: _this.world.width, repeat: -1 });
+			TweenMax.fromTo(cloud2, 280, { x: -cloud2.width }, { x: _this.world.width, repeat: -1 });
 			EventSystem.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);
 		}
 	}

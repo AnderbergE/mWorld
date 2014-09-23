@@ -58,6 +58,10 @@ BeeFlightGame.prototype.create = function () {
 
 	// Add background
 	this.add.sprite(0, 0, 'bee', 'bg', this.gameGroup);
+	var cloud1 = this.gameGroup.create(0, 10, 'objects', 'cloud2');
+	var cloud2 = this.gameGroup.create(0, 150, 'objects', 'cloud1');
+	TweenMax.fromTo(cloud1, 380, { x: -cloud1.width }, { x: this.world.width, repeat: -1 });
+	TweenMax.fromTo(cloud2, 290, { x: -cloud2.width }, { x: this.world.width, repeat: -1 });
 	var home = this.add.sprite(this.pos.home.x, this.pos.home.y, 'bee', 'home', this.gameGroup);
 	home.anchor.set(0.5, 1);
 	this.agent.thought.y += 100;
