@@ -114,7 +114,7 @@ LANG.swedish.text = {
 	/* Agents */
 	pandaName: 'Panders',
 	hedgehogName: 'Igis',
-	mouseName: 'Mu'
+	mouseName: 'Mille'
 };
 
 LANG.swedish.speech = {
