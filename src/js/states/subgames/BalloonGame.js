@@ -508,7 +508,6 @@ BalloonGame.prototype.openChest = function (number) {
 	t.addSound('chestunlock');
 	t.addLabel('unlocked');
 	t.addCallback(function () { this.chest.frameName = 'chest_open'; }, null, null, this);
-	t.add(this.addWater(this.chest.x, this.chest.y), 'unlocked');
 	t.add(this.playRandomPrize(), 'unlocked');
 	t.addSound(this.speech, this.beetle, 'yippi', 'unlocked');
 	t.add(fade(this.chest,false));
@@ -641,9 +640,19 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 BalloonGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 	this.agent.eyesStopFollow();
-	this.agent.fistPump()
-		.addCallback(this.agent.setHappy, 0, null, this.agent)
-		.addCallback(this.nextRound, null, null, this);
+	fade(this.liftoffButton, false);
+
+	var t = new TimelineMax();
+	// t.addSound(); TODO: Celebration sounds.
+	t.addLabel('water');
+	t.addLabel('water2', '+=1.5');
+	t.addLabel('water3', '+=3');
+	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
+	t.add(this.agent.fistPump(), 'water');
+	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water');
+	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water2');
+	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water3');
+	t.addCallback(this.nextRound, null, null, this);
 };
 
 

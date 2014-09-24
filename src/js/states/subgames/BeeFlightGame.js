@@ -255,9 +255,8 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		t.addLabel('goingHome');
 		t.addSound('beePlaceholder', this.bee, null, 'goingHome'); // Going home.
 		t.add(this.bee.moveTo.home(), 'goingHome');
-		t.add(this.addWater(this.pos.home.x, this.pos.home.y));
 		this.atValue = 0;
-	
+
 	/* Incorrect :( */
 	} else {
 		t.addCallback(this.agent.setSad, null, null, this.agent);
@@ -363,9 +362,18 @@ BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 BeeFlightGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 	this.agent.eyesStopFollow();
-	this.agent.fistPump()
-		.addCallback(this.agent.setHappy, 0, null, this.agent)
-		.addCallback(this.nextRound, null, null, this);
+
+	var t = new TimelineMax();
+	// t.addSound(); TODO: Celebration sounds.
+	t.addLabel('water');
+	t.addLabel('water2', '+=1.5');
+	t.addLabel('water3', '+=3');
+	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
+	t.add(this.agent.fistPump(), 'water');
+	t.add(this.addWater(this.bee.x, this.bee.y), 'water');
+	t.add(this.addWater(this.bee.x, this.bee.y), 'water2');
+	t.add(this.addWater(this.bee.x, this.bee.y), 'water3');
+	t.addCallback(this.nextRound, null, null, this);
 };
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/

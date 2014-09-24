@@ -196,7 +196,6 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 			this.agent.setHappy();
 		}, null, null, this);
 		t.addSound('lizardPlaceholder', this.lizard); // nom nom
-		t.add(this.addWater(this.lizard.tounge.world.x, this.lizard.tounge.world.y), 'afterShot');
 		t.add(tweenTint(this.lizard, this.target.tint), 'afterShot');
 		this.atValue = 0;
 
@@ -347,10 +346,16 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 LizardJungleGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 	this.agent.eyesStopFollow();
-	this.agent.setHappy();
+
 	var t = new TimelineMax();
-	t.addSound('lizardPlaceholder', this.lizard); // finished
-	t.add(this.agent.fistPump(), 0);
+	// t.addSound(); TODO: Celebration sounds.
+	t.addCallback(this.agent.setHappy, null, null, this.agent);
+	for (var i = 1; i <= 3; i++) {
+		var piece = this.getTargetPos(game.rnd.integerInRange(1, this.amount));
+		t.add(this.lizard.shoot(piece));
+		t.addCallback(this.addWater, '-=0.9', [piece.x, piece.y], this);
+	}
+	t.add(this.agent.fistPump());
 	t.addCallback(this.nextRound, null, null, this);
 };
 

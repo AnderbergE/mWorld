@@ -351,7 +351,6 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 		t.addLabel('celebrate');
 		t.addSound(this.speech, null, 'correct', 'celebrate');
 		t.add(branch.celebrate(2), 'celebrate');
-		t.add(this.addWater(branch.x + (branch.mother.x - 10) * branch.scale.x, branch.y + branch.mother.y), 'celebrate');
 		t.add(this.elevator.moveTo.branch(0, true, sum));
 
 	/* Incorrect :( */
@@ -537,15 +536,24 @@ BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
 };
 
 BirdheroGame.prototype.modeOutro = function () {
-	for (var i = 0; i < this.tree.branch.length; i++) {
-		this.tree.branch[i].celebrate(3000);
-	}
-
 	this.agent.thought.visible = false;
 	this.agent.eyesStopFollow();
-	this.agent.fistPump()
-		.addCallback(this.agent.setHappy, 0, null, this.agent)
-		.addCallback(this.nextRound, null, null, this);
+
+	var t = new TimelineMax();
+	// t.addSound(); TODO: Celebration sounds.
+	for (var i = 0; i < this.tree.branch.length; i++) {
+		t.addCallback(this.tree.branch[i].celebrate, null, null, this.tree.branch[i]);
+	}
+	t.addLabel('water');
+	t.addLabel('water2', '+=1.5');
+	t.addLabel('water3', '+=3');
+	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
+	t.add(this.agent.fistPump(), 'water');
+	var x = this.tree.x + this.pos.tree.center;
+	t.add(this.addWater(x, this.pos.tree.branch.start), 'water');
+	t.add(this.addWater(x, this.pos.tree.branch.start*0.7), 'water2');
+	t.add(this.addWater(x, this.pos.tree.branch.start*0.4), 'water3');
+	t.addCallback(this.nextRound, null, null, this);
 };
 
 

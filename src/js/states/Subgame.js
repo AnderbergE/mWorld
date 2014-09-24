@@ -163,27 +163,20 @@ Subgame.prototype.nextRound = function () {
  * @param {boolean} Override mode restrictions and force drop to be added.
  * @return {Object} The drop animation from x, y to water can.
  */
-Subgame.prototype.addWater = function (x, y, force) {
-	var t = new TimelineMax();
-	if (this.currentMode === GLOBAL.MODE.playerShow ||
-		this.currentMode === GLOBAL.MODE.agentTry ||
-		this.currentMode === GLOBAL.MODE.agentDo ||
-		force) {
-		var drop = this.add.sprite(x, y, 'objects', 'drop', this._menuGroup);
-		drop.anchor.set(0.5);
-		drop.scale.set(0.7, 0);
+Subgame.prototype.addWater = function (x, y) {
+	var drop = this.add.sprite(x, y, 'objects', 'drop', this._menuGroup);
+	drop.anchor.set(0.5);
+	drop.scale.set(0.7, 0);
 
-		// Show drop
-		t.to(drop.scale, 1.5, { y: 0.7, ease:Elastic.easeOut })
-			// Move drop
-			.to(drop, 1.5, { x: this._waterCan.x + 50, y: this._waterCan.y + 30, ease:Power2.easeOut })
-			// Hide drop and add water
-			.to(drop, 0.5, { height: 0,
-				onStart: function () { player.water++; },
-				onComplete: function () { drop.destroy(); }
-			});
-	}
-	return t;
+	// Show drop
+	return new TimelineMax().to(drop.scale, 1.5, { y: 0.7, ease:Elastic.easeOut })
+		// Move drop
+		.to(drop, 1.5, { x: this._waterCan.x + 50, y: this._waterCan.y + 30, ease:Power2.easeOut })
+		// Hide drop and add water
+		.to(drop, 0.5, { height: 0,
+			onStart: function () { player.water++; },
+			onComplete: function () { drop.destroy(); }
+		});
 };
 
 /** Start the game! */
