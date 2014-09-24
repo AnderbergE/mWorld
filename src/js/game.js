@@ -126,6 +126,7 @@ BootState.prototype.preload = function () {
 	this.load.atlasJSONHash(Mouse.prototype.id, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
 
 	/* Common game assets */
+	this.load.audio('entryMusic', ['assets/audio/music.ogg', 'assets/audio/music.mp3']);
 	this.load.audio('click', ['assets/audio/click.ogg', 'assets/audio/click.mp3']);
 	this.load.atlasJSONHash('objects', 'assets/img/objects/objects.png', 'assets/img/objects/objects.json');
 

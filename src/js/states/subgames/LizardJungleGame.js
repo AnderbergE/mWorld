@@ -32,6 +32,7 @@ LizardJungleGame.prototype.tintBank = [
 /* Phaser state function */
 LizardJungleGame.prototype.preload = function () {
 	this.load.audio('lizardPlaceholder', LANG.SPEECH.AGENT.hmm);
+	this.load.audio('lizardMusic', ['assets/audio/subgames/lizard/music.ogg', 'assets/audio/subgames/lizard/music.mp3']);
 
 	this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
 };
@@ -54,6 +55,9 @@ LizardJungleGame.prototype.create = function () {
 		}
 	});
 	this.agent.thought.guess.setDirection(true);
+
+	// Add music
+	this.add.audio('lizardMusic', 1, true).play();
 
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);

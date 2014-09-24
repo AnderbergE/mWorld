@@ -7,6 +7,7 @@ function GardenState () {}
 /* Phaser state function */
 GardenState.prototype.preload = function() {
 	this.load.audio('gardenSpeech', LANG.SPEECH.garden.speech); // audio sprite sheet
+	this.load.audio('gardenMusic', ['assets/audio/garden/music.ogg', 'assets/audio/garden/music.mp3']);
 
 	this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
 
@@ -15,9 +16,14 @@ GardenState.prototype.preload = function() {
 
 /* Phaser state function */
 GardenState.prototype.create = function () {
-	this.add.sprite(0, 0, 'garden', 'bg');
+	// Add music
+	this.add.audio('gardenMusic', 1, true).play();
 	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
+	// Add background
+	this.add.sprite(0, 0, 'garden', 'bg');
+
+	// Add sign to go to next scenario
 	var sure = false;
 	var sign = this.add.sprite(750, 100, 'garden', 'sign');
 	sign.inputEnabled = true;

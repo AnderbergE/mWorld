@@ -91,7 +91,10 @@ AgentSetupState.prototype.create = function () {
 			});
 	}
 
+	// Add music
+	this.add.audio('entryMusic', 1, true).play();
 
+	// Add background
 	this.add.image(0, 0, 'entryBg');
 
 	var agents = this.add.group();

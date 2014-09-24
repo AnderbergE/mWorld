@@ -7,8 +7,13 @@ function EntryState () {}
 
 /* Phaser state function */
 EntryState.prototype.create = function () {
+	// Add music
+	this.add.audio('entryMusic', 1, true).play();
+	
+	// Add background
 	this.add.image(0, 0, 'entryBg');
 
+	// Add headlines
 	var title = this.add.text(this.world.centerX, this.world.centerY/2, LANG.TEXT.title, {
 		font: '50pt ' +  GLOBAL.FONT,
 		fill: '#ffff00',
