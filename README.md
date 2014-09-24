@@ -36,7 +36,7 @@ utils.js -     Common objects, functions and object extensions.
 SUBGAME/STATE FILES (folder states):
 Subgame.js -    Super class for subgames, holds the core functions. See more documentation in the file.
 NumberGame.js - Holds shared functions for games that has a single number as target. See more documentation in the file.
-DebugState.js - Used for easy access to the games and their properties. Should not be available in final game.
+ChooseScenarioState.js - Used for easy access to the games and their properties. Should only be available to supervisors.
 - The rest of the files are self-explanatory.
 - First time procedure:  EntryState -> AgentSetupState -> GardenState -> Subgame + [A subgame] -> (back to GardenState).
 - Normal game procedure: EntryState -> GardenState -> Subgame + [A subgame] -> (back to GardenState).
