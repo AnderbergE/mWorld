@@ -92,18 +92,18 @@ EntryState.prototype.create = function () {
 	this.world.add(cover);
 
 	var allCredits = this.add.text(this.world.centerX, this.world.height,
-		'This game was made at Lund University\n\n' +
-		'Game development:\nErik Anderberg, Agneta Gulz, Magnus Haake, Layla Husain\n' +
-		'Programming:\nErik Anderberg, Marcus Malmberg, Henrik Söllvander\n' +
-		'Graphics:\nSebastian Gulz Haake\n\n' +
-		'Special Thanks:\nAnton Axelsson, Sanne Bengtsson, Maja Håkansson, Lisa Lindberg, Björn Norrliden', {
+		LANG.TEXT.creditsMade + '\n\n\n' +
+		LANG.TEXT.creditsDeveloped + ':\nErik Anderberg\t \tAgneta Gulz\nMagnus Haake\t \tLayla Husain\n\n' +
+		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nHenrik Söllvander\n\n' +
+		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\n\n' +
+		LANG.TEXT.creditsThanks + ':\nAnton Axelsson\t \tSanne Bengtsson\nMaja Håkansson\t \tLisa Lindberg\nBjörn Norrliden', {
 		font: '15pt ' +  GLOBAL.FONT,
 		fill: '#ffffff',
 		align: 'center'
 	});
 	allCredits.anchor.set(0.5, 0);
 	allCredits.visible = false;
-	var rolling = TweenMax.fromTo(allCredits, 15,
+	var rolling = TweenMax.fromTo(allCredits, 30,
 		{ y: this.world.height },
 		{ y: -allCredits.height, ease: Power0.easeInOut, repeat: -1, paused: true });
 };

@@ -74,6 +74,12 @@ LANG.setAgent = function (id) {
 
 LANG.swedish = {};
 LANG.swedish.text = {
+	/* General */
+	ok: 'Ok',
+	decoding: 'Snart klar...', // When decoding sound files
+	connectionLost: 'Ingen anslutning',
+	connectionLostMessage: 'Ajdå. Vi tappade anslutningen till servern.',
+
 	/* Entry state */
 	title: 'Magical Garden',
 	start: 'Starta!',
@@ -83,11 +89,13 @@ LANG.swedish.text = {
 	anonymous: 'Anonym',
 	logOut: 'Logga ut',
 
-	/* General */
-	ok: 'Ok',
-	decoding: 'Snart klar...', // When decoding sound files
-	connectionLost: 'Ingen anslutning',
-	connectionLostMessage: 'Ajdå. Vi tappade anslutningen till servern.',
+	/* Credits */
+	creditsMade: 'Detta spelet är skapat vid Lunds Universitet',
+	creditsDeveloped: 'Idé och utformning',
+	creditsProgramming: 'Programmering',
+	creditsGraphics: 'Grafik',
+	creditsMusic: 'Musik',
+	creditsThanks: 'Tack till',
 
 	/* Garden state */
 	maxLevel: 'MAX!',
