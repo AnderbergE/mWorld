@@ -35,7 +35,6 @@ BalloonGame.prototype.buttonColor = 0xa3e9a4;
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
 	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // audio sprite sheet
-	this.load.audio('balloonMusic',  ['assets/audio/subgames/birdhero/bg.ogg', 'assets/audio/subgames/birdhero/bg.mp3']);
 	this.load.audio('pop',           ['assets/audio/subgames/balloongame/pop.ogg', 'assets/audio/subgames/balloongame/pop.mp3']);
 	this.load.audio('catbushpurr',   ['assets/audio/subgames/balloongame/catbushpurr.ogg', 'assets/audio/subgames/balloongame/catbushpurr.mp3']);
 	this.load.audio('chestunlock',   ['assets/audio/subgames/balloongame/chestunlock.ogg', 'assets/audio/subgames/balloongame/chestunlock.mp3']);
@@ -69,7 +68,6 @@ BalloonGame.prototype.create = function () {
 
 	// Add music, sounds and speech
 	this.add.audio('entryMusic', 1, true).play();
-	this.add.audio('balloonMusic', 1, true).play();
 	this.speech = createAudioSheet('balloonSpeech', LANG.SPEECH.balloongame.markers);
 
 	// Add background
