@@ -67,7 +67,7 @@ BalloonGame.prototype.create = function () {
 	this.setupButtons(buttonOptions);
 
 	// Add music, sounds and speech
-	this.add.audio('entryMusic', 1, true).play();
+	// this.add.audio('entryMusic', 1, true).play();
 	this.speech = createAudioSheet('balloonSpeech', LANG.SPEECH.balloongame.markers);
 
 	// Add background
@@ -159,6 +159,7 @@ BalloonGame.prototype.create = function () {
 		// Special case when we have no representation.
 		this.eyes = this.gameGroup.create(0, 0, 'balloon', 'eyes');
 		this.eyes.visible = false;
+		this.map = null;
 	} else {
 		this.map = this.add.group(this.gameGroup);
 		this.map.x = this.pos.map.x;
@@ -376,7 +377,8 @@ BalloonGame.prototype.instructionDrag = function () {
 /** This creates a new treasure to search for. */
 BalloonGame.prototype.newTreasure = function () {
 	var t = new TimelineMax();
-	t.addSound(this.speech, this.beetle, 'newtreasure');
+	t.addSound(this.speech, this.beetle, 'newTreasure');
+	t.addSound(this.speech, this.beetle, 'yippie1');
 
 	if (this.eyes) {
 		this.eyes.x = this.caves[this.currentNumber - 1].x + 30;
@@ -410,8 +412,8 @@ BalloonGame.prototype.startWithBalloons = function (t, min, max) {
 	t.add(this.moveBalloons(this.addToNumber));
 };
 
-BalloonGame.prototype.startStop = function () {
-	// Do nothing.
+BalloonGame.prototype.startStop = function (t) {
+	t.addCallback(this.speech.play, null, ['helpMeGetThere'], this.speech);
 };
 
 BalloonGame.prototype.startBelow = function (t) {
@@ -467,7 +469,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 	/* Incorrect :( */
 	} else {
 		t.addCallback(this.agent.setSad, null, null, this.agent);
-		t.addSound(this.speech, this.beetle, result > 0 ? 'tryless' : 'trymore');
+		t.addSound(this.speech, this.beetle, result > 0 ? 'tryLess' : 'tryMore');
 		this.doReturnFunction(t, sum, result);
 	}
 
@@ -491,30 +493,39 @@ BalloonGame.prototype.openChest = function (number) {
 	}
 	t.add(fade(this.chest, true));
 	t.addSound('chestunlock');
-	t.addLabel('unlocked');
 	t.addCallback(function () { this.chest.frameName = 'chest_open'; }, null, null, this);
-	t.add(this.playRandomPrize(), 'unlocked');
-	t.addSound(this.speech, this.beetle, 'yippi', 'unlocked');
-	t.add(fade(this.chest,false));
+	t.add(this.playRandomPrize());
+	t.add(fade(this.chest, false));
 	return t;
 };
 
 /** A prize popping out of the chest. */
 BalloonGame.prototype.playRandomPrize = function () {
-	// TODO: Make the different treasures have different amounts of probability to appear.
-	this.treasure.frameName = 'treasure' + game.rnd.integerInRange(1, 6);
 	this.treasure.x = this.chest.x;
 	this.treasure.y = this.chest.y + 10;
 	this.treasure.visible = false;
 
+	/* The boot is the special prize, it has a low percentage of coming. */
+	var sound;
+	if (game.rnd.frac() < 0.1) {
+		this.treasure.frameName = 'treasure6';
+		sound = 'treasureBoot';
+	} else {
+		this.treasure.frameName = 'treasure' + game.rnd.integerInRange(1, 5);
+		sound = game.rnd.integerInRange(0, 1) ?
+			('yippie' + game.rnd.integerInRange(1, 2)) :
+			('treasure' + game.rnd.integerInRange(1, 2));
+	}
+
 	var t = new TimelineMax();
+	t.addCallback(this.speech.play, null, [sound], this.speech);
 	t.add(new TweenMax(this.treasure, 1, { y: '-=75', ease: Power1.easeOut }));
 	t.add(fade(this.treasure, true), '-=1');
 	t.add(new TweenMax(this.treasure, 1, { y: '+=75', ease: Power1.easeIn }));
 	t.add(new TweenMax(this.treasure, 2, { x: this.pos.sack.x, y: this.pos.sack.y + 10, ease: Power4.easeIn }));
 	t.addLabel('sacking');
 	t.addSound('sackjingle', null, null, 'sacking');
-	t.add(new TweenMax(this.sack, 0.2, { y: '+=3', ease: Power1.easeInOut }).backForth(2), 'sacking');
+	t.add(new TweenMax(this.sack, 0.2, { y: '+=3', ease: Power1.easeInOut }).backForth(1.4), 'sacking');
 	return t;
 };
 
@@ -563,14 +574,14 @@ BalloonGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 BalloonGame.prototype.modeIntro = function () {
 	var t = new TimelineMax().skippable();
 	t.add(new TweenMax(this.beetle, 3, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
+	t.addSound(this.speech, this.beetle, 'loveTreasures');
+	t.addSound(this.speech, this.beetle, 'yippie1');
+	t.addSound(this.speech, this.beetle, 'helpToCave', '+=0.3');
 	if (this.map) {
 		this.map.target.number = this.currentNumber;
 		t.addLabel('mapping');
-		t.addSound(this.speech, this.beetle, 'beetleintro3');
 		t.add(fade(this.map, true), 'mapping');
-	} else {
-		t.addSound(this.speech, this.beetle, 'beetleintro1');
-		t.addSound(this.speech, this.beetle, 'beetleintro2');
+		t.addSound(this.speech, this.beetle, 'lookAtMap');
 	}
 	t.addCallback(this.nextRound, null, null, this);
 };
@@ -580,7 +591,15 @@ BalloonGame.prototype.modePlayerDo = function (intro, tries) {
 	if (tries === 0) { // New round.
 		if (intro) {
 			t.skippable();
-			t.add(this.instructions());
+			t.addLabel('dragBalloons');
+			t.addSound(this.speech, this.beetle, 'canYouDrag', 'dragBalloons');
+			t.add(this.instructions(), 'dragBalloons');
+			t.addSound(this.speech, this.beetle, 'firstFloor');
+			t.addSound(this.speech, this.beetle, 'secondFloor', '+=0.2');
+			t.addSound(this.speech, this.beetle, 'thirdFloor', '+=0.2');
+			t.addSound(this.speech, this.beetle, 'fourthFloor', '+=0.2');
+			t.addSound(this.speech, this.beetle, 'canYouDragRight', '+=0.5');
+			t.addSound(this.speech, this.beetle, 'pushAnchor', '+=0.5');
 		}
 		t.add(this.newTreasure());
 	}
@@ -594,7 +613,7 @@ BalloonGame.prototype.modePlayerShow = function (intro, tries) {
 			t.skippable();
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
-			t.addSound(this.speech, this.agent, 'agentintro');
+			// t.addSound(this.speech, this.agent, 'agentintro'); TODO: Add this from agent
 			t.add(this.agent.wave(3, 1), 'agentIntro');
 		}
 		t.add(this.newTreasure());
@@ -608,12 +627,13 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 
 	var t = new TimelineMax();
 	if (tries > 0) {
-		t.addSound(this.speech, this.agent, 'oops');
+		void(tries); // TODO: Remove this when you have sound
+		// t.addSound(this.speech, this.agent, 'oops'); TODO: Add this from agent
 	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
-			t.addSound(this.speech, this.agent, 'agenttry');
+			// t.addSound(this.speech, this.agent, 'agenttry'); TODO: Add this from agent
 		}
 		t.add(this.newTreasure());
 	}
