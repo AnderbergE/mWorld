@@ -259,7 +259,10 @@ TimelineMax.prototype.addSound = function (what, who, marker, position) {
 	}
 
 	if (isNaN(position)) {
-		end = '+=' + (parseFloat(position.substr(2)) + end);
+		// The position might be a label. Try to get its position.
+		var label = this.getLabelTime(position);
+		// Add to label position or to relative position.
+		end = label >= 0 ? (label + end) : ('+=' + (parseFloat(position.substr(2)) + end));
 	} else {
 		end += position;
 	}
