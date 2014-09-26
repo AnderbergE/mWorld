@@ -1,24 +1,32 @@
 /**
  * A superclass for games where you need to guess the correct number.
- * This class will set the .doStartFunction and .doReturnFunction.
+ * This class will set the .doInstructions, .doStartFunction and .doReturnFunction.
  * They will map to the functions that you should setup (see _setupFunctions).
  * See BeeFlightGame for inspiration of how you can use this class.
+ *
  *
  * SETUP THESE IN THE SUBCLASS:
  * "this" object should have a property used when setting agent start position:
  *    this.pos: { agent: { start: { x, y }, scale: z } } }.
-
+ *
+ * instructionCount:       Method count.
+ * instructionSteps:       Method incremental-steps.
+ * instructionAdd:         Method addition.
+ * instructionSubtract:    Method subtraction.
+ * instructionAddSubtract: Method addition subtraction.
+ *
  * startStop:  When round start without automatic "guessing". Used in count and incremental-steps method.
  * startBelow: When round start by guessing lower than target. Used in addition method.
  * startAbove: When round start by guessing higher than target. Used in subtraction method.
  * startThink: When round start by guessing something. Used in add/subt method.
-
+ *
  * runNumber:  The function to run when a number has been chosen.
-
+ *
  * returnToStart:            When returning to the start position on incorrect answer.
  * returnNone:               When the game stays at the incorrect answer position.
  * returnToPreviousIfHigher: When returning to previous value if the incorrect answer was too high.
  * returnToPreviousIfLower:  When returning to previous value if the incorrect answer was too low.
+ *
  *
  * VARIABLES THE SUBCLASS CAN USE:
  * Number amount:        this.amount
@@ -115,20 +123,25 @@ NumberGame.prototype.init = function (options) {
  */
 NumberGame.prototype._setupFunctions = function () {
 	if (this.method === GLOBAL.METHOD.count) {
+		this.doInstructions = this.instructionCount;
 		this.doStartFunction = this.startStop;
 		this.doReturnFunction = this.returnToStart;
 	} else if (this.method === GLOBAL.METHOD.incrementalSteps) {
+		this.doInstructions = this.instructionSteps;
 		this.doStartFunction = this.startStop;
 		this.doReturnFunction = this.returnNone;
 	} else if (this.method === GLOBAL.METHOD.addition) {
+		this.doInstructions = this.instructionAdd;
 		this.doStartFunction = this.startBelow;
 		this.doReturnFunction = this.returnToPreviousIfHigher;
 		this.isRelative = true;
 	} else if (this.method === GLOBAL.METHOD.subtraction) {
+		this.doInstructions = this.instructionSubtract;
 		this.doStartFunction = this.startAbove;
 		this.doReturnFunction = this.returnToPreviousIfLower;
 		this.isRelative = true;
 	} else {
+		this.doInstructions = this.instructionAddSubtract;
 		this.doStartFunction = this.startThink;
 		this.doReturnFunction = this.returnNone;
 		this.isRelative = true;
@@ -310,6 +323,11 @@ NumberGame.prototype.startGame = function () {
 
 /* The following functions should be overshadowed in the game object. */
 NumberGame.prototype.pos = { agent: { start: { x: 0, y: 0 }, scale: 1 } };
+NumberGame.prototype.instructionCount = function () {};
+NumberGame.prototype.instructionSteps = function () {};
+NumberGame.prototype.instructionAdd = function () {};
+NumberGame.prototype.instructionSubtract = function () {};
+NumberGame.prototype.instructionAddSubtract = function () {};
 NumberGame.prototype.startStop = function () {};
 NumberGame.prototype.startBelow = function () {};
 NumberGame.prototype.startAbove = function () {};
