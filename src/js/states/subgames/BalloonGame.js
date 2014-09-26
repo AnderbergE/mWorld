@@ -344,10 +344,15 @@ BalloonGame.prototype.showNumbers = function () {
 		this.disableBalloons(true);
 		NumberGame.prototype.showNumbers.call(this);
 	} else {
+		// "Special" case: borrow things from showNumbers.
 		this.hideButtons();
 		this.disable(false);
 		this.disableBalloons(false);
 		fade(this.liftoffButton, true);
+		if (this.agent.visible) {
+			fade(this.agent.thought, false);
+			this.agent.eyesFollowPointer();
+		}
 	}
 };
 
@@ -360,8 +365,71 @@ BalloonGame.prototype.showYesnos = function () {
 	NumberGame.prototype.showYesnos.call(this);
 };
 
-BalloonGame.prototype.instructions = function () {
-	return this.instructionDrag();
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                           Instruction functions                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
+BalloonGame.prototype.instructionCount = function () {
+	var t = new TimelineMax();
+	t.add(this.newTreasure(true));
+	t.addSound(this.speech, this.beetle, 'canYouDrag');
+	t.add(this.instructionDrag(), 0);
+
+	var label;
+	for (var i = 1; i <= 4; i++){
+		label = 'floor' + i;
+		t.addLabel(label, '+=0.5');
+		t.addSound(this.speech, this.beetle, label);
+		t.add(this.pointAtCave(i), label);
+	}
+
+	t.addSound(this.speech, this.beetle, 'canYouDragRight', '+=0.5');
+	t.addLabel('pushAnchor', '+=0.5');
+	t.add(this.liftoffButton.highlight(1), 'pushAnchor');
+	t.addSound(this.speech, this.beetle, 'pushAnchor', 'pushAnchor');
+	return t;
+};
+
+BalloonGame.prototype.instructionSteps = function () {
+	var t = new TimelineMax();
+	t.add(this.newTreasure(true));
+	t.addSound(this.speech, this.beetle, 'canYouDragRight');
+	t.add(this.instructionDrag(), 0);
+	t.addSound(this.speech, this.beetle, 'pushAnchor');
+	return t;
+};
+
+BalloonGame.prototype.instructionAdd = function () {
+	return this.instructionButtons('presetBalloons', 'pushButton');
+};
+
+BalloonGame.prototype.instructionSubtract = function () {
+	var t = this.instructionButtons('guessBalloons', 'buttonSubtract');
+	t.addSound(this.speech, this.beetle, 'sameAsMap', '+=0.6');
+	t.addSound(this.speech, this.beetle, 'whatButton', '+=0.8');
+	return t;
+};
+
+BalloonGame.prototype.instructionAddSubtract = function () {
+	var t = this.instructionButtons('guessBalloons', 'buttonAddSub');
+	t.addSound(this.speech, this.beetle, 'sameAsMap', '+=0.6');
+	t.addSound(this.speech, this.beetle, 'whatButton', '+=0.8');
+	return t;
+};
+
+BalloonGame.prototype.instructionButtons = function (moveSound, pushSound) {
+	var t = new TimelineMax();
+	t.addLabel('moveBalloons');
+	t.addSound(this.speech, this.beetle, moveSound, 'moveBalloons');
+	t.add(this.newTreasure(true), 'moveBalloons');
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addLabel('useButtons', '+=0.3');
+	t.addLabel('flashButtons', '+=0.8');
+	t.addSound(this.speech, this.beetle, pushSound, 'useButtons');
+	t.add(fade(this.buttons, true), 'useButtons');
+	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
+	return t;
 };
 
 BalloonGame.prototype.instructionDrag = function () {
@@ -374,11 +442,38 @@ BalloonGame.prototype.instructionDrag = function () {
 		.addCallback(arrow.destroy, '+=1', null, arrow);
 };
 
+BalloonGame.prototype.pointAtCave = function (number) {
+	var cave = this.caves[number - 1];
+	var offset = 50;
+	var arrow = this.gameGroup.create(cave.x, cave.y + cave.height*0.6, 'objects', 'arrow');
+	if (number % 2 === 0) { // Cave to the left
+		arrow.x += cave.width + offset;
+		offset *= -1;
+	} else { // Cave to the right
+		arrow.x -= offset;
+		arrow.scale.x = -1;
+	}
+	arrow.anchor.set(0, 0.5);
+	arrow.tint = this.buttonColor;
+	arrow.visible = false;
+	return new TweenMax(arrow, 2, { x: '+=' + offset,
+		onStart: function () { arrow.visible = true; },
+		onComplete: function () { arrow.destroy(); }
+	});
+};
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                           Start round functions                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+
 /** This creates a new treasure to search for. */
-BalloonGame.prototype.newTreasure = function () {
+BalloonGame.prototype.newTreasure = function (silent) {
 	var t = new TimelineMax();
-	t.addSound(this.speech, this.beetle, 'newTreasure');
-	t.addSound(this.speech, this.beetle, 'yippie1');
+	if (!silent) {
+		t.addSound(this.speech, this.beetle, 'newTreasure');
+		t.addSound(this.speech, this.beetle, 'yippie1');
+	}
 
 	if (this.eyes) {
 		this.eyes.x = this.caves[this.currentNumber - 1].x + 30;
@@ -391,12 +486,7 @@ BalloonGame.prototype.newTreasure = function () {
 		t.add(fade(this.map.target, true), 1);
 	}
 
-	this.doStartFunction(t);
-
-	t.addCallback(function () {
-		this.disable(false);
-		this.agent.eyesFollowPointer();
-	}, null, null, this);
+	this.doStartFunction(t, silent);
 
 	return t;
 };
@@ -412,12 +502,14 @@ BalloonGame.prototype.startWithBalloons = function (t, min, max) {
 	t.add(this.moveBalloons(this.addToNumber));
 };
 
-BalloonGame.prototype.startStop = function (t) {
-	t.addCallback(this.speech.play, null, ['helpMeGetThere'], this.speech);
+BalloonGame.prototype.startStop = function (t, silent) {
+	if (!silent) {
+		t.addCallback(this.speech.play, null, ['helpMeGetThere'], this.speech);
+	}
 };
 
 BalloonGame.prototype.startBelow = function (t) {
-	this.startWithBalloons(t, 0, this.currentNumber - 1);
+	this.startWithBalloons(t, 1, this.currentNumber - 1);
 };
 
 BalloonGame.prototype.startAbove = function (t) {
@@ -427,6 +519,11 @@ BalloonGame.prototype.startAbove = function (t) {
 BalloonGame.prototype.startThink = function (t) {
 	this.startWithBalloons(t, 0, this.amount);
 };
+
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                    Number chosen and return functions                     */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 /**
  * When you press the anchor this happens.
@@ -576,12 +673,11 @@ BalloonGame.prototype.modeIntro = function () {
 	t.add(new TweenMax(this.beetle, 3, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
 	t.addSound(this.speech, this.beetle, 'loveTreasures');
 	t.addSound(this.speech, this.beetle, 'yippie1');
-	t.addSound(this.speech, this.beetle, 'helpToCave', '+=0.3');
+	t.addSound(this.speech, this.beetle, 'helpToCave', '+=0.5');
 	if (this.map) {
 		this.map.target.number = this.currentNumber;
-		t.addLabel('mapping');
-		t.add(fade(this.map, true), 'mapping');
-		t.addSound(this.speech, this.beetle, 'lookAtMap');
+		t.add(fade(this.map, true));
+		t.addSound(this.speech, this.beetle, 'lookAtMap', '-=0.3');
 	}
 	t.addCallback(this.nextRound, null, null, this);
 };
@@ -591,17 +687,10 @@ BalloonGame.prototype.modePlayerDo = function (intro, tries) {
 	if (tries === 0) { // New round.
 		if (intro) {
 			t.skippable();
-			t.addLabel('dragBalloons');
-			t.addSound(this.speech, this.beetle, 'canYouDrag', 'dragBalloons');
-			t.add(this.instructions(), 'dragBalloons');
-			t.addSound(this.speech, this.beetle, 'firstFloor');
-			t.addSound(this.speech, this.beetle, 'secondFloor', '+=0.2');
-			t.addSound(this.speech, this.beetle, 'thirdFloor', '+=0.2');
-			t.addSound(this.speech, this.beetle, 'fourthFloor', '+=0.2');
-			t.addSound(this.speech, this.beetle, 'canYouDragRight', '+=0.5');
-			t.addSound(this.speech, this.beetle, 'pushAnchor', '+=0.5');
+			t.add(this.doInstructions()); // includes new treasure
+		} else {
+			t.add(this.newTreasure());
 		}
-		t.add(this.newTreasure());
 	}
 	t.addCallback(this.showNumbers, null, null, this);
 };
