@@ -32,8 +32,7 @@ BeeFlightGame.prototype.buttonColor = 0xface3d;
 
 /* Phaser state function */
 BeeFlightGame.prototype.preload = function () {
-	this.load.audio('beePlaceholder', LANG.SPEECH.AGENT.hmm);
-
+	this.load.audio('beeSpeech', LANG.SPEECH.beeflight.speech); // speech sheet
 	this.load.atlasJSONHash('bee', 'assets/img/subgames/beeflight/atlas.png', 'assets/img/subgames/beeflight/atlas.json');
 };
 
@@ -53,7 +52,8 @@ BeeFlightGame.prototype.create = function () {
 		}
 	});
 
-	// Add music
+	// Add music, sounds and speech
+	this.speech = createAudioSheet('beeSpeech', LANG.SPEECH.beeflight.markers);
 	// this.add.audio('beeMusic', 1, true).play();
 
 	// Add background
@@ -104,7 +104,7 @@ BeeFlightGame.prototype.create = function () {
 		home: function () {
 			var t = new TimelineMax();
 			t.addCallback(_this.bee.flap, null, [true], _this.bee);
-			t.add(_this.bee.move(_this.pos.home, 3, _this.pos.homeScale));
+			t.add(_this.bee.move(_this.pos.home, 5, _this.pos.homeScale));
 			t.addCallback(_this.bee.flap, null, [false], _this.bee);
 			return t;
 		},
@@ -128,13 +128,10 @@ BeeFlightGame.prototype.create = function () {
 				} else {
 					var dir = target < _this.atValue ? -1 : 1;
 					var i = _this.atValue + dir;
-					t.addLabel('flow' + i);
 					while (i !== target + dir) {
-						t.add(_this.bee.move({ x: _this.flowers[i - 1].x }, 1), 'flow' + i);
+						t.add(_this.bee.move({ x: _this.flowers[i - 1].x }, 1));
+						t.addSound(_this.speech, _this.bee, 'number' + i, '-=0.5');
 						i += dir;
-						t.addLabel('flow' + i);
-						t.addLabel('flows' + i, '-=0.5');
-						t.addSound('beePlaceholder', _this.bee, null, 'flows' + i); // Counting
 					}
 				}
 			}
@@ -150,17 +147,67 @@ BeeFlightGame.prototype.create = function () {
 	this.startGame();
 };
 
-BeeFlightGame.prototype.instructionIntro = function () {
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                           Instruction functions                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+BeeFlightGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
-	t.addSound('beePlaceholder', this.bee); // How to find the flower with nectar.
+	t.add(this.newFlower());
+	t.addSound(this.speech, this.bee, 'showTheWay');
+	t.addSound(this.speech, this.bee, 'decideHowFar', '+=0.8');
 	t.add(this.pointAtFlowers(this.currentNumber));
 	t.addLabel('useButtons');
 	t.addLabel('flashButtons', '+=0.5');
-	t.addSound('beePlaceholder', this.bee); // Use the buttons.
+	t.addSound(this.speech, this.bee, 'pushNumber', 'useButtons');
 	t.add(fade(this.buttons, true), 'useButtons');
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
 	return t;
+};
+
+BeeFlightGame.prototype.instructionSteps = BeeFlightGame.prototype.instructionCount;
+
+BeeFlightGame.prototype.instructionAdd = function () {
+	var t = new TimelineMax();
+	t.add(this.newFlower(true));
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addSound(this.speech, this.bee, 'wrongPlace');
+	t.addSound(this.speech, this.bee, 'notFarEnough', '+=0.8');
+	// t.add(this.pointAtFlowers(this.currentNumber));
+	t.addLabel('useButtons');
+	t.addLabel('flashButtons', '+=0.5');
+	t.addSound(this.speech, this.bee, 'pushNumber', 'useButtons');
+	t.add(fade(this.buttons, true), 'useButtons');
+	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
+	return t;
+};
+
+BeeFlightGame.prototype.instructionSubtract = function () {
+	var t = new TimelineMax();
+	t.add(this.newFlower(true));
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addSound(this.speech, this.bee, 'goneTooFar');
+	// t.add(this.pointAtFlowers(this.currentNumber));
+	t.addLabel('useButtons');
+	t.addLabel('flashButtons', '+=0.5');
+	t.addSound(this.speech, this.bee, 'pushNumber', 'useButtons');
+	t.add(fade(this.buttons, true), 'useButtons');
+	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
+	return t;
+};
+
+BeeFlightGame.prototype.instructionAddSubtract = function () {
+	var t = new TimelineMax();
+	t.add(this.newFlower());
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addLabel('useButtons');
+	t.addLabel('flashButtons', '+=0.5');
+	t.addSound(this.speech, this.bee, 'useButtons', 'useButtons');
+	t.add(fade(this.buttons, true), 'useButtons');
+	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
+	return t;
+
 };
 
 BeeFlightGame.prototype.pointAtFlowers = function (number) {
@@ -176,7 +223,7 @@ BeeFlightGame.prototype.pointAtFlowers = function (number) {
 	t.addCallback(function () {}, '+=0.5');
 	for (var i = 0; i < number; i++) {
 		if (i !== 0) {
-			t.add(new TweenMax(arrow, 0.75, { x: this.flowers[i].x, y: startY }));
+			t.add(new TweenMax(arrow, 0.75, { x: this.flowers[i].x, y: startY }), '+=0.3');
 		}
 		t.add(new TweenMax(arrow, 1, { y: this.flowers[i].y }));
 	}
@@ -184,44 +231,56 @@ BeeFlightGame.prototype.pointAtFlowers = function (number) {
 	return t;
 };
 
-BeeFlightGame.prototype.newFlower = function () {
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                           Start round functions                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+BeeFlightGame.prototype.newFlower = function (silent) {
 	var t = new TimelineMax();
-	t.add(this.bee.moveTo.start());
 	t.addCallback(function () {
 		this.flowers[this.currentNumber - 1].frameName = 'flower' + this.currentNumber;
 		// TODO: This tint is due to a bug in Pixi, remove when bug is fixed.
 		this.flowers[this.currentNumber - 1].tint--;
 	}, null, null, this);
-	this.doStartFunction(t);
+
+	this.doStartFunction(t, silent);
 	return t;
 };
 
-BeeFlightGame.prototype.startStop = function (t) {
-	t.addSound('beePlaceholder', this.bee);
+BeeFlightGame.prototype.startStop = function () {
+	// Do nothing
 };
 
-BeeFlightGame.prototype.startBelow = function (t) {
+BeeFlightGame.prototype.startBelow = function (t, silent) {
 	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
-	t.addSound('beePlaceholder', this.bee); // I thought it was here.
-	t.addSound('beePlaceholder', this.bee); // Didn't fly long enough.
+	if (!silent) {
+		t.addSound(this.speech, this.bee, 'notFarEnough');
+	}
 };
 
-BeeFlightGame.prototype.startAbove = function (t) {
+BeeFlightGame.prototype.startAbove = function (t, silent) {
 	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
-	t.addSound('beePlaceholder', this.bee); // I thought it was here.
-	t.addSound('beePlaceholder', this.bee); // Flew too far.
+	if (!silent) {
+		t.addSound(this.speech, this.bee, 'goneTooFar');
+	}
 };
 
 BeeFlightGame.prototype.startThink = function (t) {
+	var addTo = this.rnd.integerInRange(1, this.amount);
 	t.addCallback(function () {
-		this.addToNumber = this.rnd.integerInRange(1, this.amount);
+		this.addToNumber = addTo;
 		this.bee.thought.guess.number = this.addToNumber;
 	}, null, null, this);
-	t.addSound('beePlaceholder', this.bee); // I think I am going to...
+	t.addSound(this.speech, this.bee, 'thinkItIt');
+	t.addLabel('number', '+=0.3');
 	t.add(this.bee.think());
-	t.addSound('beePlaceholder', this.bee); // Number
+	t.addSound(this.speech, this.bee, 'number' + addTo, 'number');
 };
 
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                    Number chosen and return functions                     */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	var current = this.currentNumber-1;
 	var sum = number + this.addToNumber;
@@ -236,10 +295,16 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	var t = new TimelineMax();
 	if (GLOBAL.debug) { t.skippable(); }
 
-	if (this.relative && !simulate) {
-		t.addSound('beePlaceholder', this.bee); // X more.
+	if (!simulate) {
+		if (this.isRelative && number !== 0) {
+			var moving = Math.abs(number);
+			t.addSound(this.speech, this.bee, moving === 1 ? 'one' : 'number' + moving);
+			t.addSound(this.speech, this.bee, number > 0 ? 'forward' : 'backward');
+			t.addCallback(function () {}, '+=0.5'); // Pause until next sound.
+		}
+		t.addSound(this.speech, this.bee, 'letsGo');
 	}
-	t.addSound('beePlaceholder', this.bee); // Let's go!
+
 	t.add(this.bee.moveTo.flower(sum));
 	
 	/* Correct :) */
@@ -251,16 +316,18 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 			this.flowers[current].tint++;
 			this.agent.setHappy();
 		}, null, null, this);
-		t.addSound('beePlaceholder', this.bee); // Lots of nectar.
-		t.addLabel('goingHome');
-		t.addSound('beePlaceholder', this.bee, null, 'goingHome'); // Going home.
+		t.addSound(this.speech, this.bee, 'nectar');
+		t.addSound(this.speech, this.bee, 'slurp');
+		t.addLabel('goingHome', '+=0.5');
+		t.addSound(this.speech, this.bee, 'goingBack', 'goingHome');
 		t.add(this.bee.moveTo.home(), 'goingHome');
+		t.add(this.bee.moveTo.start());
 		this.atValue = 0;
 
 	/* Incorrect :( */
 	} else {
 		t.addCallback(this.agent.setSad, null, null, this.agent);
-		this.doReturnFunction(t, sum, result);
+		this.doReturnFunction(t, sum, result, simulate);
 	}
 
 	t.addCallback(this.agent.setNeutral, null, null, this.agent);
@@ -270,33 +337,35 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 
 BeeFlightGame.prototype.returnToStart = function (t) {
 	this.atValue = 0;
-	t.addSound('beePlaceholder', this.bee); // No nectar.
+	t.addSound(this.speech, this.bee, 'noNectar');
 	t.add(this.bee.moveTo.start());
 	t.add(this.bee.moveTurn(1));
 };
 
-BeeFlightGame.prototype.returnNone = function (t, number) {
+BeeFlightGame.prototype.returnNone = function (t, number, notUsed, silent) {
 	this.atValue = number;
-	t.addSound('beePlaceholder', this.bee); // No nectar.
-};
-
-BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff) {
-	if (diff > 0) {
-		t.addSound('beePlaceholder', this.bee); // Too far.
-		t.addSound('beePlaceholder', this.bee); // Go back again.
-		t.add(this.bee.moveTo.flower(this.atValue, true));
-	} else {
-		this.returnNone(t, number);
+	if (!silent) {
+		t.addSound(this.speech, this.bee, 'noNectar');
 	}
 };
 
-BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
-	if (diff < 0) {
-		t.addSound('beePlaceholder', this.bee); // Too close to home.
-		t.addSound('beePlaceholder', this.bee); // Go back again.
+BeeFlightGame.prototype.returnToPreviousIfHigher = function (t, number, diff, silent) {
+	if (diff > 0) {
+		t.addSound(this.speech, this.bee, 'tooFar');
+		t.addSound(this.speech, this.bee, 'wasBefore');
 		t.add(this.bee.moveTo.flower(this.atValue, true));
 	} else {
-		this.returnNone(t, number);
+		this.returnNone(t, number, diff, silent);
+	}
+};
+
+BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff, silent) {
+	if (diff < 0) {
+		t.addSound(this.speech, this.bee, 'tooNear');
+		t.addSound(this.speech, this.bee, 'wasBefore');
+		t.add(this.bee.moveTo.flower(this.atValue, true));
+	} else {
+		this.returnNone(t, number, diff, silent);
 	}
 };
 
@@ -305,7 +374,12 @@ BeeFlightGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 /*                 Overshadowing Subgame mode functions                      */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BeeFlightGame.prototype.modeIntro = function () {
-	this.nextRound();
+	var t = new TimelineMax().skippable();
+	t.addSound(this.speech, this.bee, 'badSight');
+	t.addLabel('gotoStart', '+=0.5');
+	t.add(this.bee.moveTo.start(), 'gotoStart');
+	t.addSound(this.speech, this.bee, 'howToFind', 'gotoStart');
+	t.addCallback(this.nextRound, null, null, this);
 };
 
 BeeFlightGame.prototype.modePlayerDo = function (intro, tries) {
@@ -315,12 +389,9 @@ BeeFlightGame.prototype.modePlayerDo = function (intro, tries) {
 		var t = new TimelineMax();
 		if (intro) {
 			t.skippable();
-			t.addSound('beePlaceholder', this.bee); // How to find the flower with nectar.
-			t.add(this.newFlower());
-			t.addSound('beePlaceholder', this.bee); // You there.
-			t.add(this.instructionIntro());
+			t.add(this.doInstructions());  // includes new flower
 		} else {
-			t.addSound('beePlaceholder', this.bee); // Get more.
+			t.addSound(this.speech, this.bee, 'getMore');
 			t.add(this.newFlower());
 		}
 		t.addCallback(this.showNumbers, null, null, this);
@@ -337,6 +408,8 @@ BeeFlightGame.prototype.modePlayerShow = function (intro, tries) {
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
+			t.addSound(this.speech, this.bee, 'gettingHelp');
+			t.addSound(this.speech, this.bee, 'youHelpLater');
 		}
 		t.add(this.newFlower());
 		t.addCallback(this.showNumbers, null, null, this);
@@ -364,7 +437,7 @@ BeeFlightGame.prototype.modeOutro = function () {
 	this.agent.eyesStopFollow();
 
 	var t = new TimelineMax();
-	// t.addSound(); TODO: Celebration sounds.
+	t.addSound(this.speech, this.bee, 'thatsAll');
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');
 	t.addLabel('water3', '+=3');
@@ -373,6 +446,9 @@ BeeFlightGame.prototype.modeOutro = function () {
 	t.add(this.addWater(this.bee.x, this.bee.y), 'water');
 	t.add(this.addWater(this.bee.x, this.bee.y), 'water2');
 	t.add(this.addWater(this.bee.x, this.bee.y), 'water3');
+	t.addLabel('letsDance');
+	t.add(this.bee.moveTo.home(), 'letsDance');
+	t.addSound(this.speech, this.bee, 'dancing', 'letsDance');
 	t.addCallback(this.nextRound, null, null, this);
 };
 

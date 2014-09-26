@@ -370,7 +370,6 @@ BalloonGame.prototype.showYesnos = function () {
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                           Instruction functions                           */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-
 BalloonGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
 	t.add(this.newTreasure(true));
@@ -467,7 +466,6 @@ BalloonGame.prototype.pointAtCave = function (number) {
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                           Start round functions                           */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-
 /** This creates a new treasure to search for. */
 BalloonGame.prototype.newTreasure = function (silent) {
 	var t = new TimelineMax();
@@ -525,7 +523,6 @@ BalloonGame.prototype.startThink = function (t) {
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                    Number chosen and return functions                     */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-
 /**
  * When you press the anchor this happens.
  * @param {number} amount - The amount of balloons to try with.
