@@ -34,12 +34,8 @@ BalloonGame.prototype.buttonColor = 0xa3e9a4;
 
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
-	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // audio sprite sheet
-	this.load.audio('pop',           ['assets/audio/subgames/balloongame/pop.ogg', 'assets/audio/subgames/balloongame/pop.mp3']);
-	this.load.audio('catbushpurr',   ['assets/audio/subgames/balloongame/catbushpurr.ogg', 'assets/audio/subgames/balloongame/catbushpurr.mp3']);
-	this.load.audio('chestunlock',   ['assets/audio/subgames/balloongame/chestunlock.ogg', 'assets/audio/subgames/balloongame/chestunlock.mp3']);
-	this.load.audio('sackjingle',    ['assets/audio/subgames/balloongame/belljingle.ogg', 'assets/audio/subgames/balloongame/belljingle.mp3']);
-
+	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // speech sheet
+	this.load.audio('balloonSfx', ['assets/audio/subgames/balloongame/sfx.ogg', 'assets/audio/subgames/balloongame/sfx.mp3']); // sound sheet
 	this.load.atlasJSONHash('balloon', 'assets/img/subgames/balloon/atlas.png', 'assets/img/subgames/balloon/atlas.json');
 };
 
@@ -69,6 +65,12 @@ BalloonGame.prototype.create = function () {
 	// Add music, sounds and speech
 	// this.add.audio('entryMusic', 1, true).play();
 	this.speech = createAudioSheet('balloonSpeech', LANG.SPEECH.balloongame.markers);
+	this.sfx = createAudioSheet('balloonSfx', {
+			sackJingle:  [0.0,   1.6],
+			chestUnlock: [1.9,   1.0],
+			pop:         [3.1,   0.3],
+			catPurr:     [3.7,   2.8]
+	});
 
 	// Add background
 	this.gameGroup.add(new Cover('#68acea'));
@@ -83,7 +85,6 @@ BalloonGame.prototype.create = function () {
 	// The interactable bush.
 	// TODO: Create better synced graphics.
 	var catBush = this.gameGroup.create(this.pos.balloons.x + 35, this.pos.balloons.y - 60, 'balloon', 'catbush1');
-	catBush.purr = this.add.audio('catbushpurr');
 	catBush.animations.add('catBlink', ['catbush2', 'catbush3', 'catbush4', 'catbush5', 'catbush6', 'catbush7', 'catbush8', 'catbush9', 'catbush10', 'catbush1']);
 	catBush.events.onAnimationComplete.add(function () {
 		catBush.inputEnabled = true;
@@ -92,7 +93,7 @@ BalloonGame.prototype.create = function () {
 	catBush.inputEnabled = true;
 	catBush.events.onInputDown.add(function () {
 		catBush.inputEnabled = false;
-		catBush.purr.play();
+		this.sfx.play('catPurr');
 		catBush.animations.play('catBlink', 8, false);
 	}, this);
 
@@ -321,7 +322,7 @@ BalloonGame.prototype.popBalloons = function () {
 		this.bucketBalloons.popBalloons(); // Will set amount to 0.
 		this.balloonStack.updateBalloons(this.amount); // TODO: Maybe a nice "blow up" animation?
 	}, null, null, this);
-	t.addSound('pop');
+	t.addSound(this.sfx, null, 'pop');
 	return t;
 };
 
@@ -589,7 +590,7 @@ BalloonGame.prototype.openChest = function (number) {
 		t.add(fade(this.eyes, false));
 	}
 	t.add(fade(this.chest, true));
-	t.addSound('chestunlock');
+	t.addSound(this.sfx, null, 'chestUnlock');
 	t.addCallback(function () { this.chest.frameName = 'chest_open'; }, null, null, this);
 	t.add(this.playRandomPrize());
 	t.add(fade(this.chest, false));
@@ -621,7 +622,7 @@ BalloonGame.prototype.playRandomPrize = function () {
 	t.add(new TweenMax(this.treasure, 1, { y: '+=75', ease: Power1.easeIn }));
 	t.add(new TweenMax(this.treasure, 2, { x: this.pos.sack.x, y: this.pos.sack.y + 10, ease: Power4.easeIn }));
 	t.addLabel('sacking');
-	t.addSound('sackjingle', null, null, 'sacking');
+	t.addSound(this.sfx, null, 'sackJingle', 'sacking');
 	t.add(new TweenMax(this.sack, 0.2, { y: '+=3', ease: Power1.easeInOut }).backForth(1.4), 'sacking');
 	return t;
 };
