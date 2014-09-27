@@ -404,7 +404,8 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 	} else {
 		t.addLabel('wrong');
 		t.addCallback(this.agent.setSad, 'wrong', null, this.agent);
-		t.addSound(this.speech, this.bird, result < 0 ? 'higher' : 'lower');
+		t.addSound(this.speech, this.bird, game.rnd.integerInRange(0, 1) ? 'dontLiveHere' : 'notMyParent');
+		t.addSound(this.speech, this.bird, result < 0 ? 'higher' : 'lower', '+=0.2');
 		t.add(branch.confused(), 'wrong');
 		t.add(this.bird.moveTo.elevator());
 		t.add(this.bird.moveTo.peak(true));
