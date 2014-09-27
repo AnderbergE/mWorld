@@ -207,7 +207,6 @@ BeeFlightGame.prototype.instructionAddSubtract = function () {
 	t.add(fade(this.buttons, true), 'useButtons');
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
 	return t;
-
 };
 
 BeeFlightGame.prototype.pointAtFlowers = function (number) {
@@ -271,7 +270,7 @@ BeeFlightGame.prototype.startThink = function (t) {
 		this.addToNumber = addTo;
 		this.bee.thought.guess.number = this.addToNumber;
 	}, null, null, this);
-	t.addSound(this.speech, this.bee, 'thinkItIt');
+	t.addSound(this.speech, this.bee, 'thinkItIs');
 	t.addLabel('number', '+=0.3');
 	t.add(this.bee.think());
 	t.addSound(this.speech, this.bee, 'number' + addTo, 'number');

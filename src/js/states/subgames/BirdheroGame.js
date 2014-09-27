@@ -40,14 +40,9 @@ BirdheroGame.prototype.tintBank = [
 
 /* Phaser state function */
 BirdheroGame.prototype.preload = function () {
-	this.load.audio('birdheroSpeech',         LANG.SPEECH.birdhero.speech); // audio sprite sheet
-	this.load.audio('birdheroIntro',          ['assets/audio/subgames/birdhero/intro.ogg',           'assets/audio/subgames/birdhero/intro.mp3']);
-	this.load.audio('birdheroScream',         ['assets/audio/subgames/birdhero/scream.ogg',          'assets/audio/subgames/birdhero/scream.mp3']);
-	this.load.audio('birdheroMusic',          ['assets/audio/subgames/birdhero/bg.ogg',              'assets/audio/subgames/birdhero/bg.mp3']);
-	this.load.audio('birdheroElevator',       ['assets/audio/subgames/birdhero/elevator.ogg',        'assets/audio/subgames/birdhero/elevator.mp3']);
-	this.load.audio('birdheroElevatorArrive', ['assets/audio/subgames/birdhero/elevator_arrive.ogg', 'assets/audio/subgames/birdhero/elevator_arrive.mp3']);
-	this.load.audio('birdheroElevatorDown',   ['assets/audio/subgames/birdhero/elevator_down.ogg',   'assets/audio/subgames/birdhero/elevator_down.mp3']);
-
+	this.load.audio('birdheroSpeech', LANG.SPEECH.birdhero.speech); // speech audio sheet
+	this.load.audio('birdheroSfx', ['assets/audio/subgames/birdhero/sfx.ogg', 'assets/audio/subgames/birdhero/sfx.mp3']); // sound effects audio sheet
+	this.load.audio('birdheroMusic', ['assets/audio/subgames/birdhero/music.ogg', 'assets/audio/subgames/birdhero/music.mp3']);
 	this.load.atlasJSONHash('birdhero', 'assets/img/subgames/birdhero/atlas.png', 'assets/img/subgames/birdhero/atlas.json');
 };
 
@@ -67,11 +62,16 @@ BirdheroGame.prototype.create = function () {
 	// Setup tints by randomising those in the bank.
 	this.tint = this.rnd.shuffle(this.tintBank.slice());
 
-	// Add music and sounds
-	var elevatorAudio = this.add.audio('birdheroElevator', 1);
-	var elevatorAudioArrive = this.add.audio('birdheroElevatorArrive', 1);
-	var elevatorAudioDown = this.add.audio('birdheroElevatorDown', 1);
+	// Add speech and sounds (music added later)
 	this.speech = createAudioSheet('birdheroSpeech', LANG.SPEECH.birdhero.markers);
+	this.sfx = createAudioSheet('birdheroSfx', {
+		intro:          [ 0.0, 12.7],
+		happy:          [13.4,  3.8],
+		outro:          [18.0,  3.7],
+		elevatorDing:   [22.2,  0.8],
+		elevatorArrive: [23.6,  0.8],
+		elevatorDown:   [25.0,  1.3]
+	});
 
 	// Add background
 	this.add.sprite(0, 0, 'birdhero', 'bg', this.gameGroup);
@@ -172,7 +172,7 @@ BirdheroGame.prototype.create = function () {
 					for (var i = currentFloor + dir; true; i += dir) {
 						t.add(_this.elevator.moveTo._step(i));
 						if (i !== target) {
-							t.addCallback(elevatorAudio.play, null, null, elevatorAudio);
+							t.addCallback(_this.sfx.play, null, ['elevatorDing'], _this.sfx);
 						} else {
 							break;
 						}
@@ -181,9 +181,9 @@ BirdheroGame.prototype.create = function () {
 			}
 
 			if (target === 0) {
-				t.addSound(elevatorAudioDown, null, null, 0);
+				t.addSound(_this.sfx, null, 'elevatorDown', 0);
 			} else {
-				t.addCallback(elevatorAudioArrive.play, null, null, elevatorAudioArrive);
+				t.addCallback(_this.sfx.play, null, ['elevatorArrive'], _this.sfx);
 			}
 
 			return t;
@@ -225,95 +225,142 @@ BirdheroGame.prototype.zoom = function (ins) {
 	return t;
 };
 
-BirdheroGame.prototype.instructionIntro = function () {
-	this.bird.number = this.currentNumber; // Make sure bird has a number.
 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                           Instruction functions                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+BirdheroGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
+	t.add(this.newRound(true));
 	t.addCallback(this.updateButtons, null, null, this);
-	t.addSound(this.speech, this.bird, 'instruction1a');
-	t.add(this.bird.countFeathers());
-	t.addLabel('useButtons');
-	t.addLabel('flashButtons', '+=0.7');
-	t.addSound(this.speech, this.bird, 'instruction1b');
+	t.addSound(this.speech, this.bird, 'blownOut');
+	t.addLabel('countFeathers', '+=0.5');
+	t.addSound(this.speech, this.bird, 'countFeathers', 'countFeathers');
+	t.add(this.bird.countFeathers(), 'countFeathers');
+	this.instructionButtons(t);
+	return t;
+};
+
+BirdheroGame.prototype.instructionSteps = BirdheroGame.prototype.instructionCount;
+
+BirdheroGame.prototype.instructionAdd = function () {
+	var t = new TimelineMax();
+	t.add(this.newRound());
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addCallback(function () {}, '+=' + this.speech.markers.howMuchHigher.duration);
+	this.instructionButtons(t);
+	return t;
+};
+
+BirdheroGame.prototype.instructionSubtract = function () {
+	var t = new TimelineMax();
+	t.add(this.newRound());
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addCallback(function () {}, '+=' + this.speech.markers.howMuchLower.duration);
+	this.instructionButtons(t);
+	return t;
+};
+
+BirdheroGame.prototype.instructionAddSubtract = function () {
+	var t = new TimelineMax();
+	t.add(this.newRound());
+	t.addCallback(this.updateButtons, null, null, this);
+	t.addCallback(function () {}, '+=' + this.speech.markers.higherOrLower.duration);
+	this.instructionButtons(t);
+	return t;
+};
+
+BirdheroGame.prototype.instructionButtons = function (t) {
+	t.addLabel('useButtons', '+=0.5');
+	t.addLabel('flashButtons', '+=1.2');
+	t.addSound(this.speech, this.bird, 'pushButton', 'useButtons');
 	t.add(fade(this.buttons, true), 'useButtons');
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
-	return t;
 };
 
 BirdheroGame.prototype.instructionAgentTry = function () {
 	var t = new TimelineMax();
-	t.addSound(this.speech, this.bird, 'instruction2a');
+	// t.addSound(this.speech, this.bird, 'instruction2a');
 	t.add(fade(this.yesnos, true), 0);
 	t.add(this.yesnos.children[0].highlight(1));
-	t.addSound(this.speech, this.bird, 'instruction2b');
+	// t.addSound(this.speech, this.bird, 'instruction2b');
 	t.add(this.yesnos.children[1].highlight(1));
 	return t;
 };
 
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                           Start round functions                           */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 /* Start a new round, aka: introduce a new bird */
 BirdheroGame.prototype.newRound = function (silent) {
-	var t = new TimelineMax();
-	t.addCallback(function () {
-		this.bird.number = this.currentNumber;
-		this.bird.tint = this.tint[this.bird.number - 1];
-		this.bird.x = this.pos.bird.start.x - this.elevator.x;
-		this.bird.y = this.pos.bird.start.y - this.elevator.origin;
-		this.bird.scale.set(this.pos.bird.scale);
-		this.bird.visible = true;
-	}, null, null, this);
+	this.bird.number = this.currentNumber;
+	this.bird.tint = this.tint[this.bird.number - 1];
+	this.bird.x = this.pos.bird.start.x - this.elevator.x;
+	this.bird.y = this.pos.bird.start.y - this.elevator.origin;
+	this.bird.scale.set(this.pos.bird.scale);
+	this.bird.visible = true;
 
+	var t = new TimelineMax();
 	t.add(this.zoom(1), 0);
 	t.add(this.bird.moveTo.initial(), 0);
 
-	// We supply the tween as a parameter to get the labels correct.
-	this.doStartFunction(silent, t);
+	this.doStartFunction(t, silent);
 
 	return t;
 };
 
-BirdheroGame.prototype.startStop = function (silent, t) {
+BirdheroGame.prototype.startStop = function (t, silent) {
 	if (!silent) {
-		t.addSound(this.speech, this.bird, 'thisFloor1');
-		t.addLabel('showWings');
+		t.addSound(this.speech, this.bird, 'thisFloor');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addSound(this.speech, this.bird, 'thisFloor2');
+		t.addCallback(function () { this.bird.say(this.speech, 'helpMeHome').play('helpMeHome'); }, '+=0.3', null, this);
 	}
 };
 
-BirdheroGame.prototype.startBelow = function (silent, t) {
+BirdheroGame.prototype.startBelow = function (t, silent) {
+	t.addSound(this.speech, this.bird, 'useMyself');
 	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
 	if (!silent) {
-		t.addLabel('showWings');
+		t.addSound(this.speech, this.bird, 'thisFloor');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addSound(this.speech, this.bird, 'thisFloor2');
+		t.addCallback(function () { this.bird.say(this.speech, 'howMuchHigher').play('howMuchHigher'); }, '+=0.3', null, this);
 	}
 };
 
-BirdheroGame.prototype.startAbove = function (silent, t) {
+BirdheroGame.prototype.startAbove = function (t, silent) {
+	t.addSound(this.speech, this.bird, 'useMyself');
 	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
 	if (!silent) {
-		t.addLabel('showWings');
+		t.addSound(this.speech, this.bird, 'thisFloor');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addSound(this.speech, this.bird, 'thisFloor2');
+		t.addCallback(function () { this.bird.say(this.speech, 'howMuchLower').play('howMuchLower'); }, '+=0.3', null, this);
 	}
 };
 
-BirdheroGame.prototype.startThink = function (silent, t) {
-	if (!silent) {
-		t.addSound(this.speech, this.bird, 'thisFloor1');
-		t.addLabel('showWings');
-		t.addCallback(this.bird.showWings, null, null, this.bird);
-	}
+BirdheroGame.prototype.startThink = function (t, silent) {
 	t.addCallback(function () {
 		this.addToNumber = this.rnd.integerInRange(1, this.amount);
 		this.bird.thought.guess.number = this.addToNumber;
 	}, null, null, this);
-	t.add(this.bird.think());
+
 	if (!silent) {
-		t.addSound(this.speech, this.bird, 'thisFloor2'); // This is where I think I should go.
+		t.addSound(this.speech, this.bird, 'thisFloor');
+		t.addCallback(this.bird.showWings, null, null, this.bird);
+	}
+
+	t.addLabel('thinker', '+=0.3');
+	t.add(this.bird.think(), 'thinker');
+	if (!silent) {
+		t.addSound(this.speech, this.bird, 'thinkItIs', 'thinker');
+		t.addCallback(function () { this.bird.say(this.speech, 'higherOrLower').play('higherOrLower'); }, '+=0.3', null, this);
 	}
 };
 
+
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                    Number chosen and return functions                     */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BirdheroGame.prototype.runNumber = function (number, simulate) {
 	var origin = this.atValue;
 	var sum = number + this.addToNumber;
@@ -349,7 +396,7 @@ BirdheroGame.prototype.runNumber = function (number, simulate) {
 			this.agent.setHappy();
 		}, null, null, this);
 		t.addLabel('celebrate');
-		t.addSound(this.speech, null, 'correct', 'celebrate');
+		t.addSound(this.sfx, null, 'happy', 'celebrate');
 		t.add(branch.celebrate(2), 'celebrate');
 		t.add(this.elevator.moveTo.branch(0, true, sum));
 
@@ -403,10 +450,9 @@ BirdheroGame.prototype.returnToPreviousIfLower = function (from, to, diff) {
 /*                 Overshadowing Subgame mode functions                      */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BirdheroGame.prototype.modeIntro = function () {
-	var sound = this.add.audio('birdheroIntro');
 	var group = this.add.group(this.gameGroup);
 	var t = new TimelineMax({
-		onStart: function () { sound.play(); }
+		onStart: function () { this.sfx.play('intro'); }, onStartScope: this
 	}).skippable();
 
 	// Create each chick that will be blown away
@@ -466,7 +512,7 @@ BirdheroGame.prototype.modeIntro = function () {
 	}, 4);
 
 	t.addCallback(function () {
-		sound.stop();
+		this.sfx.stop();
 		emitter.destroy(true);
 		darkness.destroy(true);
 		group.destroy(true);
@@ -482,12 +528,11 @@ BirdheroGame.prototype.modePlayerDo = function (intro, tries) {
 		var t = new TimelineMax();
 		if (intro) {
 			t.skippable();
-			t.add(this.newRound(true));
-			t.add(this.instructionIntro());
-			t.addCallback(this.showNumbers, null, null, this);
+			t.add(this.doInstructions()); // includes new round
 		} else {
-			t.add(this.newRound().addCallback(this.showNumbers, 'showWings', null, this));
+			t.add(this.newRound());
 		}
+		t.addCallback(this.showNumbers, null, null, this);
 	}
 };
 
@@ -501,10 +546,11 @@ BirdheroGame.prototype.modePlayerShow = function (intro, tries) {
 			t.skippable();
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
-			t.addSound(this.speech, this.agent, 'agentIntro');
+			// t.addSound(this.speech, this.agent, 'agentIntro');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
 		}
-		t.add(this.newRound().addCallback(this.showNumbers, 'showWings', null, this));
+		t.add(this.newRound());
+		t.addCallback(this.showNumbers, null, null, this);
 	}
 };
 
@@ -515,14 +561,14 @@ BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
 	if (tries > 0) {
 		this.bird.showWings();
 		// TODO: Add more specified sounds?
-		t.addSound(this.speech, this.agent, 'agentTryAgain');
+		// t.addSound(this.speech, this.agent, 'agentTryAgain');
 		t.add(this.agentGuess());
 		t.addCallback(this.showYesnos, null, null, this);
 	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
-			t.addSound(this.speech, this.agent, 'agentTry');
+			// t.addSound(this.speech, this.agent, 'agentTry');
 			t.add(this.newRound());
 			t.add(this.agentGuess());
 			t.add(this.instructionAgentTry());
@@ -540,15 +586,20 @@ BirdheroGame.prototype.modeOutro = function () {
 	this.agent.eyesStopFollow();
 
 	var t = new TimelineMax();
-	// t.addSound(); TODO: Celebration sounds.
-	for (var i = 0; i < this.tree.branch.length; i++) {
-		t.addCallback(this.tree.branch[i].celebrate, null, null, this.tree.branch[i]);
-	}
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');
 	t.addLabel('water3', '+=3');
+
+	for (var i = 0; i < this.tree.branch.length; i++) {
+		t.addCallback(this.tree.branch[i].celebrate, null, null, this.tree.branch[i]);
+	}
+
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
 	t.add(this.agent.fistPump(), 'water');
+
+	t.addSound(this.sfx, null, 'outro', 'water');
+	t.addSound(this.speech, null, 'thankYou', 'water2');
+
 	var x = this.tree.x + this.pos.tree.center;
 	t.add(this.addWater(x, this.pos.tree.branch.start), 'water');
 	t.add(this.addWater(x, this.pos.tree.branch.start*0.7), 'water2');

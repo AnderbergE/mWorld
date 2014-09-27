@@ -137,26 +137,23 @@ LANG.swedish.speech = {
 
 	/* Subgames */
 	birdhero: {
-		speech: ['assets/audio/subgames/birdhero/speech.ogg', 'assets/audio/subgames/birdhero/speech.mp3'],
+		speech: ['assets/audio/subgames/birdhero/swedish.ogg', 'assets/audio/subgames/birdhero/swedish.mp3'],
 		markers: {
-			instruction1a:    [1.8,   8.1],
-			instruction1b:    [10.5,  2.7],
-			instruction2a:    [81.9,  3.4],
-			instruction2b:    [85.9,  3.6],
-			thisFloor1:       [17.3,  1.9],
-			thisFloor2:       [19.2,  1.5],
-			correct:          [39.9,  2  ],
-			higher:           [24.8,  2.9],
-			lower:            [31.8,  3.3],
-			agentIntro:       [53.7,  6.7],
-			agentTry:         [64.7,  2.4],
-			agentHmm:         [99.6,  1  ],
-			agentGuessWeak:   [111.5, 1.5],
-			agentGuessNormal: [116.6, 1  ],
-			agentGuessStrong: [121.3, 1.7],
-			agentCorrected:   [132.2, 2.6],
-			agentTryAgain:    [150.8, 1.8],
-			ending:           [45.7,  4.4]
+			thisFloor:     [ 0.2, 1.9],
+			helpMeHome:    [ 2.6, 2.0],
+			dontLiveHere:  [ 5.9, 1.7],
+			notMyParent:   [ 9.1, 2.3],
+			higher:        [13.0, 1.9],
+			lower:         [16.3, 1.8],
+			thankYou:      [19.7, 1.5],
+			blownOut:      [23.2, 7.8],
+			countFeathers: [32.2, 3.3],
+			pushButton:    [37.0, 2.9],
+			useMyself:     [41.2, 2.5],
+			howMuchHigher: [45.2, 2.0],
+			howMuchLower:  [48.3, 2.1],
+			thinkItIs:     [51.1, 2.7],
+			higherOrLower: [55.6, 2.7]
 		}
 	},
 
@@ -177,7 +174,6 @@ LANG.swedish.speech = {
 			floor3:         [36.3, 2.2],
 			floor4:         [39.7, 2.3],
 			canYouDragRight:[43.3, 2.2],
-			// buttonAdd:      [], // Not existing
 			buttonSubtract: [46.9, 4.5],
 			buttonAddSub:   [53.0, 5.2],
 			sameAsMap:      [59.9, 3.0],
@@ -236,7 +232,7 @@ LANG.swedish.speech = {
 			wrongPlace:   [107.5, 5.6],
 			notFarEnough: [114.4, 6.4],
 			goneTooFar:   [122.1, 8.8],
-			thinkItIt:    [132.3, 3.5],
+			thinkItIs:    [132.3, 3.5],
 			isItCorrect:  [137.1, 1.2],
 			useButtons:   [139.6, 7.2],
 			gettingHelp:  [148.3, 6.7],
