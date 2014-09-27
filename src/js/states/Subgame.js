@@ -45,7 +45,7 @@ Subgame.prototype.init = function (options) {
 	this._pendingMode = null;
 	this._first = true;
 	/* Keep track of how many rounds that have been played */
-	this._counter = new Counter(options.roundsPerMode || 3, true);
+	this._counter = new Counter(1, true);
 	/* When enough rounds have been played, trigger a mode change */
 	this._counter.onMax = function () {
 		_this._nextMode();

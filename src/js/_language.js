@@ -242,6 +242,37 @@ LANG.swedish.speech = {
 		}
 	},
 
+	lizard: {
+		speech: ['assets/audio/subgames/lizard/swedish.ogg', 'assets/audio/subgames/lizard/swedish.mp3'],
+		markers: {
+			argh:          [  0.5, 1.5],
+			arrg:          [  3.3, 0.9],
+			miss:          [  5.3, 1.8],
+			openMiss:      [  8.5, 1.7],
+			treeTaste:     [ 11.7, 3.4],
+			higher:        [ 16.6, 2.3],
+			lower:         [ 19.7, 2.9],
+			tooHigh:       [ 24.0, 6.5],
+			tooLow:        [ 32.2, 4.4],
+			yummy:         [ 38.2, 2.5],
+			thankYou:      [ 41.9, 2.4],
+			almostFull:    [ 46.0, 2.4],
+			sleepyHungry:  [ 49.8, 6.5],
+			takeThatAnt:   [ 57.6, 4.5],
+			helpToAim:     [ 63.5, 2.1],
+			howHigh:       [ 67.5, 3.3],
+			chooseButton:  [ 72.5, 3.6],
+			imStuck:       [ 77.4, 4.0],
+			howMuchHigher: [ 82.9, 3.7],
+			howMuchLower:  [ 88.3, 6.1],
+			thinkItIs:     [ 96.2, 2.6],
+			higherOrLower: [100.1, 5.3],
+			helpingMeAim:  [106.9, 6.3],
+			fullAndSleepy: [114.5, 7.7],
+			byeAndThanks:  [122.6, 2.5]
+		}
+	},
+
 	/* Agents */
 	panda: {
 		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
