@@ -417,7 +417,6 @@ BeeFlightGame.prototype.modePlayerShow = function (intro, tries) {
 
 BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 	var t = new TimelineMax();
-		this.agent.eyesStopFollow();
 	if (tries <= 0) { // if intro or first try
 		if (intro) {
 			t.skippable();
@@ -433,7 +432,6 @@ BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 
 BeeFlightGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
-	this.agent.eyesStopFollow();
 
 	var t = new TimelineMax();
 	t.addSound(this.speech, this.bee, 'thatsAll');
@@ -442,9 +440,9 @@ BeeFlightGame.prototype.modeOutro = function () {
 	t.addLabel('water3', '+=3');
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
 	t.add(this.agent.fistPump(), 'water');
-	t.add(this.addWater(this.bee.x, this.bee.y), 'water');
-	t.add(this.addWater(this.bee.x, this.bee.y), 'water2');
-	t.add(this.addWater(this.bee.x, this.bee.y), 'water3');
+	t.add(this.addWater(this.bee.x + this.bee.width/2, this.bee.y), 'water');
+	t.add(this.addWater(this.bee.x + this.bee.width/2, this.bee.y), 'water2');
+	t.add(this.addWater(this.bee.x + this.bee.width/2, this.bee.y), 'water3');
 	t.addLabel('letsDance');
 	t.add(this.bee.moveTo.home(), 'letsDance');
 	t.addSound(this.speech, this.bee, 'dancing', 'letsDance');

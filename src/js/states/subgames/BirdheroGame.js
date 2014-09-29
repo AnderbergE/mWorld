@@ -556,8 +556,6 @@ BirdheroGame.prototype.modePlayerShow = function (intro, tries) {
 };
 
 BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
-	this.agent.eyesStopFollow();
-
 	var t = new TimelineMax();
 	if (tries > 0) {
 		this.bird.showWings();
@@ -584,7 +582,6 @@ BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
 
 BirdheroGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
-	this.agent.eyesStopFollow();
 
 	var t = new TimelineMax();
 	t.addLabel('water');
@@ -592,11 +589,11 @@ BirdheroGame.prototype.modeOutro = function () {
 	t.addLabel('water3', '+=3');
 
 	for (var i = 0; i < this.tree.branch.length; i++) {
-		t.addCallback(this.tree.branch[i].celebrate, null, null, this.tree.branch[i]);
+		t.addCallback(this.tree.branch[i].celebrate, null, [5], this.tree.branch[i]);
 	}
 
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
-	t.add(this.agent.fistPump(), 'water');
+	t.add(this.agent.fistPump(5), 'water');
 
 	t.addSound(this.sfx, null, 'outro', 'water');
 	t.addSound(this.speech, null, 'thankYou', 'water2');

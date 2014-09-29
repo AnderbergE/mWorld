@@ -710,7 +710,6 @@ BalloonGame.prototype.modePlayerShow = function (intro, tries) {
 
 BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 	this.disableBalloons(true);
-	this.agent.eyesStopFollow();
 
 	var t = new TimelineMax();
 	if (tries > 0) {
@@ -730,7 +729,6 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 
 BalloonGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
-	this.agent.eyesStopFollow();
 	fade(this.liftoffButton, false);
 
 	var t = new TimelineMax();

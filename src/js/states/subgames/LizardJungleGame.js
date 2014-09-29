@@ -377,7 +377,6 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 		var t = new TimelineMax();
 		if (intro) {
 			t.skippable();
-			t.addCallback(this.agent.eyesStopFollow, null, null, this.agent);
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
 			// t.addSound(this.speech, this.agent, 'agentIntro');
@@ -400,7 +399,6 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 	if (tries <= 0) { // if intro or first try
 		if (intro) {
 			t.skippable();
-			t.addCallback(this.agent.eyesStopFollow, null, null, this.agent);
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
 			// t.addSound(this.speech, this.agent, 'agentTry');
 		}
