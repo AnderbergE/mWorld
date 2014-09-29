@@ -81,7 +81,7 @@ ButtonPanel.prototype._createButtons = function () {
 		this.add(new TextButton('+', buttonOptions));
 		buttonOptions.keepDown = true;
 		buttonOptions.onClick = function () { change.bg.events.onInputDown.dispatch(); };
-		this.add(new TextButton('v', buttonOptions));
+		this.add(new NumberButton(1, GLOBAL.NUMBER_REPRESENTATION.yesno, buttonOptions));
 
 	} else {
 		for (var i = this.min; i <= this.max; i++) {
