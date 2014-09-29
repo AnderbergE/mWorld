@@ -320,7 +320,7 @@ BalloonGame.prototype.popBalloons = function () {
 	var t = new TimelineMax();
 	t.addCallback(function () {
 		this.bucketBalloons.popBalloons(); // Will set amount to 0.
-		this.balloonStack.updateBalloons(this.amount); // TODO: Maybe a nice "blow up" animation?
+		this.balloonStack.updateBalloons(this.amount);
 	}, null, null, this);
 	t.addSound(this.sfx, null, 'pop');
 	return t;
