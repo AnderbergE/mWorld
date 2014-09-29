@@ -96,6 +96,8 @@ EntryState.prototype.create = function () {
 		LANG.TEXT.creditsDeveloped + ':\nErik Anderberg\t \tAgneta Gulz\nMagnus Haake\t \tLayla Husain\n\n' +
 		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nHenrik Söllvander\n\n' +
 		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\n\n' +
+		LANG.TEXT.creditsMusic + ':\n\n\n' + //TODO
+		LANG.TEXT.creditsSfx + ':\nhttp://soundbible.com\nhttp://freesfx.co.uk\n\n' +
 		LANG.TEXT.creditsThanks + ':\nAnton Axelsson\t \tSanne Bengtsson\nMaja Håkansson\t \tLisa Lindberg\nBjörn Norrliden', {
 		font: '15pt ' +  GLOBAL.FONT,
 		fill: '#ffffff',

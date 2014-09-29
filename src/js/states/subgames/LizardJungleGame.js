@@ -32,6 +32,7 @@ LizardJungleGame.prototype.tintBank = [
 /* Phaser state function */
 LizardJungleGame.prototype.preload = function () {
 	this.load.audio('lizardSpeech', LANG.SPEECH.lizard.speech); // speech sheet
+	this.load.audio('lizardSnore', ['assets/audio/subgames/lizard/snore.ogg', 'assets/audio/subgames/lizard/snore.mp3']);
 	this.load.audio('lizardMusic', ['assets/audio/subgames/lizard/music.ogg', 'assets/audio/subgames/lizard/music.mp3']);
 	this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
 };
@@ -333,10 +334,10 @@ LizardJungleGame.prototype.returnToPreviousIfLower = function (number, diff, sil
 /*                 Overshadowing Subgame mode functions                      */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 LizardJungleGame.prototype.modeIntro = function () {
-	var t = new TimelineMax();
-	t.skippable();
-	// t.addSound('lizardPlaceholder'); //snoring
-	t.add(this.lizard.sleeping(2), 0);
+	var t = new TimelineMax().skippable();
+	t.addLabel('snoring');
+	t.addSound(this.add.audio('lizardSnore'), null, null, 'snoring');
+	t.add(this.lizard.sleeping(3), 0, 'snoring');
 	t.addSound(this.speech, this.lizard, 'sleepyHungry');
 	t.add(this.newFood(true));
 	t.addSound(this.speech, this.lizard, 'takeThatAnt');

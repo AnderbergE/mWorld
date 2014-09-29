@@ -95,6 +95,7 @@ LANG.swedish.text = {
 	creditsProgramming: 'Programmering',
 	creditsGraphics: 'Grafik',
 	creditsMusic: 'Musik',
+	creditsSfx: 'Ljudeffekter',
 	creditsThanks: 'Tack till',
 
 	/* Garden state */
