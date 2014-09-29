@@ -132,8 +132,9 @@ LizardJungleGame.prototype.instructionAdd = function () {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, null, 'imStuck');
-	t.addSound(this.speech, null, 'howMuchHigher', '+=0.3');
-	// TODO: Point at the difference?
+	t.addLabel('countBole', '+=0.3');
+	t.addSound(this.speech, null, 'howMuchHigher', 'countBole');
+	t.add(this.pointAtBole(this.currentNumber, this.atValue), 'countBole');
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
 	t.addSound(this.speech, null, 'chooseButton', 'useButtons');
@@ -146,8 +147,9 @@ LizardJungleGame.prototype.instructionSubtract = function () {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, null, 'imStuck');
-	t.addSound(this.speech, null, 'howMuchLower', '+=0.3');
-	// TODO: Point at the difference?
+	t.addLabel('countBole', '+=0.3');
+	t.addSound(this.speech, null, 'howMuchLower', 'countBole');
+	t.add(this.pointAtBole(this.currentNumber, this.atValue), 'countBole');
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
 	t.addSound(this.speech, null, 'chooseButton', 'useButtons');
@@ -167,10 +169,12 @@ LizardJungleGame.prototype.instructionAddSubtract = function () {
 	return t;
 };
 
-LizardJungleGame.prototype.pointAtBole = function (number) {
-	var start = this.getTargetPos(1);
+LizardJungleGame.prototype.pointAtBole = function (number, from) {
+	from = from || 0;
+	var dir = number > from ? 1 : -1;
+	var pos = this.getTargetPos(from + dir);
 	var offset = 150;
-	var arrow = this.add.sprite(start.x + offset, start.y, 'objects', 'arrow', this.gameGroup);
+	var arrow = this.add.sprite(pos.x + offset, pos.y, 'objects', 'arrow', this.gameGroup);
 	arrow.tint = 0xf0f000;
 	arrow.anchor.set(0, 0.5);
 	arrow.visible = false;
@@ -178,11 +182,13 @@ LizardJungleGame.prototype.pointAtBole = function (number) {
 	var t = new TimelineMax();
 	t.addCallback(function () { arrow.visible = true; });
 	t.addCallback(function () {}, '+=0.5');
-	for (var i = 0; i < number; i++) {
-		var pos = this.getTargetPos(1 + i);
-		if (i !== 0) { t.add(new TweenMax(arrow, 0.5, { x: '+=' + offset, y: pos.y }), '+=0.3'); }
+	for (var i = from + dir; i !== number; ) {
 		t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
+		i += dir;
+		pos = this.getTargetPos(i);
+		t.add(new TweenMax(arrow, 0.5, { x: '+=' + offset, y: pos.y }), '+=0.3');
 	}
+	t.add(new TweenMax(arrow, 1, { x: '-=' + offset }));
 	t.addCallback(function () { arrow.destroy(); }, '+=0.5');
 	return t;
 };
