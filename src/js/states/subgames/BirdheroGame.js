@@ -570,20 +570,20 @@ BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
 BirdheroGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 
-	var t = new TimelineMax();
-	t.addLabel('water');
-	t.addLabel('water2', '+=1.5');
-	t.addLabel('water3', '+=3');
-
+	var t = new TimelineMax().skippable();
 	for (var i = 0; i < this.tree.branch.length; i++) {
 		t.addCallback(this.tree.branch[i].celebrate, null, [5], this.tree.branch[i]);
 	}
+
+	t.addLabel('water');
+	t.addLabel('water2', '+=1.5');
+	t.addLabel('water3', '+=3');
 
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
 	t.add(this.agent.fistPump(5), 'water');
 
 	t.addSound(this.sfx, null, 'outro', 'water');
-	t.addSound(this.speech, null, 'thankYou', 'water2');
+	t.addSound(this.speech, null, 'thankYou', 'water3');
 
 	var x = this.tree.x + this.pos.tree.center;
 	t.add(this.addWater(x, this.pos.tree.branch.start), 'water');

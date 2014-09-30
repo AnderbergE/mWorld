@@ -425,7 +425,7 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 LizardJungleGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 
-	var t = new TimelineMax();
+	var t = new TimelineMax().skippable();
 	t.addSound(this.speech, this.lizard, 'fullAndSleepy', '+=0.5');
 	t.addCallback(this.agent.setHappy, null, null, this.agent);
 	for (var i = 1; i <= 3; i++) {

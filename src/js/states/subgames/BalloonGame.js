@@ -736,7 +736,7 @@ BalloonGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 	fade(this.liftoffButton, false);
 
-	var t = new TimelineMax();
+	var t = new TimelineMax().skippable();
 	t.addSound(this.speech, this.beetle, 'fullSack');
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');

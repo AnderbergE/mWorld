@@ -320,8 +320,7 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 			this.flowers[current].tint++;
 			this.agent.setHappy();
 		}, null, null, this);
-		t.addSound(this.speech, this.bee, 'nectar');
-		t.addSound(this.speech, this.bee, 'slurp');
+		t.addSound(this.speech, this.bee, game.rnd.pick(['nectar', 'slurp']));
 		t.addLabel('goingHome', '+=0.5');
 		t.addSound(this.speech, this.bee, 'goingBack', 'goingHome');
 		t.add(this.bee.moveTo.home(), 'goingHome');
@@ -446,7 +445,7 @@ BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 BeeFlightGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 
-	var t = new TimelineMax();
+	var t = new TimelineMax().skippable();
 	t.addSound(this.speech, this.bee, 'thatsAll');
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');
