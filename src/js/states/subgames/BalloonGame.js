@@ -564,7 +564,8 @@ BalloonGame.prototype.runNumber = function (amount) {
 	/* Incorrect :( */
 	} else {
 		t.addCallback(this.agent.setSad, null, null, this.agent);
-		t.addSound(this.speech, this.beetle, result > 0 ? 'tryLess' : 'tryMore');
+		t.addSound(this.speech, this.beetle, 'wrong' + game.rnd.integerInRange(1, 2));
+		t.addSound(this.speech, this.beetle, result > 0 ? 'lower' : 'higher', '+=0.2');
 		this.doReturnFunction(t, sum, result);
 	}
 
@@ -732,13 +733,14 @@ BalloonGame.prototype.modeOutro = function () {
 	fade(this.liftoffButton, false);
 
 	var t = new TimelineMax();
-	// t.addSound(); TODO: Celebration sounds.
+	t.addSound(this.speech, this.beetle, 'fullSack');
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');
 	t.addLabel('water3', '+=3');
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
 	t.add(this.agent.fistPump(), 'water');
 	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water');
+	t.addSound(this.speech, this.beetle, 'thankYou', 'water2');
 	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water2');
 	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water3');
 	t.addCallback(this.nextRound, null, null, this);

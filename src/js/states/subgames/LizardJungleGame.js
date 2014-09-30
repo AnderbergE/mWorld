@@ -134,7 +134,7 @@ LizardJungleGame.prototype.instructionAdd = function () {
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, null, 'imStuck');
 	t.addLabel('countBole', '+=0.3');
-	t.addSound(this.speech, null, 'howMuchHigher', 'countBole');
+	t.addSound(this.speech, null, 'openHowHigher', 'countBole');
 	t.add(this.pointAtBole(this.currentNumber, this.atValue), 'countBole');
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
@@ -149,7 +149,7 @@ LizardJungleGame.prototype.instructionSubtract = function () {
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, null, 'imStuck');
 	t.addLabel('countBole', '+=0.3');
-	t.addSound(this.speech, null, 'howMuchLower', 'countBole');
+	t.addSound(this.speech, null, 'openHowLower', 'countBole');
 	t.add(this.pointAtBole(this.currentNumber, this.atValue), 'countBole');
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
@@ -298,7 +298,7 @@ LizardJungleGame.prototype.returnNone = function (number, diff, silent) {
 	// TODO: Open mouth
 	if (!silent) {
 		t.addSound(this.speech, null,
-			game.rnd.pick(['openMiss', diff < 0 ? 'higher' : 'lower']));
+			game.rnd.pick(['openMiss', diff < 0 ? 'openHigher' : 'openLower']));
 	}
 	return t;
 };

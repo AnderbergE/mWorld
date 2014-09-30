@@ -295,10 +295,15 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	if (GLOBAL.debug) { t.skippable(); }
 
 	if (!simulate) {
-		if (this.isRelative && number !== 0) {
+		if (number !== 0) {
 			var moving = Math.abs(number);
-			t.addSound(this.speech, this.bee, moving === 1 ? 'one' : 'number' + moving);
-			t.addSound(this.speech, this.bee, number > 0 ? 'forward' : 'backward');
+			if (this.isRelative) {
+				t.addSound(this.speech, this.bee, moving === 1 ? 'one' : 'number' + moving);
+				t.addSound(this.speech, this.bee, number > 0 ? 'forward' : 'backward');
+			} else {
+				t.addSound(this.speech, this.bee, 'order' + moving);
+				t.addSound(this.speech, this.bee, 'flower');
+			}
 			t.addCallback(function () {}, '+=0.5'); // Pause until next sound.
 		}
 		t.addSound(this.speech, this.bee, 'letsGo');
