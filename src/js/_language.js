@@ -297,7 +297,9 @@ LANG.swedish.speech = {
 			wrong1:           [ 22.6, 1.4],
 			wrong2:           [ 27.6, 1.5],
 			higher:           [ 25.0, 1.4],
+			more:             [155.9, 1.1],
 			lower:            [ 30.0, 2.1],
+			fewer:            [153.3, 1.5],
 			myTurn1:          [ 33.0, 2.2],
 			myTurn2:          [ 36.1, 1.3],
 			willYouHelpMe:    [ 38.5, 0.7],
@@ -320,8 +322,8 @@ LANG.swedish.speech = {
 			gardenWhereNow:   [ 93.6, 2.2],
 			gardenWaterFirst: [ 96.7, 7.9],
 			gardenYoureBack:  [107.7, 2.0],
-			// Balloon
-			balloonIntro:     [110.4, 6.2],
+			// Birdhero
+			birdheroIntro:    [140.1, 6.6],
 			// Lizard
 			lizardIntro1:     [117.4, 4.5],
 			lizardIntro2:     [123.0, 4.0],
@@ -329,29 +331,119 @@ LANG.swedish.speech = {
 			beeIntro1:        [128.1, 2.8],
 			beeIntro2:        [132.0, 2.8],
 			beeIntro3:        [135.7, 3.4],
-			// Birdhero
-			birdheroIntro:    [140.1, 6.6]
+			// Balloon
+			balloonIntro:     [110.4, 6.2]
 		}
 	},
 
 	// TODO: Add sounds!
 	hedgehog: {
-		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
-		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
-		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
-		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
-		birdheroShow: ['assets/audio/agent/panda/hello.ogg',     'assets/audio/agent/panda/hello.mp3'],
-		birdheroTry:  ['assets/audio/agent/panda/i_try.ogg',     'assets/audio/agent/panda/i_try.mp3']
+		speech: ['assets/audio/agent/hedgehog/swedish.ogg', 'assets/audio/agent/hedgehog/swedish.mp3'],
+		markers: {
+			ok1:              [  0.0, 0.6],
+			ok2:              [  1.6, 0.6],
+			hmm:              [  3.4, 1.0],
+			isThisRight:      [  5.5, 1.5],
+			itItThisOne:      [  8.1, 1.0],
+			hasToBeThis:      [ 10.0, 2.1],
+			wrongShow:        [ 13.1, 3.8],
+			wasCorrect:       [ 17.9, 1.9],
+			tryAgain:         [ 20.7, 2.4],
+			wrong1:           [ 23.7, 1.2],
+			wrong2:           [ 31.7, 1.6],
+			higher:           [ 25.8, 2.7],
+			more:             [ 29.3, 1.6],
+			lower:            [ 34.2, 3.0],
+			fewer:            [ 38.0, 1.9],
+			myTurn1:          [ 41.0, 3.1],
+			myTurn2:          [ 45.9, 1.6],
+			willYouHelpMe:    [ 48.6, 1.1],
+			instructionGreen: [ 51.0, 4.2],
+			instructionRed:   [ 56.0, 4.4],
+			letsGo:           [ 69.0, 0.9],
+			// Agent setup
+			hello:            [ 61.5, 2.3],
+			funTogether:      [ 65.1, 2.9],
+			// Garden
+			gardenIntro:      [ 70.9, 9.5],
+			gardenMyCan:      [ 81.8, 7.5],
+			gardenSign:       [ 90.7, 2.4],
+			gardenHaveWater:  [ 94.7, 6.0],
+			gardenPushField:  [102.1, 3.1],
+			gardenGrowing:    [106.3, 1.5],
+			gardenFullGrown:  [109.1, 4.7],
+			gardenWaterLeft:  [115.1, 4.0],
+			gardenEmptyCan:   [120.4, 5.0],
+			gardenWhereNow:   [126.5, 2.2],
+			gardenWaterFirst: [129.7,10.3],
+			gardenYoureBack:  [141.2, 2.1],
+			// Birdhero
+			birdheroIntro:    [145.2,11.5],
+			// Lizard
+			lizardIntro1:     [158.2, 5.4],
+			lizardIntro2:     [164.7, 5.3],
+			// Bee
+			beeIntro1:        [172.0, 4.0],
+			beeIntro2:        [177.0, 3.2],
+			beeIntro3:        [181.4, 4.3],
+			// Balloon
+			balloonIntro:     [187.7, 5.6]
+		}
 	},
 
 	// TODO: Add sounds!
 	mouse: {
-		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
-		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
-		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
-		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
-		birdheroShow: ['assets/audio/agent/panda/hello.ogg',     'assets/audio/agent/panda/hello.mp3'],
-		birdheroTry:  ['assets/audio/agent/panda/i_try.ogg',     'assets/audio/agent/panda/i_try.mp3']
+		speech: ['assets/audio/agent/mouse/swedish.ogg', 'assets/audio/agent/mouse/swedish.mp3'],
+		markers: {
+			ok1:              [  0.0, 0.5],
+			ok2:              [  1.5, 0.5],
+			hmm:              [  3.1, 1.6],
+			isThisRight:      [  5.9, 1.2],
+			itItThisOne:      [  8.5, 0.9],
+			hasToBeThis:      [ 10.6, 1.2],
+			wrongShow:        [ 13.3, 3.4],
+			wasCorrect:       [ 17.7, 1.6],
+			tryAgain:         [ 20.6, 2.1],
+			wrong1:           [ 24.2, 1.2],
+			wrong2:           [ 26.5, 1.4],
+			higher:           [ 28.9, 1.4],
+			more:             [ 31.1, 1.3],
+			lower:            [ 34.0, 2.2],
+			fewer:            [ 37.2, 1.3],
+			myTurn1:          [ 39.7, 2.1],
+			myTurn2:          [ 42.9, 1.0],
+			willYouHelpMe:    [ 45.3, 0.9],
+			instructionGreen: [ 47.0, 3.1],
+			instructionRed:   [ 51.3, 3.0],
+			letsGo:           [ 60.2, 1.0],
+			// Agent setup
+			hello:            [ 55.3, 1.6],
+			funTogether:      [ 57.4, 2.0],
+			// Garden
+			gardenIntro:      [ 62.2, 6.0],
+			gardenMyCan:      [ 69.0, 3.1],
+			gardenSign:       [ 73.3, 1.6],
+			gardenHaveWater:  [ 76.1, 3.8],
+			gardenPushField:  [ 81.2, 2.0],
+			gardenGrowing:    [ 84.2, 1.2],
+			gardenFullGrown:  [ 86.6, 3.2],
+			gardenWaterLeft:  [ 91.0, 3.2],
+			gardenEmptyCan:   [ 95.2, 3.8],
+			gardenWhereNow:   [ 99.7, 1.6],
+			gardenWaterFirst: [102.4, 7.5],
+			gardenYoureBack:  [111.0, 1.5],
+			// Birdhero
+			birdheroIntro:    [113.6, 7.9],
+			// Lizard
+			lizardIntro1:     [122.5, 4.4],
+			lizardIntro2:     [128.2, 3.9],
+			// Bee
+			beeIntro1:        [133.0, 3.1],
+			beeIntro2:        [137.2, 2.6],
+			beeIntro3:        [140.7, 3.0],
+			// Balloon
+			balloonIntro:     [144.9, 7.5]
+		}
 	}
 };
 
