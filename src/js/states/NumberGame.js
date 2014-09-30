@@ -244,7 +244,7 @@ NumberGame.prototype.pushNumber = function (number) {
 NumberGame.prototype.pushYesNo = function (value) {
 	if (!value) {
 		if (this.speech) {
-			this.agent.say(this.speech).play('agentCorrected');
+			this.agent.say(this.agent.speech, 'wrongShow').play('wrongShow');
 		}
 		this.showNumbers();
 	} else {
@@ -312,6 +312,20 @@ NumberGame.prototype.updateRelative = function () {
 	if (this.isRelative) {
 		this.addToNumber = this.atValue;
 	}
+};
+
+/* Instructions for the yes - no panel */
+NumberGame.prototype.instructionYesNo = function () {
+	var t = new TimelineMax();
+	t.addSound(this.agent.speech, this.agent, 'willYouHelpMe');
+	t.add(fade(this.yesnos, true), 0);
+	t.addLabel('green', '+=0.7');
+	t.addSound(this.agent.speech, this.agent, 'instructionGreen', 'green');
+	t.add(this.yesnos.children[0].highlight(3), 'green');
+	t.addLabel('red');
+	t.addSound(this.agent.speech, this.agent, 'instructionRed', 'red');
+	t.add(this.yesnos.children[1].highlight(3), 'red');
+	return t;
 };
 
 /* Start the game. */

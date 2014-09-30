@@ -503,7 +503,7 @@ BalloonGame.prototype.startWithBalloons = function (t, min, max) {
 
 BalloonGame.prototype.startStop = function (t, silent) {
 	if (!silent) {
-		t.addCallback(this.speech.play, null, ['helpMeGetThere'], this.speech);
+		t.addSound(this.speech, this.beetle, 'helpMeGetThere');
 	}
 };
 
@@ -701,8 +701,9 @@ BalloonGame.prototype.modePlayerShow = function (intro, tries) {
 			t.skippable();
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
-			// t.addSound(this.speech, this.agent, 'agentintro'); TODO: Add this from agent
 			t.add(this.agent.wave(3, 1), 'agentIntro');
+			t.addSound(this.agent.speech, this.agent, 'balloonIntro', 'agentIntro');
+			t.addCallback(function () {}, '+=0.5'); // pause
 		}
 		t.add(this.newTreasure());
 	}
@@ -714,17 +715,20 @@ BalloonGame.prototype.modeAgentTry = function (intro, tries) {
 
 	var t = new TimelineMax();
 	if (tries > 0) {
-		void(tries); // TODO: Remove this when you have sound
-		// t.addSound(this.speech, this.agent, 'oops'); TODO: Add this from agent
+		t.addSound(this.agent.speech, this.agent, 'tryAgain');
 	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
-			// t.addSound(this.speech, this.agent, 'agenttry'); TODO: Add this from agent
+			t.addSound(this.agent.speech, this.agent, 'myTurn' + game.rnd.integerInRange(1, 2));
 		}
 		t.add(this.newTreasure());
 	}
-	t.add(this.agentGuess());
+
+	t.add(this.agentGuess(), '+=0.3');
+	if (intro) {
+		t.add(this.instructionYesNo(), '+=0.5');
+	}
 	t.addCallback(this.showYesnos, null, null, this);
 };
 

@@ -4,11 +4,6 @@
 function AgentSetupState () {}
 
 /* Phaser state function */
-AgentSetupState.prototype.preload = function () {
-	this.load.audio('pandaChooseMe', LANG.SPEECH.panda.chooseMe);
-};
-
-/* Phaser state function */
 AgentSetupState.prototype.create = function () {
 	var _this = this;
 	var spacing = 450;
@@ -42,7 +37,7 @@ AgentSetupState.prototype.create = function () {
 				ease: Power2.easeOut,
 				onStart: function () { stopTalk(); },
 				onComplete: function () {
-					a.say(a.itsame).play();
+					a.say(a.speech, 'hello').play('hello');
 					waving = a.wave(2, 1);
 				}
 			});
@@ -51,7 +46,7 @@ AgentSetupState.prototype.create = function () {
 
 	function stopTalk () {
 		for (var key in agents.children) {
-			agents.children[key].itsame.stop();
+			agents.children[key].speech.stop();
 		}
 	}
 
@@ -79,16 +74,19 @@ AgentSetupState.prototype.create = function () {
 		_this.input.disabled = true;
 		waving.kill();
 		fadeInterface(false);
-		a.fistPump()
-			.addCallback(function () {
-				Backend.putAgent({ agent: { type: a.key, tint: a.tint } });
-				player.agent = GLOBAL.AGENT[a.key];
-				player.tint = a.tint;
-			}, 0)
-			.addCallback(function () {
-				_this.input.disabled = false;
-				_this.state.start(GLOBAL.STATE.garden);
-			});
+		a.speech.stop();
+		var t = new TimelineMax();
+		t.addSound(a.speech, a, 'funTogether');
+		t.addCallback(function () {
+			a.fistPump();
+			Backend.putAgent({ agent: { type: a.key, tint: a.tint } });
+			player.agent = GLOBAL.AGENT[a.key];
+			player.tint = a.tint;
+		}, 0);
+		t.addCallback(function () {
+			_this.input.disabled = false;
+			_this.state.start(GLOBAL.STATE.garden);
+		}, '+=0.5');
 	}
 
 	// Add music
@@ -109,7 +107,6 @@ AgentSetupState.prototype.create = function () {
 		a.scale.y = scale.y;
 		a.body.inputEnabled = true;
 		a.body.events.onInputDown.add(clickAgent, a);
-		a.itsame = game.add.audio(a.id + 'ChooseMe');
 		a.key = key;
 		agents.add(a);
 	}

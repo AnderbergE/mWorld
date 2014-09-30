@@ -278,16 +278,6 @@ BirdheroGame.prototype.instructionButtons = function (t) {
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
 };
 
-BirdheroGame.prototype.instructionAgentTry = function () {
-	var t = new TimelineMax();
-	// t.addSound(this.speech, this.bird, 'instruction2a');
-	t.add(fade(this.yesnos, true), 0);
-	t.add(this.yesnos.children[0].highlight(1));
-	// t.addSound(this.speech, this.bird, 'instruction2b');
-	t.add(this.yesnos.children[1].highlight(1));
-	return t;
-};
-
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                           Start round functions                           */
@@ -314,7 +304,7 @@ BirdheroGame.prototype.startStop = function (t, silent) {
 	if (!silent) {
 		t.addSound(this.speech, this.bird, 'thisFloor');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addCallback(function () { this.bird.say(this.speech, 'helpMeHome').play('helpMeHome'); }, '+=0.3', null, this);
+		t.addSound(this.speech, this.bird, 'helpMeHome', '+=0.3');
 	}
 };
 
@@ -324,7 +314,7 @@ BirdheroGame.prototype.startBelow = function (t, silent) {
 	if (!silent) {
 		t.addSound(this.speech, this.bird, 'thisFloor');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addCallback(function () { this.bird.say(this.speech, 'howMuchHigher').play('howMuchHigher'); }, '+=0.3', null, this);
+		t.addSound(this.speech, this.bird, 'howMuchHigher', '+=0.3');
 	}
 };
 
@@ -334,7 +324,7 @@ BirdheroGame.prototype.startAbove = function (t, silent) {
 	if (!silent) {
 		t.addSound(this.speech, this.bird, 'thisFloor');
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addCallback(function () { this.bird.say(this.speech, 'howMuchLower').play('howMuchLower'); }, '+=0.3', null, this);
+		t.addSound(this.speech, this.bird, 'howMuchLower', '+=0.3');
 	}
 };
 
@@ -353,7 +343,7 @@ BirdheroGame.prototype.startThink = function (t, silent) {
 	t.add(this.bird.think(), 'thinker');
 	if (!silent) {
 		t.addSound(this.speech, this.bird, 'thinkItIs', 'thinker');
-		t.addCallback(function () { this.bird.say(this.speech, 'higherOrLower').play('higherOrLower'); }, '+=0.3', null, this);
+		t.addSound(this.speech, this.bird, 'higherOrLower', '+=0.3');
 	}
 };
 
@@ -547,8 +537,9 @@ BirdheroGame.prototype.modePlayerShow = function (intro, tries) {
 			t.skippable();
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
-			// t.addSound(this.speech, this.agent, 'agentIntro');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
+			t.addSound(this.agent.speech, this.agent, 'birdheroIntro', 'agentIntro');
+			t.addCallback(function () {}, '+=0.5'); // pause
 		}
 		t.add(this.newRound());
 		t.addCallback(this.showNumbers, null, null, this);
@@ -559,25 +550,21 @@ BirdheroGame.prototype.modeAgentTry = function (intro, tries) {
 	var t = new TimelineMax();
 	if (tries > 0) {
 		this.bird.showWings();
-		// TODO: Add more specified sounds?
-		// t.addSound(this.speech, this.agent, 'agentTryAgain');
-		t.add(this.agentGuess());
-		t.addCallback(this.showYesnos, null, null, this);
+		t.addSound(this.agent.speech, this.agent, 'tryAgain');
 	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
-			// t.addSound(this.speech, this.agent, 'agentTry');
-			t.add(this.newRound());
-			t.add(this.agentGuess());
-			t.add(this.instructionAgentTry());
-			t.addCallback(this.showYesnos, null, null, this);
-		} else {
-			t.add(this.newRound());
-			t.add(this.agentGuess());
-			t.addCallback(this.showYesnos, null, null, this);
+			t.addSound(this.agent.speech, this.agent, 'myTurn' + game.rnd.integerInRange(1, 2));
 		}
+		t.add(this.newRound());
 	}
+
+	t.add(this.agentGuess(), '+=0.3');
+	if (intro) {
+		t.add(this.instructionYesNo(), '+=0.5');
+	}
+	t.addCallback(this.showYesnos, null, null, this);
 };
 
 BirdheroGame.prototype.modeOutro = function () {

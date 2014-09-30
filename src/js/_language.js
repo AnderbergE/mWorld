@@ -283,12 +283,55 @@ LANG.swedish.speech = {
 
 	/* Agents */
 	panda: {
-		chooseMe:     ['assets/audio/agent/panda/choose_me.ogg', 'assets/audio/agent/panda/choose_me.mp3'],
-		hmm:          ['assets/audio/agent/panda/hmm.ogg',       'assets/audio/agent/panda/hmm.mp3'],
-		tryAgain:     ['assets/audio/agent/panda/try_again.ogg', 'assets/audio/agent/panda/try_again.mp3'],
-		showMe:       ['assets/audio/agent/panda/show_me.ogg',   'assets/audio/agent/panda/show_me.mp3'],
-		birdheroShow: ['assets/audio/agent/panda/hello.ogg',     'assets/audio/agent/panda/hello.mp3'],
-		birdheroTry:  ['assets/audio/agent/panda/i_try.ogg',     'assets/audio/agent/panda/i_try.mp3']
+		speech: ['assets/audio/agent/panda/swedish.ogg', 'assets/audio/agent/panda/swedish.mp3'],
+		markers: {
+			ok1:              [  0.1, 0.7],
+			ok2:              [  1.6, 0.4],
+			hmm:              [  3.0, 1.0],
+			isThisRight:      [  5.1, 1.3],
+			itItThisOne:      [  7.5, 1.1],
+			hasToBeThis:      [  9.4, 1.6],
+			wrongShow:        [ 12.1, 3.3],
+			wasCorrect:       [ 16.3, 1.6],
+			tryAgain:         [ 19.0, 2.2],
+			wrong1:           [ 22.6, 1.4],
+			wrong2:           [ 27.6, 1.5],
+			higher:           [ 25.0, 1.4],
+			lower:            [ 30.0, 2.1],
+			myTurn1:          [ 33.0, 2.2],
+			myTurn2:          [ 36.1, 1.3],
+			willYouHelpMe:    [ 38.5, 0.7],
+			instructionGreen: [ 39.9, 3.0],
+			instructionRed:   [ 43.7, 3.1],
+			letsGo:           [105.8, 0.8],
+			// Agent setup
+			hello:            [147.5, 1.7],
+			funTogether:      [150.3, 1.9],
+			// Garden
+			gardenIntro:      [ 47.9, 6.6],
+			gardenMyCan:      [ 55.7, 6.5],
+			gardenSign:       [ 63.2, 2.0],
+			gardenHaveWater:  [ 66.1, 4.7],
+			gardenPushField:  [ 71.9, 2.4],
+			gardenGrowing:    [ 75.2, 1.7],
+			gardenFullGrown:  [ 78.2, 3.8],
+			gardenWaterLeft:  [ 83.3, 3.8],
+			gardenEmptyCan:   [ 88.2, 4.3],
+			gardenWhereNow:   [ 93.6, 2.2],
+			gardenWaterFirst: [ 96.7, 7.9],
+			gardenYoureBack:  [107.7, 2.0],
+			// Balloon
+			balloonIntro:     [110.4, 6.2],
+			// Lizard
+			lizardIntro1:     [117.4, 4.5],
+			lizardIntro2:     [123.0, 4.0],
+			// Bee
+			beeIntro1:        [128.1, 2.8],
+			beeIntro2:        [132.0, 2.8],
+			beeIntro3:        [135.7, 3.4],
+			// Birdhero
+			birdheroIntro:    [140.1, 6.6]
+		}
 	},
 
 	// TODO: Add sounds!

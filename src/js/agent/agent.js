@@ -10,8 +10,8 @@ Agent.prototype.constructor = Agent;
  * <SubAgent>.prototype.agentName = string, name of the agent.
  * this.coords
  *
- * The subagent's sprite atlas should be loaded in the boot state.
- * It should be named the same as the id of the subagent.
+ * The subagent's sprite atlas and audio should be loaded in the boot state.
+ * The sprite atlas should be named the same as the id of the subagent.
  * It should at least have the following: arm, leg, body, eye,
  *                                        mouth0 (neutral), mouth1 (open), mouth2 (happy), mouth3 (sad)
  *
@@ -78,6 +78,8 @@ function Agent () {
 		.to(this.leftLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0)
 		.to(this.rightLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0.24);
 
+	/* Create the speech audio sheet. */
+	this.speech = createAudioSheet(this.id + 'Speech', LANG.SPEECH[this.id].markers);
 
 	/* Save the progress of the player for AI purposes */
 	var _this = this;
@@ -225,10 +227,11 @@ Agent.prototype.think = function (silent) {
 	var t = Character.prototype.think.call(this);
 	t.addCallback(function () { this.thought.guess.number = this.lastGuess; }, 0, null, this);
 	if (!silent) {
-		void(silent);
-		// TODO: t.addSound(this.speech, this, 'agentHmm');
+		t.addSound(this.speech, this, 'hmm', 0);
+
+		// TODO: Sound should be based on confidence
+		t.addSound(this.speech, this, game.rnd.pick(['isThisRight', 'itItThisOne', 'hasToBeThis']));
 	}
-	// TODO: Agent should say something here based on how sure it is.
 	return t;
 };
 

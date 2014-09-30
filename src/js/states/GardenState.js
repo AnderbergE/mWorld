@@ -6,9 +6,7 @@ function GardenState () {}
 
 /* Phaser state function */
 GardenState.prototype.preload = function() {
-	this.load.audio('gardenSpeech', LANG.SPEECH.garden.speech); // audio sprite sheet
 	this.load.audio('gardenMusic', ['assets/audio/garden/music.ogg', 'assets/audio/garden/music.mp3']);
-
 	this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
 
 	this.gardenData = Backend.getGarden() || { fields: [] };
@@ -18,7 +16,6 @@ GardenState.prototype.preload = function() {
 GardenState.prototype.create = function () {
 	// Add music
 	this.add.audio('gardenMusic', 1, true).play();
-	var speech = createAudioSheet('gardenSpeech', LANG.SPEECH.garden.markers);
 
 	// Add background
 	this.add.sprite(0, 0, 'garden', 'bg');
@@ -34,8 +31,12 @@ GardenState.prototype.create = function () {
 			return;
 		}
 
-		if (player.water > player.maxWater - 6 && !sure) {
-			agent.say(speech, 'ok').play('ok'); // TODO: Are you sure? If so, press again.
+		var t = new TimelineMax();
+		t.addCallback(function () {
+			disabler.visible = true;
+		});
+		if (player.water > player.maxWater - 3 && !sure) {
+			t.addSound(agent.speech, agent, 'gardenWaterFirst');
 			sure = true;
 			var sub = EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function () {
 				sure = false;
@@ -44,13 +45,15 @@ GardenState.prototype.create = function () {
 		} else {
 			var scen = Backend.getScenario();
 			if (scen) {
-				var t = new TimelineMax();
-				t.addSound(speech, agent, 'ok'); // TODO: Let's go!
+				t.addSound(agent.speech, agent, 'letsGo');
 				t.addCallback(function () {
 					game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
 				});
 			}
 		}
+		t.addCallback(function () {
+			disabler.visible = false;
+		});
 	}, this);
 
 	/* Setup the garden fields */
@@ -132,7 +135,7 @@ GardenState.prototype.create = function () {
 		if (agent.x !== x + side || agent.y !== y) {
 			currentMove.add(agent.move({ x: x + side }, Math.abs((distance + side)/width)));
 		}
-		currentMove.addSound(speech, agent, 'ok', 0);
+		currentMove.addSound(agent.speech, agent, 'ok' + game.rnd.integerInRange(1, 2), 0);
 	});
 
 	/* Water plant when we push it. */
@@ -144,18 +147,18 @@ GardenState.prototype.create = function () {
 			t.addCallback(function () {
 				player.water--;
 				plant.water.value++;
-				agent.say(speech, 'growing').play('growing');
+				agent.say(agent.speech, 'gardenGrowing').play('gardenGrowing');
 			}, 'watering');
 			if (plant.water.left === 1 && plant.level.left === 1) {
-				t.addSound(speech, agent, 'fullGrown');
+				t.addSound(agent.speech, agent, 'gardenFullGrown');
 			}
 			if (firstWatering && player.water > 1) {
 				firstWatering = false;
-				t.addSound(speech, agent, 'waterLeft');
+				t.addSound(agent.speech, agent, 'gardenWaterLeft');
 			}
 		} else {
 			t = new TimelineMax();
-			t.addSound(speech, agent, 'waterEmpty');
+			t.addSound(agent.speech, agent, 'gardenEmptyCan');
 		}
 
 		t.addCallback(function () { disabler.visible = true; }, 0); // at start
@@ -179,26 +182,29 @@ GardenState.prototype.create = function () {
 	});
 
 
-	/* When the state starts: */
-	var t = new TimelineMax();
+	/* When the state starts */
+	var t = new TimelineMax().skippable();
 	t.add(agent.move({ x: this.world.centerX }, 3));
-	t.addCallback(function () { disabler.visible = false; });
-	/*
+
 	if (player.water > 0) {
 		if (this.gardenData.fields.length > 0) {
-			t.addSound(speech, agent, 'whereTo');
+			t.addSound(agent.speech, agent, 'gardenWhereNow');
 		} else {
-			t.addSound(speech, agent, 'haveWater');
+			t.addSound(agent.speech, agent, 'gardenHaveWater');
+			t.addSound(agent.speech, agent, 'gardenPushField', '+=0.5');
 		}
 	} else {
 		if (this.gardenData.fields.length > 0) {
-			t.addSound(speech, agent, 'welcomeBack'); // TODO: Perhaps a welcome back?
+			t.addSound(agent.speech, agent, 'gardenYoureBack');
 		} else {
-			t.addSound(speech, agent, 'intro');
+			t.addSound(agent.speech, agent, 'gardenIntro');
+			t.addSound(agent.speech, agent, 'gardenMyCan', '+=0.5');
 		}
-		t.addSound(speech, agent, 'ready');
+		t.addSound(agent.speech, agent, 'gardenSign', '+=0.5');
 	}
-	*/
+	t.addCallback(function () {
+		disabler.visible = false;
+	});
 };
 
 /* Phaser state function */

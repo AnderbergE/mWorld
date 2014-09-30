@@ -410,10 +410,13 @@ BeeFlightGame.prototype.modePlayerShow = function (intro, tries) {
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start());
-			t.addLabel('agentIntro');
+			t.addSound(this.agent.speech, this.agent, 'beeIntro1');
+			t.addLabel('agentIntro', '+=0.5');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
-			t.addSound(this.speech, this.bee, 'gettingHelp');
-			t.addSound(this.speech, this.bee, 'youHelpLater');
+			t.addSound(this.agent.speech, this.agent, 'beeIntro2', 'agentIntro');
+			t.addSound(this.speech, this.bee, 'gettingHelp', '+=0.2');
+			t.addSound(this.agent.speech, this.agent, 'beeIntro3', '+=0.2');
+			t.addSound(this.speech, this.bee, 'youHelpLater', '+=0.2');
 		}
 		t.add(this.newFlower());
 		t.addCallback(this.showNumbers, null, null, this);
@@ -422,16 +425,21 @@ BeeFlightGame.prototype.modePlayerShow = function (intro, tries) {
 
 BeeFlightGame.prototype.modeAgentTry = function (intro, tries) {
 	var t = new TimelineMax();
-	if (tries <= 0) { // if intro or first try
+	if (tries > 0) {
+		t.addSound(this.agent.speech, this.agent, 'tryAgain');
+	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
+			t.addSound(this.agent.speech, this.agent, 'myTurn' + game.rnd.integerInRange(1, 2));
 		}
 		t.add(this.newFlower());
-		
 	}
 
-	t.add(this.agentGuess());
+	t.add(this.agentGuess(), '+=0.3');
+	if (intro) {
+		t.add(this.instructionYesNo(), '+=0.5');
+	}
 	t.addCallback(this.showYesnos, null, null, this);
 };
 

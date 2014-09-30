@@ -122,8 +122,11 @@ BootState.prototype.preload = function () {
 
 	/* Agent related assets */
 	this.load.atlasJSONHash(Panda.prototype.id, 'assets/img/agent/panda/atlas.png', 'assets/img/agent/panda/atlas.json');
+	this.load.audio(Panda.prototype.id + 'Speech', LANG.SPEECH[Panda.prototype.id].speech);
 	this.load.atlasJSONHash(Hedgehog.prototype.id, 'assets/img/agent/hedgehog/atlas.png', 'assets/img/agent/hedgehog/atlas.json');
+	// this.load.audio(Hedgehog.prototype.id + 'Speech', LANG.SPEECH[Hedgehog.prototype.id].speech);
 	this.load.atlasJSONHash(Mouse.prototype.id, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
+	// this.load.audio(Mouse.prototype.id + 'Speech', LANG.SPEECH[Mouse.prototype.id].speech);
 
 	/* Common game assets */
 	this.load.audio('entryMusic', ['assets/audio/music.ogg', 'assets/audio/music.mp3']);

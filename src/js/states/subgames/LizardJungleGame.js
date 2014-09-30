@@ -386,10 +386,10 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 			t.skippable();
 			t.add(this.agent.moveTo.start());
 			t.addLabel('agentIntro');
-			// t.addSound(this.speech, this.agent, 'agentIntro');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
-			t.addSound(this.speech, this.lizard, 'helpingMeAim');
-			// t.addSound(this.speech, this.agent, 'agentIntro');
+			t.addSound(this.agent.speech, this.agent, 'lizardIntro1', 'agentIntro');
+			t.addSound(this.speech, this.lizard, 'helpingMeAim', '+=0.5');
+			t.addSound(this.agent.speech, this.agent, 'lizardIntro2', '+=0.2');
 		}
 		t.add(this.newFood());
 		t.addCallback(function () {
@@ -401,18 +401,21 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 
 LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 	var t = new TimelineMax();
-		// TODO: Add more specified sounds?
-		// t.addSound(this.speech, this.agent, 'agentTryAgain');
-	if (tries <= 0) { // if intro or first try
+	if (tries > 0) {
+		t.addSound(this.agent.speech, this.agent, 'tryAgain');
+	} else { // if intro or first try
 		if (intro) {
 			t.skippable();
 			t.add(this.agent.moveTo.start()); // Agent should be here already.
-			// t.addSound(this.speech, this.agent, 'agentTry');
+			t.addSound(this.agent.speech, this.agent, 'myTurn' + game.rnd.integerInRange(1, 2));
 		}
 		t.add(this.newFood());
 	}
 
-	t.add(this.agentGuess());
+	t.add(this.agentGuess(), '+=0.3');
+	if (intro) {
+		t.add(this.instructionYesNo(), '+=0.5');
+	}
 	t.addCallback(function () {
 		this.showYesnos();
 		this.lizard.followPointer(true);

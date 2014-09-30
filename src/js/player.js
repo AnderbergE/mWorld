@@ -42,7 +42,7 @@ function Player () {
 /**
  * @property {number} maxWater - The maximum amount of water the player can have.
  */
-Player.prototype.maxWater = 12;
+Player.prototype.maxWater = 6;
 
 /**
  * @property {number} water - The amount of water the player has.
