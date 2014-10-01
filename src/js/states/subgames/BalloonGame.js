@@ -63,7 +63,7 @@ BalloonGame.prototype.create = function () {
 	this.setupButtons(buttonOptions);
 
 	// Add music, sounds and speech
-	// this.add.audio('entryMusic', 1, true).play();
+	this.add.audio('entryMusic', 0.4, true).play();
 	this.speech = createAudioSheet('balloonSpeech', LANG.SPEECH.balloongame.markers);
 	this.sfx = createAudioSheet('balloonSfx', {
 			sackJingle:  [0.0,   1.6],
