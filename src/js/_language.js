@@ -153,7 +153,7 @@ LANG.swedish.speech = {
 			useMyself:     [41.2, 2.5],
 			howMuchHigher: [45.2, 2.0],
 			howMuchLower:  [48.3, 2.1],
-			thinkItIs:     [51.1, 2.7],
+			thinkItIs:     [51.1, 2.8],
 			higherOrLower: [55.6, 2.7]
 		}
 	},
