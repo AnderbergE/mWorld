@@ -11,6 +11,10 @@ The game is built with the game engine [Phaser](http://phaser.io/).
 Grunt generates the build catalogue in your repository and also creates a local server.
 As long as grunt is running the server will be active. If you make changes in the repository, the build will be updated; just hit update in your browser. Some coding standards are enforced using jshint, keep an eye on the terminal when making changes.
 
+## Known Issues
+* The speech and sound effects do not work on any IE version tested.
+* Phaser/PIXI/Firefox has a bug with positioning of text. It is set to high.
+
 ## Documentation
 UPDATED: 2014-09-05
 
