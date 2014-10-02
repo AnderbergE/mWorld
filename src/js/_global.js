@@ -47,7 +47,9 @@ var GLOBAL = {
 		balloonGame:  'Balloon',
 		4:            'BeeFlight',
 		beeGame:      'BeeFlight',
-		scenario:     'Scenario'
+		scenario:     'Scenario',
+		random:       100,         // Not an actual state.
+		randomGames:  [0, 2, 3, 4] // Not an actual state, it will randomly pick one in the array.
 	},
 
 	/* Method for scenario */
@@ -61,14 +63,17 @@ var GLOBAL = {
 
 	/* Number representation for scenario */
 	NUMBER_REPRESENTATION: {
-		none:           0,
-		dots:           1,
-		fingers:        2,
-		strikes:        3,
-		objects:        4,
-		numbers:        5,
-		dice:           6,
-		yesno:         15 // Special for yes/no: odd values = yes, even values = no
+		none:       0,
+		dots:       1,
+		fingers:    2,
+		strikes:    3,
+		objects:    4,
+		numbers:    5,
+		dice:       6,
+		// Multiple representations will be formed as concatenations, such as:
+		// fingers + dots = 21
+		// So if representations go above 10 there will be problems in Backend.js.
+		yesno:   1000 // Special for yes/no: odd values = yes, even values = no
 	},
 
 	/* Number range for scenario */

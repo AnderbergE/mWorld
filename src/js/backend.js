@@ -127,6 +127,19 @@ var Backend = {
 		var data = this.get('current_api_scenarios_path');
 
 		if (data) {
+			// Check if we should pick a random game
+			if (data.subgame === GLOBAL.STATE.random) {
+				data.subgame = game.rnd.pick(GLOBAL.STATE.randomGames);
+			}
+
+			var rep = [];
+			while (data.representation >= 10) {
+				rep.unshift(data.representation % 10);
+				data.representation = Math.floor(data.representation/10);
+			}
+			rep.unshift(data.representation);
+			data.representation = rep;
+
 			// Add intro and outro for the game.
 			data.mode.unshift(GLOBAL.MODE.intro);
 			data.mode.push(GLOBAL.MODE.outro);
