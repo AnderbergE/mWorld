@@ -72,7 +72,9 @@ AgentSetupState.prototype.create = function () {
 
 	function chooseAgent () {
 		_this.input.disabled = true;
-		waving.kill();
+		if (waving) {
+			waving.kill();
+		}
 		fadeInterface(false);
 		a.speech.stop();
 		var t = new TimelineMax();
