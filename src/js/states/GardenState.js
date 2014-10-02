@@ -197,12 +197,30 @@ GardenState.prototype.create = function () {
 		if (this.gardenData.fields.length > 0) {
 			t.addSound(agent.speech, agent, 'gardenYoureBack');
 		} else {
+			var w = new WaterCan();
+			w.visible = false;
+			this.world.add(w);
+
 			t.addSound(agent.speech, agent, 'gardenIntro');
-			t.addSound(agent.speech, agent, 'gardenMyCan', '+=0.5');
+			t.addLabel('myCan', '+=0.5');
+			t.addCallback(function () {
+				w.x = agent.x - w.width/4; // Since we scale to 0.5
+				w.y = agent.y;
+				w.scale.set(0);
+				w.visible = true;
+				agent.eyesFollowObject(w);
+			});
+			t.add(new TweenMax(w.scale, 1, { x: 0.5, y: 0.5, ease: Elastic.easeOut }), 'myCan');
+			t.addSound(agent.speech, agent, 'gardenMyCan', 'myCan');
+			t.add(new TweenMax(w.scale, 1, { x: 0, y: 0, ease: Elastic.easeOut, onComplete: w.destroy, onCompleteScope: w }));
 		}
-		t.addSound(agent.speech, agent, 'gardenSign', '+=0.5');
+		t.addLabel('sign');
+		t.add(agent.wave(1, 1));
+		t.addCallback(agent.eyesFollowObject, 'sign', [sign], agent);
+		t.addSound(agent.speech, agent, 'gardenSign', 'sign');
 	}
 	t.addCallback(function () {
+		agent.eyesStopFollow();
 		disabler.visible = false;
 	});
 };
