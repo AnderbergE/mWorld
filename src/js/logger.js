@@ -32,7 +32,7 @@
 	function modeChange (mode) {
 		if (mode === GLOBAL.MODE.outro) {
 			session.finished = true;
-		} else if (mode !== GLOBAL.MODE.intro) {
+		} else if (typeof mode !== 'undefined' && mode !== GLOBAL.MODE.intro) {
 			session.modes.push({ type: mode, results: [] });
 		}
 	}
