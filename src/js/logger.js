@@ -20,6 +20,12 @@
 		session.token = token;
 	}
 
+	function numbergameStarted (method, maxAmount, representation) {
+		session.method = method;
+		session.maxAmount = maxAmount;
+		session.representation = representation;
+	}
+
 	function stateChange () {
 		if (session.tries > 0) {
 			Backend.putSession(session);
@@ -44,13 +50,9 @@
 		}
 
 		trial.try = guess;
-		if (guess !== pushed) {
-			if (pushed) {
-				trial.chosenValue = pushed;
-			}
-			if (start) {
-				trial.startValue = start;
-			}
+		if (session.method >= GLOBAL.METHOD.addition) {
+			trial.chosenValue = pushed;
+			trial.startValue = start;
 		}
 		trial.time = Date.now() - time;
 		modeResults[modeResults.length-1].trials.push(trial);
@@ -95,6 +97,8 @@
 	/* Session related */
 	EventSystem.subscribe(GLOBAL.EVENT.subgameStarted,
 		function (type, token) { subgameStarted(type, token); }, true);
+	EventSystem.subscribe(GLOBAL.EVENT.numbergameStarted,
+		function (method, maxAmount, representation) { numbergameStarted(method, maxAmount, representation); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange,
 		function (mode) { modeChange(mode); }, true);
 	EventSystem.subscribe(GLOBAL.EVENT.tryNumber,

@@ -6,23 +6,24 @@ var GLOBAL = {
 
 	/* Used for the publish-subscribe system */
 	EVENT: {
-		stateShutDown:  'stateShutDown',  // [state]
+		stateShutDown:     'stateShutDown',     // [state]
 
-		subgameStarted: 'subgameStarted', // [game type, session token]
-		modeChange:     'modeChange',     // [new mode]
-		tryNumber:      'tryNumber',      // [guess, correct number]
-		agentGuess:     'agentGuess',     // [guess, correct number]
-		numberPress:    'numberPress',    // [number, representations]
-		waterAdded:     'waterAdded',     // [total amount, added amount]
-		disabled:       'disabled',       // [true/false]
+		subgameStarted:    'subgameStarted',    // [game type, session token]
+		numbergameStarted: 'numbergameStarted', // [method, maxAmount, representation]
+		modeChange:        'modeChange',        // [new mode]
+		tryNumber:         'tryNumber',         // [guess, correct number]
+		agentGuess:        'agentGuess',        // [guess, correct number]
+		numberPress:       'numberPress',       // [number, representations]
+		waterAdded:        'waterAdded',        // [total amount, added amount]
+		disabled:          'disabled',          // [true/false]
 
-		plantPress:     'plantPress',     // [garden plant]
-		waterPlant:     'waterPlant',     // [garden plant]
-		plantUpgrade:   'plantUpgrade',   // [backend data]
+		plantPress:        'plantPress',        // [garden plant]
+		waterPlant:        'waterPlant',        // [garden plant]
+		plantUpgrade:      'plantUpgrade',      // [backend data]
 
-		skippable:      'skippable',      // [TimelineMax object]
-		connection:     'connection',     // [status]
-		connectionLost: 'connectionLost'
+		skippable:         'skippable',         // [TimelineMax object]
+		connection:        'connection',        // [status]
+		connectionLost:    'connectionLost'
 	},
 
 	/* The different types of agents */

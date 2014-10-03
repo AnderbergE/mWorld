@@ -331,7 +331,10 @@ NumberGame.prototype.instructionYesNo = function () {
 /* Start the game. */
 NumberGame.prototype.startGame = function () {
 	this._nextNumber();
+
 	Subgame.prototype.startGame.call(this);
+
+	EventSystem.publish(GLOBAL.EVENT.numbergameStarted, [this.method, this.amount, this.representation]);
 };
 
 
