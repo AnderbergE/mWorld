@@ -379,7 +379,7 @@ BalloonGame.prototype.instructionCount = function () {
 	var label;
 	for (var i = 1; i <= 4; i++){
 		label = 'floor' + i;
-		t.addLabel(label, '+=0.5');
+		t.addLabel(label, '+=0.7');
 		t.addSound(this.speech, this.beetle, label);
 		t.add(this.pointAtCave(i), label);
 	}

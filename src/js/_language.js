@@ -171,7 +171,7 @@ LANG.swedish.speech = {
 			whatDoYouThink: [ 25.4, 0.6],
 			canYouDrag:     [ 27.1, 1.5],
 			floor1:         [ 29.6, 2.6],
-			floor2:         [ 33.2, 2.0],
+			floor2:         [ 33.1, 2.1],
 			floor3:         [ 36.3, 2.2],
 			floor4:         [ 39.7, 2.3],
 			canYouDragRight:[ 43.3, 2.2],
