@@ -71,6 +71,7 @@ var GLOBAL = {
 		objects:    4,
 		numbers:    5,
 		dice:       6,
+		mixed:      9,
 		// Multiple representations will be formed as concatenations, such as:
 		// fingers + dots = 21
 		// So if representations go above 10 there will be problems in Backend.js.

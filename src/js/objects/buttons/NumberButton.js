@@ -88,6 +88,15 @@ Object.defineProperty(NumberButton.prototype, 'number', {
 	}
 });
 
+/** Representations used in the mixed representation */
+NumberButton.prototype.reps = [
+	GLOBAL.NUMBER_REPRESENTATION.dots,
+	GLOBAL.NUMBER_REPRESENTATION.fingers,
+	GLOBAL.NUMBER_REPRESENTATION.strikes,
+	GLOBAL.NUMBER_REPRESENTATION.numbers,
+	GLOBAL.NUMBER_REPRESENTATION.dice
+];
+
 /**
  * Update the graphics of the button.
  */
@@ -126,6 +135,7 @@ NumberButton.prototype.updateGraphics = function () {
 	var y = 0;
 	var offset = 0;
 	var useNum = Math.abs(this._number);
+	var rep;
 	for (var i = 0; i < this.representations.length; i++) {
 		if (this.vertical) {
 			y = this.size * i;
@@ -144,33 +154,35 @@ NumberButton.prototype.updateGraphics = function () {
 			}
 		}
 
-		if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dots) {
+		rep = this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.mixed ? game.rnd.pick(this.reps) : this.representations[i];
+
+		if (rep === GLOBAL.NUMBER_REPRESENTATION.dots) {
 			offset = this.calcOffset(16);
 			this.add(new DotsRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.fingers) {
+		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.fingers) {
 			offset = this.calcOffset(24);
 			this.add(new FingerRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.strikes) {
+		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 			offset = this.calcOffset(12);
 			this.add(new StrikeRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color, this.max - this.min + 1));
 
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.objects) {
+		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.objects) {
 			var s = this.create(x, y, this.spriteKey, (this.spriteFrame ? this.spriteFrame + Math.abs(this._number) : null));
 			var scale = this.size/(s.width > s.height ? s.width : s.height)*0.8;
 			s.scale.set(scale);
 			s.x = (!this.direction ? (this._number > 0 ? this.size * 0.8 : this.size * 1.2) : this.size)/2 - s.width/2;
 			s.y = (this.direction ? (this._number > 0 ? this.size * 1.2 : this.size * 0.8) : this.size)/2 - s.height/2;
 
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.numbers) {
+		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 			this.add(new NumberRepresentation(this._number, x, y, this.size/2, this.color));
 
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.dice) {
+		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.dice) {
 			offset = this.calcOffset(12);
 			this.add(new DiceRepresentation(useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
-		} else if (this.representations[i] === GLOBAL.NUMBER_REPRESENTATION.yesno) {
+		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.yesno) {
 			this._number = this._number % 2;
 			offset = this.size*0.1;
 			this.add(new YesnoRepresentation(this._number, x + offset, y + offset, this.size - offset*2));
