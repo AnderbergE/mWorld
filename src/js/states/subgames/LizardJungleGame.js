@@ -116,9 +116,8 @@ LizardJungleGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, this.lizard, 'helpToAim', '+=0.5');
-	t.addLabel('countBole', '+=0.2');
-	t.addSound(this.speech, this.lizard, 'howHigh', 'countBole');
-	t.add(this.pointAtBole(this.currentNumber), 'countBole');
+	t.addSound(this.speech, this.lizard, 'howHigh');
+	t.add(this.pointAtBole(this.currentNumber));
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
 	t.addSound(this.speech, this.lizard, 'chooseButton', 'useButtons');
@@ -133,9 +132,8 @@ LizardJungleGame.prototype.instructionAdd = function () {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, null, 'imStuck');
-	t.addLabel('countBole', '+=0.3');
-	t.addSound(this.speech, null, 'openHowHigher', 'countBole');
-	t.add(this.pointAtBole(this.currentNumber, this.atValue), 'countBole');
+	t.addSound(this.speech, null, 'openHowHigher');
+	t.add(this.pointAtBole(this.currentNumber, this.atValue));
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
 	t.addSound(this.speech, null, 'chooseButton', 'useButtons');
@@ -148,9 +146,8 @@ LizardJungleGame.prototype.instructionSubtract = function () {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, null, 'imStuck');
-	t.addLabel('countBole', '+=0.3');
-	t.addSound(this.speech, null, 'openHowLower', 'countBole');
-	t.add(this.pointAtBole(this.currentNumber, this.atValue), 'countBole');
+	t.addSound(this.speech, null, 'openHowLower');
+	t.add(this.pointAtBole(this.currentNumber, this.atValue));
 	t.addLabel('useButtons', '+=0.5');
 	t.addLabel('flashButtons', '+=1.2');
 	t.addSound(this.speech, null, 'chooseButton', 'useButtons');
