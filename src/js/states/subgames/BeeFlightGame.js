@@ -414,6 +414,7 @@ BeeFlightGame.prototype.modePlayerShow = function (intro, tries) {
 			t.addLabel('agentIntro', '+=0.5');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
 			t.addSound(this.agent.speech, this.agent, 'beeIntro2', 'agentIntro');
+			t.addCallback(this.agent.eyesFollowObject, 'agentIntro', [this.bee], this.agent);
 			t.addSound(this.speech, this.bee, 'gettingHelp', '+=0.2');
 			t.addSound(this.agent.speech, this.agent, 'beeIntro3', '+=0.2');
 			t.addSound(this.speech, this.bee, 'youHelpLater', '+=0.2');

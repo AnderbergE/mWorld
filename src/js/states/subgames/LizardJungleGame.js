@@ -388,6 +388,7 @@ LizardJungleGame.prototype.modePlayerShow = function (intro, tries) {
 			t.addLabel('agentIntro');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
 			t.addSound(this.agent.speech, this.agent, 'lizardIntro1', 'agentIntro');
+			t.addCallback(this.agent.eyesFollowObject, 'agentIntro', [this.lizard], this.agent);
 			t.addSound(this.speech, this.lizard, 'helpingMeAim', '+=0.5');
 			t.addSound(this.agent.speech, this.agent, 'lizardIntro2', '+=0.2');
 		}
