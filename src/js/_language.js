@@ -336,7 +336,6 @@ LANG.swedish.speech = {
 		}
 	},
 
-	// TODO: Add sounds!
 	hedgehog: {
 		speech: ['assets/audio/agent/hedgehog/swedish.ogg', 'assets/audio/agent/hedgehog/swedish.mp3'],
 		markers: {
@@ -391,7 +390,6 @@ LANG.swedish.speech = {
 		}
 	},
 
-	// TODO: Add sounds!
 	mouse: {
 		speech: ['assets/audio/agent/mouse/swedish.ogg', 'assets/audio/agent/mouse/swedish.mp3'],
 		markers: {

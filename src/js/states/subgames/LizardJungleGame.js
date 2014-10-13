@@ -292,7 +292,6 @@ LizardJungleGame.prototype.returnNone = function (number, diff, silent) {
 	this.atValue = number;
 	var t = new TimelineMax();
 	t.add(this.lizard.shoot(this.getTargetPos(number), true));
-	// TODO: Open mouth
 	if (!silent) {
 		t.addSound(this.speech, null,
 			game.rnd.pick(['openMiss', diff < 0 ? 'openHigher' : 'openLower']));
