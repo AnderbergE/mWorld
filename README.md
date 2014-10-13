@@ -13,7 +13,7 @@ As long as grunt is running the server will be active. If you make changes in th
 
 ## Known Issues
 * The speech and sound effects do not work on any IE version tested.
-* Phaser/PIXI/Firefox has a bug with positioning of text. It is set to high.
+* Phaser/PIXI/Firefox has a bug with positioning of text. It is set too high.
 
 ## Documentation
 UPDATED: 2014-09-05
