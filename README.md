@@ -16,13 +16,7 @@ As long as grunt is running the server will be active. If you make changes in th
 * Phaser/PIXI/Firefox has a bug with positioning of text. It is set too high.
 
 ## Documentation
-UPDATED: 2014-09-05
-
-Creating a new subgame?
-Start by reading the documentation in: src/js/states/Subgame.js and src/js/states/NumberGame.js.
-Be inspired by BirdheroGame.js.
-You need to add your subgame/state in game.js.
-(If you want easy access to the subgame, modify DebugState.js).
+UPDATED: 2014-10-13
 
 ```
 You can always find much more documentation in the source code, check it out!
@@ -65,3 +59,10 @@ NumberButton.js -  A button with a number on it. Among other you can supply numb
 TextButton.js   -  A button with text on it. Extends GeneralButton.
 SpriteButton.js -  A button with a sprite on it. Extends GeneralButton.
 ```
+
+
+Creating a new subgame?
+Start by reading the documentation in: src/js/states/Subgame.js and src/js/states/NumberGame.js.
+Be inspired by BeeFlightGame.js.
+You need to add your subgame/state in game.js.
+(If you want easy access to the subgame, modify ChooseScenarioState.js).

@@ -1,0 +1,29 @@
+Terminology
+
+Game (Spel): Magical Garden
+
+Method (Metod): The way the player interacts with the numbers.
+	Example: addition
+Range (Range): The numbers to choose from.
+	Example: 1-4
+Representation (Representation): The way to show the number/amount
+	Example: dots, fingers, symbols
+Subgame (Delspel): A subgame that is played in the game.
+	Example: Bird Hero
+
+(Pedagogical) Scenario (Scenario): Consists of a method, range, representation and subgame.
+	Example: addition, 1-4, dots, Bird Hero
+Session (Session): A scenario that is played with all modes.
+	There may be several sessions on the same scenario.
+Modes (Modes): The different modes in the subgames:
+	(1) Child-do, (2) Child-show, (3) TA-try (Child-guide), ((4) TA-do).
+	Every mode has several rounds.
+Round (Runda): All trials on a specific task/number.
+	Example: On bird hero a bird shows 3 fingers. All of the player’s trials on this bird counts as one round. When correct, a new round begins.
+Trial (Försök): One guess at a task/number.
+Level (Nivå): A specific state in the state machine. 
+	Composed of a Scenario and connections to two Levels. 
+	AKA State
+
+Player (Spelare): The one playing the game.
+Supervisor (Handledare): The one who is responsible for the players.

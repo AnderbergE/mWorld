@@ -1,0 +1,165 @@
+This is the backend API for Magical Garden.
+
+ENUMS - How to translate values sent/received by the backend.
+Agent:
+0: panda
+1: hedgehog
+2: mouse
+
+Subgames:
+0: Lizard
+1: Mountain
+2: Bird Hero
+3: Balloon
+4: Bee Flight
+100: Random
+
+Method:
+0: Count
+1: Incremental steps (plus minus in ones)
+2: Addition
+3: Subtraction
+4: Addition and subtraction
+
+Number representation:
+0: none
+1: dots // no specific pattern
+2: fingers
+3: strikes
+4: objects
+5: numbers
+6: dice
+// Transitions will be formed together, ex: fingers & dots = 21, dots & fingers = 12
+
+Number range:
+0: 1-4
+1: 1-9
+
+Mode:
+0: player do
+1: player show
+2: agent try
+3: agent do
+
+
+
+GET - When getting data from the backend.
+Player data
+GET path: Routes.current_api_players_path();
+player: {
+	name: “Erik Anderberg”,
+	agent: {
+		type: 1,
+		tint: 123456, // Tint is easiest read as a hex number, but it is treated as an integer
+	},
+	water: 6
+}
+
+Garden data
+GET path: Routes.current_api_gardens_path();
+garden: {
+	fields: [
+		{ x: 0, y: 0, content_type: 1, level: 1 },
+		{ x: 1, y: 0, content_type: 2, level: 3 },
+		…
+	]
+}
+
+Scenario data
+GET path: Routes.current_api_scenarios_path();
+scenario: {
+	subgame: 3,
+	method: 0,
+	representation: 0,
+	range: 1
+	mode: [0,1,2],
+	roundsPerMode: 3,
+	token: 123456789 // Will be sent back in put session
+}
+
+
+
+POST - When posting data into the backend.
+Player data
+POST path: Routes.update_agent_api_players_path();
+{
+	agent: {
+		type: 1,
+		tint: 123456 // Tint is easiest read as a hex number but treated as integer
+	}
+}
+
+Garden data
+POST path: Routes.upgrade_field_api_gardens_path();
+{
+	field:  { x: 0, y: 0, level: 1, content_type: 1 }
+}
+returns
+{
+	success: true,
+	remaining_water: 3,
+	field: { x: 0, y: 0, level: 1, content_type: 1 }
+}
+
+
+Session data
+POST path: Routes.register_api_player_sessions_path();
+{
+	modes: [
+		{
+			type: 0, // Player only
+			results: [
+				{
+					target: 1,
+					trials: [
+						{ try: 1, time: 5 } // Time is in ms
+					]
+				},
+				{
+					target: 4,
+					trials: [
+						{ try: 3, time: 6 },
+						{ try: 5, time: 4 },
+						...
+					]
+				}
+				...
+			]
+		},
+		{
+			type: 1, // Agent watch
+			results: [
+				...
+			]
+		},
+		{
+			type: 2, // Agent try
+			results: [
+				{
+					target: 1,
+					trials: [
+						{ agent: 2, corrected: true, try: 1, time: 5 }
+					]
+				},
+				{
+					target: 3,
+					trials: [
+						{ agent: 2, corrected: false, try: 2, time: 5 },
+						{ agent: 5, corrected: true, try: 4, time: 5 },
+						{ agent: 3, corrected: false, try: 3 time: 5 },
+					]
+				}
+				...
+			]
+		},
+		// Note: No results from mode type 3: Agent only.
+	],
+	tries: 15, // Sum of tries
+	corrects: 9, // Sum of correct tries (for when the player quits before the session ends)
+	finished: true, // True if the you have played through the entire scenario, otherwise false
+	token: 123456789, // The same token that was received in the get scenario
+	type: 'BalloonGame',
+	method: 0,
+	maxAmount: 4,
+	representation: 0
+}
