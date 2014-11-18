@@ -40,10 +40,13 @@ BirdheroGame.prototype.tintBank = [
 
 /* Phaser state function */
 BirdheroGame.prototype.preload = function () {
-	this.load.audio('birdheroSpeech', LANG.SPEECH.birdhero.speech); // speech audio sheet
-	this.load.audio('birdheroSfx', ['assets/audio/subgames/birdhero/sfx.m4a', 'assets/audio/subgames/birdhero/sfx.ogg', 'assets/audio/subgames/birdhero/sfx.mp3']); // sound effects audio sheet
-	this.load.audio('birdheroMusic', ['assets/audio/subgames/birdhero/music.m4a', 'assets/audio/subgames/birdhero/music.ogg', 'assets/audio/subgames/birdhero/music.mp3']);
-	this.load.atlasJSONHash('birdhero', 'assets/img/subgames/birdhero/atlas.png', 'assets/img/subgames/birdhero/atlas.json');
+	if (!this.loaded) {
+		this.load.audio('birdheroSpeech', LANG.SPEECH.birdhero.speech); // speech audio sheet
+		this.load.audio('birdheroSfx', ['assets/audio/subgames/birdhero/sfx.m4a', 'assets/audio/subgames/birdhero/sfx.ogg', 'assets/audio/subgames/birdhero/sfx.mp3']); // sound effects audio sheet
+		this.load.audio('birdheroMusic', ['assets/audio/subgames/birdhero/music.m4a', 'assets/audio/subgames/birdhero/music.ogg', 'assets/audio/subgames/birdhero/music.mp3']);
+		this.load.atlasJSONHash('birdhero', 'assets/img/subgames/birdhero/atlas.png', 'assets/img/subgames/birdhero/atlas.json');
+		this.loaded = true;
+	}
 };
 
 /* Phaser state function */

@@ -6,8 +6,11 @@ function GardenState () {}
 
 /* Phaser state function */
 GardenState.prototype.preload = function() {
-	this.load.audio('gardenMusic', ['assets/audio/garden/music.m4a', 'assets/audio/garden/music.ogg', 'assets/audio/garden/music.mp3']);
-	this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
+	if (!this.loaded) {
+		this.load.audio('gardenMusic', ['assets/audio/garden/music.m4a', 'assets/audio/garden/music.ogg', 'assets/audio/garden/music.mp3']);
+		this.load.atlasJSONHash('garden', 'assets/img/garden/atlas.png', 'assets/img/garden/atlas.json');
+		this.loaded = true;
+	}
 
 	this.gardenData = Backend.getGarden() || { fields: [] };
 };
