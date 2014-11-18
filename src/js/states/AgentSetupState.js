@@ -92,7 +92,7 @@ AgentSetupState.prototype.create = function () {
 	}
 
 	// Add music
-	this.add.audio('entryMusic', 0.4, true).play();
+	this.add.audio('entryMusic', 0.3, true).play();
 
 	// Add background
 	this.add.image(0, 0, 'entryBg');
