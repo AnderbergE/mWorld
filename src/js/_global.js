@@ -95,5 +95,5 @@ var GLOBAL = {
 	},
 
 	BUTTON_COLOR: 0xc2a12d,
-	FONT: 'The Girl Next Door'
+	FONT: 'Coming Soon'
 };

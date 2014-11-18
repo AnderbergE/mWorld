@@ -14,19 +14,27 @@ function Menu () {
 	var button = new GeneralButton({ x: 5, y: 5, size: 56, onClick: function () { showMenu(true); } });
 	this.add(button);
 	var menuSplit = Math.ceil(LANG.TEXT.menu.length/2);
+	var menuStyle = {
+		font: '20pt ' +  GLOBAL.FONT,
+		stroke: '#000000',
+		strokeThickness: 2,
+		align: 'center'
+	};
 	var menuText = game.add.text(
 		button.x + button.width/2,
-		button.y + button.height/2 + 7,
-		'\n' + LANG.TEXT.menu.substr(0, menuSplit) + '\n' + LANG.TEXT.menu.substr(menuSplit),
-		{
-			font: '20pt ' +  GLOBAL.FONT,
-			stroke: '#000000',
-			strokeThickness: 2,
-			align: 'center'
-		},
+		button.y + button.height/2 - 7,
+		LANG.TEXT.menu.substr(0, menuSplit),
+		menuStyle,
 		this
 	);
-	menuText.lineSpacing = -30;
+	menuText.anchor.set(0.5);
+	menuText = game.add.text(
+		button.x + button.width/2,
+		button.y + button.height/2 + 17,
+		LANG.TEXT.menu.substr(menuSplit),
+		menuStyle,
+		this
+	);
 	menuText.anchor.set(0.5);
 
 
