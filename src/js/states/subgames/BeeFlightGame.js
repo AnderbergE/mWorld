@@ -33,7 +33,7 @@ BeeFlightGame.prototype.buttonColor = 0xface3d;
 /* Phaser state function */
 BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beeSpeech', LANG.SPEECH.beeflight.speech); // speech sheet
-	this.load.audio('beeMusic', ['assets/audio/subgames/beeflight/music.ogg', 'assets/audio/subgames/beeflight/music.mp3']);
+	this.load.audio('beeMusic', ['assets/audio/subgames/beeflight/music.m4a', 'assets/audio/subgames/beeflight/music.ogg', 'assets/audio/subgames/beeflight/music.mp3']);
 	this.load.atlasJSONHash('bee', 'assets/img/subgames/beeflight/atlas.png', 'assets/img/subgames/beeflight/atlas.json');
 };
 

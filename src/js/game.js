@@ -128,8 +128,8 @@ BootState.prototype.preload = function () {
 	this.load.audio(Mouse.prototype.id + 'Speech', LANG.SPEECH[Mouse.prototype.id].speech);
 
 	/* Common game assets */
-	this.load.audio('entryMusic', ['assets/audio/music.ogg', 'assets/audio/music.mp3']);
-	this.load.audio('click', ['assets/audio/click.ogg', 'assets/audio/click.mp3']);
+	this.load.audio('entryMusic', ['assets/audio/music.m4a', 'assets/audio/music.ogg', 'assets/audio/music.mp3']);
+	this.load.audio('click', ['assets/audio/click.m4a', 'assets/audio/click.ogg', 'assets/audio/click.mp3']);
 	this.load.atlasJSONHash('objects', 'assets/img/objects/objects.png', 'assets/img/objects/objects.json');
 
 	/* Load the entry state assets as well, no need to do two loaders. */

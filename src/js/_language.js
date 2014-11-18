@@ -133,7 +133,11 @@ LANG.swedish.text = {
 LANG.swedish.speech = {
 	/* Garden */
 	garden: {
-		speech: ['assets/audio/garden/speech.ogg', 'assets/audio/garden/speech.mp3'],
+		speech: [
+			'assets/audio/garden/speech.m4a',
+			'assets/audio/garden/speech.ogg',
+			'assets/audio/garden/speech.mp3'
+		],
 		markers: {
 			intro:        [7.3, 12.4],
 			ready:        [23.9, 1.6],
@@ -150,7 +154,11 @@ LANG.swedish.speech = {
 
 	/* Subgames */
 	birdhero: {
-		speech: ['assets/audio/subgames/birdhero/swedish.ogg', 'assets/audio/subgames/birdhero/swedish.mp3'],
+		speech: [
+			'assets/audio/subgames/birdhero/swedish.m4a',
+			'assets/audio/subgames/birdhero/swedish.ogg',
+			'assets/audio/subgames/birdhero/swedish.mp3'
+		],
 		markers: {
 			thisFloor:     [ 0.2, 1.9],
 			helpMeHome:    [ 2.6, 2.0],
@@ -171,7 +179,11 @@ LANG.swedish.speech = {
 	},
 
 	balloongame: {
-		speech: ['assets/audio/subgames/balloongame/swedish.ogg', 'assets/audio/subgames/balloongame/swedish.mp3'],
+		speech: [
+			'assets/audio/subgames/balloongame/swedish.m4a',
+			'assets/audio/subgames/balloongame/swedish.ogg',
+			'assets/audio/subgames/balloongame/swedish.mp3'
+		],
 		markers: {
 			yippie1:        [  0.1, 1.3],
 			yippie2:        [  2.2, 0.8],
@@ -208,7 +220,11 @@ LANG.swedish.speech = {
 	},
 
 	beeflight: {
-		speech: ['assets/audio/subgames/beeflight/swedish.ogg', 'assets/audio/subgames/beeflight/swedish.mp3'],
+		speech: [
+			'assets/audio/subgames/beeflight/swedish.m4a',
+			'assets/audio/subgames/beeflight/swedish.ogg',
+			'assets/audio/subgames/beeflight/swedish.mp3'
+		],
 		markers: {
 			slurp:        [  0.0, 2.0],
 			okay:         [  2.5, 0.8],
@@ -261,7 +277,11 @@ LANG.swedish.speech = {
 	},
 
 	lizard: {
-		speech: ['assets/audio/subgames/lizard/swedish.ogg', 'assets/audio/subgames/lizard/swedish.mp3'],
+		speech: [
+			'assets/audio/subgames/lizard/swedish.m4a',
+			'assets/audio/subgames/lizard/swedish.ogg',
+			'assets/audio/subgames/lizard/swedish.mp3'
+		],
 		markers: {
 			argh:          [  0.5, 1.5],
 			arrg:          [  3.3, 0.9],
@@ -295,7 +315,11 @@ LANG.swedish.speech = {
 
 	/* Agents */
 	panda: {
-		speech: ['assets/audio/agent/panda/swedish.ogg', 'assets/audio/agent/panda/swedish.mp3'],
+		speech: [
+			'assets/audio/agent/panda/swedish.m4a',
+			'assets/audio/agent/panda/swedish.ogg',
+			'assets/audio/agent/panda/swedish.mp3'
+		],
 		markers: {
 			ok1:              [  0.1, 0.7],
 			ok2:              [  1.6, 0.4],
@@ -349,7 +373,11 @@ LANG.swedish.speech = {
 	},
 
 	hedgehog: {
-		speech: ['assets/audio/agent/hedgehog/swedish.ogg', 'assets/audio/agent/hedgehog/swedish.mp3'],
+		speech: [
+			'assets/audio/agent/hedgehog/swedish.m4a',
+			'assets/audio/agent/hedgehog/swedish.ogg',
+			'assets/audio/agent/hedgehog/swedish.mp3'
+		],
 		markers: {
 			ok1:              [  0.0, 0.6],
 			ok2:              [  1.6, 0.6],
@@ -403,7 +431,11 @@ LANG.swedish.speech = {
 	},
 
 	mouse: {
-		speech: ['assets/audio/agent/mouse/swedish.ogg', 'assets/audio/agent/mouse/swedish.mp3'],
+		speech: [
+			'assets/audio/agent/mouse/swedish.m4a',
+			'assets/audio/agent/mouse/swedish.ogg',
+			'assets/audio/agent/mouse/swedish.mp3'
+		],
 		markers: {
 			ok1:              [  0.0, 0.5],
 			ok2:              [  1.5, 0.5],
