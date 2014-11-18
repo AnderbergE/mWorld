@@ -55,7 +55,6 @@ EntryState.prototype.create = function () {
 		font: '25pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	});
-	log.lineSpacing = -15;
 	log.anchor.set(0, 1);
 	log.inputEnabled = true;
 	log.events.onInputDown.add(function () { window.location = window.location.origin; });
@@ -95,10 +94,17 @@ EntryState.prototype.create = function () {
 		LANG.TEXT.creditsMade + '\n\n\n' +
 		LANG.TEXT.creditsDeveloped + ':\nErik Anderberg\t \tAgneta Gulz\nMagnus Haake\t \tLayla Husain\n\n' +
 		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nHenrik Söllvander\n\n' +
-		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\n\n' +
-		LANG.TEXT.creditsMusic + ':\n\n\n' + //TODO
-		LANG.TEXT.creditsSfx + ':\nhttp://soundbible.com\nhttp://freesfx.co.uk\n\n' +
-		LANG.TEXT.creditsThanks + ':\nAnton Axelsson\t \tSanne Bengtsson\nMaja Håkansson\t \tLisa Lindberg\nBjörn Norrliden', {
+		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\nErik Anderberg\n\n' +
+		LANG.TEXT.creditsVoices + ':\n' + LANG.TEXT.pandaName + '\t-\t' + LANG.TEXT.creditsVoicePanda + '\n' +
+			LANG.TEXT.hedgehogName + '\t-\t' + LANG.TEXT.creditsVoiceHedgehog + '\n' +
+			LANG.TEXT.mouseName + '\t-\t' + LANG.TEXT.creditsVoiceMouse + '\n' +
+			LANG.TEXT.woodlouseName + '\t-\t' + LANG.TEXT.creditsVoiceWoodlouse + '\n' +
+			LANG.TEXT.lizardName + '\t-\t' + LANG.TEXT.creditsVoiceLizard + '\n' +
+			LANG.TEXT.bumblebeeName + '\t-\t' + LANG.TEXT.creditsVoiceBumblebee + '\n' +
+			LANG.TEXT.birdName + '\t-\t' + LANG.TEXT.creditsVoiceBird + '\n\n' +
+		LANG.TEXT.creditsMusic + ':\nTorbjörn Gulz\n\n' + //TODO
+		LANG.TEXT.creditsSfx + ':\nAnton Axelsson\nhttp://soundbible.com\nhttp://freesfx.co.uk\n\n' +
+		LANG.TEXT.creditsThanks + ':\nSanne Bengtsson\t \tMaja Håkansson\nLisa Lindberg\t \tBjörn Norrliden\nBrunnsparksskolan', {
 		font: '15pt ' +  GLOBAL.FONT,
 		fill: '#ffffff',
 		align: 'center'

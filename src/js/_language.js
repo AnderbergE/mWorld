@@ -94,6 +94,14 @@ LANG.swedish.text = {
 	creditsDeveloped: 'Idé och utformning',
 	creditsProgramming: 'Programmering',
 	creditsGraphics: 'Grafik',
+	creditsVoices: 'Röster',
+	creditsVoicePanda: 'Igis Gulz-Haake',
+	creditsVoiceHedgehog: 'Agneta Gulz',
+	creditsVoiceMouse: 'Sebastian Gulz-Haake',
+	creditsVoiceWoodlouse: 'Igis Gulz-Haake',
+	creditsVoiceLizard: 'Igis Gulz-Haake',
+	creditsVoiceBumblebee: 'Agneta Gulz',
+	creditsVoiceBird: 'Igis Gulz-Haake',
 	creditsMusic: 'Musik',
 	creditsSfx: 'Ljudeffekter',
 	creditsThanks: 'Tack till',
@@ -112,10 +120,14 @@ LANG.swedish.text = {
 	gotoGarden: 'Gå till trädgården',
 	quit: 'Avsluta spelet',
 
-	/* Agents */
+	/* Agents and characters */
 	pandaName: 'Panders',
 	hedgehogName: 'Igis',
-	mouseName: 'Mille'
+	mouseName: 'Mille',
+	woodlouseName: 'Grålle',
+	lizardName: 'Kamilla',
+	bumblebeeName: 'Humfrid',
+	birdName: 'Fålia'
 };
 
 LANG.swedish.speech = {
