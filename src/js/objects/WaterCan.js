@@ -49,17 +49,10 @@ WaterCan.prototype.destroy = function (destroyChildren, soft) {
  * @return {Object} The animation TweenMax.
  */
 WaterCan.prototype.pour = function (duration) {
-	var bmd = new Phaser.BitmapData(game, '', 6, 6);
-	var half = bmd.width/2;
-	bmd.ctx.fillStyle = '#2266cc';
-	bmd.ctx.beginPath();
-	bmd.ctx.arc(half, half, half, 0, Math.PI2);
-	bmd.ctx.closePath();
-	bmd.ctx.fill();
 	var emitter = game.add.emitter(this.can.width, 5, 200);
 	emitter.width = 5;
-	emitter.makeParticles(bmd);
-	emitter.setScale(0.5, 1, 0.5, 1);
+	emitter.makeParticles('objects', 'drop');
+	emitter.setScale(0.1, 0.3, 0.1, 0.3);
 	emitter.setYSpeed(100, 150);
 	emitter.setXSpeed(50, 100);
 	emitter.setRotation(0, 0);

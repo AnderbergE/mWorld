@@ -107,7 +107,6 @@ BootState.prototype.preload = function () {
 	this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 	this.scale.pageAlignHorizontally = true;
 	this.scale.pageAlignVertically = true;
-	this.scale.setScreenSize(true);
 
 	/* If volume has been changed, use the stored one. */
 	if (typeof localStorage.mainVolume !== 'undefined') {

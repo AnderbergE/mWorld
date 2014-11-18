@@ -479,17 +479,10 @@ BirdheroGame.prototype.modeIntro = function () {
 	t.add(new TweenMax(darkness, 1, { alpha: 0 }), 12);
 
 	// Make it rain!
-	var bmd = new Phaser.BitmapData(game, '', 6, 6);
-	var half = bmd.width/2;
-	bmd.ctx.fillStyle = '#0044aa';
-	bmd.ctx.beginPath();
-	bmd.ctx.arc(half, half, half, 0, Math.PI2);
-	bmd.ctx.closePath();
-	bmd.ctx.fill();
 	var emitter = this.add.emitter(this.world.centerX, -10, 5000);
 	emitter.width = this.world.width*1.5;
-	emitter.makeParticles(bmd);
-	emitter.setScale(0.5, 1, 0.5, 1);
+	emitter.makeParticles('objects', 'drop');
+	emitter.setScale(0.1, 0.2, 0.1, 0.2);
 	emitter.setYSpeed(500, 700);
 	emitter.setXSpeed(-300, -400);
 	emitter.setRotation(0, 0);
