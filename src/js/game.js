@@ -64,6 +64,9 @@ function BootState () {}
 
 /* Phaser state function */
 BootState.prototype.preload = function () {
+	GLOBAL.STATE_KEYS = Object.keys(this);
+	GLOBAL.STATE_KEYS.push('loaded');
+
 	/* Make sure tweens are stopped when pausing. */
 	game.onPause.add(function () {
 		TweenMax.globalTimeScale(0);

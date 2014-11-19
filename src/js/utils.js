@@ -170,11 +170,28 @@ function createAudioSheet (key, markers) {
  */
 function onShutDown () {
 	TweenMax.killAll();
-	this.sound.stopAll();
-	this.sound.onSoundDecode.removeAll();
 	EventSystem.publish(GLOBAL.EVENT.stateShutDown, this);
 	EventSystem.clear();
 	GeneralButton.prototype.buttonColor = GLOBAL.BUTTON_COLOR;
+
+	var key = this.sound._sounds.length;
+	while (key--) {
+		this.sound._sounds[key].destroy(true);
+	}
+	for (key in this) {
+		if (GLOBAL.STATE_KEYS.indexOf(key) < 0) {
+			if (this[key].destroy) {
+				try {
+					this[key].destroy(true);
+				}
+				catch (e) {
+					// Don't care about errors here.
+					// console.log(e);
+				}
+			}
+			delete this[key];
+		}
+	}
 }
 
 /**
@@ -224,7 +241,7 @@ Phaser.SoundManager.prototype.whenSoundsDecoded = function (func) {
 
 		var c = function () {
 			if (this.checkSoundsDecoded()) {
-				this.onSoundDecode.remove(c);
+				this.onSoundDecode.remove(c, this);
 				func();
 				loader.display = 'none';
 			}

@@ -52,6 +52,7 @@ var GLOBAL = {
 		random:       100,         // Not an actual state.
 		randomGames:  [0, 2, 3, 4] // Not an actual state, it will randomly pick one in the array.
 	},
+	STATE_KEYS: null, // saved when game is booted.
 
 	/* Method for scenario */
 	METHOD: {
