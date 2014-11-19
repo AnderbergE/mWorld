@@ -192,6 +192,7 @@ function onShutDown () {
 			delete this[key];
 		}
 	}
+	this.world.removeAll(true);
 }
 
 /**
