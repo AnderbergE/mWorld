@@ -79,10 +79,29 @@ Subgame.prototype.init = function (options) {
 	this._waterCan = new WaterCan();
 	this._menuGroup.add(this._waterCan);
 	this._menuGroup.add(new Menu());
+
+	/* For cleanup when shutting down state */
+	this._origAudio = Object.keys(this.game.cache._sounds);
+	this._origImages = Object.keys(this.game.cache._images);
 };
 
 /* Phaser state function */
-Subgame.prototype.shutdown = onShutDown;
+Subgame.prototype.shutdown = function () {
+	var key;
+	for (key in this.game.cache._sounds) {
+		if (this._origAudio.indexOf(key) < 0) {
+			this.game.cache.removeSound(key);
+		}
+	}
+
+	for (key in this.game.cache._images) {
+		if (this._origImages.indexOf(key) < 0) {
+			this.game.cache.removeImage(key);
+		}
+	}
+
+	onShutDown.call(this);
+};
 
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/

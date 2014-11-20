@@ -131,6 +131,23 @@ LANG.swedish.text = {
 };
 
 LANG.swedish.speech = {
+	/* Agent intro */
+	agentIntro: {
+		speech: [
+			'assets/audio/agent/swedishIntro.m4a',
+			'assets/audio/agent/swedishIntro.ogg',
+			'assets/audio/agent/swedishIntro.mp3'
+		],
+		markers: {
+			pandaHello:          [ 0.0, 1.7],
+			pandaFunTogether:    [ 2.8, 2.0],
+			hedgehogHello:       [ 5.7, 2.4],
+			hedgehogFunTogether: [ 8.9, 3.0],
+			mouseHello:          [12.3, 1.7],
+			mouseFunTogether:    [14.4, 1.9]
+		}
+	},
+
 	/* Subgames */
 	birdhero: {
 		speech: [
@@ -322,8 +339,8 @@ LANG.swedish.speech = {
 			instructionRed:   [ 43.7, 3.1],
 			letsGo:           [105.8, 0.8],
 			// Agent setup
-			hello:            [147.5, 1.7],
-			funTogether:      [150.3, 1.9],
+			hello:            [147.5, 1.7], // same as in intro speech file
+			funTogether:      [150.3, 1.9], // same as in intro speech file
 			// Garden
 			gardenIntro:      [ 47.9, 6.6],
 			gardenMyCan:      [ 55.7, 6.5],
@@ -380,8 +397,8 @@ LANG.swedish.speech = {
 			instructionRed:   [ 56.0, 4.4],
 			letsGo:           [ 69.0, 0.9],
 			// Agent setup
-			hello:            [ 61.5, 2.3],
-			funTogether:      [ 65.1, 2.9],
+			hello:            [ 61.5, 2.3], // same as in intro speech file
+			funTogether:      [ 65.1, 2.9], // same as in intro speech file
 			// Garden
 			gardenIntro:      [ 70.9, 9.5],
 			gardenMyCan:      [ 81.8, 7.5],
@@ -438,8 +455,8 @@ LANG.swedish.speech = {
 			instructionRed:   [ 51.3, 3.0],
 			letsGo:           [ 60.2, 1.0],
 			// Agent setup
-			hello:            [ 55.3, 1.6],
-			funTogether:      [ 57.4, 2.0],
+			hello:            [ 55.3, 1.6], // same as in intro speech file
+			funTogether:      [ 57.4, 2.0], // same as in intro speech file
 			// Garden
 			gardenIntro:      [ 62.2, 6.0],
 			gardenMyCan:      [ 69.0, 3.1],

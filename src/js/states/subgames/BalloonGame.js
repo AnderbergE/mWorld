@@ -34,12 +34,9 @@ BalloonGame.prototype.buttonColor = 0xa3e9a4;
 
 /* Phaser state function */
 BalloonGame.prototype.preload = function () {
-	if (!this.loaded) {
-		this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // speech sheet
-		this.load.audio('balloonSfx', ['assets/audio/subgames/balloongame/sfx.m4a', 'assets/audio/subgames/balloongame/sfx.ogg', 'assets/audio/subgames/balloongame/sfx.mp3']); // sound sheet
-		this.load.atlasJSONHash('balloon', 'assets/img/subgames/balloon/atlas.png', 'assets/img/subgames/balloon/atlas.json');
-		this.loaded = true;
-	}
+	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // speech sheet
+	this.load.audio('balloonSfx', ['assets/audio/subgames/balloongame/sfx.m4a', 'assets/audio/subgames/balloongame/sfx.ogg', 'assets/audio/subgames/balloongame/sfx.mp3']); // sound sheet
+	this.load.atlasJSONHash('balloon', 'assets/img/subgames/balloon/atlas.png', 'assets/img/subgames/balloon/atlas.json');
 };
 
 /* Phaser state function */

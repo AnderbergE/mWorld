@@ -4,6 +4,14 @@
 function AgentSetupState () {}
 
 /* Phaser state function */
+AgentSetupState.prototype.preload = function() {
+	this.load.audio('chooseSpeech', LANG.SPEECH.agentIntro.speech);
+	this.load.atlasJSONHash(Panda.prototype.id, 'assets/img/agent/panda/atlas.png', 'assets/img/agent/panda/atlas.json');
+	this.load.atlasJSONHash(Hedgehog.prototype.id, 'assets/img/agent/hedgehog/atlas.png', 'assets/img/agent/hedgehog/atlas.json');
+	this.load.atlasJSONHash(Mouse.prototype.id, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
+};
+
+/* Phaser state function */
 AgentSetupState.prototype.create = function () {
 	var _this = this;
 	var spacing = 450;
@@ -18,6 +26,8 @@ AgentSetupState.prototype.create = function () {
 		strokeThickness: 5
 	};
 	var waving;
+
+	var speech = createAudioSheet('chooseSpeech', LANG.SPEECH.agentIntro.markers);
 
 
 	function clickAgent () {
@@ -35,18 +45,12 @@ AgentSetupState.prototype.create = function () {
 			TweenMax.to(agents, slideTime, {
 				x: -(agents.children.indexOf(a) * spacing),
 				ease: Power2.easeOut,
-				onStart: function () { stopTalk(); },
+				onStart: function () { speech.stop(); },
 				onComplete: function () {
-					a.say(a.speech, 'hello').play('hello');
+					a.say(speech, a.id + 'Hello').play(a.id + 'Hello');
 					waving = a.wave(2, 1);
 				}
 			});
-		}
-	}
-
-	function stopTalk () {
-		for (var key in agents.children) {
-			agents.children[key].speech.stop();
 		}
 	}
 
@@ -76,9 +80,9 @@ AgentSetupState.prototype.create = function () {
 			waving.kill();
 		}
 		fadeInterface(false);
-		a.speech.stop();
+		speech.stop();
 		var t = new TimelineMax();
-		t.addSound(a.speech, a, 'funTogether');
+		t.addSound(speech, a, a.id + 'FunTogether');
 		t.addCallback(function () {
 			a.fistPump();
 			Backend.putAgent({ agent: { type: a.key, tint: a.tint } });
@@ -168,4 +172,19 @@ AgentSetupState.prototype.create = function () {
 };
 
 /* Phaser state function */
-AgentSetupState.prototype.shutdown = onShutDown;
+AgentSetupState.prototype.shutdown = function () {
+	if (player.agent.prototype.id !== Panda.prototype.id) {
+		this.cache.removeSound(Panda.prototype.id + 'Speech');
+		this.cache.removeImage(Panda.prototype.id);
+	}
+	if (player.agent.prototype.id !== Hedgehog.prototype.id) {
+		this.cache.removeSound(Hedgehog.prototype.id + 'Speech');
+		this.cache.removeImage(Hedgehog.prototype.id);
+	}
+	if (player.agent.prototype.id !== Mouse.prototype.id) {
+		this.cache.removeSound(Mouse.prototype.id + 'Speech');
+		this.cache.removeImage(Mouse.prototype.id);
+	}
+	
+	onShutDown.call(this);
+};

@@ -31,13 +31,10 @@ LizardJungleGame.prototype.tintBank = [
 
 /* Phaser state function */
 LizardJungleGame.prototype.preload = function () {
-	if (!this.loaded) {
-		this.load.audio('lizardSpeech', LANG.SPEECH.lizard.speech); // speech sheet
-		this.load.audio('lizardSnore', ['assets/audio/subgames/lizard/snore.m4a', 'assets/audio/subgames/lizard/snore.ogg', 'assets/audio/subgames/lizard/snore.mp3']);
-		this.load.audio('lizardMusic', ['assets/audio/subgames/lizard/music.m4a', 'assets/audio/subgames/lizard/music.ogg', 'assets/audio/subgames/lizard/music.mp3']);
-		this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
-		this.loaded = true;
-	}
+	this.load.audio('lizardSpeech', LANG.SPEECH.lizard.speech); // speech sheet
+	this.load.audio('lizardSnore', ['assets/audio/subgames/lizard/snore.m4a', 'assets/audio/subgames/lizard/snore.ogg', 'assets/audio/subgames/lizard/snore.mp3']);
+	this.load.audio('lizardMusic', ['assets/audio/subgames/lizard/music.m4a', 'assets/audio/subgames/lizard/music.ogg', 'assets/audio/subgames/lizard/music.mp3']);
+	this.load.atlasJSONHash('lizard', 'assets/img/subgames/lizardjungle/atlas.png', 'assets/img/subgames/lizardjungle/atlas.json');
 };
 
 /* Phaser state function */

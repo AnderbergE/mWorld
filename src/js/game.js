@@ -123,12 +123,12 @@ BootState.prototype.preload = function () {
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
 	/* Agent related assets */
-	this.load.atlasJSONHash(Panda.prototype.id, 'assets/img/agent/panda/atlas.png', 'assets/img/agent/panda/atlas.json');
-	this.load.audio(Panda.prototype.id + 'Speech', LANG.SPEECH[Panda.prototype.id].speech);
-	this.load.atlasJSONHash(Hedgehog.prototype.id, 'assets/img/agent/hedgehog/atlas.png', 'assets/img/agent/hedgehog/atlas.json');
-	this.load.audio(Hedgehog.prototype.id + 'Speech', LANG.SPEECH[Hedgehog.prototype.id].speech);
-	this.load.atlasJSONHash(Mouse.prototype.id, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
-	this.load.audio(Mouse.prototype.id + 'Speech', LANG.SPEECH[Mouse.prototype.id].speech);
+	// If player does not have an agent, it will be forced to go to agent setup state.
+	if (player.agent) {
+		var name = player.agent.prototype.id;
+		this.load.audio(name + 'Speech', LANG.SPEECH.AGENT.speech);
+		this.load.atlasJSONHash(name, 'assets/img/agent/' + name + '/atlas.png', 'assets/img/agent/' + name + '/atlas.json');
+	}
 
 	/* Common game assets */
 	this.load.audio('entryMusic', ['assets/audio/music.m4a', 'assets/audio/music.ogg', 'assets/audio/music.mp3']);

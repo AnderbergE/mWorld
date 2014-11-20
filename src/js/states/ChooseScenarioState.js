@@ -2,13 +2,19 @@
 function ChooseScenarioState () {}
 
 /* Phaser state function */
-ChooseScenarioState.prototype.create = function () {
-	this.add.image(0, 0, 'entryBg');
-
+ChooseScenarioState.prototype.preload = function() {
 	if (!player.agent) {
 		console.log('Setting agent to: ' + GLOBAL.AGENT[0].prototype.id);
 		player.agent = GLOBAL.AGENT[0];
+		var name = player.agent.prototype.id;
+		this.load.audio(name + 'Speech', LANG.SPEECH.AGENT.speech);
+		this.load.atlasJSONHash(name, 'assets/img/agent/' + name + '/atlas.png', 'assets/img/agent/' + name + '/atlas.json');
 	}
+};
+
+/* Phaser state function */
+ChooseScenarioState.prototype.create = function () {
+	this.add.image(0, 0, 'entryBg');
 
 	var textOptions = {
 		font: '20pt ' +  GLOBAL.FONT,
