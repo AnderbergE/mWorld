@@ -479,7 +479,7 @@ BirdheroGame.prototype.modeIntro = function () {
 	t.add(new TweenMax(darkness, 1, { alpha: 0 }), 12);
 
 	// Make it rain!
-	var emitter = this.add.emitter(this.world.centerX, -10, 5000);
+	var emitter = this.add.emitter(this.world.centerX, -10, 25);
 	emitter.width = this.world.width*1.5;
 	emitter.makeParticles('objects', 'drop');
 	emitter.setScale(0.1, 0.2, 0.1, 0.2);
