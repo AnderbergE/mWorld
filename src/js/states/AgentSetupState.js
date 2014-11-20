@@ -173,15 +173,15 @@ AgentSetupState.prototype.create = function () {
 
 /* Phaser state function */
 AgentSetupState.prototype.shutdown = function () {
-	if (player.agent.prototype.id !== Panda.prototype.id) {
+	if (!player.agent || player.agent.prototype.id !== Panda.prototype.id) {
 		this.cache.removeSound(Panda.prototype.id + 'Speech');
 		this.cache.removeImage(Panda.prototype.id);
 	}
-	if (player.agent.prototype.id !== Hedgehog.prototype.id) {
+	if (!player.agent || player.agent.prototype.id !== Hedgehog.prototype.id) {
 		this.cache.removeSound(Hedgehog.prototype.id + 'Speech');
 		this.cache.removeImage(Hedgehog.prototype.id);
 	}
-	if (player.agent.prototype.id !== Mouse.prototype.id) {
+	if (!player.agent || player.agent.prototype.id !== Mouse.prototype.id) {
 		this.cache.removeSound(Mouse.prototype.id + 'Speech');
 		this.cache.removeImage(Mouse.prototype.id);
 	}

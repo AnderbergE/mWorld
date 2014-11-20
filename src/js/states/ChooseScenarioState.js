@@ -4,11 +4,10 @@ function ChooseScenarioState () {}
 /* Phaser state function */
 ChooseScenarioState.prototype.preload = function() {
 	if (!player.agent) {
-		console.log('Setting agent to: ' + GLOBAL.AGENT[0].prototype.id);
-		player.agent = GLOBAL.AGENT[0];
-		var name = player.agent.prototype.id;
-		this.load.audio(name + 'Speech', LANG.SPEECH.AGENT.speech);
-		this.load.atlasJSONHash(name, 'assets/img/agent/' + name + '/atlas.png', 'assets/img/agent/' + name + '/atlas.json');
+		console.log('Setting agent to: ' + Panda.prototype.id);
+		player.agent = Panda;
+		this.load.audio('pandaSpeech', LANG.SPEECH.AGENT.speech);
+		this.load.atlasJSONHash('panda', 'assets/img/agent/panda/atlas.png', 'assets/img/agent/panda/atlas.json');
 	}
 };
 

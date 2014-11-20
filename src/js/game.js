@@ -127,7 +127,13 @@ BootState.prototype.preload = function () {
 	if (player.agent) {
 		var name = player.agent.prototype.id;
 		this.load.audio(name + 'Speech', LANG.SPEECH.AGENT.speech);
-		this.load.atlasJSONHash(name, 'assets/img/agent/' + name + '/atlas.png', 'assets/img/agent/' + name + '/atlas.json');
+		if (name === Panda.prototype.id) {
+			this.load.atlasJSONHash(name, 'assets/img/agent/panda/atlas.png', 'assets/img/agent/panda/atlas.json');
+		} else if (name === Hedgehog.prototype.id) {
+			this.load.atlasJSONHash(name, 'assets/img/agent/hedgehog/atlas.png', 'assets/img/agent/hedgehog/atlas.json');
+		} else if (name === Mouse.prototype.id) {
+			this.load.atlasJSONHash(name, 'assets/img/agent/mouse/atlas.png', 'assets/img/agent/mouse/atlas.json');
+		}
 	}
 
 	/* Common game assets */
