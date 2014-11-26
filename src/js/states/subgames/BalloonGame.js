@@ -25,8 +25,8 @@ BalloonGame.prototype.pos = {
 	balloons: { x: 150, y: 580 },
 	bucket: { x: 780, y: 610 },
 	cave: { left: 670, right: 860, y: 555, height: 420 },
-	sack: { x: 730, y: 650 },
-	map: { x: 520, y: 470 },
+	sack: { x: 550, y: 650 },
+	map: { x: 650, y: 610 },
 	liftoff: { x: 900, y: 670 }
 };
 
@@ -106,16 +106,6 @@ BalloonGame.prototype.create = function () {
 		));
 	}
 
-	// Reward objects, for when you choose the correct number.
-	this.chest = this.gameGroup.create(0, 0, 'balloon', 'chest_closed');
-	this.chest.anchor.set(0.5, 1);
-	this.chest.visible = false;
-	this.treasure = this.gameGroup.create(0, 0, 'balloon', 'treasure1');
-	this.treasure.anchor.set(0.5, 1);
-	this.treasure.visible = false;
-	this.sack = this.gameGroup.create(this.pos.sack.x, this.pos.sack.y, 'balloon', 'sack');
-	this.sack.scale.set(0.7);
-	this.sack.anchor.set(0.5);
 
 	// Fine-tune the agent and bring it on top
 	this.gameGroup.bringToTop(this.agent);
@@ -157,8 +147,8 @@ BalloonGame.prototype.create = function () {
 	if (this.representation[0] === GLOBAL.NUMBER_REPRESENTATION.none) {
 		// Special case when we have no representation.
 		this.eyes = this.gameGroup.create(0, 0, 'balloon', 'eyes');
+		this.gameGroup.moveDown(this.eyes);
 		this.eyes.visible = false;
-		this.map = null;
 	} else {
 		this.map = this.add.group(this.gameGroup);
 		this.map.x = this.pos.map.x;
@@ -170,6 +160,17 @@ BalloonGame.prototype.create = function () {
 		});
 		this.map.add(this.map.target);
 	}
+
+	// Reward objects, for when you choose the correct number.
+	this.chest = this.gameGroup.create(0, 0, 'balloon', 'chest_closed');
+	this.chest.anchor.set(0.5, 1);
+	this.chest.visible = false;
+	this.treasure = this.gameGroup.create(0, 0, 'balloon', 'treasure1');
+	this.treasure.anchor.set(0.5, 1);
+	this.treasure.visible = false;
+	this.sack = this.gameGroup.create(this.pos.sack.x, this.pos.sack.y, 'balloon', 'sack');
+	this.sack.scale.set(0.7);
+	this.sack.anchor.set(0.5);
 
 	// The button to push when done with the balloons.
 	var _this = this;
