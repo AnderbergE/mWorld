@@ -17,9 +17,11 @@ BeeFlightGame.prototype.pos = {
 	home: {
 		x: 110, y: 700
 	},
-	homeScale: 0.3,
 	bee: {
-		x: 120, y: 300
+		x: 120, y: 300,
+		homeScale: 0.3,
+		airScale: 0.8,
+		flowerScale: 0.6
 	},
 	agent: {
 		start: { x: 1200, y: 400 },
@@ -71,16 +73,11 @@ BeeFlightGame.prototype.create = function () {
 	// Setup flowers
 	var size = this.world.width - this.pos.flowers.stopOffset - this.pos.flowers.start;
 	var width = size / this.amount;
-	var yPos = this.amount > 5 ? 450 : 550;
-	var yOffset = this.amount > 5 ? 100 : 0;
+	var yPos = 550;
 	this.flowers = [];
-	var i, v, c, row;
+	var i, v, c;
 	for (i = 0; i < this.amount; i++) {
-		row = (i % 2);
-		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos + yOffset * row, 'bee', 'flower', this.gameGroup));
-		if (!row && i !== 0) { // So that the flower nearest is on top of farest.
-			this.gameGroup.moveDown(this.flowers[i]);
-		}
+		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos, 'bee', 'flower', this.gameGroup));
 		this.flowers[i].anchor.set(0.5, 0);
 
 		// Calculate tint
@@ -91,7 +88,7 @@ BeeFlightGame.prototype.create = function () {
 
 	// Setup bee
 	this.bee = new BeeFlightBee(this.pos.home.x, this.pos.home.y);
-	this.bee.scale.set(this.pos.homeScale);
+	this.bee.scale.set(this.pos.bee.homeScale);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bee.addThought(170, -75, this.representation[0], true);
 		this.bee.thought.toScale = 0.7;
@@ -105,14 +102,14 @@ BeeFlightGame.prototype.create = function () {
 		home: function () {
 			var t = new TimelineMax();
 			t.addCallback(_this.bee.flap, null, [true], _this.bee);
-			t.add(_this.bee.move(_this.pos.home, 5, _this.pos.homeScale));
+			t.add(_this.bee.move(_this.pos.home, 5, _this.pos.bee.homeScale));
 			t.addCallback(_this.bee.flap, null, [false], _this.bee);
 			return t;
 		},
 		start: function () {
 			var t = new TimelineMax();
 			t.addCallback(_this.bee.flap, null, [true], _this.bee);
-			t.add(_this.bee.move(_this.pos.bee, 3, 1));
+			t.add(_this.bee.move(_this.pos.bee, 3, _this.pos.bee.airScale));
 			return t;
 		},
 		flower: function (target, direct) {
@@ -137,7 +134,7 @@ BeeFlightGame.prototype.create = function () {
 				}
 			}
 
-			t.add(_this.bee.move({ y: flow.y }, 0.75));
+			t.add(_this.bee.move({ y: flow.y }, 0.75, _this.pos.bee.flowerScale));
 			t.addCallback(_this.bee.flap, null, [false], _this.bee);
 			return t;
 		}
