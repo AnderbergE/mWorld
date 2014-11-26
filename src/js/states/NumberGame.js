@@ -221,6 +221,9 @@ NumberGame.prototype.setupButtons = function (options) {
 	if (options.buttons) {
 		options.buttons.method = this.method;
 		options.buttons.onClick = function (number) { _this.pushNumber(number); };
+		if (!options.buttons.background && this.method === GLOBAL.METHOD.count) {
+			options.buttons.background = 'button';
+		}
 		this.buttons = new ButtonPanel(this.amount, this.representation, options.buttons);
 		this.buttons.visible = false;
 		this.hudGroup.add(this.buttons);
