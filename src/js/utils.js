@@ -180,7 +180,7 @@ function onShutDown () {
 	}
 	for (key in this) {
 		if (GLOBAL.STATE_KEYS.indexOf(key) < 0) {
-			if (this[key].destroy) {
+			if (this[key] && this[key].destroy) {
 				try {
 					this[key].destroy(true);
 				}
