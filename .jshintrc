@@ -6,6 +6,10 @@
 {
 	// Accepted globals
 	"globals"       : {
+		"require": false,
+		"module": false,
+		"exports": false,
+
 		"Phaser": false,
 
 		"TweenMax": false,
