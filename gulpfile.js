@@ -1,6 +1,7 @@
 // General requires
 var gulp = require('gulp');
 var connect = require('gulp-connect');
+var util = require('gulp-util');
 
 // Script requires
 var browserify = require('browserify');
@@ -52,6 +53,11 @@ gulp.task('browserify', function() {
 	var bundle = function() {
 		return bundler
 			.bundle()
+			.on('error', function (err) {
+				util.beep();
+				util.log(util.colors.red('Error: '), err.message);
+				this.emit('end');
+			})
 			.pipe(source(getBundleName() + '.js'))
 			.pipe(buffer())
 			.pipe(sourcemaps.init({ loadMaps: true }))
@@ -67,6 +73,8 @@ gulp.task('browserify', function() {
 gulp.task('lint', function() {
 	return gulp.src(SCRIPT + ALL + '.js')
 		.pipe(jshint('.jshintrc'))
+		.pipe(jshint.reporter('fail'))
+		.on('error', function () { util.beep(); })
 		.pipe(jshint.reporter('default'));
 });
 
@@ -88,10 +96,7 @@ gulp.task('watch', function() {
 
 	gulp.watch(SRC + ALL + '.html', ['html']);
 
-	gulp.watch([
-		SCRIPT + ALL + '.js',
-		'common/**/*.js',
-	], ['scripts']);
+	gulp.watch(SCRIPT + ALL + '.js', ['scripts']);
 
 	gulp.watch(STYLE + ALL + '.less', ['styles']);
 });
