@@ -7,7 +7,8 @@ Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 * Clone/Fork this repository to your computer.
 * Open the repository in a terminal.
 * Run: 'npm install'. (This requires node, which you can get here: [Node](http://nodejs.org/))
-* Run: gulp (If you experience problems, try looking here: [Gulp](http://gulpjs.com/))
+* If you do not have [Gulp](http://gulpjs.com/)) installed globally on your computer, run 'npm install --global gulp'
+* Run: 'gulp'
 * Play the game at http://localhost:9000/index.html
 
 Gulp generates the build catalogue in your repository and also starts a local server.
