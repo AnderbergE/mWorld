@@ -27,7 +27,7 @@ var DEST = 'build/';
 var getBundleName = function () {
 	var version = require('./package.json').version;
 	var name = require('./package.json').name;
-	return name.toLowerCase().replace(/\s+/g, '_') + '.' + version + '.min';
+	return name.toLowerCase() + '.' + version + '.min';
 };
 
 
