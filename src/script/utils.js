@@ -91,6 +91,7 @@ exports.createAudioSheet = function (key, markers) {
  * Randomize array element order in-place.
  * Using Fisher-Yates shuffle algorithm.
  * @param {Array} The array to shuffle. (Use .splice(0) if you need to copy an array.)
+ * @returns {Array} The input array in shuffled order.
  */
 Phaser.RandomDataGenerator.prototype.shuffle = function (array) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -151,6 +152,7 @@ TimelineMax.prototype.addSound = function (what, who, marker, position) {
  * Publishes skippable event.
  * NOTE: You can not skip part of a timeline.
  * NOTE: See menu object for more information about skipping.
+ * @returns: 'this' TimelineMax object, enables chaining.
  */
 TimelineMax.prototype.skippable = function () {
 	this.addCallback(function () {

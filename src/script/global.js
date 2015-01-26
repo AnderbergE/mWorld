@@ -39,7 +39,7 @@ exports.STATE = {
 	random:       100,         // Not an actual state.
 	randomGames:  [0, 2, 3, 4] // Not an actual state, it will randomly pick one in the array.
 };
-exports.STATE_KEYS = null; // saved when game is booted.
+exports.STATE_KEYS = null; // Used to clear a subgame, saved when subgame is booted.
 
 /* Method for scenario */
 exports.METHOD = {
@@ -82,6 +82,8 @@ exports.MODE = {
 	outro:      11,
 };
 
+// Default button color.
 exports.BUTTON_COLOR = 0xc2a12d;
 
+// Font to use in the game.
 exports.FONT = 'Coming Soon';

@@ -29,7 +29,7 @@ NumberButton.prototype.constructor = NumberButton;
  *        {string} spriteKey: Used for object representation only. The key to the sprite.
  *        {string} spriteFrame: Used for object representation only. The framename in the sprite.
                                 NOTE: Used like this: spriteFrame + this.number
- * @return {Object} Itself.
+ * @returns {Object} Itself.
  */
 function NumberButton (game, number, representations, options) {
 	/* The order here is a bit weird because GeneralButton calls setSize, which this class overshadows. */
@@ -203,6 +203,7 @@ NumberButton.prototype.updateGraphics = function () {
 /**
  * Calculate the different offsets for the button (needed due to arrow in button).
  * @param {Number} offset - Offset from button edge (used like: this.size/offset).
+ * @returns {Object} Offsets on the form { o: offset, x: x, y: y }.
  */
 NumberButton.prototype.calcOffset = function (offset) {
 	var t = {};
@@ -221,6 +222,7 @@ NumberButton.prototype.calcOffset = function (offset) {
 /**
  * Set the size of this button.
  * @param {Number} The new size.
+ * @returns {Object} This button.
  */
 NumberButton.prototype.setSize = function (size) {
 	GeneralButton.prototype.setSize.call(this, size || this.size);
@@ -233,8 +235,9 @@ NumberButton.prototype.setSize = function (size) {
 };
 
 /**
- * Set the direction of the background button.
+ * Set the direction of the background button (where the arrow should point).
  * @param {Boolean} val - True = up/down, false = left/right.
+ * @returns {Object} This button.
  */
 NumberButton.prototype.setDirection = function (val) {
 	this.direction = val;

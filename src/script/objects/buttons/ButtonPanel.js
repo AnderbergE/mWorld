@@ -174,8 +174,8 @@ ButtonPanel.prototype.reset = function () {
 
 /**
  * Highlight all buttons.
- * @param {Number} How long to highlight
- * @return {Object} The animation timeline.
+ * @param {Number} duration - How long to highlight the buttons.
+ * @returns {Object} The animation timeline.
  */
 ButtonPanel.prototype.highlight = function (duration) {
 	var t = new TimelineMax();
@@ -187,7 +187,7 @@ ButtonPanel.prototype.highlight = function (duration) {
 
 /**
  * Disable/Enable all buttons.
- * @param {Boolean} True is disabled, false is enabled
+ * @param {Boolean} disable - True is disabled, false is enabled
  */
 ButtonPanel.prototype.disable = function (value) {
 	for (var i = 0; i < this.length; i++) {

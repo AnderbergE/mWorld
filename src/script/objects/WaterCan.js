@@ -12,7 +12,7 @@ WaterCan.prototype.constructor = WaterCan;
  * @param {number} x - X position (default is game.width - 150).
  * @param {number} y - Y position (default is 5).
  * @param {number} amount - amount of water in the can (default player amount).
- * @return {Object} Itself.
+ * @returns {Object} Itself.
  */
 function WaterCan (game, x, y, amount) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
@@ -52,7 +52,7 @@ WaterCan.prototype.destroy = function (destroyChildren, soft) {
 /**
  * Pour water from the can.
  * @param {number} duration - Duration to pour.
- * @return {Object} The animation TweenMax.
+ * @returns {Object} The animation TweenMax.
  */
 WaterCan.prototype.pour = function (duration) {
 	var emitter = this.game.add.emitter(this.can.width, 5, 200);

@@ -3,7 +3,7 @@ var EventSystem = require('./pubsub.js');
 
 /**
  * Handles the communication with the backend.
- * The communication needs a Route object set which will tell where
+ * The communication needs a Route object set, that object will tell where
  * to send the different get and post requests.
  * @global
  */
@@ -15,6 +15,10 @@ module.exports = {
 	 */
 	_maxTries: 10,
 
+	/**
+	 * @property {Object} _rnd - A random data generator (we have no access to game object here).
+	 * @private
+	 */
 	_rnd: new Phaser.RandomDataGenerator(),
 
 	/**
@@ -137,6 +141,8 @@ module.exports = {
 				data.subgame = this._rnd.pick(GLOBAL.STATE.randomGames);
 			}
 
+			// Representations are only one integer, but can include several representations.
+			// Every position holds its own representation, see global.js for more info.
 			var rep = [];
 			while (data.representation >= 10) {
 				rep.unshift(data.representation % 10);

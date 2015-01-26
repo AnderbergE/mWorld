@@ -39,7 +39,6 @@ function Subgame () {}
 
 /* 
  * Phaser state function.
- * Publishes subgameStarted event.
  */
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
@@ -212,7 +211,10 @@ Subgame.prototype.addWater = function (x, y) {
 		});
 };
 
-/** Start the game! */
+/**
+ * Start the game!
+ * Publishes subgameStarted event.
+ */
 Subgame.prototype.startGame = function () {
 	/* Send event that subgame is started. */
 	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [this.game.state.current, this._token]);

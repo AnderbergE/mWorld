@@ -6,17 +6,16 @@ Slider.prototype = Object.create(Phaser.Group.prototype);
 Slider.prototype.constructor = Slider;
 
 /**
-TODO: Update
  * A slider (that is an interactive handle on a line).
+ * NOTE: Uses GeneralButton.prototype.buttonColor for colors.
  * @param {Object} game - A reference to the Phaser game.
- * @param {Object} A list of options:
- *		x: the x position (default 0).
- *		y: the y position (default 0).
- *      width: the width (of the line) (default 300).
- *      height: the height (of the handle) (default 50).
- *      onChange: function to run when handle changes (default null).
- *      initial: initial value of the slider (default 0).
- * @return {Object} Itself.
+ * @param {number} x - the x position (default 0).
+ * @param {number} y - the y position (default 0).
+ * @param {number} width - the width (of the line) (default 300).
+ * @param {number} height - the height (of the handle) (default 50).
+ * @param {Function} onChange: function to run when handle changes (default null).
+ * @param {number} initial: initial value of the slider (default 0).
+ * @returns {Object} Itself.
  */
 function Slider (game, x, y, width, height, onChange, initial) {
 	Phaser.Group.call(this, game, null); // Parent constructor.

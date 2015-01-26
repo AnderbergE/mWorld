@@ -76,7 +76,7 @@ function GeneralButton (game, options) {
 
 /**
  * Set the size of this button.
- * @param {Number} The new size.
+ * @param {Number} size - The new size.
  */
 GeneralButton.prototype.setSize = function (size) {
 	this.size = size;
@@ -101,7 +101,7 @@ GeneralButton.prototype.setDown = function () {
 
 /**
  * Highlight the buttons.
- * @param {Number} How long to highlight
+ * @param {Number} duration - How long to highlight the button.
  * @returns {Object} The animation tweenmax.
  */
 GeneralButton.prototype.highlight = function (duration) {

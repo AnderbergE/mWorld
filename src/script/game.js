@@ -19,18 +19,26 @@ require('./utils.js'); // Setup prototype functions.
  * BootState will run after this.
  */
 window.onload = function () {
-	if (document.querySelector('#game')) {
-		// Do not start game if the element does not exist.
 
+	// Only start game if the element to put it in exist.
+	if (document.querySelector('#game')) {
+
+		// If running locally we enter debug mode.
 		if (window.location.hostname.toLowerCase() === 'localhost' || window.location.hostname === '127.0.0.1') {
 			GLOBAL.debug = true;
 		}
 
-
+		// Create game object.
 		var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
+
+		// Cache game object among GLOBALs, use this only if necessary.
+		// TODO: This is not a pretty solution, but it becomes very complicated in utils otherwise.
 		GLOBAL.game = game;
+
+		// Cache player object in the game object for easy access.
 		game.player = new Player(game);
 
+		// Setup game states.
 		game.state.add('Boot', BootState);
 		game.state.add(GLOBAL.STATE.entry,        EntryState);
 		game.state.add(GLOBAL.STATE.agentSetup,   AgentSetupState);
@@ -41,6 +49,7 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
 		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
 
+		// Run the boot state.
 		game.state.start('Boot');
 	}
 };

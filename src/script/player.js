@@ -28,7 +28,7 @@ function Player (game) {
 	this._water = 0;
 
 	/**
-	 * @property {number} tint - A tint for the agent.
+	 * @property {number} name - The name of the player.
 	 */
 	this.name = LANG.TEXT.anonymous;
 
@@ -74,6 +74,7 @@ Object.defineProperty(Player.prototype, 'water', {
 
 /**
  * @property {Object} agent - Pointer to the agent constructor.
+ *                            NOTE: Do not use this to create an agent, use createAgent.
  *                            NOTE: Updates the language object as well.
  */
 Object.defineProperty(Player.prototype, 'agent', {
@@ -90,7 +91,7 @@ Object.defineProperty(Player.prototype, 'agent', {
 
 /**
  * Creates an agent of the current type the player uses.
- * @return {Object} An instance of the agent belonging to the player.
+ * @returns {Object} An instance of the agent belonging to the player.
  */
 Player.prototype.createAgent = function () {
 	var agent = new this.agent(this.game);

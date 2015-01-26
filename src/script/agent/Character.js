@@ -8,6 +8,7 @@ Character.prototype.constructor = Character;
 
 /**
  * Superclass for characters.
+ * @param {Object} game - A reference to the Phaser game.
  */
 function Character (game) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
@@ -16,9 +17,9 @@ function Character (game) {
 /**
  * When you want a sound to be said by a character.
  * NOTE: If the character has a this.talk TweenMax or TimelineMax it will be used.
- * @param {string|Object} Key to a sound file or the sound object.
- * @param {string} If you want the speaker to only talk during a specific marker.
- * @return {Object} The sound object (not started).
+ * @param {string|Object} what - Key to a sound file or the sound object.
+ * @param {string} marker - If you want the speaker to only talk during a specific marker.
+ * @returns {Object} The sound object (not started).
  */
 Character.prototype.say = function (what, marker) {
 	var a = (typeof what === 'string') ? this.game.add.audio(what) : what;
@@ -68,10 +69,10 @@ Character.prototype.say = function (what, marker) {
  * Move a character.
  * NOTE: If this.turn property is true, it will turn according to direction.
  * NOTE: If the character has a this.walk TweenMax or TimelineMax it will be used.
- * @param {Object} Properties to tween, set x and/or y to move.
- * @param {number} Duration of the move.
- * @param {number} If a scaling should happen during the move.
- * @return {Object} The movement timeline.
+ * @param {Object} properties - Properties to tween, set x and/or y to move.
+ * @param {number} duration - Duration of the move.
+ * @param {number} scale - If a scaling should happen during the move.
+ * @returns {Object} The movement timeline.
  */
 Character.prototype.move = function (properties, duration, scale) {
 	properties.ease = properties.ease || Power1.easeInOut;
@@ -159,8 +160,8 @@ Character.prototype.move = function (properties, duration, scale) {
 /**
  * Turn around! Every now and then I get a little bit lonely...
  * @param {number} direction - -1 = left, 1 = right, default: opposite of current.
- *                      NOTE: This only takes into account the state when the function is called.
- *                      Making a "opposite turn" inside a Timeline might not have the expected result.
+ *                             NOTE: This only takes into account the state when the function is called.
+ *                             Making a "opposite turn" inside a Timeline might not have the expected result.
  * @returns {Object} The turning tween.
  */
 Character.prototype.moveTurn = function (direction) {
@@ -199,6 +200,9 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 	}
 };
 
+/**
+ * Mirror the thought bubble 180 degrees horizontally.
+ */
 Character.prototype.mirrorThought = function () {
 	this.thought.guess.x += (this.thought.guess.x > -60) ? -20 : 20;
 	this.thought.bubble.scale.x *= -1;
@@ -207,8 +211,7 @@ Character.prototype.mirrorThought = function () {
 /**
  * Animation: Think about the guessed number!
  * NOTE: The addThought must have been called before this function.
- * @param {boolean} If the agent should be silent while thinking (optional).
- * @return {Object} The animation timeline.
+ * @returns {Object} The animation timeline.
  */
 Character.prototype.think = function () {
 	if (typeof this.thought === 'undefined' || this.thought === null) {

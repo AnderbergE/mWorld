@@ -152,10 +152,10 @@ Agent.prototype.percentWrong = 0.3;
  *     this.playerGuesses [[guess, correct], ...].
  *     this.playerCorrect Number of correct guesses by the player.
  *     this.playerWrong   Number of incorrect guesses by the player.
- * @param {number} The correct number.
- * @param {number} Minimum value to guess.
- * @param {number} Maximum value to guess.
- * @return {number} The guess.
+ * @param {number} correct - The correct number.
+ * @param {number} min - Minimum value to guess.
+ * @param {number} max - Maximum value to guess.
+ * @returns {number} The agent's guess.
  */
 Agent.prototype.guessing = function (correct, min, max) {
 	var perc = 1;
@@ -180,10 +180,10 @@ Agent.prototype.guessing = function (correct, min, max) {
 /**
  * Have the agent guess a number
  * Publishes agentGuess event.
- * @param {number} The correct number.
- * @param {number} Minimum value to guess.
- * @param {number} Maximum value to guess.
- * @return {number} The guess (also available in this.lastGuess).
+ * @param {number} correct - The correct number.
+ * @param {number} min - Minimum value to guess.
+ * @param {number} max - Maximum value to guess.
+ * @returns {number} The agent's guess (also available in this.lastGuess).
  */
 Agent.prototype.guessNumber = function (correct, min, max) {
 	this.lastGuess = this.guessing(correct, min, max);
@@ -215,8 +215,8 @@ Agent.prototype.setSad = function () {
 
 /**
  * Add a thought bubble to the agent. Must be called to use the "think" function.
- * @param {number} The representation of the guess.
- * @param {boolean} If the thought bubble should be to the right instead of left (default false).
+ * @param {number} representation - The representation of the guess.
+ * @param {boolean} right - If the thought bubble should be to the right instead of left (default false).
  */
 Agent.prototype.addThought = function (representation, right) {
 	Character.prototype.addThought.call(this, right ? 550 : -550, -475, representation, right);
@@ -226,8 +226,8 @@ Agent.prototype.addThought = function (representation, right) {
 /**
  * Animation: Think about the guessed number!
  * NOTE: The addThought must have been called before this function.
- * @param {boolean} If the agent should be silent while thinking (optional).
- * @return {Object} The animation timeline.
+ * @param {boolean} sielnt - If the agent should be silent while thinking (optional).
+ * @returns {Object} The animation timeline.
  */
 Agent.prototype.think = function (silent) {
 	if (typeof this.thought === 'undefined' || this.thought === null) {
@@ -247,9 +247,9 @@ Agent.prototype.think = function (silent) {
 
 /**
  * Animation: Pump it up yeah!
- * @param {number} Duration in seconds (default 3).
- * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0).
- * @return {Object} The animation timeline.
+ * @param {number} duration - Duration in seconds (default 3).
+ * @param {number} arm - -1 = left arm, 0 = both, 1 = right arm (default 0).
+ * @returns {Object} The animation timeline.
  */
 Agent.prototype.fistPump = function (duration, arm) {
 	duration = duration || 3;
@@ -277,9 +277,9 @@ Agent.prototype.fistPump = function (duration, arm) {
 
 /**
  * Animation: Put you hand up in the air and wave it around like you care.
- * @param {number} Duration in seconds (default 3).
- * @param {number} -1 = left arm, 0 = both, 1 = right arm (default 0).
- * @return {Object} The animation timeline.
+ * @param {number} duration - Duration in seconds (default 3).
+ * @param {number} arm - -1 = left arm, 0 = both, 1 = right arm (default 0).
+ * @returns {Object} The animation timeline.
  */
 Agent.prototype.wave = function (duration, arm) {
 	duration = duration || 3;
@@ -308,9 +308,9 @@ Agent.prototype.wave = function (duration, arm) {
 
 /**
  * Animation: Water with a water can.
- * @param {number} Duration in seconds (default 3).
- * @param {number} 1 < left arm, otherwise right arm (default 0).
- * @return {Object} The animation timeline.
+ * @param {number} duration - Duration in seconds (default 3).
+ * @param {number} arm - 1 < left arm, otherwise right arm (default 0).
+ * @returns {Object} The animation timeline.
  */
 Agent.prototype.water = function (duration, arm) {
 	duration = duration || 3;
@@ -373,7 +373,7 @@ Agent.prototype._eyeFollow = function (eye, targ) {
 
 /**
  * Make the agent's eyes follow an object.
- * @param {Object} The target to follow
+ * @param {Object} targ - The target to follow
  */
 Agent.prototype.eyesFollowObject = function (targ) {
 	this.eyesStopFollow();
