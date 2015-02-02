@@ -5,24 +5,17 @@
 */
 {
 	// Accepted globals
-	"globals"       : {
-		"require": false,
-		"module": false,
-		"exports": false,
+	"predef" : [
+		"Routes",
+		"Phaser",
 
-		"Phaser": false,
+		"TweenMax",
+		"TimelineMax",
+		// Tween easing functions:
+		"Back", "Bounce", "Elastic", "Power0", "Power1", "Power2", "Power3", "Power4", "SlowMo", "SteppedEase",
 
-		"TweenMax": false,
-		"TimelineMax": false,
-		"Back": false, "Bounce": false, "Elastic": false, "Power0": false, "Power1": false, "Power2": false, "Power3": false, "Power4": false, "SlowMo": false, "SteppedEase": false,
-
-		"subscribe": false,
-		"unsubscribe": false,
-		"publish": false,
-
-		"$": false, // jQuery
-		"Routes": false
-	},
+		"$" // jQuery
+	],
 
 	// Enforcing options
 	// true means more warnings
@@ -84,6 +77,7 @@
 
 	// Environments
 	"browser"       : true,
+	"browserify"    : true,
 	"couch"         : false,
 	"devel"         : true,
 	"dojo"          : false,
