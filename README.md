@@ -1,5 +1,5 @@
 # Magical Garden
-Magical Garden is a game for understanding numbers, aka number sense.
+Magical Garden is a game for understanding numbers, aka number sense.<br>
 The game is built with the game engine [Phaser](http://phaser.io/).
 Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 
@@ -7,7 +7,7 @@ Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 * Clone/Fork this repository to your computer.
 * Open the repository in a terminal.
 * Run: 'npm install'. (This requires node, which you can get here: [Node](http://nodejs.org/))
-* If you do not have [Gulp](http://gulpjs.com/)) installed globally on your computer, run 'npm install --global gulp'
+* If you do not have [Gulp](http://gulpjs.com/) installed globally on your computer, run 'npm install --global gulp'
 * Run: 'gulp'
 * Play the game at http://localhost:9000/index.html
 
@@ -64,8 +64,8 @@ SpriteButton.js -  A button with a sprite on it. Extends GeneralButton.
 ```
 
 
-Creating a new subgame?
-Start by reading the documentation in: src/js/states/subgames/Subgame.js and src/js/states/subgames/NumberGame.js.
-Be inspired by BeeFlightGame.js.
-You need to add your subgame/state in game.js.
+Creating a new subgame?<br>
+Start by reading the documentation in: src/js/states/subgames/Subgame.js and src/js/states/subgames/NumberGame.js.<br>
+Be inspired by BeeFlightGame.js.<br>
+You need to add your subgame/state in game.js.<br>
 (If you want easy access to the subgame, modify ChooseScenarioState.js).
