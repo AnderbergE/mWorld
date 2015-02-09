@@ -69,3 +69,8 @@ Start by reading the documentation in: src/js/states/subgames/Subgame.js and src
 Be inspired by BeeFlightGame.js.<br>
 You need to add your subgame/state in game.js.<br>
 (If you want easy access to the subgame, modify ChooseScenarioState.js).
+
+
+## License
+Source code is Copyright (c) 2014-2015 Lund University Cognitive Science department. See the LICENSE file for license rights and limitations (MIT).<br>
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />Images and audio is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
