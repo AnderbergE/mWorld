@@ -64,12 +64,16 @@ exports.fade = function (what, typ, duration, to) {
  */
 exports.tweenTint = function (what, toColor, duration) {
 	duration = duration || 1;
+	var color = Phaser.Color.getRGB(what.tint);
+	var endColor =  Phaser.Color.getRGB(toColor);
 
-	return TweenMax.to(what, duration, {
-		onUpdate: function (start, end) {
-			what.tint = Phaser.Color.interpolateColor(start, end, 255, Math.floor(255*this.progress()));
-		},
-		onUpdateParams: [what.tint, toColor]
+	return TweenMax.to(color, duration, {
+		r: endColor.r,
+		g: endColor.g,
+		b: endColor.b,
+		onUpdate: function () {
+			what.tint = Phaser.Color.getColor(color.r, color.g, color.b);
+		}
 	});
 };
 
