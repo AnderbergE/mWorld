@@ -240,8 +240,6 @@ BeeFlightGame.prototype.newFlower = function (silent) {
 	var t = new TimelineMax();
 	t.addCallback(function () {
 		this.flowers[this.currentNumber - 1].frameName = 'flower' + this.currentNumber;
-		// TODO: This tint is due to a bug in Pixi, remove when bug is fixed.
-		this.flowers[this.currentNumber - 1].tint--;
 	}, null, null, this);
 
 	this.doStartFunction(t, silent);
@@ -318,8 +316,6 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		t.addCallback(function () {
 			this.hideButtons();
 			this.flowers[current].frameName = 'flower';
-			// TODO: This tint is due to a bug in Pixi, remove when bug is fixed.
-			this.flowers[current].tint++;
 			this.agent.setHappy();
 		}, null, null, this);
 		t.addSound(this.speech, this.bee, this.rnd.pick(['nectar', 'slurp']));

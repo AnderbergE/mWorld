@@ -111,24 +111,12 @@ NumberButton.prototype.updateGraphics = function () {
 	}
 
 	if (typeof this.background === 'undefined' && this.representations[0] !== GLOBAL.NUMBER_REPRESENTATION.yesno) {
-		// TODO: This color handling is due to a bug in Pixi, remove when bug is fixed.
-		if (typeof this.originColor === 'undefined' || this.originColor === null) {
-			this.originColor = this.color;
-			this.originPressed = this.colorPressed;
-			this.colorAdd = Phaser.Color.getBlue(this.color) > 3 ? -1 : 1;
-		}
 		if (this._number > 0) {
 			this.bg.frameName = 'button_plus';
-			this.color = this.originColor + 1*this.colorAdd;
-			this.colorPressed = this.originPressed + 1;
 		} else if (this._number < 0) {
 			this.bg.frameName = 'button_minus';
-			this.color = this.originColor + 2*this.colorAdd;
-			this.colorPressed = this.originPressed + 2;
 		} else {
 			this.bg.frameName = 'button_zero';
-			this.color = this.originColor + 3*this.colorAdd;
-			this.colorPressed = this.originPressed + 3;
 		}
 		this.setSize();
 		this.reset();

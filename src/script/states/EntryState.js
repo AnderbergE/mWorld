@@ -113,7 +113,7 @@ EntryState.prototype.create = function () {
 			LANG.TEXT.lizardName + '\t-\t' + LANG.TEXT.creditsVoiceLizard + '\n' +
 			LANG.TEXT.bumblebeeName + '\t-\t' + LANG.TEXT.creditsVoiceBumblebee + '\n' +
 			LANG.TEXT.birdName + '\t-\t' + LANG.TEXT.creditsVoiceBird + '\n\n' +
-		LANG.TEXT.creditsMusic + ':\nTorbjörn Gulz\n\n' + //TODO
+		LANG.TEXT.creditsMusic + ':\nTorbjörn Gulz\n\n' +
 		LANG.TEXT.creditsSfx + ':\nAnton Axelsson\nhttp://soundbible.com\nhttp://freesfx.co.uk\n\n' +
 		LANG.TEXT.creditsThanks + ':\nSanne Bengtsson\t \tMaja Håkansson\nLisa Lindberg\t \tBjörn Norrliden\nBrunnsparksskolan', {
 		font: '15pt ' +  GLOBAL.FONT,

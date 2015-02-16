@@ -63,11 +63,6 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 		this._number = value;
 		this.rightWing.frameName = 'wing' + (value > 5 ? 5 : value);
 		if (value > 5) { this.leftWing.frameName = 'wing' + (value - 5); }
-
-		/* For some reason the tint need to be changed to update the frame. */
-		// TODO: Update this when issue is solved in Phaser.
-		this.rightWing.tint = this.wing.tint - value;
-		this.leftWing.tint = this.wing.tint - value;
 	}
 });
 
