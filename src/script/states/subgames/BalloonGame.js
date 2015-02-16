@@ -34,7 +34,7 @@ BalloonGame.prototype.pos = {
 	},
 	balloons: { x: 150, y: 580 },
 	bucket: { x: 780, y: 610 },
-	cave: { left: 670, right: 860, y: 555, height: 420 },
+	cave: { left: 670, right: 860, y: 555, height: 420, bucketOffset: -15 },
 	sack: { x: 550, y: 650 },
 	map: { x: 650, y: 610 },
 	liftoff: { x: 900, y: 670 }
@@ -551,8 +551,8 @@ BalloonGame.prototype.runNumber = function (amount) {
 		t.add(new TweenMax(this.beetle, 2, { x: 0, y: 0, ease: Power1.easeIn }));
 	}
 
-	if (this.actionGroup.y !== this.caves[sum - 1].y) {
-		t.add(new TweenMax(this.actionGroup, 2, { y: this.caves[sum - 1].y, ease: Power1.easeInOut }));
+	if (this.actionGroup.y !== this.caves[sum - 1].y + this.pos.cave.bucketOffset) {
+		t.add(new TweenMax(this.actionGroup, 2, { y: this.caves[sum - 1].y + this.pos.cave.bucketOffset, ease: Power1.easeInOut }));
 	}
 
 	/* Correct :) */
