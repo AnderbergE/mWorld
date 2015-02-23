@@ -15,6 +15,9 @@ var jshint = require('gulp-jshint');
 var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 
+// Asset requires
+var imagemin = require('gulp-imagemin');
+
 
 // Constants
 var SRC = 'src/';
@@ -40,6 +43,7 @@ gulp.task('assets', function() {
 			IMAGE + ALL + '.*',
 			SRC + '*.js'
 		], { base: SRC })
+		.pipe(imagemin({ optimizationLevel: 2 })) // Minimize image sizes
 		.pipe(gulp.dest(DEST));
 });
 

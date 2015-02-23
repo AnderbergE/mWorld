@@ -11,7 +11,7 @@ Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 * Run: 'gulp'
 * Play the game at http://localhost:9000/index.html
 
-Gulp generates the build catalogue in your repository and also starts a local server.
+Gulp generates the build catalogue in your repository and also starts a local server. It might take some time to run the first time, because it compresses all possible assets.
 As long as gulp is running the server will be active. If you make changes in the repository, the build will be updated; just hit update in your browser. Some coding standards are enforced using jshint, keep an eye on the terminal when making changes.
 
 ## Documentation
