@@ -39,7 +39,7 @@ GardenState.prototype.preload = function() {
 /* Phaser state function */
 GardenState.prototype.create = function () {
 	// Add music
-	this.add.audio('gardenMusic', 0.2, true).play();
+	this.add.music('gardenMusic', 0.2, true).play();
 
 	// Add background
 	this.add.sprite(0, 0, 'garden', 'bg');

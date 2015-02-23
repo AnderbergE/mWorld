@@ -70,9 +70,11 @@ function Slider (game, x, y, width, height, onChange, initial) {
 		};
 	}, this);
 
+	var click = game.add.audio('click');
 	trigger.events.onInputUp.add(function () {
 		this.handle.update = function () {};
 		this.handle.tint += 0x1e1e1e;
+		click.play();
 	}, this);
 }
 

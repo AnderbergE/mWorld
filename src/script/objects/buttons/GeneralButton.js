@@ -49,13 +49,14 @@ function GeneralButton (game, options) {
 	this.bg = this.create(0, 0, (background === null ? null : 'objects'), background);
 	this.bg.inputEnabled = true;
 
+	var click = game.add.audio('click');
 	this.bg.events.onInputDown.add(function () {
 		if (this.disabled || this.bg.tint === this.colorPressed) {
 			return;
 		}
 
 		this.bg.tint = this.colorPressed;
-		game.add.audio('click').play();
+		click.play();
 
 		if (this.onClick) {
 			this.onClick();

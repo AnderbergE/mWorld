@@ -97,7 +97,7 @@ function Menu (game) {
 
 	var resume = new TextButton(game, LANG.TEXT.resume, {
 		x: centerX,
-		y: centerY*0.8,
+		y: centerY*0.7,
 		fontSize: 30,
 		onClick: function () {
 			showMenu(false);
@@ -107,45 +107,82 @@ function Menu (game) {
 	menuGroup.add(resume);
 
 	/* Add volume control. */
-	var volumeSlider = new Slider(game,
+	var fgVolumeSlider = new Slider(game,
 		centerX - bmd.width*0.2,
-		centerY/0.85,
+		centerY*1.05,
 		bmd.width*0.5,
 		40,
 		function (value) {
-			game.sound.volume = value;
-			localStorage.mainVolume = value;
+			game.sound.fgVolume = value;
+			localStorage.fgVolume = value;
 
 			if (value > 0) {
-				muteButton.sprite.frameName = 'volume';
-				muteButton.muteValue = value;
+				fgMuteButton.sprite.frameName = 'speech';
+				fgMuteButton.muteValue = value;
 			} else {
-				muteButton.sprite.frameName = 'volume_mute';
+				fgMuteButton.sprite.frameName = 'speech_mute';
 			}
 		},
-		game.sound.volume
+		game.sound.fgVolume
 	);
-	menuGroup.add(volumeSlider);
+	menuGroup.add(fgVolumeSlider);
 
-	var muteButton = new SpriteButton(game, 'objects', game.sound.volume > 0 ? 'volume' : 'volume_mute', {
+	var fgMuteButton = new SpriteButton(game, 'objects', game.sound.fgVolume > 0 ? 'speech' : 'speech_mute', {
 		x: centerX - bmd.width*0.35,
-		y: volumeSlider.y - volumeSlider.height*0.75,
-		size: volumeSlider.height*1.5,
+		y: fgVolumeSlider.y - fgVolumeSlider.height*0.75,
+		size: fgVolumeSlider.height*1.5,
 		onClick: function () {
-			if (this.sprite.frameName === 'volume_mute') {
-				volumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
+			if (this.sprite.frameName === 'speech_mute') {
+				fgVolumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
 			} else {
-				volumeSlider.value = 0;
+				fgVolumeSlider.value = 0;
 			}
 		}
 	});
-	muteButton.sprite.scale.set(0.6);
-	muteButton.muteValue = volumeSlider.value;
-	menuGroup.add(muteButton);
+	fgMuteButton.sprite.scale.set(0.6);
+	fgMuteButton.muteValue = fgVolumeSlider.value;
+	menuGroup.add(fgMuteButton);
+
+	var bgVolumeSlider = new Slider(game,
+		centerX - bmd.width*0.2,
+		centerY*1.25,
+		bmd.width*0.5,
+		40,
+		function (value) {
+			game.sound.bgVolume = value;
+			localStorage.bgVolume = value;
+
+			if (value > 0) {
+				bgMuteButton.sprite.frameName = 'volume';
+				bgMuteButton.muteValue = value;
+			} else {
+				bgMuteButton.sprite.frameName = 'volume_mute';
+			}
+		},
+		game.sound.bgVolume
+	);
+	menuGroup.add(bgVolumeSlider);
+
+	var bgMuteButton = new SpriteButton(game, 'objects', game.sound.bgVolume > 0 ? 'volume' : 'volume_mute', {
+		x: centerX - bmd.width*0.35,
+		y: bgVolumeSlider.y - bgVolumeSlider.height*0.75,
+		size: bgVolumeSlider.height*1.5,
+		onClick: function () {
+			if (this.sprite.frameName === 'volume_mute') {
+				bgVolumeSlider.value = this.muteValue > 0.1 ? this.muteValue : 1;
+			} else {
+				bgVolumeSlider.value = 0;
+			}
+		}
+	});
+	bgMuteButton.sprite.scale.set(0.6);
+	bgMuteButton.muteValue = bgVolumeSlider.value;
+	menuGroup.add(bgMuteButton);
+
 
 	var currentState = game.state.states[game.state.current];
 	if (currentState.menuBack) {
-		var garden = game.add.text(centerX, centerY/0.7, currentState.menuBack.text, {
+		var garden = game.add.text(centerX, centerY*1.5, currentState.menuBack.text, {
 			font: '30pt ' +  GLOBAL.FONT,
 			fill: '#000000'
 		}, menuGroup);
@@ -156,7 +193,7 @@ function Menu (game) {
 		}, this);
 	}
 
-	var quit = game.add.text(centerX, centerY/0.6, LANG.TEXT.quit, {
+	var quit = game.add.text(centerX, centerY*1.7, LANG.TEXT.quit, {
 		font: '30pt ' +  GLOBAL.FONT,
 		fill: '#000000'
 	}, menuGroup);

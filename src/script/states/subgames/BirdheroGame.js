@@ -204,7 +204,7 @@ BirdheroGame.prototype.create = function () {
 	EventSystem.subscribe(GLOBAL.EVENT.modeChange, playMusic);
 	function playMusic (mode) {
 		if (mode !== GLOBAL.MODE.intro) {
-			_this.add.audio('birdheroMusic', 0.7, true).play();
+			_this.add.music('birdheroMusic', 0.7, true).play();
 			TweenMax.fromTo(cloud1, 350, { x: -cloud1.width }, { x: _this.world.width, repeat: -1 });
 			TweenMax.fromTo(cloud2, 280, { x: -cloud2.width }, { x: _this.world.width, repeat: -1 });
 			EventSystem.unsubscribe(GLOBAL.EVENT.modeChange, playMusic);

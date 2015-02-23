@@ -72,10 +72,45 @@ BootState.prototype.preload = function () {
 	this.scale.pageAlignHorizontally = true;
 	this.scale.pageAlignVertically = true;
 
-	/* If volume has been changed, use the stored one. */
-	if (typeof localStorage.mainVolume !== 'undefined') {
-		this.sound.volume = localStorage.mainVolume;
+	/* Setup sound manager */
+	// Array to hold music objects, needed to change bg-volume
+	this.sound._music = [];
+
+	/* Use stored volumes, if any. */
+	this.sound._fgVolume = 1;
+	if (typeof localStorage.fgVolume !== 'undefined') {
+		this.sound.fgVolume = localStorage.fgVolume;
 	}
+	this.sound._bgVolume = 1;
+	if (typeof localStorage.bgVolume !== 'undefined') {
+		this.sound.bgVolume = localStorage.bgVolume;
+	}
+
+	// Overshadow the original sound managers add function.
+	// To save maxVolume for the sound and setup actual volume according to fg.
+	this.sound.add = function (key, volume, loop, connect) {
+		var sound = Phaser.SoundManager.prototype.add.call(this, key, volume, loop, connect);
+		sound.maxVolume = sound.volume;
+		sound.volume = sound.maxVolume * this.fgVolume;
+		return sound;
+	};
+	// Overshadow the original sound managers remove function.
+	// To make sure that object is removed from music array.
+	this.sound.remove = function (sound) {
+		var success = Phaser.SoundManager.prototype.remove.call(this, sound);
+		if (this._music.indexOf(sound) >= 0) {
+			this._music.splice(this._music.indexOf(sound), 1);
+		}
+		return success;
+	};
+	// Overshadow the original sound objects play function.
+	// To set volume according to fg/bg.
+	var soundFunction = Phaser.Sound.prototype.play;
+	Phaser.Sound.prototype.play = function (marker, position, volume, loop, forceRestart) {
+		var container = this.game.sound[this.game.sound._music.indexOf(this) >= 0 ? 'bgVolume' : 'fgVolume'];
+		volume = (typeof volume !== 'number' ? this.maxVolume : volume) * container;
+		return soundFunction.call(this, marker, position, volume, loop, forceRestart);
+	};
 
 	/* Allow images to be served from external sites, e.g. amazon */
 	this.load.crossOrigin = 'anonymous';

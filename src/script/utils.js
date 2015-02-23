@@ -92,6 +92,59 @@ exports.createAudioSheet = function (key, markers) {
 };
 
 /**
+* Creates a new Sound object as background music
+*
+* @method Phaser.GameObjectFactory#music
+* @param {string} key - The Game.cache key of the sound that this object will use.
+* @param {number} [volume=1] - The volume at which the sound will be played.
+* @param {boolean} [loop=false] - Whether or not the sound will loop.
+* @param {boolean} [connect=true] - Controls if the created Sound object will connect to the master gainNode of the SoundManager when running under WebAudio.
+* @return {Phaser.Sound} The newly created text object.
+*/
+Phaser.GameObjectFactory.prototype.music = function (key, volume, loop, connect) {
+	var music = this.game.sound.add(key, volume, loop, connect);
+	music.volume = music.maxVolume * this.game.sound.bgVolume;
+	this.game.sound._music.push(music);
+	return music;
+};
+
+/**
+* @name Phaser.SoundManager#fgVolume
+* @property {number} fgVolume - Gets or sets the foreground volume of the SoundManager, a value between 0 and 1.
+*/
+Object.defineProperty(Phaser.SoundManager.prototype, 'fgVolume', {
+	get: function () {
+		return this._fgVolume;
+	},
+	set: function (value) {
+		this._fgVolume = value;
+		for (var i = 0; i < this._sounds.length; i++) {
+			if (this._music.indexOf(this._sounds[i]) < 0) {
+				this._sounds[i].volume = this._sounds[i].maxVolume * value;
+			}
+		}
+	}
+});
+
+/**
+* @name Phaser.SoundManager#bgVolume
+* @property {number} bgVolume - Gets or sets the background volume of the SoundManager, a value between 0 and 1.
+*/
+Object.defineProperty(Phaser.SoundManager.prototype, 'bgVolume', {
+	get: function () {
+		return this._bgVolume;
+	},
+	set: function (value) {
+		this._bgVolume = value;
+		for (var i = 0; i < this._sounds.length; i++) {
+			if (this._music.indexOf(this._sounds[i]) >= 0) {
+				this._sounds[i].volume = this._sounds[i].maxVolume * value;
+			}
+		}
+	}
+});
+
+/**
  * Randomize array element order in-place.
  * Using Fisher-Yates shuffle algorithm.
  * @param {Array} The array to shuffle. (Use .splice(0) if you need to copy an array.)

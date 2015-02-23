@@ -65,7 +65,7 @@ LizardJungleGame.prototype.create = function () {
 	this.agent.thought.guess.setDirection(true);
 
 	// Add music and speech
-	this.add.audio('lizardMusic', 1, true).play();
+	this.add.music('lizardMusic', 1, true).play();
 	this.speech = util.createAudioSheet('lizardSpeech', LANG.SPEECH.lizard.markers);
 
 	// Add main game
