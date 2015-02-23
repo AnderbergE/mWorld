@@ -36,6 +36,7 @@ var getBundleName = function () {
 gulp.task('assets', function() {
 	return gulp.src([
 			AUDIO + ALL + '.*',
+			'!' + IMAGE + '**/separated/*.*', // Skip the separated files
 			IMAGE + ALL + '.*',
 			SRC + '*.js'
 		], { base: SRC })
