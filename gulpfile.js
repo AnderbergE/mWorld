@@ -83,6 +83,11 @@ gulp.task('scripts', ['lint', 'browserify']);
 gulp.task('styles', function() {
 	return gulp.src(STYLE + 'style.less')
 		.pipe(less({ compress: true }))
+		.on('error', function (err) {
+			util.beep();
+			util.log(util.colors.red('Styles: '), err.message);
+			this.emit('end');
+		})
 		.pipe(autoprefixer('last 2 version'))
 		.pipe(gulp.dest(DEST));
 });
