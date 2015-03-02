@@ -119,4 +119,6 @@ gulp.task('connect', function() {
 	});
 });
 
-gulp.task('default', ['assets', 'html', 'scripts', 'styles', 'watch', 'connect']);
+gulp.task('default', ['assets', 'html', 'scripts', 'styles', 'watch', 'connect'], function () {
+	util.log(util.colors.green('All tasks have started!'));
+});
