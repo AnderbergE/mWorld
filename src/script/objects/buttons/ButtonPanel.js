@@ -41,6 +41,9 @@ function ButtonPanel (game, amount, representations, options) {
 
 	this.color = options.color;
 	this.background = options.background;
+	if (!this.background && (this.method === GLOBAL.METHOD.count || this.method === GLOBAL.METHOD.incrementalSteps)) {
+		this.background = 'button';
+	}
 	this.maxButtonSize = options.maxButtonSize || 75;
 	this.onClick = options.onClick;
 
@@ -78,17 +81,34 @@ ButtonPanel.prototype._createButtons = function () {
 	/* Set up the buttons that should be in the panel. */
 	if (this.method === GLOBAL.METHOD.incrementalSteps) {
 		buttonOptions.doNotAdapt = true;
+		// Create buttons first, then add them in their order (this is because we manipulate the buttonOptions later)
 		var change = new NumberButton(this.game, 1, this.representations, buttonOptions);
-		buttonOptions.keepDown = false;
+
+		// Put the other buttons centered.
 		buttonOptions[this.vertical ? 'x' : 'y'] = ((this.representations.length - 1) * buttonSize)/2;
-		buttonOptions.onClick = function () { change.number--; };
-		this.add(new TextButton(this.game, '-', buttonOptions));
-		this.add(change);
-		buttonOptions.onClick = function () { change.number++; };
-		this.add(new TextButton(this.game, '+', buttonOptions));
-		buttonOptions.keepDown = true;
 		buttonOptions.onClick = function () { change.bg.events.onInputDown.dispatch(); };
-		this.add(new NumberButton(this.game, 1, GLOBAL.NUMBER_REPRESENTATION.yesno, buttonOptions));
+		var go = new NumberButton(this.game, 1, GLOBAL.NUMBER_REPRESENTATION.yesno, buttonOptions);
+
+		buttonOptions.keepDown = false;
+		buttonOptions.background = 'button_minus';
+		buttonOptions.onClick = function () { change.number--; };
+		var minus = new TextButton(this.game, '-', buttonOptions);
+
+		buttonOptions.background = 'button_plus';
+		buttonOptions.onClick = function () { change.number++; };
+		var plus = new TextButton(this.game, '+', buttonOptions);
+
+		if (this.vertical) {
+			minus.bg.rotation = -Math.PI/2;
+			minus.bg.y += minus.bg.width;
+			plus.bg.rotation = -Math.PI/2;
+			plus.bg.y += plus.bg.width;
+		}
+
+		this.add(minus);
+		this.add(change);
+		this.add(plus);
+		this.add(go);
 
 	} else {
 		for (var i = this.min; i <= this.max; i++) {
