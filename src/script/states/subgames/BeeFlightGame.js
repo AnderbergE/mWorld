@@ -107,17 +107,17 @@ BeeFlightGame.prototype.create = function () {
 	// Add Timeline/Tween functions
 	var _this = this;
 	this.bee.moveTo = {
-		home: function () {
+		home: function (duration) {
 			var t = new TimelineMax();
 			t.addCallback(_this.bee.flap, null, [true], _this.bee);
-			t.add(_this.bee.move(_this.pos.home, 5, _this.pos.bee.homeScale));
+			t.add(_this.bee.move(_this.pos.home, duration || 5, _this.pos.bee.homeScale));
 			t.addCallback(_this.bee.flap, null, [false], _this.bee);
 			return t;
 		},
 		start: function () {
 			var t = new TimelineMax();
 			t.addCallback(_this.bee.flap, null, [true], _this.bee);
-			t.add(_this.bee.move(_this.pos.bee, 3, _this.pos.bee.airScale));
+			t.add(_this.bee.move(_this.pos.bee, 2, _this.pos.bee.airScale));
 			return t;
 		},
 		flower: function (target, direct) {
@@ -320,8 +320,14 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		}, null, null, this);
 		t.addSound(this.speech, this.bee, this.rnd.pick(['nectar', 'slurp']));
 		t.addLabel('goingHome', '+=0.5');
-		t.addSound(this.speech, this.bee, 'goingBack', 'goingHome');
-		t.add(this.bee.moveTo.home(), 'goingHome');
+
+		if (this._counter.value === 1 && this._mode === this.modePlayerDo) {
+			// Only say "going back" first time.
+			t.addSound(this.speech, this.bee, 'goingBack', 'goingHome');
+			t.add(this.bee.moveTo.home(), 'goingHome');
+		} else {
+			t.add(this.bee.moveTo.home(2), 'goingHome');
+		}
 		t.add(this.bee.moveTo.start());
 		this.atValue = 0;
 
