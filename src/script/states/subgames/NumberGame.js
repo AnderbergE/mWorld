@@ -158,11 +158,8 @@ NumberGame.prototype._setupFunctions = function () {
 };
 
 /** Change this.currentNumber to a new one (resets the tries). */
+// TODO: Should we allow the same number again?
 NumberGame.prototype._nextNumber = function () {
-	// Should we allow the same number again?
-	this._totalTries += this._currentTries;
-	this._currentTries = 0;
-
 	// Weighted randomisation if applicable
 	if (this._weighted && this.rnd.frac() < 0.2) {
 		this.currentNumber = this.rnd.integerInRange(5, this._numberMax);
@@ -197,13 +194,16 @@ NumberGame.prototype._getRange = function () {
  */
 NumberGame.prototype.tryNumber = function (number, offset) {
 	var sum = number + (offset || 0);
+	this.lastTry = sum - this.currentNumber;
 	EventSystem.publish(GLOBAL.EVENT.tryNumber, [sum, this.currentNumber, number, offset]);
 	this._currentTries++;
-	this.lastTry = sum - this.currentNumber;
+	this._totalTries++;
 
 	if (!this.lastTry) {
 		this._counter.value++; // This will trigger next mode if we loop.
 		this._nextNumber();
+		this._totalCorrect++;
+		this._currentTries = 0;
 	}
 	return this.lastTry;
 };

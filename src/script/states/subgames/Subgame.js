@@ -63,6 +63,7 @@ Subgame.prototype.init = function (options) {
 	};
 	this._currentTries = 0;
 	this._totalTries = 0;
+	this._totalCorrect = 0;
 
 	/* Public variables */
 	this.currentMode = null; // The current mode running

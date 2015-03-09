@@ -321,7 +321,7 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 		t.addSound(this.speech, this.bee, this.rnd.pick(['nectar', 'slurp']));
 		t.addLabel('goingHome', '+=0.5');
 
-		if (this._counter.value === 1 && this._mode === this.modePlayerDo) {
+		if (this._totalCorrect === 1) {
 			// Only say "going back" first time.
 			t.addSound(this.speech, this.bee, 'goingBack', 'goingHome');
 			t.add(this.bee.moveTo.home(), 'goingHome');
