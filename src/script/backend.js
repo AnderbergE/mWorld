@@ -22,6 +22,12 @@ module.exports = {
 	_rnd: new Phaser.RandomDataGenerator(),
 
 	/**
+	 * @property {Object} _previous - The previous scenario.
+	 * @private
+	 */
+	_previous: -1,
+
+	/**
 	 * Basic ajax call.
 	 * Publishes connection event if ajax call fail.
 	 * @param {Object} settings - An object with settings to jQuery ajax call
@@ -136,10 +142,13 @@ module.exports = {
 		var data = this.get('current_api_scenarios_path');
 
 		if (data) {
-			// Check if we should pick a random game
+			// Setup subgame. First check if we should pick a random game.
 			if (data.subgame === GLOBAL.STATE.random) {
-				data.subgame = this._rnd.pick(GLOBAL.STATE.randomGames);
+				do {
+					data.subgame = this._rnd.pick(GLOBAL.STATE.randomGames);
+				} while (data.subgame === this._previous);
 			}
+			this._previous = data.subgame;
 
 			// Representations are only one integer, but can include several representations.
 			// Every position holds its own representation, see global.js for more info.
