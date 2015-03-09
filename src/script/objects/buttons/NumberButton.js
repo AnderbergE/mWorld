@@ -194,15 +194,23 @@ NumberButton.prototype.updateGraphics = function () {
  * @returns {Object} Offsets on the form { o: offset, x: x, y: y }.
  */
 NumberButton.prototype.calcOffset = function (offset) {
-	var t = {};
-	t.o = this.size/offset;
-	if (this.direction) { /* Up/Down */
+	var t = {
+		x: 0,
+		y: 0,
+		o: this.size/offset
+	};
+
+	if (this.background) { // Probably square looking button.
+		t.x = t.o*2;
+		t.y = t.o*2;
+	} else if (this.direction) { /* Up/Down */
 		t.x = t.o*1.8;
 		t.y = t.o*(this._number >= 0 ? 3.3 : 1);
 	} else { /* Left/Right */
 		t.x = t.o*(this._number >= 0 ? 1 : 3.3);
 		t.y = t.o*2;
 	}
+
 	t.o *= 4;
 	return t;
 };

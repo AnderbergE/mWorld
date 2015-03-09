@@ -101,8 +101,13 @@ ButtonPanel.prototype._createButtons = function () {
 		if (this.vertical) {
 			minus.bg.rotation = -Math.PI/2;
 			minus.bg.y += minus.bg.width;
+			minus._text.y -= 6;
 			plus.bg.rotation = -Math.PI/2;
 			plus.bg.y += plus.bg.width;
+			plus._text.y += 5;
+		} else {
+			minus._text.x += 5;
+			plus._text.x -= 4;
 		}
 
 		this.add(minus);
