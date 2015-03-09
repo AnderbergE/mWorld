@@ -1,4 +1,5 @@
 var NumberButton = require('../objects/buttons/NumberButton.js');
+var GLOBAL = require('../global.js');
 var utils = require('../utils.js');
 
 module.exports = Character;
@@ -188,12 +189,18 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 	this.thought.bubble = this.thought.create(0, 0, 'objects', 'thought_bubble');
 	this.thought.bubble.scale.x = 1;
 	this.thought.bubble.anchor.set(0.5);
-	this.thought.guess = new NumberButton(this.game, 1, representation, {
+	var options = {
 		x: -60,
 		y: -55,
 		size: 100,
 		disabled: true
-	});
+	};
+	// Make sure that button background is correct according to method.
+	if (this.game.state.getCurrentState().method === GLOBAL.METHOD.count ||
+		this.game.state.getCurrentState().method === GLOBAL.METHOD.incrementalSteps) {
+		options.background = 'button';
+	}
+	this.thought.guess = new NumberButton(this.game, 1, representation, options);
 	this.thought.add(this.thought.guess);
 	if (mirror) {
 		this.mirrorThought();
