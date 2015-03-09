@@ -110,7 +110,7 @@ BalloonGame.prototype.create = function () {
 	var heightPerCave = this.pos.cave.height / this.amount;
 	for (var i = 0; i < this.amount; i++) {
 		this.caves.push(this.gameGroup.create(
-			i % 2 ? this.pos.cave.left : this.pos.cave.right,
+			this.amount > 4 && i % 2 ? this.pos.cave.left : this.pos.cave.right,
 			this.pos.cave.y - i * heightPerCave,
 			'balloon', 'cave'
 		));
@@ -451,7 +451,7 @@ BalloonGame.prototype.pointAtCave = function (number) {
 	var cave = this.caves[number - 1];
 	var offset = 50;
 	var arrow = this.gameGroup.create(cave.x, cave.y + cave.height*0.6, 'objects', 'arrow');
-	if (number % 2 === 0) { // Cave to the left
+	if (this.amount > 4 && number % 2 === 0) { // Cave to the left
 		arrow.x += cave.width + offset;
 		offset *= -1;
 	} else { // Cave to the right
