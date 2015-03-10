@@ -737,16 +737,17 @@ BalloonGame.prototype.modeOutro = function () {
 	util.fade(this.liftoffButton, false);
 
 	var t = new TimelineMax().skippable();
+	t.add(new TweenMax(this.beetle, 1, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
 	t.addSound(this.speech, this.beetle, 'fullSack');
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');
 	t.addLabel('water3', '+=3');
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
 	t.add(this.agent.fistPump(), 'water');
-	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water');
+	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water');
 	t.addSound(this.speech, this.beetle, 'thankYou', 'water2');
-	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water2');
-	t.add(this.addWater(this.beetle.world.x, this.beetle.world.y), 'water3');
+	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water2');
+	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water3');
 	t.addCallback(this.nextRound, null, null, this);
 };
 
