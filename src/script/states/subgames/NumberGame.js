@@ -126,7 +126,7 @@ NumberGame.prototype.init = function (options) {
 		onClick: function () {
 			_this.disable(true);
 			var t;
-			if (_this._mode === GLOBAL.MODE.agentTry) {
+			if (_this.currentMode === GLOBAL.MODE.agentTry && !_this.buttons.visible) {
 				t = _this.instructionYesNo();
 			} else {
 				t = _this.doInstructions();
