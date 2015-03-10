@@ -502,10 +502,8 @@ BalloonGame.prototype.startWithBalloons = function (t, min, max) {
 	t.add(this.moveBalloons(this.addToNumber));
 };
 
-BalloonGame.prototype.startStop = function (t, silent) {
-	if (!silent) {
-		t.addSound(this.speech, this.beetle, 'helpMeGetThere');
-	}
+BalloonGame.prototype.startStop = function () {
+	// Do nothing
 };
 
 BalloonGame.prototype.startBelow = function (t) {
@@ -687,9 +685,8 @@ BalloonGame.prototype.modePlayerDo = function (intro, tries) {
 	if (tries === 0) { // New round.
 		if (intro && this.instructions) {
 			t.skippable();
-			t.addLabel('instructions');
-			t.add(this.doInstructions());
-			t.add(this.newTreasure(true), 'instructions');
+			t.add(this.newTreasure(true));
+			t.add(this.doInstructions(), 0.5);
 		} else {
 			t.add(this.newTreasure());
 		}
