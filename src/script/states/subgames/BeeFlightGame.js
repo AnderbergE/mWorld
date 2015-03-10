@@ -172,9 +172,10 @@ BeeFlightGame.prototype.instructionAdd = function () {
 	var t = new TimelineMax();
 	t.addSound(this.speech, this.bee, 'wrongPlace');
 	t.addSound(this.speech, this.bee, 'notFarEnough', '+=0.8');
+	t.addSound(this.speech, this.bee, 'howMuchMore');
 	// t.add(this.pointAtFlowers(this.currentNumber));
-	t.addLabel('useButtons');
-	t.addLabel('flashButtons', '+=0.5');
+	t.addLabel('useButtons', '+=0.3');
+	t.addLabel('flashButtons', '+=0.8');
 	t.addSound(this.speech, this.bee, 'pushNumber', 'useButtons');
 	t.add(util.fade(this.buttons, true), 'useButtons');
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
@@ -184,9 +185,10 @@ BeeFlightGame.prototype.instructionAdd = function () {
 BeeFlightGame.prototype.instructionSubtract = function () {
 	var t = new TimelineMax();
 	t.addSound(this.speech, this.bee, 'goneTooFar');
+	t.addSound(this.speech, this.bee, 'mustGoBack');
 	// t.add(this.pointAtFlowers(this.currentNumber));
-	t.addLabel('useButtons');
-	t.addLabel('flashButtons', '+=0.5');
+	t.addLabel('useButtons', '+=0.3');
+	t.addLabel('flashButtons', '+=0.8');
 	t.addSound(this.speech, this.bee, 'pushNumber', 'useButtons');
 	t.add(util.fade(this.buttons, true), 'useButtons');
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
@@ -245,14 +247,14 @@ BeeFlightGame.prototype.startStop = function () {
 BeeFlightGame.prototype.startBelow = function (t, silent) {
 	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
 	if (!silent) {
-		t.addSound(this.speech, this.bee, 'notFarEnough');
+		t.addSound(this.speech, this.bee, this.rnd.pick(['notFarEnough', 'howMuchMore']));
 	}
 };
 
 BeeFlightGame.prototype.startAbove = function (t, silent) {
 	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
 	if (!silent) {
-		t.addSound(this.speech, this.bee, 'goneTooFar');
+		t.addSound(this.speech, this.bee, this.rnd.pick(['goneTooFar', 'mustGoBack']));
 	}
 };
 
@@ -310,7 +312,7 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 			this.flowers[current].frameName = 'flower';
 			this.agent.setHappy();
 		}, null, null, this);
-		t.addSound(this.speech, this.bee, this.rnd.pick(['nectar', 'slurp']));
+		t.addSound(this.speech, this.bee, this.rnd.pick(['slurp', 'nectar1', 'nectar2']));
 		t.addLabel('goingHome', '+=0.5');
 
 		if (this._totalCorrect === 1) {
