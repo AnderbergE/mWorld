@@ -107,6 +107,7 @@ NumberGame.prototype.init = function (options) {
 	this.agent.scale.set(this.pos.agent.scale);
 	this.agent.visible = true;
 	this.agent.addThought(this.representation[0], this.pos.agent.mirror || false);
+	this.saidAgentWrong = false;
 
 	var _this = this;
 	this.agent.moveTo = {
@@ -126,7 +127,7 @@ NumberGame.prototype.init = function (options) {
 		onClick: function () {
 			_this.disable(true);
 			var t;
-			if (_this.currentMode === GLOBAL.MODE.agentTry && !_this.buttons.visible) {
+			if (_this.currentMode === GLOBAL.MODE.agentTry && !_this.saidAgentWrong) {
 				t = _this.instructionYesNo();
 			} else {
 				t = _this.doInstructions();
@@ -264,6 +265,7 @@ NumberGame.prototype.setupButtons = function (options) {
 
 /* Function to trigger when a button in the number panel is pushed. */
 NumberGame.prototype.pushNumber = function (number) {
+	this.saidAgentWrong = false;
 	return this.runNumber(number)
 		.addCallback(this.nextRound, null, null, this);
 };
@@ -271,6 +273,7 @@ NumberGame.prototype.pushNumber = function (number) {
 /* Function to trigger when a button in the yes-no panel is pushed. */
 NumberGame.prototype.pushYesNo = function (value) {
 	if (!value) {
+		this.saidAgentWrong = true;
 		if (this.speech) {
 			this.agent.say(this.agent.speech, 'wrongShow').play('wrongShow');
 		}
