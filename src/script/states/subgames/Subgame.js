@@ -67,7 +67,7 @@ Subgame.prototype.init = function (options) {
 
 	// Instruction options
 	this.instructions = typeof options.instructions !== 'undefined' ? options.instructions : true;
-	this.instructionsAgent = typeof options.instructions !== 'undefined' ? options.instructions : true;
+	this.instructionsAgent = typeof options.instructionsAgent !== 'undefined' ? options.instructionsAgent : true;
 
 	/* Public variables */
 	this.currentMode = null; // The current mode running
