@@ -65,6 +65,7 @@ Subgame.prototype.init = function (options) {
 	this._totalTries = 0;
 	this._totalCorrect = 0;
 
+	// Instruction options
 	this.instructions = typeof options.instructions !== 'undefined' ? options.instructions : true;
 	this.instructionsAgent = typeof options.instructions !== 'undefined' ? options.instructions : true;
 

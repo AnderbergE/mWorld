@@ -19,6 +19,7 @@ module.exports = NumberGame;
  * "this" object should have a property used when setting agent start position:
  *    this.pos: { agent: { start: { x, y }, scale: z } } }.
  *
+ * NEVER DO ANY LOGICAL CHANGES IN THE INSTRUCTIONS!
  * instructionCount:       Method count.
  * instructionSteps:       Method incremental-steps.
  * instructionAdd:         Method addition.
@@ -120,6 +121,7 @@ NumberGame.prototype.init = function (options) {
 		}
 	};
 
+	// Setup help button with correct instruction functions.
 	this.helpButton = new TextButton(this.game, '?', {
 		x: 75, y: 5, size: 56, fontSize: 30,
 		color: GLOBAL.BUTTON_COLOR,
