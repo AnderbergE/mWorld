@@ -53,7 +53,7 @@ function Menu (game) {
 	/* For skipping timelines */
 	var skipper = null;
 	var skipButton = new TextButton(game, '>>', {
-		x: 75, y: 5, size: 56, fontSize: 30,
+		x: 145, y: 5, size: 56, fontSize: 30,
 		doNotAdapt: true,
 		onClick: function () {
 			if (skipper) {

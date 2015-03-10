@@ -103,8 +103,10 @@ GeneralButton.prototype.setDown = function () {
 /**
  * Highlight the buttons.
  * @param {Number} duration - How long to highlight the button.
+ * @param {Number} from - The opacity to highlight from (will end at this as well) (default 1).
  * @returns {Object} The animation tweenmax.
  */
-GeneralButton.prototype.highlight = function (duration) {
-	return TweenMax.to(this, 0.5, { alpha: 0 }).backForth(duration || 3);
+GeneralButton.prototype.highlight = function (duration, from) {
+	from = typeof from === 'number' ? from : 1;
+	return TweenMax.fromTo(this, 0.5, { alpha: from }, { alpha: 0 }).backForth(duration || 3);
 };

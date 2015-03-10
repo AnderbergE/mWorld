@@ -200,12 +200,13 @@ ButtonPanel.prototype.reset = function () {
 /**
  * Highlight all buttons.
  * @param {Number} duration - How long to highlight the buttons.
+ * @param {Number} from - The opacity to highlight from (will end at this as well) (default 1).
  * @returns {Object} The animation timeline.
  */
-ButtonPanel.prototype.highlight = function (duration) {
+ButtonPanel.prototype.highlight = function (duration, from) {
 	var t = new TimelineMax();
 	for (var i = 0; i < this.length; i++) {
-		t.add(this.children[i].highlight(duration), 0);
+		t.add(this.children[i].highlight(duration, from), 0);
 	}
 	return t;
 };

@@ -2,8 +2,9 @@ var Subgame = require('./Subgame.js');
 var GLOBAL = require('../../global.js');
 var EventSystem = require('../../pubsub.js');
 var util = require('../../utils.js');
-var GeneralButton = require('../../objects/buttons/GeneralButton.js');
 var ButtonPanel = require('../../objects/buttons/ButtonPanel.js');
+var GeneralButton = require('../../objects/buttons/GeneralButton.js');
+var TextButton = require('../../objects/buttons/TextButton.js');
 
 module.exports = NumberGame;
 
@@ -117,6 +118,24 @@ NumberGame.prototype.init = function (options) {
 			return _this.agent.move({ x: _this.pos.agent.stop.x, y: _this.pos.agent.stop.y }, 3);
 		}
 	};
+
+	this.helpButton = new TextButton(this.game, '?', {
+		x: 75, y: 5, size: 56, fontSize: 30,
+		color: GLOBAL.BUTTON_COLOR,
+		doNotAdapt: true,
+		onClick: function () {
+			_this.disable(true);
+			var t;
+			if (_this._mode === GLOBAL.MODE.agentTry) {
+				t = _this.instructionYesNo();
+			} else {
+				t = _this.doInstructions();
+			}
+			t.addCallback(_this.disable, null, [false], true);
+			t.skippable();
+		}
+	});
+	this.gameGroup.add(this.helpButton);
 };
 
 
@@ -340,6 +359,8 @@ NumberGame.prototype.instructionYesNo = function () {
 /* Start the game. */
 NumberGame.prototype.startGame = function () {
 	this._nextNumber();
+
+	this.gameGroup.bringToTop(this.helpButton);
 
 	Subgame.prototype.startGame.call(this);
 
