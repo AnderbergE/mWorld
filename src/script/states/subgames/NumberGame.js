@@ -136,7 +136,7 @@ NumberGame.prototype.init = function (options) {
 			t.skippable();
 		}
 	});
-	this.gameGroup.add(this.helpButton);
+	this.hudGroup.add(this.helpButton);
 };
 
 
