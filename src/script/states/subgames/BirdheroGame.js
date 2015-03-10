@@ -497,9 +497,13 @@ BirdheroGame.prototype.modePlayerDo = function (intro, tries) {
 		var t = new TimelineMax();
 		if (intro) {
 			t.skippable();
-			t.add(this.newRound(true));
-			t.addCallback(this.updateButtons, null, null, this);
-			t.add(this.doInstructions());
+			if (this.instructions) {
+				t.add(this.newRound(true));
+				t.addCallback(this.updateButtons, null, null, this);
+				t.add(this.doInstructions());
+			} else {
+				t.add(this.newRound());
+			}
 		} else {
 			t.add(this.newRound());
 		}

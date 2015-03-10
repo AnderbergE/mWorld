@@ -65,6 +65,8 @@ Subgame.prototype.init = function (options) {
 	this._totalTries = 0;
 	this._totalCorrect = 0;
 
+	this.instructions = typeof options.instructions !== 'undefined' ? options.instructions : true;
+
 	/* Public variables */
 	this.currentMode = null; // The current mode running
 

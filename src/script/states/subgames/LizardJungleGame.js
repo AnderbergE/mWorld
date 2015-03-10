@@ -362,7 +362,9 @@ LizardJungleGame.prototype.modePlayerDo = function (intro, tries) {
 			}
 			this.doStartFunction(t);
 			t.addCallback(this.updateButtons, null, null, this);
-			t.add(this.doInstructions());
+			if (this.instructions) {
+				t.add(this.doInstructions());
+			}
 		} else {
 			t.add(this.newFood());
 		}
