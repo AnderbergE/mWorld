@@ -298,21 +298,24 @@ BirdheroGame.prototype.newRound = function (silent) {
 
 BirdheroGame.prototype.startStop = function (t, silent) {
 	if (!silent) {
-		t.addSound(this.speech, this.bird, 'thisFloor');
+		t.addSound(this.speech, this.bird, this.rnd.pick(['thisFloor', 'helpMeHome']));
 		t.addCallback(this.bird.showWings, null, null, this.bird);
-		t.addSound(this.speech, this.bird, 'helpMeHome', '+=0.3');
 	}
 };
 
 BirdheroGame.prototype.startBelow = function (t) {
-	t.addSound(this.speech, this.bird, 'useMyself');
+	if (this._totalCorrect === 0) { // First time
+		t.addSound(this.speech, this.bird, 'useMyself');
+	}
 	t.add(this.runNumber(this.rnd.integerInRange(1, this.currentNumber - 1), true));
 	t.addCallback(this.bird.showWings, null, null, this.bird);
 	t.addSound(this.speech, this.bird, 'howMuchHigher', '+=0.3');
 };
 
 BirdheroGame.prototype.startAbove = function (t) {
-	t.addSound(this.speech, this.bird, 'useMyself');
+	if (this._totalCorrect === 0) { // First time
+		t.addSound(this.speech, this.bird, 'useMyself');
+	}
 	t.add(this.runNumber(this.rnd.integerInRange(this.currentNumber + 1, this.amount), true));
 	t.addCallback(this.bird.showWings, null, null, this.bird);
 	t.addSound(this.speech, this.bird, 'howMuchLower', '+=0.3');
@@ -326,10 +329,15 @@ BirdheroGame.prototype.startThink = function (t) {
 
 	t.addCallback(this.bird.showWings, null, null, this.bird);
 
-	t.addLabel('thinker', '+=0.3');
-	t.add(this.bird.think(), 'thinker');
-	t.addSound(this.speech, this.bird, 'thinkItIs', 'thinker');
-	t.addSound(this.speech, this.bird, 'higherOrLower', '+=0.3');
+	if (this._totalCorrect === 0) { // First time
+		t.addSound(this.speech, this.bird, 'thinkItIs', '+=0.3');
+		t.add(this.bird.think());
+		t.addSound(this.speech, this.bird, 'higherOrLower', '+=0.3');
+	} else { // Randomize what bird says otherwise
+		t.addLabel('thinker');
+		t.addSound(this.speech, this.bird, this.rnd.pick(['thinkItIs', 'higherOrLower']) , 'thinker');
+		t.add(this.bird.think(), 'thinker');
+	}
 };
 
 
