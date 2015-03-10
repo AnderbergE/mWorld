@@ -377,7 +377,6 @@ BalloonGame.prototype.showYesnos = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BalloonGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
-	t.add(this.newTreasure(true));
 	t.addSound(this.speech, this.beetle, 'canYouDrag');
 	t.add(this.instructionDrag(), 0);
 
@@ -398,7 +397,6 @@ BalloonGame.prototype.instructionCount = function () {
 
 BalloonGame.prototype.instructionSteps = function () {
 	var t = new TimelineMax();
-	t.add(this.newTreasure(true));
 	t.addSound(this.speech, this.beetle, 'canYouDragRight');
 	t.add(this.instructionDrag(), 0);
 	t.addSound(this.speech, this.beetle, 'pushAnchor');
@@ -425,9 +423,7 @@ BalloonGame.prototype.instructionAddSubtract = function () {
 
 BalloonGame.prototype.instructionButtons = function (moveSound, pushSound) {
 	var t = new TimelineMax();
-	t.addLabel('moveBalloons');
-	t.addSound(this.speech, this.beetle, moveSound, 'moveBalloons');
-	t.add(this.newTreasure(true), 'moveBalloons');
+	t.addSound(this.speech, this.beetle, moveSound);
 	t.addCallback(this.updateButtons, null, null, this);
 	t.addLabel('useButtons', '+=0.3');
 	t.addLabel('flashButtons', '+=0.8');
@@ -691,7 +687,9 @@ BalloonGame.prototype.modePlayerDo = function (intro, tries) {
 	if (tries === 0) { // New round.
 		if (intro) {
 			t.skippable();
+			t.addLabel('instructions');
 			t.add(this.doInstructions()); // includes new treasure
+			t.add(this.newTreasure(true), 'instructions');
 		} else {
 			t.add(this.newTreasure());
 		}
