@@ -423,8 +423,8 @@ BalloonGame.prototype.instructionAddSubtract = function () {
 
 BalloonGame.prototype.instructionButtons = function (moveSound, pushSound) {
 	var t = new TimelineMax();
-	t.addSound(this.speech, this.beetle, moveSound);
 	t.addCallback(this.updateButtons, null, null, this);
+	t.addSound(this.speech, this.beetle, moveSound);
 	t.addLabel('useButtons', '+=0.3');
 	t.addLabel('flashButtons', '+=0.8');
 	t.addSound(this.speech, this.beetle, pushSound, 'useButtons');

@@ -389,8 +389,8 @@ BeeFlightGame.prototype.modePlayerDo = function (intro, tries) {
 		if (intro) {
 			t.skippable();
 
-			t.addCallback(this.updateButtons, null, null, this);
 			t.add(this.newFlower(true));
+			t.addCallback(this.updateButtons, null, null, this);
 			t.add(this.doInstructions());
 		} else {
 			t.addSound(this.speech, this.bee, 'getMore');

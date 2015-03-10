@@ -363,8 +363,6 @@ NumberGame.prototype.instructionYesNo = function () {
 NumberGame.prototype.startGame = function () {
 	this._nextNumber();
 
-	this.gameGroup.bringToTop(this.helpButton);
-
 	Subgame.prototype.startGame.call(this);
 
 	EventSystem.publish(GLOBAL.EVENT.numbergameStarted, [this.method, this.amount, this.representation]);
