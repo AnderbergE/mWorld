@@ -413,7 +413,7 @@ LizardJungleGame.prototype.modeAgentTry = function (intro, tries) {
 	}
 
 	t.add(this.agentGuess(), '+=0.3');
-	if (intro) {
+	if (intro && this.instructionsAgent) {
 		t.add(this.instructionYesNo(), '+=0.5');
 	}
 	t.addCallback(function () {
