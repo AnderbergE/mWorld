@@ -232,12 +232,14 @@ BeeFlightGame.prototype.pointAtFlowers = function (number) {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BeeFlightGame.prototype.newFlower = function (silent) {
 	var t = new TimelineMax();
-	t.addCallback(function () {
-		this.flowers[this.currentNumber - 1].frameName = 'flower' + this.currentNumber;
-	}, null, null, this);
+	t.addCallback(this.openFlower, null, [this.currentNumber], this);
 
 	this.doStartFunction(t, silent);
 	return t;
+};
+
+BeeFlightGame.prototype.openFlower = function (number) {
+	this.flowers[number - 1].frameName = 'flower' + number;
 };
 
 BeeFlightGame.prototype.startStop = function () {
@@ -452,15 +454,24 @@ BeeFlightGame.prototype.modeOutro = function () {
 	this.agent.thought.visible = false;
 
 	var t = new TimelineMax().skippable();
-	t.addSound(this.speech, this.bee, 'thatsAll');
-	t.addLabel('water');
-	t.addLabel('water2', '+=1.5');
-	t.addLabel('water3', '+=3');
-	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
-	t.add(this.agent.fistPump(), 'water');
-	t.add(this.addWater(this.bee.x + this.bee.width/2, this.bee.y), 'water');
-	t.add(this.addWater(this.bee.x + this.bee.width/2, this.bee.y), 'water2');
-	t.add(this.addWater(this.bee.x + this.bee.width/2, this.bee.y), 'water3');
+	t.addLabel('water1', '+=1.0');
+	t.addLabel('water2', '+=2.5');
+	t.addLabel('water3', '+=4');
+	t.addSound(this.speech, this.bee, 'thatsAll', 0);
+	t.addCallback(this.agent.setHappy, 'water1', null, this.agent);
+	t.add(this.agent.fistPump(), 'water1');
+
+	var i, number, flower, opened = [];
+	for (i = 1; i <= 3; i++) {
+		do {
+			number = this.rnd.integerInRange(1, this.amount);
+			console.log(number, opened);
+		} while (opened.indexOf(number) >= 0);
+		opened.push(number);
+		flower = this.flowers[number - 1];
+		t.addCallback(this.openFlower, 'water' + i, [number], this);
+		t.add(this.addWater(flower.x, flower.y + 10), 'water' + i);
+	}
 	t.addLabel('letsDance');
 	t.add(this.bee.moveTo.home(), 'letsDance');
 	t.addSound(this.speech, this.bee, 'dancing', 'letsDance');
