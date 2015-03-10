@@ -155,8 +155,6 @@ BeeFlightGame.prototype.create = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BeeFlightGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
-	t.addCallback(this.updateButtons, null, null, this);
-	t.add(this.newFlower());
 	t.addSound(this.speech, this.bee, 'showTheWay');
 	t.addSound(this.speech, this.bee, 'decideHowFar', '+=0.8');
 	t.add(this.pointAtFlowers(this.currentNumber));
@@ -172,8 +170,6 @@ BeeFlightGame.prototype.instructionSteps = BeeFlightGame.prototype.instructionCo
 
 BeeFlightGame.prototype.instructionAdd = function () {
 	var t = new TimelineMax();
-	t.add(this.newFlower(true));
-	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, this.bee, 'wrongPlace');
 	t.addSound(this.speech, this.bee, 'notFarEnough', '+=0.8');
 	// t.add(this.pointAtFlowers(this.currentNumber));
@@ -187,8 +183,6 @@ BeeFlightGame.prototype.instructionAdd = function () {
 
 BeeFlightGame.prototype.instructionSubtract = function () {
 	var t = new TimelineMax();
-	t.add(this.newFlower(true));
-	t.addCallback(this.updateButtons, null, null, this);
 	t.addSound(this.speech, this.bee, 'goneTooFar');
 	// t.add(this.pointAtFlowers(this.currentNumber));
 	t.addLabel('useButtons');
@@ -201,8 +195,6 @@ BeeFlightGame.prototype.instructionSubtract = function () {
 
 BeeFlightGame.prototype.instructionAddSubtract = function () {
 	var t = new TimelineMax();
-	t.add(this.newFlower());
-	t.addCallback(this.updateButtons, null, null, this);
 	t.addLabel('useButtons');
 	t.addLabel('flashButtons', '+=0.5');
 	t.addSound(this.speech, this.bee, 'useButtons', 'useButtons');
@@ -396,7 +388,10 @@ BeeFlightGame.prototype.modePlayerDo = function (intro, tries) {
 		var t = new TimelineMax();
 		if (intro) {
 			t.skippable();
-			t.add(this.doInstructions());  // includes new flower
+
+			t.addCallback(this.updateButtons, null, null, this);
+			t.add(this.newFlower(true));
+			t.add(this.doInstructions());
 		} else {
 			t.addSound(this.speech, this.bee, 'getMore');
 			t.add(this.newFlower());
