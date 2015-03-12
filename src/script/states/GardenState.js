@@ -91,7 +91,7 @@ GardenState.prototype.create = function () {
 	for (var row = 0; row < rows; row++) {
 		for (var column = 0; column < columns; column++) {
 			type = this.rnd.integerInRange(1, 9);
-			level = 5;
+			level = 0;
 			water = 0;
 
 			for (i = 0; i < fields.length; i++) {
