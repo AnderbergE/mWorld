@@ -72,7 +72,7 @@ GardenState.prototype.create = function () {
 				t.addSound(agent.speech, agent, 'letsGo');
 				t.addCallback(function () {
 					this.game.state.start(GLOBAL.STATE[scen.subgame], true, false, scen);
-				});
+				}, null, null, this);
 			}
 		}
 		t.addCallback(function () {
