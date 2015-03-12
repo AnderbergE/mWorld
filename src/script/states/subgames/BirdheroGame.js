@@ -330,8 +330,9 @@ BirdheroGame.prototype.startThink = function (t) {
 	t.addCallback(this.bird.showWings, null, null, this.bird);
 
 	if (this._totalCorrect === 0) { // First time
-		t.addSound(this.speech, this.bird, 'thinkItIs', '+=0.3');
-		t.add(this.bird.think());
+		t.addLabel('thinker', '+=0.3');
+		t.add(this.bird.think(), 'thinker');
+		t.addSound(this.speech, this.bird, 'thinkItIs', 'thinker');
 		t.addSound(this.speech, this.bird, 'higherOrLower', '+=0.3');
 	} else { // Randomize what bird says otherwise
 		t.addLabel('thinker');
