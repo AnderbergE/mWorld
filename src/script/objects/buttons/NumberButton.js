@@ -174,7 +174,8 @@ NumberButton.prototype.updateGraphics = function () {
 			s.y = (this.direction ? (this._number > 0 ? this.size * 1.2 : this.size * 0.8) : this.size)/2 - s.height/2;
 
 		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.numbers) {
-			this.add(new NumberRepresentation(this.game, this._number, x, y+this.size/8, this.size/2, this.color));
+			offset = this.calcOffset(24);
+			this.add(new NumberRepresentation(this.game, this._number, x+offset.x - this.size/12, y+offset.y, this.size/2, this.color));
 
 		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.dice) {
 			offset = this.calcOffset(12);
