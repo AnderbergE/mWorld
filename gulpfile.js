@@ -5,10 +5,8 @@ var util = require('gulp-util');
 
 // Script requires
 var browserify = require('browserify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
+var transform = require('vinyl-transform');
 var sourcemaps = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
 var jshint = require('gulp-jshint');
 
 // Style requires
@@ -66,23 +64,20 @@ gulp.task('html', function () {
 });
 
 gulp.task('browserify', function () {
-	var bundler = browserify('./' + SCRIPT + 'game.js', { debug: true });
+	var browserified = transform(function(filename) {
+		var b = browserify(filename);
+		return b.bundle();
+	});
 
-	var bundle = function() {
-		return bundler.bundle()
-			.on('error', function (err) {
-				util.beep();
-				util.log(util.colors.red('Error: '), err.message);
-				this.emit('end');
-			})
-			.pipe(source(getBundleName() + '.js'))
-			.pipe(buffer())
-			.pipe(sourcemaps.init({ loadMaps: true }))
-			.pipe(sourcemaps.write('./'))
-			.pipe(gulp.dest(destination));
-	};
+	var bundle = gulp.src('./' + SCRIPT + 'game.js')
+		.pipe(browserified);
 
-	return bundle();
+	if (destination !== PRODUCTION) {
+		bundle.pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(sourcemaps.write('./'));
+	}
+
+	return bundle.pipe(gulp.dest(destination));
 });
 
 gulp.task('lint', function() {
