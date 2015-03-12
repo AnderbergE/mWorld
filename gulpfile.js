@@ -65,19 +65,31 @@ gulp.task('html', function () {
 
 gulp.task('browserify', function () {
 	var browserified = transform(function(filename) {
-		var b = browserify(filename);
+		var b = browserify(filename, { debug: true });
 		return b.bundle();
 	});
 
-	var bundle = gulp.src('./' + SCRIPT + 'game.js')
-		.pipe(browserified);
-
 	if (destination !== PRODUCTION) {
-		bundle.pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(sourcemaps.write('./'));
+		return gulp.src('./' + SCRIPT + 'game.js')
+			.pipe(browserified)
+			.on('error', function (err) {
+				util.beep();
+				util.log(util.colors.red('Browserify: '), err.message);
+				this.emit('end');
+			})
+			.pipe(sourcemaps.init({ loadMaps: true }))
+			.pipe(sourcemaps.write('./'))
+			.pipe(gulp.dest(destination));
+	} else {
+		return gulp.src('./' + SCRIPT + 'game.js')
+			.pipe(browserified)
+			.on('error', function (err) {
+				util.beep();
+				util.log(util.colors.red('Browserify: '), err.message);
+				this.emit('end');
+			})
+			.pipe(gulp.dest(destination));
 	}
-
-	return bundle.pipe(gulp.dest(destination));
 });
 
 gulp.task('lint', function() {
