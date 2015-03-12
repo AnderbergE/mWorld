@@ -123,13 +123,6 @@ BootState.prototype.preload = function () {
 	};
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
 
-	/* Setup agent lookup globals */
-	GLOBAL.AGENT = {
-		0: Panda,
-		1: Hedgehog,
-		2: Mouse
-	};
-
 	/* Agent related assets */
 	if (this.game.player.agent) {
 		var name = this.game.player.agent.prototype.id;

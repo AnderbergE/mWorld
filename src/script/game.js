@@ -1,5 +1,8 @@
 var GLOBAL = require('./global.js');
 var Player = require('./player.js');
+var Hedgehog = require('./agent/Hedgehog.js');
+var Mouse = require('./agent/Mouse.js');
+var Panda = require('./agent/Panda.js');
 var BootState = require('./states/BootState.js');
 var EntryState = require('./states/EntryState.js');
 var AgentSetupState = require('./states/AgentSetupState.js');
@@ -34,6 +37,13 @@ window.onload = function () {
 		// Cache game object among GLOBALs, use this only if necessary.
 		// TODO: This is not a pretty solution, but it becomes very complicated in utils otherwise.
 		GLOBAL.game = game;
+
+		/* Setup agent lookup globals */
+		GLOBAL.AGENT = {
+			0: Panda,
+			1: Hedgehog,
+			2: Mouse
+		};
 
 		// Cache player object in the game object for easy access.
 		game.player = new Player(game);
