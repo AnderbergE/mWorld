@@ -65,7 +65,7 @@ gulp.task('html', function () {
 
 gulp.task('browserify', function () {
 	var browserified = transform(function(filename) {
-		var b = browserify(filename, { debug: true });
+		var b = browserify(filename, { debug: destination !== PRODUCTION ? true : false });
 		return b.bundle();
 	});
 
