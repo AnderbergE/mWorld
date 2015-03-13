@@ -206,48 +206,49 @@ GardenState.prototype.create = function () {
 		/*jshint camelcase:true */
 	});
 
+	/* When the state starts. */
+	this.startGame = function () {
+		var t = new TimelineMax().skippable();
+		t.add(agent.move({ x: this.world.centerX }, 3));
 
-	/* When the state starts */
-	var t = new TimelineMax().skippable();
-	t.add(agent.move({ x: this.world.centerX }, 3));
-
-	if (this.game.player.water > 0) {
-		if (this.gardenData.fields.length > 0) {
-			t.addSound(agent.speech, agent, 'gardenWhereNow');
+		if (this.game.player.water > 0) {
+			if (this.gardenData.fields.length > 0) {
+				t.addSound(agent.speech, agent, 'gardenWhereNow');
+			} else {
+				t.addSound(agent.speech, agent, 'gardenHaveWater');
+				t.addSound(agent.speech, agent, 'gardenPushField', '+=0.5');
+			}
 		} else {
-			t.addSound(agent.speech, agent, 'gardenHaveWater');
-			t.addSound(agent.speech, agent, 'gardenPushField', '+=0.5');
-		}
-	} else {
-		if (this.gardenData.fields.length > 0) {
-			t.addSound(agent.speech, agent, 'gardenYoureBack');
-		} else {
-			var w = new WaterCan(this.game);
-			w.visible = false;
-			this.world.add(w);
+			if (this.gardenData.fields.length > 0) {
+				t.addSound(agent.speech, agent, 'gardenYoureBack');
+			} else {
+				var w = new WaterCan(this.game);
+				w.visible = false;
+				this.world.add(w);
 
-			t.addSound(agent.speech, agent, 'gardenIntro');
-			t.addLabel('myCan', '+=0.5');
-			t.addCallback(function () {
-				w.x = agent.x - w.width/4; // Since we scale to 0.5
-				w.y = agent.y;
-				w.scale.set(0);
-				w.visible = true;
-				agent.eyesFollowObject(w);
-			});
-			t.add(new TweenMax(w.scale, 1, { x: 0.5, y: 0.5, ease: Elastic.easeOut }), 'myCan');
-			t.addSound(agent.speech, agent, 'gardenMyCan', 'myCan');
-			t.add(new TweenMax(w.scale, 1, { x: 0, y: 0, ease: Elastic.easeOut, onComplete: w.destroy, onCompleteScope: w }));
+				t.addSound(agent.speech, agent, 'gardenIntro');
+				t.addLabel('myCan', '+=0.5');
+				t.addCallback(function () {
+					w.x = agent.x - w.width/4; // Since we scale to 0.5
+					w.y = agent.y;
+					w.scale.set(0);
+					w.visible = true;
+					agent.eyesFollowObject(w);
+				});
+				t.add(new TweenMax(w.scale, 1, { x: 0.5, y: 0.5, ease: Elastic.easeOut }), 'myCan');
+				t.addSound(agent.speech, agent, 'gardenMyCan', 'myCan');
+				t.add(new TweenMax(w.scale, 1, { x: 0, y: 0, ease: Elastic.easeOut, onComplete: w.destroy, onCompleteScope: w }));
+			}
+			t.addLabel('sign');
+			t.add(agent.wave(1, 1));
+			t.addCallback(agent.eyesFollowObject, 'sign', [sign], agent);
+			t.addSound(agent.speech, agent, 'gardenSign', 'sign');
 		}
-		t.addLabel('sign');
-		t.add(agent.wave(1, 1));
-		t.addCallback(agent.eyesFollowObject, 'sign', [sign], agent);
-		t.addSound(agent.speech, agent, 'gardenSign', 'sign');
-	}
-	t.addCallback(function () {
-		agent.eyesStopFollow();
-		disabler.visible = false;
-	});
+		t.addCallback(function () {
+			agent.eyesStopFollow();
+			disabler.visible = false;
+		}, null, null, this);
+	};
 };
 
 

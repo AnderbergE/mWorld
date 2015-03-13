@@ -12,6 +12,9 @@ var TextButton = require('../objects/buttons/TextButton.js');
 
 module.exports = AgentSetupState;
 
+AgentSetupState.prototype = Object.create(SuperState.prototype);
+AgentSetupState.prototype.constructor = AgentSetupState;
+
 /**
  * The state for choosing agent.
  */
@@ -170,19 +173,22 @@ AgentSetupState.prototype.create = function () {
 	this.world.add(new Menu(this.game));
 
 
-	/* Choose the first agent if player does not have one */
-	var current = 0;
-	if (this.game.player.agent) {
-		for (var k in agents.children) {
-			if (agents.children[k].id === this.game.player.agent.prototype.id) {
-				agents.children[k].tint = this.game.player.tint;
-				current = k;
-				break;
+	/* When the state starts. */
+	this.startGame = function () {
+		/* Choose the first agent if player does not have one */
+		var current = 0;
+		if (this.game.player.agent) {
+			for (var k in agents.children) {
+				if (agents.children[k].id === this.game.player.agent.prototype.id) {
+					agents.children[k].tint = this.game.player.tint;
+					current = k;
+					break;
+				}
 			}
 		}
-	}
 
-	agents.children[current].body.events.onInputDown.dispatch();
+		agents.children[current].body.events.onInputDown.dispatch();
+	};
 };
 
 /* Phaser state function */
