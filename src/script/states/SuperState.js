@@ -8,50 +8,45 @@ module.exports = SuperState;
 /**
  * The boot state will load the first parts of the game and common game assets.
  * Add assets that will be used by many states.
+ * NOTE: Do not overshadow the update function! Use 'run' instead.
  */
 function SuperState () {}
 
 /**
- * Check if all sound files have been decoded.
- * NOTE: This will not start decoding. So if you turn off autodecode you
- * need to start it yourself.
- * @return {Object} True if all sounds are decoded, otherwise false.
- */
-SuperState.prototype.checkSoundsDecoded = function () {
-	for (var key in this.game.cache._sounds) {
-		if (!this.game.cache.isSoundDecoded(key)) {
-			this.sound.decode(key);
-			return false;
-		}
-	}
-	return true;
-};
-
-/**
- * Run a function when all sounds have been decoded.
- * NOTE: If you debug between loading audio and decoding, this function does
- * not work. Reason is unknown.
+ * Update will trigger after create. But sounds might not be decoded yet, so we wait for that.
+ * NOTE: Do not overshadow the update function! Use 'run' instead.
  */
 SuperState.prototype.update = function () {
-	var loader = document.querySelector('.loading').style;
+	this.state.onUpdateCallback = function () {};
 
-	if (this.checkSoundsDecoded()) {
-		this.state.onUpdateCallback = this.run;
-		loader.display = 'none';
-		if (this.startGame) {
-			this.startGame();
+	var keys = [], key;
+	for (var i = 0; i < this.sound._sounds.length; i++) {
+		key = this.sound._sounds[i].key;
+		if (keys.indexOf(key) < 0) {
+			keys.push(key);
 		}
-
-	} else {
-		loader.display = 'block';
-		document.querySelector('.progress').innerHTML = LANG.TEXT.decoding;
 	}
+
+	document.querySelector('.loading').style.display = 'block';
+	document.querySelector('.progress').innerHTML = LANG.TEXT.decoding;
+
+	this.sound.setDecodedCallback(keys, this._soundsDecoded, this);
+};
+
+/** This function runs when all sounds have been decoded. */
+SuperState.prototype._soundsDecoded = function () {
+	document.querySelector('.loading').style.display = 'none';
+
+	if (this.startGame) {
+		this.startGame();
+	}
+
+	this.state.onUpdateCallback = this.run;
 };
 
 /**
- * Run a function when all sounds have been decoded.
- * NOTE: If you debug between loading audio and decoding, this function does
- * not work. Reason is unknown.
+ * Overshadow this function for use of the update loop.
+ * This will be set when all sounds have been decoded.
  */
 SuperState.prototype.run = function () {};
 
