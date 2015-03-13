@@ -138,6 +138,7 @@ NumberGame.prototype.init = function (options) {
 			t.skippable();
 		}
 	});
+	this.helpButton.visible = false;
 	this.hudGroup.add(this.helpButton);
 };
 
@@ -364,6 +365,7 @@ NumberGame.prototype.instructionYesNo = function () {
 /* Start the game. */
 NumberGame.prototype.startGame = function () {
 	this._nextNumber();
+	this.helpButton.visible = true;
 
 	Subgame.prototype.startGame.call(this);
 
