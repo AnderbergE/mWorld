@@ -22,7 +22,8 @@ SuperState.prototype.update = function () {
 	var keys = [], key;
 	for (var i = 0; i < this.sound._sounds.length; i++) {
 		key = this.sound._sounds[i].key;
-		if (keys.indexOf(key) < 0) {
+		if (keys.indexOf(key) < 0 && this.cache._sounds[key]) {
+			this.sound.decode(key); // Make sure that decoding has begun.
 			keys.push(key);
 		}
 	}
