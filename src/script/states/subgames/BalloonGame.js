@@ -82,8 +82,8 @@ BalloonGame.prototype.create = function () {
 
 	// Add background
 	this.gameGroup.add(new Cover(this.game, '#68acea'));
-	var cloud1 = this.gameGroup.create(0, 25, 'objects', 'cloud1');
-	var cloud2 = this.gameGroup.create(0, 200, 'objects', 'cloud2');
+	var cloud1 = this.gameGroup.create(-1000, 25, 'objects', 'cloud1');
+	var cloud2 = this.gameGroup.create(-1000, 200, 'objects', 'cloud2');
 	// This is needed, otherwise the clouds can be seen slightly to the right of the bg.
 	this.gameGroup.create(0, 0, 'balloon', 'bg').width = this.world.width + 1;
 	// Make the clouds move.

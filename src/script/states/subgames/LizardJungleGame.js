@@ -70,8 +70,8 @@ LizardJungleGame.prototype.create = function () {
 
 	// Add main game
 	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
-	var cloud1 = this.gameGroup.create(0, 33, 'objects', 'cloud2');
-	var cloud2 = this.gameGroup.create(0, 222, 'objects', 'cloud1');
+	var cloud1 = this.gameGroup.create(-1000, 33, 'objects', 'cloud2');
+	var cloud2 = this.gameGroup.create(-1000, 222, 'objects', 'cloud1');
 	TweenMax.fromTo(cloud1, 300, { x: -cloud1.width }, { x: this.world.width, repeat: -1 });
 	TweenMax.fromTo(cloud2, 200, { x: -cloud2.width }, { x: this.world.width, repeat: -1 });
 	this.gameGroup.bringToTop(this.agent);
