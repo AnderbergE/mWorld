@@ -18,7 +18,8 @@
  * I, Erik, have investigated how to lower this usage:
  * Has effect:
  * 1) Reducing the amount of channels, such as from stereo to mono.
- * 2) Reducing unused speech.
+ * 2) Removing unused speech.
+ * 3) Never have any unused sound loaded in memory.
  * 
  * Has NO effect:
  * 1) Reducing sample rate or bitrate (web audio decodes to 44100 32bit).
