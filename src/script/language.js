@@ -12,6 +12,21 @@
  *
  * NOTE: GLOBAL.FONT specifies which font that is used.
  *
+ * *** A NOTE ABOUT AUDIO FILE SIZE ***
+ * This project uses web audio, which in turn uses huge memory amounts.
+ * This is a problem for our speech on devices with restricted memory.
+ * I, Erik, have investigated how to lower this usage:
+ * Has effect:
+ * 1) Reducing the amount of channels, such as from stereo to mono.
+ * 2) Reducing unused speech.
+ * 
+ * Has NO effect:
+ * 1) Reducing sample rate or bitrate (web audio decodes to 44100 32bit).
+ *    However, file size is reduced by this which gives faster loading times.
+ * 2) Modifying format (same reason as previous).
+ *    However, some formats cannot be played on all devices, so backup is needed.
+ * 3) Removing pauses (or at least has a very marginal effect).
+ *
  * @global
  */
 var LANG = {};

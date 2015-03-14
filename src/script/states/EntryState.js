@@ -14,6 +14,11 @@ EntryState.prototype.constructor = EntryState;
  */
 function EntryState () {}
 
+/* Phaser state function */
+EntryState.prototype.preload = function () {
+	this.load.audio('entryMusic', ['audio/music.m4a', 'audio/music.ogg', 'audio/music.mp3']);
+};
+
 /* Entry state assets are loaded in the boot section */
 
 /* Phaser state function */

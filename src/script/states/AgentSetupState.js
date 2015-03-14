@@ -22,6 +22,7 @@ function AgentSetupState () {}
 
 /* Phaser state function */
 AgentSetupState.prototype.preload = function() {
+	this.load.audio('entryMusic', ['audio/music.m4a', 'audio/music.ogg', 'audio/music.mp3']);
 	this.load.audio('chooseSpeech', LANG.SPEECH.agentIntro.speech);
 	this.load.atlasJSONHash(Panda.prototype.id, 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
 	this.load.atlasJSONHash(Hedgehog.prototype.id, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');

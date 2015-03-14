@@ -61,10 +61,18 @@ SuperState.prototype.shutdown = function () {
 	EventSystem.clear();
 	GeneralButton.prototype.buttonColor = GLOBAL.BUTTON_COLOR;
 
+	// Purge sound
 	var key = this.sound._sounds.length;
 	while (key--) {
 		this.sound._sounds[key].destroy(true);
 	}
+	// Purge sound from cache as well
+	for (key in this.cache._sounds) {
+		if (this.sound._doNotDelete.indexOf(key) < 0) {
+			this.cache.removeSound(key);
+		}
+	}
+	// Purge all "this" variables.
 	for (key in this) {
 		if (GLOBAL.STATE_KEYS.indexOf(key) < 0) {
 			if (this[key] && this[key].destroy) {
