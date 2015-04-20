@@ -3,6 +3,7 @@ var GLOBAL = require('../global.js');
 var LANG = require('../language.js');
 var util = require('../utils.js');
 var Cover = require('../objects/Cover.js');
+var Modal = require('../objects/Modal.js');
 
 module.exports = EntryState;
 
@@ -37,6 +38,17 @@ EntryState.prototype.create = function () {
 		strokeThickness: 5
 	});
 	title.anchor.set(0.5);
+
+	if (GLOBAL.demo) {
+		var demoTitle = this.add.text(this.world.centerX, this.world.centerY/2 + 50, LANG.TEXT.demo, {
+			font: '50pt ' +  GLOBAL.FONT,
+			fill: '#ff0000',
+			stroke: '#000000',
+			strokeThickness: 5
+		});
+		demoTitle.anchor.set(0.5);	
+		demoTitle.angle = -20;
+	}
 
 	var start = this.add.text(this.world.centerX, this.world.centerY, LANG.TEXT.continuePlaying, {
 		font: '50pt ' +  GLOBAL.FONT,
@@ -130,4 +142,11 @@ EntryState.prototype.create = function () {
 	var rolling = TweenMax.fromTo(allCredits, 30,
 		{ y: this.world.height },
 		{ y: -allCredits.height, ease: Power0.easeInOut, repeat: -1, paused: true });
+
+	if (GLOBAL.demo) {
+		// Make sure that the player understand that the demo is a bit different.
+		var demo = new Modal(this.game, LANG.TEXT.demoEntry, 24);
+		demo.setSize(600);
+		this.game.world.add(demo);
+	}
 };

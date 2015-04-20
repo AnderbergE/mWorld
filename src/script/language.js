@@ -96,7 +96,7 @@ LANG.swedish.text = {
 	ok: 'Ok',
 	decoding: 'Snart klar...', // When decoding sound files
 	connectionLost: 'Ingen anslutning',
-	connectionLostMessage: 'Ajdå. Vi tappade anslutningen till servern.',
+	connectionLostMessage: 'Ajdå!\nVi tappade anslutningen till servern.',
 
 	/* Entry state */
 	title: 'Magical Garden',
@@ -145,7 +145,14 @@ LANG.swedish.text = {
 	woodlouseName: 'Grålle',
 	lizardName: 'Kamilla',
 	bumblebeeName: 'Humfrid',
-	birdName: 'Fålia'
+	birdName: 'Fålia',
+
+	/* Demo */
+	demo: 'Demo',
+	demoEntry: 'Magical Garden DEMO.\n' +
+		'I detta demot får du välja bana själv,' +
+		' i den riktiga versionen görs detta åt en.\n' +
+		'Demot kan därför inte anpassa bana efter din kapacitet.'
 };
 
 LANG.swedish.speech = {

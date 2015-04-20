@@ -60,7 +60,7 @@ BootState.prototype.preload = function () {
 	}, true);
 
 	EventSystem.subscribe(GLOBAL.EVENT.connectionLost, function () {
-		_this.game.world.add(new Modal(_this.game, LANG.TEXT.connectionLostMessage, 20, function () {
+		_this.game.world.add(new Modal(_this.game, LANG.TEXT.connectionLostMessage, 30, function () {
 			document.querySelector('.loading').style.display = 'none';
 			_this.game.state.start(GLOBAL.STATE.entry);
 		}));
