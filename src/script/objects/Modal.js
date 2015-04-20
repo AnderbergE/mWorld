@@ -29,12 +29,12 @@ function Modal (game, text, fontSize, callback) {
 	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
 	this.bg = this.create(game.world.width/2, centerY, bmd);
 	this.bg.anchor.set(0.5);
-	this.bg.alpha = 0.7;
+	this.bg.alpha = 0.8;
 
 	/* Add the text field. */
 	this.text = game.add.text(centerX, 0, text, {
 		font: (fontSize || 50) + 'pt ' +  GLOBAL.FONT,
-		fill: '#dd00dd',
+		fill: '#bb00bb',
 		align: 'center',
 		wordWrap: true
 	}, this);
