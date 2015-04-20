@@ -147,12 +147,35 @@ LANG.swedish.text = {
 	bumblebeeName: 'Humfrid',
 	birdName: 'Fålia',
 
+	/* Subgame names */
+	balloonGameName: 'Skattjakten',
+	beeGameName: 'Humlehjälpen',
+	birdheroGameName: 'Fågelhjälten',
+	lizardGameName: 'Piratmaten',
+
+	/* Scenario related names */
+	subgameName: 'Delspel',
+	numberRangeName: 'Intervall',
+	numberRepresentationName: 'Representation',
+	methodName: 'Metod',
+
+	countName: 'Räkna',
+	stepName: 'Steg-för-steg',
+	addName: 'Addition',
+	subName: 'Subtraktion',
+	addsubName: 'Add och sub',
+
 	/* Demo */
 	demo: 'Demo',
 	demoEntry: 'Magical Garden DEMO.\n' +
-		'I detta demot får du välja bana själv,' +
-		' i den riktiga versionen görs detta åt en.\n' +
-		'Demot kan därför inte anpassa bana efter din kapacitet.'
+		'I detta demot får du välja scenario själv,' +
+		' i den riktiga versionen görs detta åt en.' +
+		' Demot anpassar därför inte scenario efter din kapacitet.',
+	demoChoice: 'DEMO\n' +
+		'Välj en knapp i varje rad för att skräddarsy ditt scenario.\n' +
+		'Detta är enbart tillgängligt i demot, för att visa de delar som finns.\n' +
+		'I det riktiga spelet genereras dynamiskt ett scenario som passar spelarens kapacitet.',
+	startScenario: 'Starta scenario'
 };
 
 LANG.swedish.speech = {

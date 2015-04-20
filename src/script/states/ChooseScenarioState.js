@@ -2,6 +2,7 @@ var SuperState = require('./SuperState.js');
 var GLOBAL = require('../global.js');
 var LANG = require('../language.js');
 var Panda = require('../agent/Panda.js');
+var Cover = require('../objects/Cover.js');
 var Menu = require('../objects/Menu.js');
 var NumberButton = require('../objects/buttons/NumberButton.js');
 var TextButton = require('../objects/buttons/TextButton.js');
@@ -30,15 +31,24 @@ ChooseScenarioState.prototype.create = function () {
 
 	this.add.image(0, 0, 'entryBg');
 
+	this.world.add(new Cover(this.game, '#000000', 0.4));
+
+	this.add.text(75, 50, LANG.TEXT.demoChoice, {
+		font: '15pt ' +  GLOBAL.FONT,
+		fill: '#ffffff',
+		align: 'center',
+		wordWrap: true,
+		wordWrapWidth: this.game.world.width - 40
+	});
+
 	var textOptions = {
 		font: '20pt ' +  GLOBAL.FONT,
-		fill: '#ffffff',
+		fill: '#ffff00',
 		stroke: '#000000',
 		strokeThickness: 4
 	};
 	var offset = 10;
 	var i, t, key;
-
 
 	/* Subgame selection */
 	var subgame = null;
@@ -49,18 +59,19 @@ ChooseScenarioState.prototype.create = function () {
 		subgame = this;
 	};
 
-	this.add.text(75, 80, 'Subgame', textOptions);
+	this.add.text(75, 195, LANG.TEXT.subgameName, textOptions);
 	var games = [
-		['Balloon', GLOBAL.STATE.balloonGame],
-		['Bird Hero', GLOBAL.STATE.birdheroGame],
-		['Lizard', GLOBAL.STATE.lizardGame],
-		['Bee Flight', GLOBAL.STATE.beeGame]
+		[LANG.TEXT.balloonGameName, GLOBAL.STATE.balloonGame],
+		[LANG.TEXT.lizardGameName, GLOBAL.STATE.lizardGame],
+		[LANG.TEXT.beeGameName, GLOBAL.STATE.beeGame],
+		[LANG.TEXT.birdheroGameName, GLOBAL.STATE.birdheroGame]
 	];
 	var gameButtons = [];
 	for (i = 0; i < games.length; i++) {
 		t = new TextButton(this.game, games[i][0], {
 			x: t ? t.x + t.width + offset : 50,
-			y: 125,
+			y: 230,
+			size: 65,
 			fontSize: 25,
 			onClick: gameClicker,
 			keepDown: true
@@ -80,13 +91,14 @@ ChooseScenarioState.prototype.create = function () {
 		range = this;
 	};
 
-	this.add.text(75, 220, 'Number Range', textOptions);
+	this.add.text(75, 300, LANG.TEXT.numberRangeName, textOptions);
 	var rangeButtons = [];
 	t = null;
 	for (key in GLOBAL.NUMBER_RANGE) {
 		t = new TextButton(this.game, '1 - ' + GLOBAL.NUMBER_RANGE[key], {
 			x: t ? t.x + t.width + offset : 50,
-			y: 265,
+			y: 335,
+			size: 65,
 			fontSize: 33,
 			onClick: rangeClicker,
 			keepDown: true
@@ -106,7 +118,7 @@ ChooseScenarioState.prototype.create = function () {
 		representation = this;
 	};
 
-	this.add.text(75, 360, 'Number Representation', textOptions);
+	this.add.text(75, 410, LANG.TEXT.numberRepresentationName, textOptions);
 	var representationButtons = [];
 	i = 0;
 	for (key in GLOBAL.NUMBER_REPRESENTATION) {
@@ -116,7 +128,7 @@ ChooseScenarioState.prototype.create = function () {
 
 		representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new NumberButton(this.game, 4, GLOBAL.NUMBER_REPRESENTATION[key], {
 			x: 50 + i*(75 + offset),
-			y: 405,
+			y: 450,
 			onClick: representationClicker
 		});
 		this.world.add(representationButtons[representationButtons.length-1]);
@@ -131,20 +143,21 @@ ChooseScenarioState.prototype.create = function () {
 		method = this;
 	};
 
-	this.add.text(75, 500, 'Method', textOptions);
+	this.add.text(75, 530, LANG.TEXT.methodName, textOptions);
 	var methods = [
-		['Counting',  GLOBAL.METHOD.count],
-		['Step-by-step', GLOBAL.METHOD.incrementalSteps],
-		['Addition', GLOBAL.METHOD.addition],
-		['Subtraction', GLOBAL.METHOD.subtraction],
-		['Add & Sub', GLOBAL.METHOD.additionSubtraction]
+		[LANG.TEXT.countName,  GLOBAL.METHOD.count],
+		[LANG.TEXT.stepName, GLOBAL.METHOD.incrementalSteps],
+		[LANG.TEXT.addName, GLOBAL.METHOD.addition],
+		[LANG.TEXT.subName, GLOBAL.METHOD.subtraction],
+		[LANG.TEXT.addsubName, GLOBAL.METHOD.additionSubtraction]
 	];
 	var methodButtons = [];
 	t = null;
 	for (i = 0; i < methods.length; i++) {
 		t = new TextButton(this.game, methods[i][0], {
 			x: t ? t.x + t.width + offset : 50,
-			y: 545,
+			y: 565,
+			size: 65,
 			fontSize: 20,
 			onClick: methodClicker,
 			keepDown: true
@@ -156,7 +169,7 @@ ChooseScenarioState.prototype.create = function () {
 
 
 	/* Start game (save current options) */
-	var startButton = new TextButton(this.game, 'Start scenario', {
+	var startButton = new TextButton(this.game, LANG.TEXT.startScenario, {
 		x: this.world.centerX - 150,
 		y: 660,
 		fontSize: 30,
