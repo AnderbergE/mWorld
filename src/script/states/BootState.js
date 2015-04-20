@@ -153,13 +153,8 @@ BootState.prototype.update = function () {
 	 * So we need to wait for the web font to set its loaded flag.
 	 */
 	if (this._fontLoaded) {
-
-		if (typeof Routes === 'undefined' || Routes === null) {
-			console.warn('You are missing a route to the server, no data will be fetched or sent.');
-		}
-
 		if (GLOBAL.debug) {
-			console.log('You are running in debug mode, sneaking into choose scenario state :)');
+			// Debug mode goes directly to scenario picker.
 			this.game.state.start(GLOBAL.STATE.scenario);
 
 		} else {

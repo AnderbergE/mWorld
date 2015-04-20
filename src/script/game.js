@@ -29,6 +29,12 @@ window.onload = function () {
 		// If running locally we enter debug mode.
 		if (window.location.hostname.toLowerCase() === 'localhost' || window.location.hostname === '127.0.0.1') {
 			GLOBAL.debug = true;
+			console.log('You are running in debug mode, you have super powers!');
+		}
+
+		if (typeof Routes === 'undefined' || Routes === null) {
+			GLOBAL.demo = true;
+			console.warn('You are in demonstration mode, no data will be sent to the server.');
 		}
 
 		// Create game object.
