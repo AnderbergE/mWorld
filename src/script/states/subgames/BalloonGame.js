@@ -179,6 +179,7 @@ BalloonGame.prototype.create = function () {
 	this.treasure = this.gameGroup.create(0, 0, 'balloon', 'treasure1');
 	this.treasure.anchor.set(0.5, 1);
 	this.treasure.visible = false;
+	this.treasuresLeft = [1,2,3,4,5,6,7,8,9,10,11]; // For picking a random treasure.
 	this.sack = this.gameGroup.create(this.pos.sack.x, this.pos.sack.y, 'balloon', 'sack');
 	this.sack.scale.set(0.7);
 	this.sack.anchor.set(0.5);
@@ -603,11 +604,12 @@ BalloonGame.prototype.playRandomPrize = function () {
 
 	/* The boot is the special prize, it has a low percentage of coming. */
 	var sound;
-	if (this.rnd.frac() < 0.1) {
-		this.treasure.frameName = 'treasure11';
+	var index = this.rnd.integerInRange(0, this.treasuresLeft.length - 1);
+	var treasure = this.treasuresLeft.splice(index, 1);
+	this.treasure.frameName = 'treasure' + treasure;
+	if (treasure === 11) {
 		sound = 'treasureBoot';
 	} else {
-		this.treasure.frameName = 'treasure' + this.rnd.integerInRange(1, 10);
 		sound = this.rnd.integerInRange(0, 1) ?
 			('yippie' + this.rnd.integerInRange(1, 2)) :
 			('treasure' + this.rnd.integerInRange(1, 2));
