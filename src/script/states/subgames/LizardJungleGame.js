@@ -264,7 +264,7 @@ LizardJungleGame.prototype.runNumber = function (number, simulate) {
 		}, null, null, this);
 		t.addLabel('afterShot');
 		t.addSound(this.speech, this.lizard,
-			this.rnd.pick(['yummy', (this.currentMode === GLOBAL.MODE.agentTry ? 'almostFull' : 'thankYou')]), 'afterShot');
+			this.rnd.pick(['yummy', (this.currentMode === GLOBAL.MODE.agentTry && this._counter.left !== 1 ? 'almostFull' : 'thankYou')]), 'afterShot');
 		t.add(util.tweenTint(this.lizard, this.target.tint), 'afterShot');
 		this.atValue = 0;
 
@@ -427,14 +427,16 @@ LizardJungleGame.prototype.modeOutro = function () {
 
 	var t = new TimelineMax().skippable();
 	t.addSound(this.speech, this.lizard, 'fullAndSleepy', '+=0.5');
+
+	t.addLabel('finito', '+=1');
 	t.addCallback(this.agent.setHappy, null, null, this.agent);
 	for (var i = 1; i <= 3; i++) {
 		var piece = this.getTargetPos(this.rnd.integerInRange(1, this.amount));
 		t.add(this.lizard.shoot(piece));
 		t.addCallback(this.addWater, '-=0.9', [piece.x, piece.y], this);
 	}
-	t.addLabel('finito');
-	t.addSound(this.speech, this.lizard, 'byeAndThanks', 'finito');
-	t.add(this.agent.fistPump(), 'finito');
+	t.add(this.agent.fistPump(6), 'finito');
+
+	t.addSound(this.speech, this.lizard, 'byeAndThanks');
 	t.addCallback(this.nextRound, null, null, this);
 };
