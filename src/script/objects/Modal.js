@@ -27,22 +27,23 @@ function Modal (game, text, fontSize, callback) {
 	var bmd = game.add.bitmapData(parseInt(game.world.width/3), parseInt(game.world.height/2));
 	bmd.ctx.fillStyle = '#b9d384';
 	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
-	this.create(game.world.width/3, centerY * 0.67, bmd).alpha = 0.7;
+	this.bg = this.create(game.world.width/2, centerY, bmd);
+	this.bg.anchor.set(0.5);
+	this.bg.alpha = 0.7;
 
 	/* Add the text field. */
-	game.add.text(centerX, centerY, text, {
+	this.text = game.add.text(centerX, 0, text, {
 		font: (fontSize || 50) + 'pt ' +  GLOBAL.FONT,
 		fill: '#dd00dd',
 		align: 'center',
-		wordWrap: true,
-		wordWrapWidth: bmd.width * 0.7
-	}, this).anchor.set(0.5);
+		wordWrap: true
+	}, this);
+	this.text.anchor.set(0.5, 0);
 
 	/* Add the ok button. */
 	var _this = this;
-	this.add(new TextButton(game, LANG.TEXT.ok, {
-		x: centerX - 55,
-		y: centerY/0.75,
+	this.button = new TextButton(game, LANG.TEXT.ok, {
+		x: centerX,
 		size: 80,
 		fontSize: 30,
 		onClick: function () {
@@ -51,5 +52,20 @@ function Modal (game, text, fontSize, callback) {
 				callback();
 			}
 		}
-	}));
+	});
+	this.button.x -= this.button.width / 2;
+	this.add(this.button);
+
+	this.setSize();
 }
+
+Modal.prototype.setSize = function (width, height) {
+	width = width || this.bg.width;
+	height = height || this.bg.height;
+
+	this.bg.width = width;
+	this.bg.height = height;
+	this.text.y = this.bg.y - this.bg.height / 2 + 20;
+	this.text.wordWrapWidth = this.bg.width - 20;
+	this.button.y = this.bg.y + this.bg.height / 2 - 90;
+};
