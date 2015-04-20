@@ -131,7 +131,13 @@ module.exports = {
 	 * @return {Object} An object with data about the garden.
 	 */
 	getGarden: function () {
-		return this.get('current_api_gardens_path');
+		if (typeof Routes !== 'undefined') {
+			return this.get('current_api_gardens_path');
+
+		} else {
+			// If there is no server connection, use temporary storage.
+			return this._tempStore;
+		}
 	},
 
 	/**
@@ -182,9 +188,15 @@ module.exports = {
 	 * @param {Object} data - The garden updates.
 	 */
 	putUpgradePlant: function (data) {
-		this.post('upgrade_field_api_gardens_path', data, function (data) {
-			EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
-		});
+		if (typeof Routes !== 'undefined') {
+			this.post('upgrade_field_api_gardens_path', data, function (data) {
+				EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
+			});
+
+		} else {
+			// If we are missing a route to the server, we temporarily save the garden.
+			this.localPutPlantUpgrade(data);
+		}
 	},
 
 	/**
@@ -193,5 +205,22 @@ module.exports = {
 	 */
 	putSession: function (data) {
 		this.post('register_api_player_sessions_path', data);
+	},
+
+	localPutPlantUpgrade: function (data) {
+		var o = data.field;
+		this._tempStore = this._tempStore || { fields: [] };
+
+		for (var i = 0; i < this._tempStore.fields.length; i++) {
+			if (o.x === this._tempStore.fields[i].x && o.y === this._tempStore.fields[i].y) {
+				o.level = o.level || this._tempStore.fields[i].level + 1;
+				this._tempStore.fields[i] = o;
+				return;
+			}
+		}
+
+		// This is done if the plant did not already exist.
+		o.level = o.level || 1;
+		this._tempStore.fields.push(o);
 	}
 };

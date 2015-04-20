@@ -396,7 +396,9 @@ GardenPlant.prototype.down = function () {
 		/* Water management */
 		var maxLevel = function () {
 			_this.waterButton.destroy();
-			_this.highlight.destroy();
+			if (_this.highlight) {
+				_this.highlight.destroy();
+			}
 			_this.game.add.text(_this.width/2, height/2, LANG.TEXT.maxLevel, {
 				font: '40pt ' +  GLOBAL.FONT,
 				fill: '#5555ff'
