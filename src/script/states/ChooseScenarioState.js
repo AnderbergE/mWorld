@@ -218,15 +218,15 @@ ChooseScenarioState.prototype.create = function () {
 			gameButtons[0].setDown();
 			subgame = gameButtons[0];
 			break;
-		case GLOBAL.STATE.birdheroGame:
+		case GLOBAL.STATE.lizardGame:
 			gameButtons[1].setDown();
 			subgame = gameButtons[1];
 			break;
-		case GLOBAL.STATE.lizardGame:
+		case GLOBAL.STATE.beeGame:
 			gameButtons[2].setDown();
 			subgame = gameButtons[2];
 			break;
-		case GLOBAL.STATE.beeGame:
+		case GLOBAL.STATE.birdheroGame:
 			gameButtons[3].setDown();
 			subgame = gameButtons[3];
 			break;
