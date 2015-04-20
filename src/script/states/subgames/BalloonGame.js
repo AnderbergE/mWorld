@@ -121,13 +121,16 @@ BalloonGame.prototype.create = function () {
 	// Fine-tune the agent and bring it on top
 	this.gameGroup.bringToTop(this.agent);
 	this.agent.thought.guess.setDirection(true);
-	this.agent.thought.toScale = 3;
 	this.agent.thought.x += 100;
-	this.agent.thought.y -= 140;
-	if (this.representation[0] === GLOBAL.NUMBER_REPRESENTATION.none) {
+	if (this.method === GLOBAL.METHOD.count || this.method === GLOBAL.METHOD.incrementalSteps) {
+		this.agent.thought.toScale = 4.5;
+		this.agent.thought.y -= 350;
 		this.agent.thought.guess.spriteKey = 'balloon';
 		this.agent.thought.guess.spriteFrame = 'b';
 		this.agent.thought.guess.representations = GLOBAL.NUMBER_REPRESENTATION.objects;
+	} else {
+		this.agent.thought.toScale = 3;
+		this.agent.thought.y -= 140;
 	}
 
 	// The stack to grab balloons from
