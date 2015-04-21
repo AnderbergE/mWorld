@@ -77,6 +77,7 @@ Character.prototype.say = function (what, marker) {
  */
 Character.prototype.move = function (properties, duration, scale) {
 	properties.ease = properties.ease || Power1.easeInOut;
+	properties.immediateRender = properties.immediateRender || false; // Make sure to not change properties immediately
 
 	var t = new TimelineMax();
 	t.to(this, duration, properties);
