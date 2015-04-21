@@ -187,15 +187,17 @@ GardenState.prototype.create = function () {
 
 	/* Water plant when we push it. */
 	EventSystem.subscribe(GLOBAL.EVENT.waterPlant, function (plant) {
-		var t;
+		var t = new TimelineMax();
 		if (_this.game.player.water > 0) {
-			var side = ((plant.x + plant.width/3) <= agent.x) ? -1 : 1;
-			t = agent.water(2, side);
+			var side = ((plant.x + plant.width/2) <= agent.x) ? -1 : 1; // Side to water towards.
+			t.add(agent.move({ x: (side < 0 ? '+' : '-') + '=' + (agent.leftArm.width * agent.scale.x + 20) }, 0.2));
+			t.add(agent.water(2, side));
 			t.addCallback(function () {
 				_this.game.player.water--;
 				plant.water.value++;
-				agent.say(agent.speech, 'gardenGrowing').play('gardenGrowing');
-			}, 'watering');
+			});
+			t.addSound(agent.speech, agent, 'gardenGrowing');
+
 			if (plant.water.left === 1 && plant.level.left === 1) {
 				t.addSound(agent.speech, agent, 'gardenFullGrown');
 			}
@@ -204,7 +206,6 @@ GardenState.prototype.create = function () {
 				t.addSound(agent.speech, agent, 'gardenWaterLeft');
 			}
 		} else {
-			t = new TimelineMax();
 			t.addSound(agent.speech, agent, 'gardenEmptyCan');
 		}
 
