@@ -4,6 +4,7 @@ var GLOBAL = require('../global.js');
 var LANG = require('../language.js');
 var EventSystem = require('../pubsub.js');
 var util = require('../utils.js');
+var AStar = require('../objects/AStar.js');
 var Counter = require('../objects/Counter.js');
 var Cover = require('../objects/Cover.js');
 var Menu = require('../objects/Menu.js');
@@ -109,6 +110,12 @@ GardenState.prototype.create = function () {
 		}
 	}
 
+	var grid = new Array(rows);
+	for (i = 0; i < grid.length; i++) {
+		grid[i] = new Array(columns);
+	}
+	var path = new AStar(grid);
+
 	/* Add the garden agent */
 	var agent = this.game.player.createAgent();
 	agent.scale.set(0.2);
@@ -132,15 +139,21 @@ GardenState.prototype.create = function () {
 	/* Move agent when we push a plant. */
 	var _this = this;
 	EventSystem.subscribe(GLOBAL.EVENT.plantPress, function (plant) {
-		var y = plant.y + plant.plantHeight - agent.height/2;
-		var x = plant.x;
-		// If this is changed: update the side variable in the waterPlant subscription.
-		var side = -plant.width * 0.3;
-		if (agent.x > x) {
-			x += plant.width;
-			side *= -1;
+		var x = Math.floor(agent.x / width);
+		var y = Math.floor((agent.y - startPos) / height);
+		var toX = Math.floor(plant.x / width);
+		var toY = Math.floor((plant.y - startPos) / height);
+
+		// If the path is simply to the left, don't do anything.
+		if (toX === x - 1 && y === toY) {
+			return;
 		}
-		if (agent.x === x && agent.y === y ) {
+
+		var p = path.find(x, y, toX, toY);
+		console.log(x, y, p);
+
+		// Don't do anything if there is no path.
+		if (p.length < 1) {
 			return;
 		}
 
@@ -149,18 +162,28 @@ GardenState.prototype.create = function () {
 		}
 
 		currentMove = new TimelineMax();
-		var distance = agent.x - x;
-		if (agent.y !== y) {
-			if (agent.y % (plant.plantHeight - agent.height/2) < 10) {
-				distance = 0;
-				currentMove.add(agent.move({ x: x }, Math.abs((agent.x - x)/width)));
+
+		var dx, dy, move;
+		for (var i = 1; i < p.length; i++) {
+			dx = p[i].x - p[i - 1].x;
+			dy = p[i].y - p[i - 1].y;
+
+			move = { y: startPos + (p[i].y + 0.5) * height };
+
+			// Only add x movement when moving in x direction.
+			// Otherwise it might switch sides on vertical movements.
+			if (dx !== 0) {
+				// -dx is left.
+				move.x = p[i].x * width + (dx < 0 ? 1 : 0) * width;
 			}
-			currentMove.add(agent.move({ y: y }, Math.abs((agent.y - y)/height)));
+			currentMove.add(agent.move(move, (Math.abs(dx) + Math.abs(dy)) * 0.4));
 		}
-		if (agent.x !== x + side || agent.y !== y) {
-			currentMove.add(agent.move({ x: x + side }, Math.abs((distance + side)/width)));
-		}
-		currentMove.addSound(agent.speech, agent, 'ok' + _this.game.rnd.integerInRange(1, 2), 0);
+
+		// Say something about the move.
+		currentMove.addCallback(function () {
+			var marker = 'ok' + _this.game.rnd.integerInRange(1, 2);
+			agent.say(agent.speech, marker).play(marker);
+		}, 0);
 	});
 
 	/* Water plant when we push it. */
