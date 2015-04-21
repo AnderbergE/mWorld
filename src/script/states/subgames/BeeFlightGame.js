@@ -465,7 +465,6 @@ BeeFlightGame.prototype.modeOutro = function () {
 	for (i = 1; i <= 3; i++) {
 		do {
 			number = this.rnd.integerInRange(1, this.amount);
-			console.log(number, opened);
 		} while (opened.indexOf(number) >= 0);
 		opened.push(number);
 		flower = this.flowers[number - 1];

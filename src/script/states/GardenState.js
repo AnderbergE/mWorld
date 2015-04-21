@@ -150,7 +150,6 @@ GardenState.prototype.create = function () {
 		}
 
 		var p = path.find(x, y, toX, toY);
-		console.log(x, y, p);
 
 		// Don't do anything if there is no path.
 		if (p.length < 1) {
