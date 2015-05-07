@@ -158,12 +158,7 @@ BalloonGame.prototype.create = function () {
 	this.actionGroup.add(this.bucketBalloons);
 
 	// Setup how to show the target number.
-	if (this.representation[0] === GLOBAL.NUMBER_REPRESENTATION.none) {
-		// Special case when we have no representation.
-		this.eyes = this.gameGroup.create(0, 0, 'balloon', 'eyes');
-		this.gameGroup.moveDown(this.eyes);
-		this.eyes.visible = false;
-	} else {
+	if (this.representation[0] !== GLOBAL.NUMBER_REPRESENTATION.none) {
 		this.map = this.add.group(this.gameGroup);
 		this.map.x = this.pos.map.x;
 		this.map.y = this.pos.map.y;
@@ -480,15 +475,16 @@ BalloonGame.prototype.newTreasure = function (silent) {
 		t.addSound(this.speech, this.beetle, 'yippie1');
 	}
 
-	if (this.eyes) {
-		this.eyes.x = this.caves[this.currentNumber - 1].x + 30;
-		this.eyes.y = this.caves[this.currentNumber - 1].y + 30;
-		t.add(util.fade(this.eyes, true));
-	}
+
+	this.chest.frameName = 'chest_closed';
+	this.chest.x = this.caves[this.currentNumber - 1].x + 55;
+	this.chest.y = this.caves[this.currentNumber - 1].y + 50;
 	if (this.map) {
 		t.add(util.fade(this.map.target, false), 0);
 		t.addCallback(function () { this.map.target.number = this.currentNumber; }, 0.5, null, this);
 		t.add(util.fade(this.map.target, true), 1);
+	} else {
+		t.add(util.fade(this.chest, true));
 	}
 
 	this.doStartFunction(t, silent);
@@ -560,7 +556,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 			this.hideButtons();
 			this.agent.setHappy();
 		}, null, null, this);
-		t.add(this.openChest(sum));
+		t.add(this.openChest());
 		if (this.method !== GLOBAL.METHOD.incrementalSteps) {
 			this.returnToStart(t);
 		}
@@ -580,17 +576,9 @@ BalloonGame.prototype.runNumber = function (amount) {
 
 /**
  * The animation and sound of the chest opening.
- * @param {number} number - The cave number.
  */
-BalloonGame.prototype.openChest = function (number) {
-	this.chest.frameName = 'chest_closed';
-	this.chest.x = this.caves[number - 1].x + 55;
-	this.chest.y = this.caves[number - 1].y + 50;
-
+BalloonGame.prototype.openChest = function () {
 	var t = new TimelineMax();
-	if (this.eyes) {
-		t.add(util.fade(this.eyes, false));
-	}
 	t.add(util.fade(this.chest, true));
 	t.addSound(this.sfx, null, 'chestUnlock');
 	t.addCallback(function () { this.chest.frameName = 'chest_open'; }, null, null, this);
