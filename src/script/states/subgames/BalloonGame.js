@@ -138,9 +138,8 @@ BalloonGame.prototype.create = function () {
 	this.balloonStack = new BalloonGameStack(this.game, this.pos.balloons.x, this.pos.balloons.y, this.amount);
 	this.balloonStack.scale.set(0.9);
 	this.makeDraggable(this.balloonStack);
+	this.balloonStack.sway(true);
 	this.gameGroup.add(this.balloonStack);
-	// Make the balloons sway.
-	TweenMax.fromTo(this.balloonStack.balloons, 2, { angle: -7 }, { angle: 7, ease: Power1.easeInOut, repeat: -1, yoyo: true });
 
 	// The group where the bucket, beetle and right side balloons go into.
 	// Put into the same group to make it easier to animate together.
@@ -780,4 +779,19 @@ BalloonGameStack.prototype.updateBalloons = function (amount) {
 BalloonGameStack.prototype.popBalloons = function () {
 	this.amount = 0;
 	this.balloons.frameName = 'b0';
+};
+
+// Make the balloons sway.
+BalloonGameStack.prototype.sway = function (on) {
+	if (on) {
+		if (!this._sway) {
+			this._sway = TweenMax.fromTo(this, 2, { angle: -7 }, { angle: 7, ease: Power1.easeInOut, repeat: -1, yoyo: true });
+		}
+	} else {
+		if (this._sway) {
+			this._sway.kill();
+			this._sway = null;
+			this.angle = 0;
+		}
+	}
 };
