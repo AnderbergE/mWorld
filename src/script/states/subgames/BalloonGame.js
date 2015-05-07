@@ -751,9 +751,9 @@ BalloonGame.prototype.modeOutro = function () {
 	t.addCallback(this.agent.setHappy, 'water', null, this.agent);
 	t.add(this.agent.fistPump(), 'water');
 	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water');
-	t.addSound(this.speech, this.beetle, 'thankYou', 'water2');
 	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water2');
 	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water3');
+	t.addSound(this.speech, this.beetle, 'thankYou', 'water3');
 	t.addCallback(this.nextRound, null, null, this);
 };
 
