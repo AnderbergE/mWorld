@@ -403,17 +403,17 @@ GardenPlant.prototype.down = function () {
 		this.game.add.sprite(0, 0, bmd, null, this.infoGroup).inputEnabled = true;
 
 		/* The button to push when adding water. */
-		this.waterButton = new SpriteButton(this.game, 'objects', 'watering_can', {
+		this.waterButton = new SpriteButton(this.game, 'objects', 'drop', {
 			x: this.width/2 - (height - 20)/2,
 			y: 10,
 			size: height - 20,
+			color: 0x25377D,
 			keepDown: true,
 			onClick: function () {
 				/* Water is added to the plant when animation runs. */
 				EventSystem.publish(GLOBAL.EVENT.waterPlant, [_this]);
 			}
 		});
-		this.waterButton.sprite.tint = 0xbb3333;
 		this.infoGroup.add(this.waterButton);
 
 		/* Water management */
