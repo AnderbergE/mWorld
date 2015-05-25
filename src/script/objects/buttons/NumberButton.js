@@ -1,8 +1,8 @@
 var GeneralButton = require('./GeneralButton.js');
 var DotsRepresentation = require('../representations/DotsRepresentation.js');
-var FingerRepresentation = require('../representations/FingerRepresentation.js');
 var StrikeRepresentation = require('../representations/StrikeRepresentation.js');
 var NumberRepresentation = require('../representations/NumberRepresentation.js');
+var ObjectRepresentation = require('../representations/ObjectRepresentation.js');
 var DiceRepresentation = require('../representations/DiceRepresentation.js');
 var YesnoRepresentation = require('../representations/YesnoRepresentation.js');
 var GLOBAL = require('../../global.js');
@@ -159,19 +159,16 @@ NumberButton.prototype.updateGraphics = function () {
 			this.add(new DotsRepresentation(this.game, useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
 
 		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.fingers) {
-			offset = this.calcOffset(24);
-			this.add(new FingerRepresentation(this.game, useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color));
+			offset = this.calcOffset(60);
+			this.add(new ObjectRepresentation(this.game, 'objects', (this.max - this.min + 1 <= 5 ? 'finger' : 'fingers') + Math.abs(this._number), x+offset.x, y+offset.y, this.size-offset.o));
 
 		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.strikes) {
 			offset = this.calcOffset(12);
 			this.add(new StrikeRepresentation(this.game, useNum, x+offset.x, y+offset.y, this.size-offset.o, this.color, this.max - this.min + 1));
 
 		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.objects) {
-			var s = this.create(x, y, this.spriteKey, (this.spriteFrame ? this.spriteFrame + Math.abs(this._number) : null));
-			var scale = this.size/(s.width > s.height ? s.width : s.height)*0.8;
-			s.scale.set(scale);
-			s.x = (!this.direction ? (this._number > 0 ? this.size * 0.8 : this.size * 1.2) : this.size)/2 - s.width/2;
-			s.y = (this.direction ? (this._number > 0 ? this.size * 1.2 : this.size * 0.8) : this.size)/2 - s.height/2;
+			offset = this.calcOffset(60);
+			this.add(new ObjectRepresentation(this.game, this.spriteKey, (this.spriteFrame ? this.spriteFrame + Math.abs(this._number) : null), x+offset.x, y+offset.y, this.size-offset.o));
 
 		} else if (rep === GLOBAL.NUMBER_REPRESENTATION.numbers) {
 			offset = this.calcOffset(24);

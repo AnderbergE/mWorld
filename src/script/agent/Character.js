@@ -190,15 +190,17 @@ Character.prototype.addThought = function (x, y, representation, mirror) {
 	this.thought.bubble = this.thought.create(0, 0, 'objects', 'thought_bubble');
 	this.thought.bubble.scale.x = 1;
 	this.thought.bubble.anchor.set(0.5);
+	var state = this.game.state.getCurrentState();
 	var options = {
 		x: -60,
 		y: -55,
 		size: 100,
-		disabled: true
+		disabled: true,
+		max: state.amount
 	};
 	// Make sure that button background is correct according to method.
-	if (this.game.state.getCurrentState().method === GLOBAL.METHOD.count ||
-		this.game.state.getCurrentState().method === GLOBAL.METHOD.incrementalSteps) {
+	if (state.method === GLOBAL.METHOD.count ||
+		state.method === GLOBAL.METHOD.incrementalSteps) {
 		options.background = 'button';
 	}
 	this.thought.guess = new NumberButton(this.game, 1, representation, options);
