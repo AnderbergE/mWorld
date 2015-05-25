@@ -34,10 +34,10 @@ BalloonGame.prototype.pos = {
 	},
 	balloons: { x: 150, y: 580 },
 	bucket: { x: 780, y: 610 },
-	cave: { left: 670, right: 860, y: 555, height: 420, bucketOffset: -15 },
+	cave: { left: 680, right: 850, y: 555, height: 420, bucketOffset: -15 },
 	sack: { x: 550, y: 650 },
 	map: { x: 650, y: 610 },
-	liftoff: { x: 900, y: 670 }
+	liftoff: { x: 850, y: 670 }
 };
 
 BalloonGame.prototype.buttonColor = 0xa3e9a4;
