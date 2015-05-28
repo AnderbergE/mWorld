@@ -126,12 +126,23 @@ ChooseScenarioState.prototype.create = function () {
 			continue;
 		}
 
-		representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new NumberButton(this.game, 4, GLOBAL.NUMBER_REPRESENTATION[key], {
-			x: 50 + i*(75 + offset),
-			y: 450,
-			onClick: representationClicker
-		});
-		this.world.add(representationButtons[representationButtons.length-1]);
+		if (GLOBAL.NUMBER_REPRESENTATION[key] === GLOBAL.NUMBER_REPRESENTATION.mixed) {
+			representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new TextButton(this.game, 'MIX', {
+				x: 50 + i*(75 + offset),
+				y: 450,
+				size: 40,
+				keepDown: true,
+				onClick: representationClicker
+			});
+			representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]].representations = [GLOBAL.NUMBER_REPRESENTATION.mixed];
+		} else {
+			representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new NumberButton(this.game, 4, GLOBAL.NUMBER_REPRESENTATION[key], {
+				x: 50 + i*(75 + offset),
+				y: 450,
+				onClick: representationClicker
+			});
+		}
+		this.world.add(representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]]);
 		i++;
 	}
 
