@@ -33,13 +33,13 @@ ChooseScenarioState.prototype.create = function () {
 
 	this.world.add(new Cover(this.game, '#000000', 0.4));
 
-	this.add.text(75, 50, LANG.TEXT.demoChoice, {
+	this.add.text(this.world.centerX, 50, LANG.TEXT.demoChoice, {
 		font: '15pt ' +  GLOBAL.FONT,
 		fill: '#ffffff',
 		align: 'center',
 		wordWrap: true,
 		wordWrapWidth: this.game.world.width - 40
-	});
+	}).anchor.set(0.5, 0);
 
 	var textOptions = {
 		font: '20pt ' +  GLOBAL.FONT,

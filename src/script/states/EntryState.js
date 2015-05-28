@@ -3,7 +3,6 @@ var GLOBAL = require('../global.js');
 var LANG = require('../language.js');
 var util = require('../utils.js');
 var Cover = require('../objects/Cover.js');
-var Modal = require('../objects/Modal.js');
 
 module.exports = EntryState;
 
@@ -40,7 +39,20 @@ EntryState.prototype.create = function () {
 	title.anchor.set(0.5);
 
 	if (GLOBAL.demo) {
-		var demoTitle = this.add.text(this.world.centerX, this.world.centerY/2 + 50, LANG.TEXT.demo, {
+		// Make sure that the player understand that the demo is a bit different.
+		var demoBg = new Cover(this.game, '#ffffff', 0.8);
+		demoBg.height = 180;
+		this.world.add(demoBg);
+
+		this.add.text(this.world.centerX, 25, LANG.TEXT.demoEntry, {
+			font: '15pt ' +  GLOBAL.FONT,
+			align: 'center',
+			wordWrap: true,
+			wordWrapWidth: this.game.world.width - 20
+		}).anchor.set(0.5, 0);
+
+		title.y += 50;
+		var demoTitle = this.add.text(this.world.centerX, this.world.centerY/2 + 75, LANG.TEXT.demo, {
 			font: '50pt ' +  GLOBAL.FONT,
 			fill: '#ff0000',
 			stroke: '#000000',
@@ -142,11 +154,4 @@ EntryState.prototype.create = function () {
 	var rolling = TweenMax.fromTo(allCredits, 30,
 		{ y: this.world.height },
 		{ y: -allCredits.height, ease: Power0.easeInOut, repeat: -1, paused: true });
-
-	if (GLOBAL.demo) {
-		// Make sure that the player understand that the demo is a bit different.
-		var demo = new Modal(this.game, LANG.TEXT.demoEntry, 24);
-		demo.setSize(600);
-		this.game.world.add(demo);
-	}
 };

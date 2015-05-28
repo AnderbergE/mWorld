@@ -167,14 +167,14 @@ LANG.swedish.text = {
 
 	/* Demo */
 	demo: 'Demo',
-	demoEntry: 'Magical Garden DEMO.\n' +
-		'I detta demot får du välja scenario själv,' +
-		' i den riktiga versionen görs detta åt en.' +
-		' Demot anpassar därför inte scenario efter din kapacitet.',
-	demoChoice: 'DEMO\n' +
-		'Välj en knapp i varje rad för att skräddarsy ditt scenario.\n' +
-		'Detta är enbart tillgängligt i demot, för att visa de delar som finns.\n' +
-		'I det riktiga spelet genereras dynamiskt ett scenario som passar spelarens kapacitet.',
+	demoEntry: 'Observera att detta är en översiktsdemo! Den skiljer från lärspelet på följande sätt:\n' +
+		'* I det riktiga lärspelet har man sin egen inloggning. Genom den anpassar spelet hela tiden svårighetsnivån\n' +
+		'och stödet till individen, och utseendet av ens magiska trädgård sparas mellan inloggningarna.\n' +
+		'* Demon sparar ingen data för att göra det som nämns ovan, istället väljer man svårighetsnivå själv.',
+	demoChoice: 'ENDAST I ÖVERSIKTSDEMO\n' +
+		'Välj en knapp i varje rad för att skapa ett scenario att spela.\n' +
+		'I den riktiga versionen av lärspelet görs dessa val automatiskt. Då kommer man\n' +
+		'direkt till ett scenario där svårighetsgraden och stödet har anpassats efter individen.',
 	startScenario: 'Starta scenario'
 };
 
