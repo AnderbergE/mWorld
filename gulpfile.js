@@ -5,7 +5,8 @@ var util = require('gulp-util');
 
 // Script requires
 var browserify = require('browserify');
-var transform = require('vinyl-transform');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var sourcemaps = require('gulp-sourcemaps');
 var jshint = require('gulp-jshint');
 
@@ -64,31 +65,24 @@ gulp.task('html', function () {
 });
 
 gulp.task('browserify', function () {
-	var browserified = transform(function(filename) {
-		var b = browserify(filename, { debug: destination !== PRODUCTION ? true : false });
-		return b.bundle();
-	});
+	var b = browserify({
+		entries: './' + SCRIPT + 'game.js',
+		debug: destination !== PRODUCTION ? true : false
+	}).bundle()
+		.pipe(source('game.js'))
+		.pipe(buffer())
+		.on('error', function (err) {
+			util.beep();
+			util.log(util.colors.red('Browserify: '), err.message);
+			this.emit('end');
+		});
 
 	if (destination !== PRODUCTION) {
-		return gulp.src('./' + SCRIPT + 'game.js')
-			.pipe(browserified)
-			.on('error', function (err) {
-				util.beep();
-				util.log(util.colors.red('Browserify: '), err.message);
-				this.emit('end');
-			})
-			.pipe(sourcemaps.init({ loadMaps: true }))
+		return b.pipe(sourcemaps.init({ loadMaps: true }))
 			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest(destination));
 	} else {
-		return gulp.src('./' + SCRIPT + 'game.js')
-			.pipe(browserified)
-			.on('error', function (err) {
-				util.beep();
-				util.log(util.colors.red('Browserify: '), err.message);
-				this.emit('end');
-			})
-			.pipe(gulp.dest(destination));
+		return b.pipe(gulp.dest(destination));
 	}
 });
 
