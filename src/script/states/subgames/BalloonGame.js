@@ -595,7 +595,7 @@ BalloonGame.prototype.playRandomPrize = function () {
 	/* The boot is the special prize, it has a low percentage of coming. */
 	var sound;
 	var index = this.rnd.integerInRange(0, this.treasuresLeft.length - 1);
-	var treasure = this.treasuresLeft.splice(index, 1);
+	var treasure = this.treasuresLeft.splice(index, 1)[0];
 	this.treasure.frameName = 'treasure' + treasure;
 	if (treasure === 11) {
 		sound = 'treasureBoot';
