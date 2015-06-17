@@ -165,7 +165,7 @@ Phaser.RandomDataGenerator.prototype.shuffle = function (array) {
  * @param {string|Object} what - The name of the sound file, or the sound object, to play.
  * @param {Object} who - If someone should say it (object must have "say" function) (optional).
  * @param {string} marker - For playing a specific marker in a sound file (optional).
- * @param {number} position - The position to put the sound (default is '+=0').
+ * @param {number|string} position - The position to put the sound (default is '+=0').
  * @return {Object} The TimelineMax object.
  */
 TimelineMax.prototype.addSound = function (what, who, marker, position) {
