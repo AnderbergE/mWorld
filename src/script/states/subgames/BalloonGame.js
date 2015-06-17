@@ -88,7 +88,7 @@ BalloonGame.prototype.create = function () {
 	// This is needed, otherwise the clouds can be seen slightly to the right of the bg.
 	this.gameGroup.create(0, 0, 'balloon', 'bg').width = this.world.width + 1;
 	// Make the clouds move.
-	TweenMax.fromTo(cloud1, 160, { x: -cloud1.width }, { x: 600, repeat: -1 });
+	TweenMax.fromTo(cloud1, 160, { x: -cloud1.width }, { x: 630, repeat: -1 });
 	TweenMax.fromTo(cloud2, 120, { x: -cloud2.width }, { x: 600, repeat: -1 });
 
 	// The interactable bush.
