@@ -31,11 +31,14 @@ SuperState.prototype.update = function () {
 	document.querySelector('.loading').style.display = 'block';
 	document.querySelector('.progress').innerHTML = LANG.TEXT.decoding;
 
-	this.sound.setDecodedCallback(keys, this._soundsDecoded, this);
+	this.sound.setDecodedCallback(keys, soundsDecoded, this);
 };
 
-/** This function runs when all sounds have been decoded. */
-SuperState.prototype._soundsDecoded = function () {
+/**
+ * This function runs when all sounds have been decoded.
+ * @private
+ */
+function soundsDecoded () {
 	document.querySelector('.loading').style.display = 'none';
 
 	if (this.startGame) {
@@ -43,7 +46,7 @@ SuperState.prototype._soundsDecoded = function () {
 	}
 
 	this.state.onUpdateCallback = this.run;
-};
+}
 
 /**
  * Overshadow this function for use of the update loop.

@@ -23,8 +23,6 @@ BootState.prototype._fontLoaded = false;
 
 /* Phaser state function */
 BootState.prototype.preload = function () {
-	var _this = this;
-
 	GLOBAL.STATE_KEYS = Object.keys(this);
 	GLOBAL.STATE_KEYS.push('loaded');
 
@@ -59,12 +57,12 @@ BootState.prototype.preload = function () {
 		}
 	}, true);
 
-	EventSystem.subscribe(GLOBAL.EVENT.connectionLost, function () {
-		_this.game.world.add(new Modal(_this.game, LANG.TEXT.connectionLostMessage, 30, function () {
+	EventSystem.subscribe(GLOBAL.EVENT.connectionLost, (function () {
+		this.game.world.add(new Modal(this.game, LANG.TEXT.connectionLostMessage, 30, (function () {
 			document.querySelector('.loading').style.display = 'none';
-			_this.game.state.start(GLOBAL.STATE.entry);
-		}));
-	}, true);
+			this.game.state.start(GLOBAL.STATE.entry);
+		}).bind(this)));
+	}).bind(this), true);
 
 
 	/* Make sure the game scales according to resolution */
@@ -118,7 +116,7 @@ BootState.prototype.preload = function () {
 	/* Load the Google WebFont Loader script */
 	// The Google WebFont Loader will look for this specific object.
 	window.WebFontConfig = {
-		active: function () { _this._fontLoaded = true; },
+		active: (function () { this._fontLoaded = true; }).bind(this),
 		google: { families: [GLOBAL.FONT] }
 	};
 	this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');

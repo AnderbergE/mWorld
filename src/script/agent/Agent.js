@@ -337,7 +337,6 @@ Agent.prototype.water = function (duration, arm) {
 	t.add(new TweenMax(obj, water.durUp, { rotation: dir * water.angle, ease: Power1.easeOut }));
 	t.add(new TweenMax(w, water.durCan, { rotation: dir * water.canAngle }));
 	t.addCallback(this.eyesFollowObject, null, [w.can], this);
-	t.addLabel('watering');
 	t.add(w.pour(duration));
 	t.addCallback(this.eyesStopFollow, null, null, this);
 	t.add(new TweenMax(obj, water.durUp, { rotation: dir * water.back, ease: Power1.easeIn }));

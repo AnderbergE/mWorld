@@ -37,12 +37,9 @@ Subgame.prototype = Object.create(SuperState.prototype);
 Subgame.prototype.constructor = Subgame;
 function Subgame () {}
 
-/* 
- * Phaser state function.
- */
+/** Phaser state function. */
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
-	var _this = this; // Event subscriptions does not have access to this
 	this._token = options.token || Date.now();
 	this._modes = options.mode || [
 		GLOBAL.MODE.intro,
@@ -58,9 +55,9 @@ Subgame.prototype.init = function (options) {
 	/* Keep track of how many rounds that have been played */
 	this._counter = new Counter(options.roundsPerMode || 3, true);
 	/* When enough rounds have been played, trigger a mode change */
-	this._counter.onMax = function () {
-		_this._nextMode();
-	};
+	this._counter.onMax = (function () {
+		_nextMode.call(this);
+	}).bind(this);
 	this._currentTries = 0;
 	this._totalTries = 0;
 	this._totalCorrect = 0;
@@ -102,42 +99,24 @@ Subgame.prototype.init = function (options) {
 	this._origImages = Object.keys(this.game.cache._images);
 };
 
-/* Phaser state function */
-Subgame.prototype.shutdown = function () {
-	var key;
-	for (key in this.game.cache._sounds) {
-		if (this._origAudio.indexOf(key) < 0) {
-			this.game.cache.removeSound(key);
-		}
-	}
-
-	for (key in this.game.cache._images) {
-		if (this._origImages.indexOf(key) < 0) {
-			this.game.cache.removeImage(key);
-		}
-	}
-
-	SuperState.prototype.shutdown.call(this);
-};
-
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                            Private functions                              */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 
 /** Change to the next mode in the queue. */
-Subgame.prototype._nextMode = function () {
+function _nextMode () {
 	var newMode = this._modes.shift();
-	this._decideMode(newMode);
+	_decideMode.call(this, newMode);
 	this._pendingMode = newMode;
 	this._first = true;
-};
+}
 
 /**
  * Translate from integer to mode function
  * @param {number}
  */
-Subgame.prototype._decideMode = function (mode) {
+function _decideMode (mode) {
 	if (mode === GLOBAL.MODE.intro) {
 		this._mode = this.modeIntro;
 	} else if (mode === GLOBAL.MODE.playerDo) {
@@ -153,13 +132,7 @@ Subgame.prototype._decideMode = function (mode) {
 	} else {
 		this._mode = this.endGame;
 	}
-};
-
-/** Skip the current mode. */
-Subgame.prototype._skipMode = function () {
-	this._nextMode();
-	this.nextRound();
-};
+}
 
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
@@ -177,7 +150,7 @@ Subgame.prototype.nextRound = function () {
 	if ((this.currentMode === GLOBAL.MODE.intro ||
 		this.currentMode === GLOBAL.MODE.outro) &&
 		this.currentMode === this._pendingMode) {
-		this._nextMode();
+		_nextMode.call(this);
 	}
 
 	// Publish event when it it is the first time it runs
@@ -225,7 +198,7 @@ Subgame.prototype.startGame = function () {
 	EventSystem.publish(GLOBAL.EVENT.subgameStarted, [this.game.state.current, this._token]);
 
 	this._menuGroup.visible = true;
-	this._nextMode();
+	_nextMode.call(this);
 	this.nextRound();
 };
 
@@ -236,9 +209,15 @@ Subgame.prototype.endGame = function () {
 
 
 /* The following functions should be overshadowed in the game object. */
-Subgame.prototype.modeIntro      = Subgame.prototype._skipMode;
-Subgame.prototype.modePlayerDo   = Subgame.prototype._skipMode;
-Subgame.prototype.modePlayerShow = Subgame.prototype._skipMode;
-Subgame.prototype.modeAgentTry   = Subgame.prototype._skipMode;
-Subgame.prototype.modeAgentDo    = Subgame.prototype._skipMode;
-Subgame.prototype.modeOutro      = Subgame.prototype._skipMode;
+Subgame.prototype.modeIntro      = Subgame.prototype.skipMode;
+Subgame.prototype.modePlayerDo   = Subgame.prototype.skipMode;
+Subgame.prototype.modePlayerShow = Subgame.prototype.skipMode;
+Subgame.prototype.modeAgentTry   = Subgame.prototype.skipMode;
+Subgame.prototype.modeAgentDo    = Subgame.prototype.skipMode;
+Subgame.prototype.modeOutro      = Subgame.prototype.skipMode;
+
+/** Skip the current mode. */
+Subgame.prototype.skipMode = function () {
+	_nextMode.call(this);
+	this.nextRound();
+};

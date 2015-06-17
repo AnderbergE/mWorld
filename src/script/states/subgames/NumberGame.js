@@ -89,7 +89,7 @@ NumberGame.prototype.init = function (options) {
 
 	// Setup gameplay differently depending on situation.
 	this.isRelative = false;
-	this._setupFunctions();
+	_setupFunctions.call(this);
 
 	/* Numbers for randomisation. */
 	this._weighted = this.amount > 4 && this.method === GLOBAL.METHOD.count;
@@ -153,7 +153,7 @@ NumberGame.prototype.init = function (options) {
  * The .doStartFunction is an easy way to call the appropriate start function.
  * The .doReturnFunction is an wasy way to call the appropriate return function when answer is incorrect.
  */
-NumberGame.prototype._setupFunctions = function () {
+function _setupFunctions () {
 	if (this.method === GLOBAL.METHOD.count) {
 		this.doInstructions = this.instructionCount;
 		this.doStartFunction = this.startStop;
@@ -178,20 +178,20 @@ NumberGame.prototype._setupFunctions = function () {
 		this.doReturnFunction = this.returnNone;
 		this.isRelative = true;
 	}
-};
+}
 
 /** Change this.currentNumber to a new one (resets the tries). */
 // TODO: Should we allow the same number again?
-NumberGame.prototype._nextNumber = function () {
+function _nextNumber () {
 	// Weighted randomisation if applicable
 	if (this._weighted && this.rnd.frac() < 0.2) {
 		this.currentNumber = this.rnd.integerInRange(5, this._numberMax);
 	} else {
 		this.currentNumber = this.rnd.integerInRange(this._numberMin, this._numberMax);
 	}
-};
+}
 
-NumberGame.prototype._getRange = function () {
+function _getRange () {
 	if (this.method === GLOBAL.METHOD.addition) {
 		return { min: 1, max: this.amount - this.addToNumber };
 	} else if (this.method === GLOBAL.METHOD.subtraction) {
@@ -201,7 +201,7 @@ NumberGame.prototype._getRange = function () {
 	} else {
 		return { min: 1, max: this.amount };
 	}
-};
+}
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
 /*                            Public functions                               */
@@ -224,7 +224,7 @@ NumberGame.prototype.tryNumber = function (number, offset) {
 
 	if (!this.lastTry) {
 		this._counter.value++; // This will trigger next mode if we loop.
-		this._nextNumber();
+		_nextNumber.call(this);
 		this._totalCorrect++;
 		this._currentTries = 0;
 	}
@@ -235,7 +235,7 @@ NumberGame.prototype.tryNumber = function (number, offset) {
 NumberGame.prototype.agentGuess = function () {
 	var t = new TimelineMax();
 	t.addCallback(function () {
-		var range = this._getRange();
+		var range = _getRange.call(this);
 		this.agent.guessNumber(this.currentNumber - (this.isRelative ? this.addToNumber : 0), range.min, range.max);
 	}, 0, null, this);
 	t.add(this.agent.think());
@@ -336,7 +336,7 @@ NumberGame.prototype.hideButtons = function () {
 /* Update the values of the button panel. */
 NumberGame.prototype.updateButtons = function () {
 	if (this.buttons) {
-		var range = this._getRange();
+		var range = _getRange.call(this);
 		this.buttons.setRange(range.min, range.max);
 	}
 };
@@ -364,7 +364,7 @@ NumberGame.prototype.instructionYesNo = function () {
 
 /* Start the game. */
 NumberGame.prototype.startGame = function () {
-	this._nextNumber();
+	_nextNumber.call(this);
 	this.helpButton.visible = true;
 
 	Subgame.prototype.startGame.call(this);
