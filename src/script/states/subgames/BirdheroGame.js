@@ -607,8 +607,10 @@ function BirdheroBranch (game, x, y, tint) {
 
 	var branchType = this.game.rnd.integerInRange(1, 3);
 	var branch = this.game.add.sprite(0, 0, 'birdhero', 'branch' + branchType, this);
-	this.nest = this.game.add.sprite(branch.x + (branchType === 1) ? 100 : (branchType === 2) ? 60 : 80, branch.height * 0.4, 'birdhero', 'nest', this);
-	this.mother = this.game.add.sprite(this.nest.x + this.nest.width/5, this.nest.y, 'birdhero', 'parent', this);
+	this.nest = this.game.add.sprite(branch.x + (branchType === 1) ? 200 : (branchType === 2) ? 170 : 180, branch.height * 0.4, 'birdhero', 'nest', this);
+	this.nest.anchor.x = 1;
+	this.mother = this.game.add.sprite(this.nest.x, this.nest.y, 'birdhero', 'parent', this);
+	this.mother.x -= this.mother.width;
 	this.mother.y -= this.mother.height*0.7;
 	this.mother.tint = tint || 0xffffff;
 	this.nest.bringToTop();
@@ -623,13 +625,18 @@ Object.defineProperty(BirdheroBranch.prototype, 'chicks', {
 	set: function(value) {
 		var change = value - this._chicks.length;
 		var dir = change > 0 ? -1 : 1;
-		while (change !== 0 && this._chicks.length < 3) {
+		while (change !== 0) {
 			if (dir < 0) {
-				var chick = this.game.add.sprite(this.mother.x - 10, this.nest.y, 'birdhero', 'chick', this);
-				chick.x += this._chicks.length * chick.width * 0.5;
+				var chick = this.game.add.sprite(this.nest.x, this.nest.y, 'birdhero', 'chick', this);
+				chick.x -= chick.width * 1.2 + this._chicks.length * chick.width * 0.5;
 				chick.y -= chick.height * 0.5;
 				chick.tint = this.mother.tint;
+				chick.scale.set(0);
+				TweenMax.to(chick.scale, 0.2, { x: 1, y: 1, delay: 0.2 });
 				this._chicks.push(chick);
+				if (this._chicks.length > 3) {
+					TweenMax.to(this.nest.scale, 0.3, { x: 1 + (this._chicks.length - 3) * 0.2 });
+				}
 			} else {
 				this._chicks.pop().destroy();
 			}
@@ -650,7 +657,7 @@ BirdheroBranch.prototype.chickPos = function () {
 /** @returns {Object} The x, y coordinates of where the bird should stop at the nest */
 BirdheroBranch.prototype.visit = function () {
 	return {
-		x: this.nest.x * this.scale.x,
+		x: (this.nest.x - this.nest.width) * this.scale.x,
 		y: this.nest.y
 	};
 };
