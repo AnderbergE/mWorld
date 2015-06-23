@@ -1,11 +1,11 @@
-var SuperState = require('../SuperState.js');
-var GLOBAL = require('../../global.js');
-var LANG = require('../../language.js');
-var EventSystem = require('../../pubsub.js');
-var Counter = require('../../objects/Counter.js');
-var Cover = require('../../objects/Cover.js');
-var Menu = require('../../objects/Menu.js');
-var WaterCan = require('../../objects/WaterCan.js');
+var SuperState = require('./SuperState.js');
+var GLOBAL = require('./../global.js');
+var LANG = require('./../language.js');
+var EventSystem = require('./../pubsub.js');
+var Counter = require('./../objects/Counter.js');
+var Cover = require('./../objects/Cover.js');
+var Menu = require('./../objects/Menu.js');
+var WaterCan = require('./../objects/WaterCan.js');
 
 module.exports = Subgame;
 

@@ -1,4 +1,4 @@
-var Subgame = require('./Subgame.js');
+var Subgame = require('../Subgame.js');
 var GLOBAL = require('../../global.js');
 var EventSystem = require('../../pubsub.js');
 var util = require('../../utils.js');
