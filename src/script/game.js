@@ -12,6 +12,8 @@ var BirdheroGame = require('./states/subgames/BirdheroGame.js');
 var BalloonGame = require('./states/subgames/BalloonGame.js');
 var BeeFlightGame = require('./states/subgames/BeeFlightGame.js');
 var ChooseScenarioState = require('./states/ChooseScenarioState.js');
+var InvitationGame = require('./states/partygames/InvitationGame.js');
+
 
 require('./logger.js'); // Start logger
 require('./utils.js'); // Setup prototype functions.
@@ -64,6 +66,7 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
 		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
+		game.state.add(GLOBAL.STATE.invitationGame, InvitationGame);
 
 		// Run the boot state.
 		game.state.start('Boot');

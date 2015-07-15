@@ -153,7 +153,7 @@ BootState.prototype.update = function () {
 	if (this._fontLoaded) {
 		if (GLOBAL.debug) {
 			// Debug mode goes directly to scenario picker.
-			this.game.state.start(GLOBAL.STATE.scenario);
+			this.game.state.start(GLOBAL.STATE.invitationGame);
 
 		} else {
 			this.game.state.start(GLOBAL.STATE.entry);

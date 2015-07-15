@@ -40,6 +40,7 @@ function Subgame () {}
 /** Phaser state function. */
 Subgame.prototype.init = function (options) {
 	/* "Private" variables */
+	options = options || {};
 	this._token = options.token || Date.now();
 	this._modes = options.mode || [
 		GLOBAL.MODE.intro,
@@ -208,6 +209,12 @@ Subgame.prototype.endGame = function () {
 };
 
 
+/** Skip the current mode. */
+Subgame.prototype.skipMode = function () {
+	_nextMode.call(this);
+	this.nextRound();
+};
+
 /* The following functions should be overshadowed in the game object. */
 Subgame.prototype.modeIntro      = Subgame.prototype.skipMode;
 Subgame.prototype.modePlayerDo   = Subgame.prototype.skipMode;
@@ -215,9 +222,3 @@ Subgame.prototype.modePlayerShow = Subgame.prototype.skipMode;
 Subgame.prototype.modeAgentTry   = Subgame.prototype.skipMode;
 Subgame.prototype.modeAgentDo    = Subgame.prototype.skipMode;
 Subgame.prototype.modeOutro      = Subgame.prototype.skipMode;
-
-/** Skip the current mode. */
-Subgame.prototype.skipMode = function () {
-	_nextMode.call(this);
-	this.nextRound();
-};
