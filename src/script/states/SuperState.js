@@ -22,7 +22,7 @@ SuperState.prototype.update = function () {
 	var keys = [], key;
 	for (var i = 0; i < this.sound._sounds.length; i++) {
 		key = this.sound._sounds[i].key;
-		if (keys.indexOf(key) < 0 && this.cache._sounds[key]) {
+		if (keys.indexOf(key) < 0 && this.cache.checkSoundKey(key)) {
 			this.sound.decode(key); // Make sure that decoding has begun.
 			keys.push(key);
 		}
@@ -70,7 +70,7 @@ SuperState.prototype.shutdown = function () {
 		this.sound._sounds[key].destroy(true);
 	}
 	// Purge sound from cache as well
-	for (key in this.cache._sounds) {
+	for (key in this.cache._cache.sound) {
 		if (this.sound._doNotDelete.indexOf(key) < 0) {
 			this.cache.removeSound(key);
 		}

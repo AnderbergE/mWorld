@@ -95,8 +95,9 @@ Subgame.prototype.init = function (options) {
 	this._menuGroup.add(new Menu(this.game));
 
 	/* For cleanup when shutting down state */
-	this._origAudio = Object.keys(this.game.cache._sounds);
-	this._origImages = Object.keys(this.game.cache._images);
+	// TODO: Should not use _cache, it can change at any time.
+	this._origAudio = Object.keys(this.cache._cache.sound);
+	this._origImages = Object.keys(this.cache._cache.image);
 };
 
 

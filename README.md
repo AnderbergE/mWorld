@@ -1,7 +1,5 @@
 # Magical Garden
 Magical Garden is a game for understanding numbers, aka number sense.<br>
-The game is built with the game engine [Phaser](http://phaser.io/).
-Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 
 ## How to build:
 * Clone/Fork this repository to your computer.
@@ -16,6 +14,10 @@ As long as gulp is running the server will be active. If you make changes in the
 
 ## Documentation
 UPDATED: 2015-01-26
+
+The game is built with the game engine [Phaser](http://phaser.io/). It is custom built using the string: ```grunt custom --exclude p2,video```.
+
+Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 
 The code uses [Browserify](http://browserify.org/) to handle dependencies between files. It will bundle them together as one file. The script file is created with source maps, meaning that in browser debuggers there will be e 'source' folder that has the same folder structure as the folder 'src'.
 

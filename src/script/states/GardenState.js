@@ -24,13 +24,13 @@ function GardenState () {}
 
 /* Phaser state function */
 GardenState.prototype.preload = function() {
-	if (!this.cache._sounds[this.game.player.agent.prototype.id + 'Speech']) {
+	if (!this.cache.checkSoundKey(this.game.player.agent.prototype.id + 'Speech')) {
 		this.load.audio(this.game.player.agent.prototype.id + 'Speech', LANG.SPEECH.AGENT.speech);
 	}
-	if (!this.cache._sounds.gardenMusic) {
+	if (!this.cache.checkSoundKey('gardenMusic')) {
 		this.load.audio('gardenMusic', ['audio/garden/music.m4a', 'audio/garden/music.ogg', 'audio/garden/music.mp3']);
 	}
-	if (!this.cache._images.garden) {
+	if (!this.cache.checkImageKey('garden')) {
 		this.load.atlasJSONHash('garden', 'img/garden/atlas.png', 'img/garden/atlas.json');
 	}
 
