@@ -20,7 +20,7 @@
  * 1) Reducing the amount of channels, such as from stereo to mono.
  * 2) Removing unused speech.
  * 3) Never have any unused sound loaded in memory.
- * 
+ *
  * Has NO effect:
  * 1) Reducing sample rate or bitrate (web audio decodes to 44100 32bit).
  *    However, file size is reduced by this which gives faster loading times.
@@ -96,7 +96,7 @@ LANG.swedish.text = {
 	ok: 'Ok',
 	decoding: 'Snart klar...', // When decoding sound files
 	connectionLost: 'Ingen anslutning',
-	connectionLostMessage: 'Ajdå!\nVi tappade anslutningen till servern.',
+	connectionLostMessage: 'Ajdå. Vi tappade anslutningen till servern.',
 
 	/* Entry state */
 	title: 'Magical Garden',
@@ -152,6 +152,7 @@ LANG.swedish.text = {
 	beeGameName: 'Humlehjälpen',
 	birdheroGameName: 'Fågelhjälten',
 	lizardGameName: 'Piratmaten',
+	vehicleGameName: 'Lastdags',
 
 	/* Scenario related names */
 	subgameName: 'Delspel',
@@ -323,6 +324,77 @@ LANG.swedish.speech = {
 		}
 	},
 
+	vehicle: {
+		speech: [
+			'audio/subgames/vehicle/swedish.m4a',
+			'audio/subgames/vehicle/swedish.ogg',
+			'audio/subgames/vehicle/swedish.mp3'
+		],
+		markers: {
+			helloHedvig:  [  1.9, 1.1], // Hej Hedvig.
+			letsGo:       [  4.2, 1.1], // Då kör vi.
+			order1:       [  6.0, 1.3], // Första.
+			order2:       [  7.9, 1.1], // Andra.
+			order3:       [  9.5, 1.3], // Tredje.
+			order4:       [ 11.3, 1.3], // Fjärde.
+			order5:       [ 13.4, 1.2], // Femte.
+			order6:       [ 15.5, 1.2], // Sjätte.
+			order7:       [ 17.3, 1.3], // Sjunde.
+			order8:       [ 19.3, 1.3], // Åttonde.
+			order9:       [ 21.0, 1.3], // Nionde.
+			marking:      [ 22.8, 1.2], // Markeringen.
+			number1:      [ 24.8, 1.0], // Ett.
+			number2:      [ 26.6, 0.9], // Två.
+			number3:      [ 28.4, 0.9], // Tre.
+			number4:      [ 30.5, 0.9], // Fyra.
+			number5:      [ 32.2, 0.9], // Fem.
+			number6:      [ 34.0, 1.2], // Sex.
+			number7:      [ 36.0, 0.8], // Sju.
+			number8:      [ 37.8, 0.9], // Åtta.
+			number9:      [ 39.4, 1.1], // Nio.
+			one:          [ 41.7, 0.6], // En.
+			forward:      [ 43.0, 1.1], // Framåt.
+			backward:     [ 44.9, 1.1], // Bakåt.
+			tooFar:       [ 47.2, 2.2], // Så här långt skulle vi nog inte.
+			tooNear:      [ 50.7, 2.5], // Nu åkte vi tillbaka lite för långt.
+			wasBefore:    [ 54.6, 4.4], // Jag flyttar tillbaka kroken till där jag var förut så kan vi prova igen.
+			sure:         [ 60.2, 1.7], // Javisst. Det gör jag gärna.// howToFind
+			showTheWay:   [ 63.2, 7.3], // Hej där! Skulle du vilja hjälpa mig med att visa hur långt jag ska flytta kroken för att lasten ska hamna på rätt ställe?
+			pushNumber:   [ 72.2, 3.7], // Tryck på rätt nummer för att visa mig hur långt jag ska flytta kroken.
+			decideHowFar: [ 77.5, 4.9], // Bestäm först hur långt kroken ska flyttas för att lasten ska hamna på rätt plats.
+			wrongPlace:   [ 84.8, 1.5], // Det här blev inte riktigt rätt.
+			notFarEnough: [ 87.6, 3.1], // Jag har nog inte flyttat fram kroken tillräckligt långt.
+			howMuchMore:  [ 91.5, 1.3], // Hur mycket längre ska jag?
+			goneTooFar:   [ 94.4, 2.4], // Jag har nog flyttat fram kroken för långt.
+			mustGoBack:   [ 98.0, 1.9], // Hur mycket måste jag flytta tillbaka?
+			thinkItIs:    [101.9, 2.9], // Jag tror att jag ska flytta fram kroken så här långt.
+			isItCorrect:  [105.3, 1.1], // Är det rätt?
+			useButtons:   [108.4, 5.8], // Använd knapparna och visa mig om jag ska flytta kroken längre fram eller om jag ska flytta den bakåt.
+			gettingHelp:  [117.0, 4.2], // Och jag får hjälp med hur jag ska flytta kroken för att lasten ska hamna rätt.
+			youHelpLater: [123.8, 3.9], // Javisst. Om du tittar på först så kan du prova sedan.
+			noWorries:	  [129.6, 3.4], // Ingen orsak Hedvig. Det var bara roligt att kunna hjälpa till.
+			moveHook:     [135.9, 2.3], // Okej. Då flyttar jag kroken.
+			step:         [139.4, 0.9], // steg.
+			to:           [141.5, 0.8], // till.
+			notRight:     [144.4, 1.8], // Det här var inte rätt plats.
+			yes1:         [147.3, 0.9], // Javisst.
+			yes2:         [148.4, 1.3], // Jajjamensan.
+			yes3:         [149.7, 1.2], // Absolut.
+			yes4:         [151.0, 1.7], // Ja då. Det fixar vi.
+			plus:         [ 43.0, 1.1], // Plus.
+			minus:        [ 44.9, 1.1], // Minus.
+			// agent1:       [154.6, 4.9], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			// agent2:       [160.3, 5.8], // Jaha. Det låter jättespännande. Får jag också hjälpa till?
+			helloHerman:  [167.3, 1.9], // Hej Herman.
+			canYouHelpMe: [169.9, 4.7], // Vill du hjälpa mig att lasta lådorna på släpet? // badSight
+			more1:        [175.9, 1.9], // Kan vi ta en till?
+			more2:        [178.9, 2.3], // Orkar du med en till?
+			more3:        [182.4, 5.3], // Det finns lite plats kvar på släpet. Orkar du hjälpa mig med en till?
+		    agentHelp:    [189.3, 4.1], // Herman hjälper mig att lasta lådorna på släpet.
+			thatsAll:     [194.7, 9.2]  // Nu tycker jag att det räcker. Annars orkar jag nog inte flytta släpet. Tack så mycket för hjälpen allihopa.
+		}
+	},
+
 	lizard: {
 		speech: [
 			'audio/subgames/lizard/swedish.m4a',
@@ -415,7 +487,10 @@ LANG.swedish.speech = {
 			beeIntro2:        [132.0, 2.8],
 			beeIntro3:        [135.7, 3.4],
 			// Balloon
-			balloonIntro:     [110.4, 6.2]
+			balloonIntro:     [110.4, 6.2],
+			// Vehicle
+			vehicleIntro1:    [117.4, 4.5], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			vehicleIntro2:    [123.0, 4.0]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
@@ -473,7 +548,10 @@ LANG.swedish.speech = {
 			beeIntro2:        [177.0, 3.2],
 			beeIntro3:        [181.4, 4.3],
 			// Balloon
-			balloonIntro:     [187.7, 5.6]
+			balloonIntro:     [187.7, 5.6],
+			// Vehicle
+			vehicleIntro1:    [158.2, 5.4], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			vehicleIntro2:    [164.7, 5.3]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
@@ -531,7 +609,10 @@ LANG.swedish.speech = {
 			beeIntro2:        [137.2, 2.6],
 			beeIntro3:        [140.7, 3.0],
 			// Balloon
-			balloonIntro:     [144.9, 7.5]
+			balloonIntro:     [144.9, 7.5],
+			// Vehicle
+			vehicleIntro1:    [122.5, 4.4], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			vehicleIntro2:    [128.2, 3.9]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	}
 };

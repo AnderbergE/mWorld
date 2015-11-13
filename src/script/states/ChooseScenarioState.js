@@ -64,7 +64,8 @@ ChooseScenarioState.prototype.create = function () {
 		[LANG.TEXT.balloonGameName, GLOBAL.STATE.balloonGame],
 		[LANG.TEXT.lizardGameName, GLOBAL.STATE.lizardGame],
 		[LANG.TEXT.beeGameName, GLOBAL.STATE.beeGame],
-		[LANG.TEXT.birdheroGameName, GLOBAL.STATE.birdheroGame]
+		[LANG.TEXT.birdheroGameName, GLOBAL.STATE.birdheroGame],
+		[LANG.TEXT.vehicleGameName, GLOBAL.STATE.vehicleGame]
 	];
 	var gameButtons = [];
 	for (i = 0; i < games.length; i++) {
@@ -72,7 +73,7 @@ ChooseScenarioState.prototype.create = function () {
 			x: t ? t.x + t.width + offset : 50,
 			y: 230,
 			size: 65,
-			fontSize: 25,
+			fontSize: 20,
 			onClick: gameClicker,
 			keepDown: true
 		});
@@ -240,6 +241,10 @@ ChooseScenarioState.prototype.create = function () {
 		case GLOBAL.STATE.birdheroGame:
 			gameButtons[3].setDown();
 			subgame = gameButtons[3];
+			break;
+		case GLOBAL.STATE.vehicleGame:
+			gameButtons[4].setDown();
+			subgame = gameButtons[4];
 			break;
 	}
 	if (localStorage.chooseRange) {

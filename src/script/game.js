@@ -11,6 +11,7 @@ var LizardJungleGame = require('./states/subgames/LizardJungleGame.js');
 var BirdheroGame = require('./states/subgames/BirdheroGame.js');
 var BalloonGame = require('./states/subgames/BalloonGame.js');
 var BeeFlightGame = require('./states/subgames/BeeFlightGame.js');
+var VehicleGame = require('./states/subgames/VehicleGame.js');
 var ChooseScenarioState = require('./states/ChooseScenarioState.js');
 
 require('./logger.js'); // Start logger
@@ -63,6 +64,7 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.birdheroGame, BirdheroGame);
 		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
+		game.state.add(GLOBAL.STATE.vehicleGame,  VehicleGame);
 		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
 
 		// Run the boot state.

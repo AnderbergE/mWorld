@@ -35,9 +35,11 @@ exports.STATE = {
 	balloonGame:  'Balloon',
 	4:            'BeeFlight',
 	beeGame:      'BeeFlight',
+	5:            'Vehicles',
+	vehicleGame:  'Vehicles',
 	scenario:     'Scenario',
 	random:       100,         // Not an actual state.
-	randomGames:  [0, 2, 3, 4] // Not an actual state, it will randomly pick one in the array.
+	randomGames:  [0, 2, 3, 4, 5] // Not an actual state, it will randomly pick one in the array.
 };
 exports.STATE_KEYS = null; // Used to clear a subgame, saved when subgame is booted.
 
