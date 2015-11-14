@@ -25,7 +25,7 @@ EntryState.prototype.preload = function () {
 EntryState.prototype.create = function () {
 	// Add music
 	this.add.music('entryMusic', 0.7, true).play();
-	
+
 	// Add background
 	this.add.image(0, 0, 'entryBg');
 
@@ -58,7 +58,7 @@ EntryState.prototype.create = function () {
 			stroke: '#000000',
 			strokeThickness: 5
 		});
-		demoTitle.anchor.set(0.5);	
+		demoTitle.anchor.set(0.5);
 		demoTitle.angle = -20;
 	}
 
@@ -133,7 +133,7 @@ EntryState.prototype.create = function () {
 	var allCredits = this.add.text(this.world.centerX, this.world.height,
 		LANG.TEXT.creditsMade + '\n\n\n' +
 		LANG.TEXT.creditsDeveloped + ':\nErik Anderberg\t \tAgneta Gulz\nMagnus Haake\t \tLayla Husain\n\n' +
-		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nHenrik Söllvander\n\n' +
+		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nLars Persson\t \tHenrik Söllvander\n\n' +
 		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\nErik Anderberg\n\n' +
 		LANG.TEXT.creditsVoices + ':\n' + LANG.TEXT.pandaName + '\t-\t' + LANG.TEXT.creditsVoicePanda + '\n' +
 			LANG.TEXT.hedgehogName + '\t-\t' + LANG.TEXT.creditsVoiceHedgehog + '\n' +
