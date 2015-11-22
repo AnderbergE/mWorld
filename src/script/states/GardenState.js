@@ -81,6 +81,21 @@ GardenState.prototype.create = function () {
 		});
 	}, this);
 
+	var callParty = this.game.rnd.between(1, 100);
+	var partySign = this.add.sprite(120, 100, 'garden', 'partysign');
+	if (callParty <= 100) {
+
+		partySign.visible = true;
+		partySign.inputEnabled = true;
+	}
+	else {
+
+		partySign.visible = false;
+	}
+	partySign.events.onInputDown.add(function () {
+		this.game.state.start(GLOBAL.STATE.partyInvitationGame);
+	}, this);
+
 	/* Setup the garden fields */
 	var rows = 3;
 	var columns = 8;

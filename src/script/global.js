@@ -38,6 +38,11 @@ exports.STATE = {
 	5:            'Vehicles',
 	vehicleGame:  'Vehicles',
 	scenario:     'Scenario',
+	partyInvitationGame:'PartyInvitation',
+	partyGarlandGame:  'PartyGarland',
+	partyBalloonGame:  'PartyBalloon',
+	partyGiftGame:  'PartyGift',
+	partyGame:    'Party',
 	random:       100,         // Not an actual state.
 	randomGames:  [0, 2, 3, 4, 5] // Not an actual state, it will randomly pick one in the array.
 };

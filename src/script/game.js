@@ -13,6 +13,11 @@ var BalloonGame = require('./states/subgames/BalloonGame.js');
 var BeeFlightGame = require('./states/subgames/BeeFlightGame.js');
 var VehicleGame = require('./states/subgames/VehicleGame.js');
 var ChooseScenarioState = require('./states/ChooseScenarioState.js');
+var PartyGarlandGame = require('./states/partygames/PartyGarlandGame.js');
+var PartyInvitationGame = require('./states/partygames/PartyInvitationGame.js');
+var PartyBalloonGame = require('./states/partygames/PartyBalloonGame.js');
+var PartyGiftGame = require('./states/partygames/PartyGiftGame.js');
+
 
 require('./logger.js'); // Start logger
 require('./utils.js'); // Setup prototype functions.
@@ -66,6 +71,10 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
 		game.state.add(GLOBAL.STATE.vehicleGame,  VehicleGame);
 		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
+		game.state.add(GLOBAL.STATE.partyGarlandGame, PartyGarlandGame);
+		game.state.add(GLOBAL.STATE.partyInvitationGame, PartyInvitationGame);
+		game.state.add(GLOBAL.STATE.partyBalloonGame, PartyBalloonGame);
+		game.state.add(GLOBAL.STATE.partyGiftGame, PartyGiftGame);
 
 		// Run the boot state.
 		game.state.start('Boot');
