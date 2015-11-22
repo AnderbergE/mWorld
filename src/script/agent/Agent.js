@@ -75,7 +75,7 @@ function Agent (game) {
 	this.rightEye = this.create(this.coords.eye.right.x, this.coords.eye.right.y, this.id, 'eye');
 	this.rightEye.anchor.set(0.5);
 
-	this.mouth = this.create(this.coords.mouth.x, this.coords.mouth.y, this.id, 'mouth0');
+	this.mouth = this.create(this.coords.mouth.x, this.coords.mouth.y, this.id, 'mouth0') || {};
 	this.mouth.anchor.set(0.5, 0);
 
 

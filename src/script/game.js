@@ -12,7 +12,10 @@ var BirdheroGame = require('./states/subgames/BirdheroGame.js');
 var BalloonGame = require('./states/subgames/BalloonGame.js');
 var BeeFlightGame = require('./states/subgames/BeeFlightGame.js');
 var ChooseScenarioState = require('./states/ChooseScenarioState.js');
-var InvitationGame = require('./states/partygames/InvitationGame.js');
+var PartyGarlandGame = require('./states/partygames/PartyGarlandGame.js');
+var PartyInvitationGame = require('./states/partygames/PartyInvitationGame.js');
+var PartyBalloonGame = require('./states/partygames/PartyBalloonGame.js');
+var PartyGiftGame = require('./states/partygames/PartyGiftGame.js');
 
 
 require('./logger.js'); // Start logger
@@ -50,7 +53,7 @@ window.onload = function () {
 		GLOBAL.AGENT = {
 			0: Panda,
 			1: Hedgehog,
-			2: Mouse
+			2: Mouse,
 		};
 
 		// Cache player object in the game object for easy access.
@@ -66,7 +69,10 @@ window.onload = function () {
 		game.state.add(GLOBAL.STATE.balloonGame,  BalloonGame);
 		game.state.add(GLOBAL.STATE.beeGame,      BeeFlightGame);
 		game.state.add(GLOBAL.STATE.scenario,     ChooseScenarioState);
-		game.state.add(GLOBAL.STATE.invitationGame, InvitationGame);
+		game.state.add(GLOBAL.STATE.partyGarlandGame, PartyGarlandGame);
+		game.state.add(GLOBAL.STATE.partyInvitationGame, PartyInvitationGame);
+		game.state.add(GLOBAL.STATE.partyBalloonGame, PartyBalloonGame);
+		game.state.add(GLOBAL.STATE.partyGiftGame, PartyGiftGame);
 
 		// Run the boot state.
 		game.state.start('Boot');

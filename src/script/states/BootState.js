@@ -131,7 +131,7 @@ BootState.prototype.preload = function () {
 			this.load.atlasJSONHash(name, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');
 		} else if (name === Mouse.prototype.id) {
 			this.load.atlasJSONHash(name, 'img/agent/mouse/atlas.png', 'img/agent/mouse/atlas.json');
-		}
+		} 
 	}
 
 	/* Common game assets */
@@ -153,7 +153,7 @@ BootState.prototype.update = function () {
 	if (this._fontLoaded) {
 		if (GLOBAL.debug) {
 			// Debug mode goes directly to scenario picker.
-			this.game.state.start(GLOBAL.STATE.invitationGame);
+			this.game.state.start(GLOBAL.STATE.scenario);
 
 		} else {
 			this.game.state.start(GLOBAL.STATE.entry);

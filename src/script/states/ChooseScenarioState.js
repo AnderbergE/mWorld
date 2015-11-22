@@ -33,7 +33,7 @@ ChooseScenarioState.prototype.create = function () {
 
 	this.world.add(new Cover(this.game, '#000000', 0.4));
 
-	this.add.text(this.world.centerX, 50, LANG.TEXT.demoChoice, {
+	this.add.text(this.world.centerX, 30, LANG.TEXT.demoChoice, {
 		font: '15pt ' +  GLOBAL.FONT,
 		fill: '#ffffff',
 		align: 'center',
@@ -59,7 +59,7 @@ ChooseScenarioState.prototype.create = function () {
 		subgame = this;
 	};
 
-	this.add.text(75, 195, LANG.TEXT.subgameName, textOptions);
+	this.add.text(75, 245, LANG.TEXT.subgameName, textOptions);
 	var games = [
 		[LANG.TEXT.balloonGameName, GLOBAL.STATE.balloonGame],
 		[LANG.TEXT.lizardGameName, GLOBAL.STATE.lizardGame],
@@ -70,7 +70,7 @@ ChooseScenarioState.prototype.create = function () {
 	for (i = 0; i < games.length; i++) {
 		t = new TextButton(this.game, games[i][0], {
 			x: t ? t.x + t.width + offset : 50,
-			y: 230,
+			y: 280,
 			size: 65,
 			fontSize: 25,
 			onClick: gameClicker,
@@ -91,13 +91,13 @@ ChooseScenarioState.prototype.create = function () {
 		range = this;
 	};
 
-	this.add.text(75, 300, LANG.TEXT.numberRangeName, textOptions);
+	this.add.text(75, 350, LANG.TEXT.numberRangeName, textOptions);
 	var rangeButtons = [];
 	t = null;
 	for (key in GLOBAL.NUMBER_RANGE) {
 		t = new TextButton(this.game, '1 - ' + GLOBAL.NUMBER_RANGE[key], {
 			x: t ? t.x + t.width + offset : 50,
-			y: 335,
+			y: 385,
 			size: 65,
 			fontSize: 33,
 			onClick: rangeClicker,
@@ -118,7 +118,7 @@ ChooseScenarioState.prototype.create = function () {
 		representation = this;
 	};
 
-	this.add.text(75, 410, LANG.TEXT.numberRepresentationName, textOptions);
+	this.add.text(75, 460, LANG.TEXT.numberRepresentationName, textOptions);
 	var representationButtons = [];
 	i = 0;
 	for (key in GLOBAL.NUMBER_REPRESENTATION) {
@@ -129,7 +129,7 @@ ChooseScenarioState.prototype.create = function () {
 		if (GLOBAL.NUMBER_REPRESENTATION[key] === GLOBAL.NUMBER_REPRESENTATION.mixed) {
 			representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new TextButton(this.game, 'MIX', {
 				x: 50 + i*(75 + offset),
-				y: 450,
+				y: 500,
 				size: 40,
 				keepDown: true,
 				onClick: representationClicker
@@ -138,7 +138,7 @@ ChooseScenarioState.prototype.create = function () {
 		} else {
 			representationButtons[GLOBAL.NUMBER_REPRESENTATION[key]] = new NumberButton(this.game, 4, GLOBAL.NUMBER_REPRESENTATION[key], {
 				x: 50 + i*(75 + offset),
-				y: 450,
+				y: 500,
 				onClick: representationClicker
 			});
 		}
@@ -154,7 +154,7 @@ ChooseScenarioState.prototype.create = function () {
 		method = this;
 	};
 
-	this.add.text(75, 530, LANG.TEXT.methodName, textOptions);
+	this.add.text(75, 580, LANG.TEXT.methodName, textOptions);
 	var methods = [
 		[LANG.TEXT.countName,  GLOBAL.METHOD.count],
 		[LANG.TEXT.stepName, GLOBAL.METHOD.incrementalSteps],
@@ -167,7 +167,7 @@ ChooseScenarioState.prototype.create = function () {
 	for (i = 0; i < methods.length; i++) {
 		t = new TextButton(this.game, methods[i][0], {
 			x: t ? t.x + t.width + offset : 50,
-			y: 565,
+			y: 615,
 			size: 65,
 			fontSize: 20,
 			onClick: methodClicker,
@@ -182,8 +182,8 @@ ChooseScenarioState.prototype.create = function () {
 	/* Start game (save current options) */
 	var startButton = new TextButton(this.game, LANG.TEXT.startScenario, {
 		x: this.world.centerX - 150,
-		y: 660,
-		fontSize: 30,
+		y: 688,
+		fontSize: 25,
 		onClick: function () {
 			if (!subgame || !subgame.gameState ||
 				!range || !range.range ||
@@ -221,6 +221,53 @@ ChooseScenarioState.prototype.create = function () {
 	this.world.add(gotoGarden);
 
 	this.world.add(new Menu(this.game));
+
+
+	/* Partygames. */
+	var playInvitations = new TextButton(this.game, 'Inbjudningar', {
+		x: 50,
+		y: 190,
+		size: 56,
+		fontSize: 20,
+		onClick: function () {
+			_this.game.state.start(GLOBAL.STATE.partyInvitationGame);
+		}
+	});
+	this.world.add(playInvitations);
+
+	var playGarlands = new TextButton(this.game, 'Girlanger', {
+		x: playInvitations.x + playInvitations.width + 20,
+		y: 190,
+		size: 56,
+		fontSize: 20,
+		onClick: function () {
+			_this.game.state.start(GLOBAL.STATE.partyGarlandGame);
+		}
+	});
+	this.world.add(playGarlands);
+
+	var playBalloons = new TextButton(this.game, 'Ballonger', {
+		x: playGarlands.x + playGarlands.width + 20,
+		y: 190,
+		size: 56,
+		fontSize: 20,
+		onClick: function () {
+			_this.game.state.start(GLOBAL.STATE.partyBalloonGame);
+		}
+	});
+	this.world.add(playBalloons);
+
+	var playGifts = new TextButton(this.game, 'Presenter', {
+		x: playBalloons.x + playBalloons.width + 20,
+		y: 190,
+		size: 56,
+		fontSize: 20,
+		onClick: function () {
+			_this.game.state.start(GLOBAL.STATE.partyGiftGame);
+		}
+	});
+	this.world.add(playGifts);
+
 
 
 	/* If we have been in this state before, we try to preset the correct buttons. */

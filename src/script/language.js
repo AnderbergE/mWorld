@@ -142,6 +142,7 @@ LANG.swedish.text = {
 	pandaName: 'Panders',
 	hedgehogName: 'Igis',
 	mouseName: 'Mille',
+	trollName: 'Trolle',
 	woodlouseName: 'Grålle',
 	lizardName: 'Kamilla',
 	bumblebeeName: 'Humfrid',
@@ -192,7 +193,7 @@ LANG.swedish.speech = {
 			hedgehogHello:       [ 5.7, 2.4],
 			hedgehogFunTogether: [ 8.9, 3.0],
 			mouseHello:          [12.3, 1.7],
-			mouseFunTogether:    [14.4, 1.9]
+			mouseFunTogether:    [14.4, 1.9],
 		}
 	},
 
@@ -363,8 +364,7 @@ LANG.swedish.speech = {
 	/* Agents */
 	panda: {
 		speech: [
-			'audio/agent/panda/swedish.m4a',
-			'audio/agent/panda/swedish.ogg',
+
 			'audio/agent/panda/swedish.mp3'
 		],
 		markers: {
@@ -415,14 +415,72 @@ LANG.swedish.speech = {
 			beeIntro2:        [132.0, 2.8],
 			beeIntro3:        [135.7, 3.4],
 			// Balloon
-			balloonIntro:     [110.4, 6.2]
+			balloonIntro:     [110.4, 6.2],
+			// Party
+			hi:               [158.2, 1.2],
+			niceYoureHere:    [160.0, 2.0],
+			soonBirthday:     [162.0, 2.2],
+			wereHavingParty:  [166.0, 3.5],
+			thanks:           [268.2, 0.9],
+			niceComeBack:     [239.0, 2.6],
+			helpUsAgain:      [242.4, 2.8],
+			haveGifts:        [282.0, 3.9],
+			// PartyInvitation
+			gottaInvite:      [170.0, 2.3],
+			makeCards:        [173.0, 2.2],
+			allGuestsGet:     [175.8, 3.0],
+			helpMeStickers:   [179.0, 3.8],
+			manyOfThese:      [183.0, 3.9],
+			someOfThese:      [187.0, 3.9],
+			thisManyOfThese:  [191.0, 3.9],
+			imTrying:         [195.0, 3.8],
+			dragStickers:     [199.0, 2.0],
+			dragStickers2:    [203.0, 2.9],
+			looksNice:        [206.0, 3.0],
+			imPutting:        [209.2, 2.0],
+			dragCard:         [212.0, 2.0],
+			dragStickersBack: [215.0, 3.0],
+			rightButMore:     [218.5, 5.0],
+			tryMore:          [224.0, 2.0],
+			ohNo:             [226.4, 5.2],
+			madeNiceCards:    [232.2, 4.2],
+			thanksForHelp:    [237.0, 1.7],
+			// PartyGarlands
+			haveToGarlands:   [246.1, 2.5],
+			letsPutUp:        [249.3, 2.9],
+			goodPlace:        [253.0, 2.8],
+			followMe:         [256.8, 0.8],
+			hereGood:         [259.2, 1.3],
+			whichGarland:     [261.0, 2.6],
+			helpMeFlags:      [264.5, 2.8],
+			wasGood:          [206.0, 3.0],
+			putFlagsBack:     [270.0, 2.4],
+			moreGarlands:     [273.2, 2.4],
+			looksGood:        [276.2, 2.7],
+			finished:         [279.3, 2.0],
+			// PartyGifts
+			niceParty:        [286.1, 2.2],
+			helpFindGifts:    [289.0, 2.9],
+			shouldBeHere:     [292.4, 2.6],
+			lookMap:          [296.0, 1.6],
+			giftAtCross:      [298.3, 2.2],
+			howManySteps:     [301.3, 3.6],
+			rememberSteps:    [306.0, 2.5],
+			pushButton:       [309.2, 2.9],
+			pushGlass:        [313.0, 2.9],
+			isItHere:         [316.6, 1.0],
+			yesGift:          [319.0, 1.9],
+			moreSteps:        [322.0, 2.0],
+			tooManySteps:     [325.0, 2.0],
+			nextGift:         [328.0, 2.9],
+			wasAll:           [331.2, 2.2],
+			openGifts:        [334.2, 2.0],
+			thanksForParty:   [337.0, 3.7]
 		}
 	},
 
 	hedgehog: {
 		speech: [
-			'audio/agent/hedgehog/swedish.m4a',
-			'audio/agent/hedgehog/swedish.ogg',
 			'audio/agent/hedgehog/swedish.mp3'
 		],
 		markers: {
@@ -473,14 +531,75 @@ LANG.swedish.speech = {
 			beeIntro2:        [177.0, 3.2],
 			beeIntro3:        [181.4, 4.3],
 			// Balloon
-			balloonIntro:     [187.7, 5.6]
+			balloonIntro:     [187.7, 5.6],
+			// Party
+			hi:               [195.0, 1.0],
+			niceYoureHere:    [197.0, 2.0],
+			soonBirthday:     [200.0, 3.0],
+			wereHavingParty:  [204.0, 5.7],
+			thanks:           [243.6, 1.3],
+			thanksForHelp:    [258.6, 2.0],
+			niceComeBack:     [210.0, 3.2],
+			helpUsAgain:      [214.0, 3.0],
+			haveGifts:        [333.0, 3.8],
+			// PartyGarlands
+			haveToGarlands:   [218.0, 3.0],
+			letsPutUp:        [222.0, 3.0],
+			goodPlace:        [226.1, 3.9],
+			followMe:         [230.3, 1.4],
+			hereGood:         [232.6, 2.3],
+			whichGarland:     [235.4, 3.6],
+			helpMeFlags:      [239.3, 3.5],
+			putFlagsBack:     [245.2, 3.6],
+			moreGarlands:     [249.2, 2.5],
+			looksGood:        [252.6, 3.2],
+			finished:         [256.0, 1.8],
+			// PartyBalloons
+			haveToBalloons:   [261.6, 2.0],
+			makeBalloons:     [264.2, 2.5],
+			herePump:         [267.4, 4.8],
+			helpMePump:       [272.2, 5.4],
+			pushOne:          [278.2, 2.4],
+			pushTwo:          [281.2, 2.8],
+			pushThree:        [285.0, 2.7],
+			pushFour:         [288.2, 2.4],
+			pushFive:         [291.2, 2.8],
+			pushSix:          [294.8, 2.7],
+			pushSeven:        [298.0, 2.8],
+			pushEight:        [301.2, 2.7],
+			pushNine:         [305.0, 2.7],
+			wasGood:          [308.1, 2.0],
+			tooMuchAir:       [311.0, 2.9],
+			newBalloon:       [315.0, 1.6],
+			moreAir:          [317.1, 2.0],
+			dragBalloon:      [319.9, 2.1],
+			anotherBalloon:   [322.8, 2.1],
+			manyNiceBalloons: [326.0, 3.0],
+			goPutThemUp:      [329.4, 2.5],
+			// PartyGifts
+			niceParty:        [337.2, 2.6],
+			helpFindGifts:    [340.0, 3.4],
+			shouldBeHere:     [343.8, 2.8],
+			lookMap:          [347.0, 1.9],
+			giftAtCross:      [349.2, 2.4],
+			howManySteps:     [352.8, 3.8],
+			rememberSteps:    [357.0, 3.0],
+			pushButton:       [361.0, 2.8],
+			pushGlass:        [364.2, 2.8],
+			isItHere:         [368.0, 1.0],
+			yesGift:          [369.2, 2.9],
+			moreSteps:        [373.0, 2.0],
+			tooManySteps:     [376.0, 2.0],
+			nextGift:         [379.0, 2.8],
+			wasAll:           [382.0, 2.0],
+			openGifts:        [385.0, 2.8],
+			thanksForParty:   [388.2, 4.8]
 		}
 	},
 
 	mouse: {
 		speech: [
-			'audio/agent/mouse/swedish.m4a',
-			'audio/agent/mouse/swedish.ogg',
+		
 			'audio/agent/mouse/swedish.mp3'
 		],
 		markers: {
@@ -531,7 +650,93 @@ LANG.swedish.speech = {
 			beeIntro2:        [137.2, 2.6],
 			beeIntro3:        [140.7, 3.0],
 			// Balloon
-			balloonIntro:     [144.9, 7.5]
+			balloonIntro:     [144.9, 7.5],
+			// Party
+			hi:               [153.8, 0.9],
+			niceYoureHere:    [155.0, 2.0],
+			soonBirthday:     [158.0, 3.0],
+			wereHavingParty:  [161.0, 4.0],
+			thanks:           [233.0, 1.0],
+			niceComeBack:     [234.0, 2.0],
+			helpUsAgain:      [237.0, 2.0],
+			haveGifts:        [297.0, 3.6],
+			// PartyInvitation
+			gottaInvite:      [165.8, 2.8],
+			makeCards:        [169.0, 2.0],
+			allGuestsGet:     [171.0, 3.0],
+			helpMeStickers:   [175.0, 3.0],
+			manyOfThese:      [178.5, 3.5],
+			someOfThese:      [182.5, 3.5],
+			thisManyOfThese:  [186.5, 3.5],
+			imTrying:         [190.5, 4.0],
+			dragStickers:     [195.0, 3.0],
+			dragStickers2:    [198.0, 3.0],
+			looksNice:        [201.0, 2.2],
+			imPutting:        [204.0, 2.0],
+			dragCard:         [206.0, 2.0],
+			dragStickersBack: [209.0, 3.0],
+			rightButMore:     [213.0, 5.0],
+			tryMore:          [218.0, 2.0],
+			ohNo:             [220.4, 5.0],
+			madeNiceCards:    [226.0, 3.9],
+			thanksForHelp:    [230.2, 1.8],
+			// PartyBalloons
+			haveToBalloons:   [240.0, 1.5],
+			makeBalloons:     [242.0, 2.0],
+			herePump:         [244.3, 3.0],
+			helpMePump:       [248.0, 3.6],
+			pushOne:          [252.2, 1.7],
+			pushTwo:          [254.9, 1.8],
+			pushThree:        [257.0, 2.0],
+			pushFour:         [260.0, 1.9],
+			pushFive:         [262.2, 2.0],
+			pushSix:          [265.4, 1.9],
+			pushSeven:        [268.0, 2.0],
+			pushEight:        [270.8, 1.9],
+			pushNine:         [273.2, 2.2],
+			wasGood:          [276.0, 1.7],
+			tooMuchAir:       [279.0, 2.0],
+			newBalloon:       [281.2, 1.8],
+			moreAir:          [283.2, 2.3],
+			dragBalloon:      [285.8, 2.2],
+			anotherBalloon:   [289.0, 1.8],
+			manyNiceBalloons: [292.0, 2.0],
+			goPutThemUp:      [294.6, 1.8],
+			// PartyGifts
+			niceParty:        [300.8, 2.2],
+			helpFindGifts:    [303.8, 3.3],
+			shouldBeHere:     [307.0, 2.2],
+			lookMap:          [310.1, 2.0],
+			giftAtCross:      [312.2, 2.0],
+			howManySteps:     [315.0, 3.3],
+			rememberSteps:    [318.2, 3.4],
+			pushButton:       [321.6, 3.2],
+			pushGlass:        [325.2, 2.8],
+			isItHere:         [329.0, 0.9],
+			yesGift:          [331.0, 1.9],
+			moreSteps:        [333.2, 2.2],
+			tooManySteps:     [336.0, 1.9],
+			nextGift:         [338.2, 2.7],
+			wasAll:           [341.8, 1.9],
+			openGifts:        [344.0, 2.2],
+			thanksForParty:   [347.0, 3.4]
+		}
+	},
+
+	troll: {
+		speech: [
+			'audio/agent/troll/swedish.mp3'
+		],
+		markers: {
+			iCanDo:            [ 0.0, 1.6],
+			oops:              [ 9.8, 0.9],
+			iNeedHelp:         [11.5, 3.8],
+			iCanHelp:          [21.0, 1.0],
+			isGood:            [26.9, 1.9],
+			continueWhenBack:  [35.0, 3.7],
+			yesWater:          [41.9, 1.8],
+			haveMap:           [47.0, 2.0],
+			laugh:             [55.8, 1.8]
 		}
 	}
 };
