@@ -209,18 +209,14 @@ module.exports = {
 
 	localPutPlantUpgrade: function (data) {
 		var o = data.field;
-		this._tempStore = this._tempStore || { fields: [] };
+		this._tempStore = this._tempStore || { fields: {} };
 
-		for (var i = 0; i < this._tempStore.fields.length; i++) {
-			if (o.x === this._tempStore.fields[i].x && o.y === this._tempStore.fields[i].y) {
-				o.level = o.level || this._tempStore.fields[i].level + 1;
-				this._tempStore.fields[i] = o;
-				return;
-			}
+		if (!o.id) { // New plant!
+			o.id = Math.random();
 		}
 
-		// This is done if the plant did not already exist.
-		o.level = o.level || 1;
-		this._tempStore.fields.push(o);
+		this._tempStore.fields[o.id] = o;
+		data.success = true;
+		EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
 	}
 };
