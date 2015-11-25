@@ -154,18 +154,23 @@ LANG.swedish.text = {
 	birdheroGameName: 'Fågelhjälten',
 	lizardGameName: 'Piratmaten',
 	vehicleGameName: 'Lastdags',
+	partyInvitationGameName: 'Inbjudningar',
+	partyGarlandGameName: 'Girlanger',
+	partyBalloonGameName: 'Ballonger',
+	partyGiftGameName: 'Presenter',
 
 	/* Scenario related names */
 	subgameName: 'Delspel',
 	numberRangeName: 'Intervall',
 	numberRepresentationName: 'Representation',
 	methodName: 'Metod',
-
 	countName: 'Räkna',
 	stepName: 'Steg-för-steg',
 	addName: 'Addition',
 	subName: 'Subtraktion',
 	addsubName: 'Add och sub',
+	gameType: 'Speltyp',
+	difficulty: 'Svårghetsgrad',
 
 	/* Demo */
 	demo: 'Demo',
@@ -175,9 +180,11 @@ LANG.swedish.text = {
 		'* Demon sparar ingen data för att göra det som nämns ovan, istället väljer man svårighetsnivå själv.',
 	demoChoice: 'ENDAST I ÖVERSIKTSDEMO\n' +
 		'Välj en knapp i varje rad för att skapa ett scenario att spela.\n' +
-		'I den riktiga versionen av lärspelet görs dessa val automatiskt. Då kommer man\n' +
+		'I den riktiga versionen av lärspelet görs dessa val automatiskt. Då kommer en\n' +
 		'direkt till ett scenario där svårighetsgraden och stödet har anpassats efter individen.',
-	startScenario: 'Starta scenario'
+	demoParty: 'ENDAST I ÖVERSIKTSDEMO\n' +
+		'Välj en partytyp och svårighetsgrad.\n' +
+		'I den riktiga versionen av lärspelet görs dessa val automatiskt.',
 };
 
 LANG.swedish.speech = {

@@ -39,12 +39,13 @@ exports.STATE = {
 	vehicleGame:  'Vehicles',
 	scenario:     'Scenario',
 	partyInvitationGame:'PartyInvitation',
-	partyGarlandGame:  'PartyGarland',
-	partyBalloonGame:  'PartyBalloon',
-	partyGiftGame:  'PartyGift',
-	partyGame:    'Party',
+	partyGarlandGame:   'PartyGarland',
+	partyBalloonGame:   'PartyBalloon',
+	partyGiftGame:      'PartyGift',
+	partyPicker:        'PartyPicker',
 	random:       100,         // Not an actual state.
-	randomGames:  [0, 2, 3, 4, 5] // Not an actual state, it will randomly pick one in the array.
+	randomGames:  [0, 2, 3, 4] // Not an actual state, it will randomly pick one in the array.
+	// TODO: When vehicle is done, add it here!
 };
 exports.STATE_KEYS = null; // Used to clear a subgame, saved when subgame is booted.
 

@@ -81,20 +81,22 @@ GardenState.prototype.create = function () {
 		});
 	}, this);
 
+	// TODO: Randomize party.
 	var callParty = this.game.rnd.between(1, 100);
-	var partySign = this.add.sprite(120, 100, 'garden', 'partysign');
 	if (callParty <= 100) {
-
+		var partySign = this.add.sprite(120, 100, 'garden', 'partysign');
 		partySign.visible = true;
 		partySign.inputEnabled = true;
-	}
-	else {
+		partySign.events.onInputDown.add(function () {
+			// This happens either on local machine or on "trial" version of the game.
+			if (GLOBAL.demo) {
+				this.game.state.start(GLOBAL.STATE.partyPicker, true, false);
+				return;
+			}
 
-		partySign.visible = false;
+			this.game.state.start(GLOBAL.STATE.partyInvitationGame);
+		}, this);
 	}
-	partySign.events.onInputDown.add(function () {
-		this.game.state.start(GLOBAL.STATE.partyInvitationGame);
-	}, this);
 
 	/* Setup the garden fields */
 	var rows = 3;
