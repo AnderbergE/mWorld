@@ -6,9 +6,9 @@ VehicleTractor.prototype = Object.create(Character.prototype);
 VehicleTractor.prototype.constructor = VehicleTractor;
 
 VehicleTractor.prototype.pos = {
-	eyeNeutralPos: { x: 51, y: -80 },
-	eyeAgentPos: { x: 49, y: -84 },
-	eyeCranePos: { x: 49, y: -82 }
+	eyeNeutralPos: { x: 55, y: -103 },
+	eyeAgentPos: { x: 54, y: -108 },
+	eyeCranePos: { x: 52, y: -105 }
 };
 
 /**
@@ -27,9 +27,9 @@ function VehicleTractor (game, x, y) {
 
 	this.body = this.game.add.sprite(0, 0, 'vehicle', 'tractor', this);
 	this.body.anchor.set(0, 1);
-	this.eyes = this.game.add.sprite(51, -80, 'vehicle', 'tractor_eyes', this);
+	this.eyes = this.game.add.sprite(this.pos.eyeNeutralPos.x, this.pos.eyeNeutralPos.y, 'vehicle', 'tractor_eyes', this);
 	this.eyes.anchor.set(0.5, 0.5);
-	this.mouth = this.game.add.sprite(50, -62, 'vehicle', 'tractor_happy', this);
+	this.mouth = this.game.add.sprite(52, -70, 'vehicle', 'tractor_happy', this);
 	this.mouth.anchor.set(0.5, 0);
 
 	this.talk = TweenMax.to(this.mouth, 0.2, {
@@ -46,9 +46,9 @@ function VehicleTractor (game, x, y) {
 VehicleTractor.prototype.lookAtCrane = function ()
 {
 	var t = new TimelineMax();
-	
+
 	t.to(this.eyes, 0.6, { x: this.pos.eyeCranePos.x, y: this.pos.eyeCranePos.y, ease: Power1.easeInOut });
-	
+
 	return t;
 };
 
@@ -59,9 +59,9 @@ VehicleTractor.prototype.lookAtCrane = function ()
 VehicleTractor.prototype.lookAtAgent = function ()
 {
 	var t = new TimelineMax();
-	
+
 	t.to(this.eyes, 0.4, { x: this.pos.eyeAgentPos.x, y: this.pos.eyeAgentPos.y, ease: Power1.easeInOut });
-	
+
 	return t;
 };
 
@@ -72,8 +72,8 @@ VehicleTractor.prototype.lookAtAgent = function ()
 VehicleTractor.prototype.lookAtUser = function ()
 {
 	var t = new TimelineMax();
-	
+
 	t.to(this.eyes, 0.4, { x: this.pos.eyeNeutralPos.x, y: this.pos.eyeNeutralPos.y, ease: Power1.easeInOut });
-	
-	return t;	
+
+	return t;
 };

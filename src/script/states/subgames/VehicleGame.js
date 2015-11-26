@@ -22,7 +22,7 @@ function VehicleGame () {
 VehicleGame.prototype.pos = {
 	agent: {
 		start: { x: 1200, y: 460 },
-		stop: { x: 740, y: 420 },
+		stop: { x: 700, y: 420 },
 		scale: 0.3
 	},
 	crane: {
@@ -32,7 +32,7 @@ VehicleGame.prototype.pos = {
 	},
 	trailer : {
 		pos: { x: 380, y: 750 },
-		firstMarker: { x: 425 , y: 687 },
+		firstMarker: { x: 425 , y: 650 },
 		markerOffset: 65,
 		height: 83,
 		cargopos: { x: 420, y: 667 },
@@ -82,20 +82,25 @@ VehicleGame.prototype.create = function () {
 	var cloud2 = this.gameGroup.create(-1000, 150, 'objects', 'cloud1');
 	TweenMax.fromTo(cloud1, 380, { x: -cloud1.width }, { x: this.world.width, repeat: -1 });
 	TweenMax.fromTo(cloud2, 290, { x: -cloud2.width }, { x: this.world.width, repeat: -1 });
-	this.agent.thought.y += 90;
+
+	this.agent.mirrorThought();
+	this.agent.thought.x = -this.agent.thought.x - 150;
+	this.agent.thought.y *= 1.9;
+	this.agent.thought.toScale = 3;
 	this.gameGroup.bringToTop(this.agent);
 
-	
 	this.tractor = new VehicleTractor(this.game, this.pos.tractor.pos.x, this.pos.tractor.pos.y);
 	this.gameGroup.add(this.tractor);
-	
-	var trailer = this.add.sprite(this.pos.trailer.pos.x, this.pos.trailer.pos.y, 'vehicle', 'trailer', this.gameGroup);
-	trailer.anchor.set(0, 1);
+
+	this.trailer = this.add.sprite(this.pos.trailer.pos.x, this.pos.trailer.pos.y, 'vehicle', 'trailer', this.gameGroup);
+	this.trailer.anchor.set(0, 1);
 
 
 	// Create the cargo heap.
-	var heap = this.add.sprite(this.pos.cargo.heapPos.x, this.pos.cargo.heapPos.y, 'vehicle', 'cargoheap', this.gameGroup);
-	heap.anchor.set(0.5, 0.5);
+	var cargoHeap = this.add.sprite(this.pos.cargo.heapPos.x, this.pos.cargo.heapPos.y, 'vehicle', 'cargobox', this.gameGroup);
+	cargoHeap.y -= cargoHeap.height;
+	this.add.sprite(cargoHeap.x - cargoHeap.width, cargoHeap.y, 'vehicle', 'cargobox', this.gameGroup);
+	this.add.sprite(cargoHeap.x - cargoHeap.width / 2, cargoHeap.y - cargoHeap.height, 'vehicle', 'cargobox', this.gameGroup);
 
 
 	this.crane = new VehicleCrane(this.game, this.pos.crane.start.x, this.pos.crane.start.y, this.amount);
@@ -105,7 +110,7 @@ VehicleGame.prototype.create = function () {
 		this.crane.thought.toScale = 0.7;
 	}
 
-	
+
 	// Create an array with the trailers load and initiate to zero. Create the positional markers for the cargo.
 	this.trailerLoad = [this.amount];
 	this.markers = [this.amount];
@@ -125,17 +130,10 @@ VehicleGame.prototype.create = function () {
 };
 
 VehicleGame.prototype.createNewCargo = function (xPos, yPos) {
-	var cargo = this.game.add.sprite(xPos, 
-		yPos, 
-		'vehicle', 
-		'cargobox', 
-		this.gameGroup);
+	var cargo = this.game.add.sprite(xPos, yPos, 'vehicle', 'cargobox', this.gameGroup);
 	cargo.visible = false;
 	cargo.anchor.set(0.5, 1);
-	if (this.amount > 4) {
-		cargo.scale.set(0.66);
-	}
-	
+	cargo.scale.set(this.crane.cargo.scale.x, this.crane.cargo.scale.y);
 	return cargo;
 };
 
@@ -201,21 +199,21 @@ VehicleGame.prototype.pointAtTrailer = function (number) {
 	arrow.anchor.set(0, 0.5);
 	arrow.rotation = -Math.PI/2;
 	arrow.visible = false;
-	
+
 	var t = new TimelineMax();
 	t.addCallback(function () { arrow.visible = true; });
 	t.addCallback(function () {}, '+=0.5');
 	for (var i = 0; i < number; i++) {
 		var adjustedPos = this.amount < 9 ? i * 2 : i;
 		var xPos = startX + (this.pos.trailer.cargoposoffset * adjustedPos);
-		
+
 		if (i !== 0) {
 			t.add(new TweenMax(arrow, 0.75, { x: xPos, y: startY - 200 }), '+=0.3');
 		}
-		t.add(new TweenMax(arrow, 1, { y: startY - 10 }));
+		t.add(new TweenMax(arrow, 1, { y: startY - 20 }));
 	}
 	t.addCallback(function () { arrow.destroy(); }, '+=0.5');
-	
+
 	return t;
 };
 
@@ -229,12 +227,12 @@ VehicleGame.prototype.newCargo = function (silent) {
 	if (this.trailerLoad[this.currentNumber - 1] > 2) {
 		this.currentNumber = this.getNewNumber();
 	}
-	
+
 	t.addCallback(this.markCargoPosition, null, [this.currentNumber - 1], this);
-	t.add(this.pickUpCargo());	
+	t.add(this.pickUpCargo());
 
 	this.doStartFunction(t, silent);
-		
+
 	return t;
 };
 
@@ -242,13 +240,13 @@ VehicleGame.prototype.getNewNumber = function () {
 	for (var i = 1; i < this.amount; i++) {
 		// Add the count to the current position and adjust for the maximum range.
 		var nextNumber = (this.currentNumber + i) % (this.amount + 1);
-		
+
 		// Check if the new position is available and in the acceptable range.
 		if (this.trailerLoad[nextNumber - 1] < 3 && nextNumber >= this._numberMin && nextNumber <= this._numberMax) {
 			return nextNumber;
 		}
 	}
-	
+
 	// Should not happen but just in case...
 	return this.currentNumber;
 };
@@ -261,7 +259,7 @@ VehicleGame.prototype.markCargoPosition = function (pos) {
 	if (this.markerAnimation) {
 		this.markerAnimation.pause(0);
 	}
-	
+
 	this.markerAnimation = TweenMax.to(this.markers[pos], 0.5, {
 		height: animatedHeight, width: animatedWidth, ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: false
 	});
@@ -339,7 +337,7 @@ VehicleGame.prototype.runNumber = function (number, simulate) {
 			var moving = Math.abs(number);
 			t.addSound(this.speech, this.crane, 'moveHook');
 			if (this.method === GLOBAL.METHOD.additionSubtraction && isFirstTry) {
-				// First guess in Add&Sub game mode, add the numbers before moving the hook 
+				// First guess in Add&Sub game mode, add the numbers before moving the hook
 				// instead of just calling direction and distance as with the add or sub game modes.
 				t.addSound(this.speech, this.crane, 'number' + this.addToNumber);
 				t.addSound(this.speech, this.crane, number > 0 ? 'plus' : 'minus');
@@ -360,7 +358,7 @@ VehicleGame.prototype.runNumber = function (number, simulate) {
 	}
 
 	t.add(this.moveTrolleyToMarker(sum, false));
-	
+
 	// Correct :)
 	if (!result) {
 		t.add(this.placeCargo(sum - 1));
@@ -372,7 +370,7 @@ VehicleGame.prototype.runNumber = function (number, simulate) {
 
 		t.add(this.crane.moveTrolley(this.pos.trailer.pos.x - this.pos.crane.drop.x));
 		this.atValue = 0;
-	
+
 	// Incorrect :(
 	} else {
 		// Start to lower the hook a little before returning it.
@@ -424,11 +422,10 @@ VehicleGame.prototype.moveTrolleyToMarker = function (target, noNumberCallout) {
 
 VehicleGame.prototype.placeCargo = function (pos) {
 	var t = new TimelineMax();
-	
+
 	// Lower the hook and cargo to drop it off.
 	t.addLabel('lowerHook');
-	var cargoBoxHeight = this.amount < 9 ? this.pos.cargo.height : this.pos.cargo.height * 0.66;
-	var cargoPosY = this.pos.trailer.pos.y - this.pos.trailer.height - ((this.trailerLoad[pos] % 3) * cargoBoxHeight);
+	var cargoPosY = this.pos.trailer.pos.y - this.trailer.height - ((this.trailerLoad[pos] % 3) * this.crane.cargo.height);
 	t.add(this.crane.moveHook(cargoPosY - this.crane.adjustedCargonetHeight), 'lowerHook+=0.5');
 
 	// Release the cargo by hiding the cargo net and the moving cargo box.
@@ -438,7 +435,7 @@ VehicleGame.prototype.placeCargo = function (pos) {
 	// Create a new cargo box at the location and make it visible.
 	var cargo = this.createNewCargo(this.markers[pos].x, cargoPosY);
 	t.addCallback(function () { cargo.visible = true; }, 'lowerHook+=1.7', null, this);
-	
+
 	// Return the hook to travel height.
 	t.add(this.crane.moveHook(this.crane.pos.hookTravelPos), 'lowerHook+=2');
 
@@ -544,8 +541,8 @@ VehicleGame.prototype.modePlayerShow = function (intro, tries) {
 			t.addLabel('agentIntro', '+=0.5');
 			t.add(this.agent.wave(3, 1), 'agentIntro');
 			t.addSound(this.agent.speech, this.agent, 'vehicleIntro1', 'agentIntro');
-			t.add(this.tractor.lookAtCrane());
-			t.add(this.crane.lookAtTractor());
+			t.add(this.tractor.lookAtAgent(), 'agentIntro');
+			t.add(this.crane.lookAtTractor(), 'agentIntro');
 			t.addSound(this.speech, this.tractor, 'agentHelp', '+=0.2');
 			t.addSound(this.speech, this.crane, 'gettingHelp', '+=0.2');
 			t.addSound(this.agent.speech, this.agent, 'vehicleIntro2', '+=0.2');
@@ -592,6 +589,6 @@ VehicleGame.prototype.modeOutro = function () {
 	t.add(this.addWater(this.tractor.x + 50, this.tractor.y - 45), 'water1');
 	t.add(this.addWater(this.crane.x + 184, this.crane.y - 270), 'water2');
 	t.add(this.addWater(this.agent.x, this.agent.y + 70), 'water3');
-	
+
 	t.addCallback(this.nextRound, null, null, this);
 };

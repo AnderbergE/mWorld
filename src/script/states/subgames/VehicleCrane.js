@@ -6,15 +6,15 @@ VehicleCrane.prototype = Object.create(Character.prototype);
 VehicleCrane.prototype.constructor = VehicleCrane;
 
 VehicleCrane.prototype.pos = {
-	craneArmHeight: 513,
+	craneArmHeight: 540,
 	craneTrolleyStart: 310,
 	hookDefaultPos: 300,
 	hookTravelPos: 360,
 	hookHeight: 69,
-	hookThickness: 17,
-	cargonetHeight: 127,
-	eyeNeutralPos: { x: 187, y: -379 },
-	eyeTractorPos: { x: 191, y: -377 }
+	hookThickness: 13,
+	cargonetHeight: 109,
+	eyeNeutralPos: { x: 179, y: -362 },
+	eyeTractorPos: { x: 183, y: -362 }
 };
 
 /**
@@ -39,42 +39,42 @@ function VehicleCrane (game, x, y, amount)
 
 	this.body = this.game.add.sprite(0, 0, 'vehicle', 'crane', this);
 	this.body.anchor.set(0, 1);
-	this.eyes = this.game.add.sprite(187, -379, 'vehicle', 'crane_eyes', this);
+	this.eyes = this.game.add.sprite(this.pos.eyeNeutralPos.x, this.pos.eyeNeutralPos.y, 'vehicle', 'crane_eyes', this);
 	this.eyes.anchor.set(0.5, 0.5);
-	this.mouth = this.game.add.sprite(184, -341, 'vehicle', 'crane_happy', this);
+	this.mouth = this.game.add.sprite(180, -310, 'vehicle', 'crane_happy', this);
 	this.mouth.anchor.set(0.5, 0);
-
-	this.trolley = this.game.add.sprite(this.trolleyPos, -545, 'vehicle', 'crane_trolley', this);
-	this.trolley.anchor.set(0.5, 0);
 
 	this.wire = this.game.add.sprite(this.trolleyPos, (this.pos.craneArmHeight) * -1, 'vehicle', 'crane_wire', this);
 	this.wire.height = this.pos.craneArmHeight - this.hookPos - this.pos.hookHeight;
 	this.wire.anchor.set(0.5, 0);
-	
-	this.hook = this.game.add.sprite(this.trolleyPos, this.hookPos * -1, 'vehicle', 'crane_hook', this);
+
+	this.trolley = this.game.add.sprite(this.trolleyPos, -545, 'vehicle', 'crane_trolley', this);
+	this.trolley.anchor.set(0.5, 0);
+
+	this.hook = this.game.add.sprite(this.trolleyPos, this.hookPos * -1, 'vehicle', 'hook', this);
 	this.hook.anchor.set(0.5, 1);
 
  	this.adjustedCargonetHeight = amount < 9 ? this.pos.cargonetHeight : this.pos.cargonetHeight * 0.66;
 	this.adjustedCargonetHeight -= this.pos.hookThickness;
-	
+
 	this.cargo = this.game.add.sprite(this.trolleyPos, (this.hookPos - this.adjustedCargonetHeight) * -1, 'vehicle', 'cargobox', this);
 	this.cargo.anchor.set(0.5, 1);
 	this.cargo.scale.set(amount < 9 ? 1 : 0.66);
 	this.cargo.visible = false;
-	
+
 	this.cargonet = this.game.add.sprite(this.trolleyPos, (this.hookPos + this.pos.hookThickness) * -1, 'vehicle', 'cargonet', this);
 	this.cargonet.anchor.set(0.5, 0);
 	this.cargonet.scale.set(amount < 9 ? 1 : 0.66);
 	this.cargonet.visible = false;
 
 	// Animation for mouth when talking.
-	var talkProps = 
+	var talkProps =
 	{
-		frame: this.mouth.frame + 1, 
-		roundProps: 'frame', 
-		ease: Power0.easeInOut, 
-		repeat: -1, 
-		yoyo: true, 
+		frame: this.mouth.frame + 1,
+		roundProps: 'frame',
+		ease: Power0.easeInOut,
+		repeat: -1,
+		yoyo: true,
 		paused: true
 	};
 	this.talk = TweenMax.to(this.mouth, 0.2, talkProps);//{
@@ -128,7 +128,7 @@ VehicleCrane.prototype.moveCrane = function(newCranePos) {
  */
 VehicleCrane.prototype.moveHook = function (newHookPos) {
 	this.hookPos = this.y - newHookPos;
-	
+
 	var t = new TimelineMax();
 	t.addLabel('moveHook');
 
@@ -146,7 +146,7 @@ VehicleCrane.prototype.moveHook = function (newHookPos) {
 	// Move the cargo.
 	var newCargoPos = (this.hookPos - this.adjustedCargonetHeight) * -1;
 	t.to(this.cargo, 1, { y: newCargoPos, ease: Power1.easeInOut }, 'moveHook');
-	
+
 	return t;
 };
 
@@ -158,7 +158,7 @@ VehicleCrane.prototype.moveHook = function (newHookPos) {
 VehicleCrane.prototype.moveTrolley = function (trolleyPos)
 {
 	this.trolleyPos = trolleyPos;
-	
+
 	var t = new TimelineMax();
 	t.addLabel('moveTrolley');
 
@@ -168,7 +168,7 @@ VehicleCrane.prototype.moveTrolley = function (trolleyPos)
 	t.to(this.wire, 1, { x: this.trolleyPos, ease: Power1.easeInOut }, 'moveTrolley');
 	t.to(this.cargonet, 1, { x: this.trolleyPos, ease: Power1.easeInOut }, 'moveTrolley');
 	t.to(this.cargo, 1, { x: this.trolleyPos, ease: Power1.easeInOut }, 'moveTrolley');
-	
+
 	return t;
 };
 
@@ -179,9 +179,9 @@ VehicleCrane.prototype.moveTrolley = function (trolleyPos)
 VehicleCrane.prototype.lookAtTractor = function ()
 {
 	var t = new TimelineMax();
-	
+
 	t.to(this.eyes, 0.4, { x: this.pos.eyeTractorPos.x, y: this.pos.eyeTractorPos.y, ease: Power1.easeInOut });
-	
+
 	return t;
 };
 
@@ -192,8 +192,8 @@ VehicleCrane.prototype.lookAtTractor = function ()
 VehicleCrane.prototype.lookAtUser = function ()
 {
 	var t = new TimelineMax();
-	
+
 	t.to(this.eyes, 0.4, { x: this.pos.eyeNeutralPos.x, y: this.pos.eyeNeutralPos.y, ease: Power1.easeInOut });
-	
-	return t;	
+
+	return t;
 };
