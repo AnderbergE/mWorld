@@ -111,9 +111,7 @@ ChoosePartyState.prototype.create = function () {
 			localStorage.choosePartygame = partyGame.gameState;
 			localStorage.choosePartyDifficulty = difficultySlider.value;
 
-			_this.game.state.start(partyGame.gameState, true, false, {
-				roundsPerMode: 3
-			});
+			_this.game.state.start(partyGame.gameState, true, false, { difficulty: difficultySlider.value * 10 });
 		}
 	});
 	this.world.add(startButton);
