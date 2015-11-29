@@ -54,6 +54,60 @@ exports.fade = function (what, typ, duration, to) {
 		}
 	});
 };
+/**
+ * Pop in or out an object.
+ * NOTE: The returned tween has both an onStart and onComplete function.
+ * @param {Object} what - The object to pop in, needs to have an scale property.
+ * @param {boolean} typ - Pop in = true, out = false, toggle = undefined (default: toggle).
+ * @param {number} duration - Pop in duration in seconds (default: 0.5).
+ *                            NOTE: The tween will have 0 duration if state is alreday correct.
+ * @param {number} to - The scale to fade to (only used when popping in) (default: 1).
+ *                      NOTE: You can pop in to a lower scale using typ "true".
+ * @return {Object} The animation TweenMax.
+ */
+exports.popin = function (what, typ, duration, to) {
+	duration = duration || 0.5;
+
+	return TweenMax.to(what.scale, duration, {
+		ease: Bounce.easeOut,
+		onStart: function () {
+			/* If this object is popping, stop it! */
+			if (what.isPopping) {
+				what.isPopping.kill();
+			}
+
+			/* No specified type: Toggle the current one. */
+			if (typeof typ === 'undefined' || typ === null) {
+				typ = !what.visible || what.scale.x === 0 || what.scale.y === 0;
+			}
+
+			/* Not visible? Set scale to 0 and make it visible if it should be. */
+			if (!what.visible) {
+				what.scale.set(0);
+				if (typ) {
+					what.visible = true;
+				}
+			}
+
+			/* If we are fading in, fade to the specified scale, otherwise 0. */
+			to = typ > 0 ? (to || 1) : 0;
+			if (what.scale.x !== to || what.scale.y !== to) {
+				this.updateTo({ x: to, y: to });
+			} else {
+				/* We are already at correct state, cut the duration. */
+				this.duration(0);
+			}
+
+			what.isPopping = this;
+		},
+		onComplete: function () {
+			if (!typ) {
+				what.visible = false;
+			}
+			delete what.isPopping;
+		}
+	});
+};
 
 /**
  * Easily tween an objects tint. It tweens from the current tint value.
@@ -151,13 +205,13 @@ Object.defineProperty(Phaser.SoundManager.prototype, 'bgVolume', {
  * @returns {Array} The input array in shuffled order.
  */
 Phaser.RandomDataGenerator.prototype.shuffle = function (array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-    return array;
+	for (var i = array.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	}
+	return array;
 };
 
 /**
