@@ -16,8 +16,8 @@ WaterCan.prototype.constructor = WaterCan;
  */
 function WaterCan (game, x, y, amount) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	this.x = x || game.width - 125;
-	this.y = y || 5;
+	this.x = typeof x === 'number' ? x : (game.width - 125);
+	this.y = typeof y === 'number' ? y : 5;
 	this.amount = amount || this.game.player.water;
 	var origin = 87;
 	var waterStep = 54 / this.game.player.maxWater;

@@ -93,15 +93,15 @@ GardenState.prototype.create = function () {
 	}
 
 	/* Setup the garden fields */
-	var plants = this.add.group();
-	plants.x = 50;
-	plants.y = 250;
+	this.plantGroup = this.add.group();
+	this.plantGroup.x = 90;
+	this.plantGroup.y = 350;
 	var maxLevel = 5;
 	var currentPlant;
 
 	var plantArea = new Cover(this.game, null, 0);
-	plantArea.width = this.world.width - plants.x * 2;
-	plantArea.height = this.world.height - plants.y;
+	plantArea.width = this.world.width - this.plantGroup.x * 2;
+	plantArea.height = this.world.height - this.plantGroup.y;
 	plantArea.inputEnabled = true;
 	plantArea.events.onInputDown.add(function (notUsed, event) {
 		util.fade(this.actions, false, 0.1);
@@ -110,9 +110,12 @@ GardenState.prototype.create = function () {
 		newPlantButtonButton.x = event.x - newPlantButtonButton.width / 2;
 		newPlantButtonButton.y = event.y - newPlantButtonButton.height / 2;
 		util.fade(newPlantButtonButton, true, 0.1);
-		moveAgent.call(this, event.x + (this.agent.x < event.x ? (-this.agent.width / 2) : (this.agent.height / 2)), event.y + newPlantButtonButton.height / 2 - this.agent.height / 2);
+
+		var x = event.x - this.plantGroup.x;
+		var y = event.y - this.plantGroup.y;
+		moveAgent.call(this, x + (this.agent.x < x ? -1 : 1) * (this.agent.width / 2 + this.agent.leftArm.width * this.agent.scale.x / 2), y + newPlantButtonButton.height / 2 - this.agent.height / 2);
 	}, this);
-	plants.add(plantArea);
+	this.plantGroup.add(plantArea);
 	var newPlantButtonButton = new SpriteButton(this.game, 'objects', 'drop', { // The button to push when adding water.
 		x: 0, y: 0, size: 60, color: 0x25377D,
 		onClick: (function () {
@@ -128,8 +131,15 @@ GardenState.prototype.create = function () {
 		var field = fields[key];
 		var plant = new GardenPlant(this.game, field.x, field.y, field.content_type, field.level); // jshint ignore:line
 		plant.id = key;
-		plants.add(plant);
+		this.plantGroup.add(plant);
 	}
+
+	/* Add the garden agent */
+	this.agent = this.game.player.createAgent();
+	this.agent.scale.set(0.2);
+	this.agent.x = -200;
+	this.agent.y = 0;
+	this.plantGroup.add(this.agent);
 
 	/* The interface for plants. */
 	this.actions = this.add.group();
@@ -139,7 +149,35 @@ GardenState.prototype.create = function () {
 	bmd.ctx.globalAlpha = 0.5;
 	bmd.ctx.fillRect(0, 0, bmd.width, bmd.height);
 	this.game.add.sprite(0, 0, bmd, null, this.actions);
-	// TODO: Move button.
+	this.actions.moveButton = new SpriteButton(this.game, 'objects', 'move', { // The button to push when adding water.
+		x: 10, y: 10, size: this.actions.height - 20, color: 0xFFFAF0
+	});
+	this.actions.moveButton.sprite.tint = 0x5D2500;
+	this.actions.moveButton.bg.events.onInputDown.add(function (noUsed, event) {
+		var ex = event.x;
+		var ey = event.y;
+		var ax = this.actions.x;
+		var ay = this.actions.y;
+		var px = currentPlant.x;
+		var py = currentPlant.y;
+		currentPlant.update = (function () {
+			var newX = (px + event.x - ex);
+			if (newX > 0 && newX < plantArea.width) {
+				currentPlant.x = newX;
+				this.actions.x = ax + event.x - ex;
+			}
+			var newY = (py + event.y - ey);
+			if (newY > 0 && newY < (plantArea.height)) {
+				currentPlant.y = newY;
+				this.actions.y = ay + event.y - ey;
+			}
+		}).bind(this);
+	}, this);
+	this.actions.moveButton.bg.events.onInputUp.add(function () {
+		moveAgentToPlant.call(this);
+		currentPlant.update = function () {};
+	}, this);
+	this.actions.add(this.actions.moveButton);
 	this.actions.waterButton = new SpriteButton(this.game, 'objects', 'drop', { // The button to push when adding water.
 		x: this.actions.width / 2 + 10, y: 10, size: this.actions.height - 20,
 		color: 0x25377D, keepDown: true,
@@ -156,13 +194,6 @@ GardenState.prototype.create = function () {
 		fill: '#5555ff'
 	}, this.actions);
 	this.actions.maxText.anchor.set(0.5);
-
-	/* Add the garden agent */
-	this.agent = this.game.player.createAgent();
-	this.agent.scale.set(0.2);
-	this.agent.x = -100;
-	this.agent.y = this.world.height / 2;
-	this.world.add(this.agent);
 
 	/* Add the water can */
 	this.world.add(new WaterCan(this.game));
@@ -191,6 +222,11 @@ GardenState.prototype.create = function () {
 		}, 0, null, this);
 	}
 
+	function moveAgentToPlant (plant) {
+		var p = plant || currentPlant;
+		moveAgent.call(this, p.x + (this.agent.x < p.x ? -1 : 1) * (p.width / 2 + this.agent.width / 2 + this.agent.leftArm.width * this.agent.scale.x / 2), p.y - this.agent.height / 2);
+	}
+
 	/* Water plant when we push it. */
 	function waterPlant (plant) {
 		if (plant.level === maxLevel) {
@@ -206,8 +242,8 @@ GardenState.prototype.create = function () {
 
 				if (!plant.level) { // New plant!
 					// Add the plant on a coordinate relative to the plants group.
-					plant = new GardenPlant(this.game, plant.x - plants.x, plant.y - plants.y, this.rnd.integerInRange(1, 13), 1);
-					plants.add(plant);
+					plant = new GardenPlant(this.game, plant.x - this.plantGroup.x, plant.y - this.plantGroup.y, this.rnd.integerInRange(1, 13), 1);
+					this.plantGroup.add(plant);
 				} else {
 					plant.upgrade();
 					if (plant.level === maxLevel) {
@@ -264,13 +300,11 @@ GardenState.prototype.create = function () {
 		}
 
 		currentPlant = plant;
+		moveAgentToPlant.call(this);
 
-		var x = plants.x + plant.x;
-		var y = plants.y + plant.y;
-		moveAgent.call(this, x + (this.agent.x < x ? -1 : 1) * (plant.width / 2 + this.agent.width / 2), y - this.agent.height / 2);
-
-		this.actions.x = x - this.actions.width / 2;
-		this.actions.y = y - plant.height - this.actions.height;
+		// Actions is outside plant group, so add group coordinates.
+		this.actions.x = this.plantGroup.x + plant.x - this.actions.width / 2;
+		this.actions.y = this.plantGroup.y + plant.y - plant.height - this.actions.height;
 		if (plant.level === maxLevel) {
 			this.actions.waterButton.visible = false;
 			this.actions.maxText.visible = true;
@@ -292,7 +326,7 @@ GardenState.prototype.create = function () {
 /* When the state starts. */
 GardenState.prototype.startGame = function () {
 	var t = new TimelineMax().skippable();
-	t.add(this.agent.move({ x: this.world.centerX }, 3));
+	t.add(this.agent.move({ x: this.world.width / 2 - this.plantGroup.x }, 3));
 
 	if (this.game.player.water > 0) {
 		if (this.gardenData.fields.length > 0) {
@@ -305,20 +339,19 @@ GardenState.prototype.startGame = function () {
 		if (this.gardenData.fields.length > 0) {
 			t.addSound(this.agent.speech, this.agent, 'gardenYoureBack');
 		} else {
-			var w = new WaterCan(this.game);
+			var w = new WaterCan(this.game, 0, this.agent.height);
+			w.can.anchor.set(0.5);
+			w.scale.set(0);
 			w.visible = false;
-			this.world.add(w);
+			this.agent.add(w);
 
 			t.addSound(this.agent.speech, this.agent, 'gardenIntro');
 			t.addLabel('myCan', '+=0.5');
 			t.addCallback(function () {
-				w.x = this.agent.x - w.width/4; // Since we scale to 0.5
-				w.y = this.agent.y;
-				w.scale.set(0);
 				w.visible = true;
-				this.agent.eyesFollowObject(w);
+				this.agent.eyesFollowObject(w.can);
 			}, null, null, this);
-			t.add(new TweenMax(w.scale, 1, { x: 0.5, y: 0.5, ease: Elastic.easeOut }), 'myCan');
+			t.add(new TweenMax(w.scale, 1, { x: 3, y: 3, ease: Elastic.easeOut }), 'myCan');
 			t.addSound(this.agent.speech, this.agent, 'gardenMyCan', 'myCan');
 			t.add(new TweenMax(w.scale, 1, { x: 0, y: 0, ease: Elastic.easeOut, onComplete: w.destroy, onCompleteScope: w }));
 		}
@@ -331,6 +364,12 @@ GardenState.prototype.startGame = function () {
 		this.agent.eyesStopFollow();
 		this.disabler.visible = false;
 	}, null, null, this);
+};
+
+GardenState.prototype.run = function () {
+	this.agent.y += this.agent.height / 2;
+	this.plantGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+	this.agent.y -= this.agent.height / 2;
 };
 
 

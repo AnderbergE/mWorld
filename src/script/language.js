@@ -100,7 +100,7 @@ LANG.swedish.text = {
 
 	/* Entry state */
 	title: 'Magical Garden',
-	start: 'Starta!',
+	start: 'Starta',
 	continuePlaying: 'Fortsätt',
 	changeAgent: 'Byt ut ', // Followed by agent name
 	credits: 'Skapat av',
