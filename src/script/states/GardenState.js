@@ -105,6 +105,7 @@ GardenState.prototype.create = function () {
 	plantArea.inputEnabled = true;
 	plantArea.events.onInputDown.add(function (notUsed, event) {
 		util.fade(this.actions, false, 0.1);
+		currentPlant = null;
 
 		newPlantButtonButton.x = event.x - newPlantButtonButton.width / 2;
 		newPlantButtonButton.y = event.y - newPlantButtonButton.height / 2;
@@ -264,10 +265,12 @@ GardenState.prototype.create = function () {
 
 		currentPlant = plant;
 
-		moveAgent.call(this, this.agent.x < plant.x ? (plant.x - plant.width / 2 - this.agent.width / 2) : (plant.x + plant.width / 2 + this.agent.width / 2), plant.y - this.agent.height / 2);
+		var x = plants.x + plant.x;
+		var y = plants.y + plant.y;
+		moveAgent.call(this, x + (this.agent.x < x ? -1 : 1) * (plant.width / 2 + this.agent.width / 2), y - this.agent.height / 2);
 
-		this.actions.x = plant.x - this.actions.width / 2;
-		this.actions.y = plant.y - plant.height - this.actions.height;
+		this.actions.x = x - this.actions.width / 2;
+		this.actions.y = y - plant.height - this.actions.height;
 		if (plant.level === maxLevel) {
 			this.actions.waterButton.visible = false;
 			this.actions.maxText.visible = true;
