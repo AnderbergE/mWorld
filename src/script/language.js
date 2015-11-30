@@ -497,8 +497,8 @@ LANG.swedish.speech = {
 			// Balloon
 			balloonIntro:     [110.4, 6.2],
 			// Vehicle
-			vehicleIntro1:    [117.4, 4.5], // Hej Hedvig. Hej Herman. Vad håller ni på med?
-			vehicleIntro2:    [123.0, 4.0]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
+			vehicleIntro1:    [157.5, 3.6], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			vehicleIntro2:    [161.5, 4.9]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
@@ -558,8 +558,8 @@ LANG.swedish.speech = {
 			// Balloon
 			balloonIntro:     [187.7, 5.6],
 			// Vehicle
-			vehicleIntro1:    [158.2, 5.4], // Hej Hedvig. Hej Herman. Vad håller ni på med?
-			vehicleIntro2:    [164.7, 5.3]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
+			vehicleIntro1:    [194.0, 5.5], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			vehicleIntro2:    [200.0, 6.6]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
@@ -619,8 +619,8 @@ LANG.swedish.speech = {
 			// Balloon
 			balloonIntro:     [144.9, 7.5],
 			// Vehicle
-			vehicleIntro1:    [122.5, 4.4], // Hej Hedvig. Hej Herman. Vad håller ni på med?
-			vehicleIntro2:    [128.2, 3.9]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
+			vehicleIntro1:    [153.0, 3.8], // Hej Hedvig. Hej Herman. Vad håller ni på med?
+			vehicleIntro2:    [157.5, 4.4]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 

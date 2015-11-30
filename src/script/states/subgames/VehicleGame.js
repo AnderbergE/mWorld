@@ -21,8 +21,8 @@ function VehicleGame () {
 
 VehicleGame.prototype.pos = {
 	agent: {
-		start: { x: 1200, y: 460 },
-		stop: { x: 700, y: 420 },
+		start: { x: 1200, y: 380 },
+		stop: { x: 700, y: 400 },
 		scale: 0.3
 	},
 	crane: {
