@@ -89,7 +89,10 @@ function Agent (game) {
 		.to(this.rightLeg, 0.12, { y: '-=50' , ease: Power1.easeInOut, yoyo: true, repeat: 1 }, 0.24);
 
 	/* Create the speech audio sheet. */
-	this.speech = utils.createAudioSheet(this.id + 'Speech', LANG.SPEECH[this.id].markers);
+	var speechKey = this.id + 'Speech';
+	if (this.game.cache.checkSoundKey(speechKey)) {
+		this.speech = utils.createAudioSheet(speechKey, LANG.SPEECH[this.id].markers);
+	}
 
 	/* Save the progress of the player for AI purposes */
 	var _this = this;

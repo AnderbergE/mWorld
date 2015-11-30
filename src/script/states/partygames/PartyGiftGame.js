@@ -1,8 +1,5 @@
 var PartyGame = require('./PartyGame.js');
-var Troll = require('../../agent/Troll.js');
-var Hedgehog = require('../../agent/Hedgehog.js');
-var Mouse = require('../../agent/Mouse.js');
-var Panda = require('../../agent/Panda.js');
+var GLOBAL = require('../../global.js');
 
 module.exports = PartyGiftGame;
 
@@ -15,24 +12,46 @@ function PartyGiftGame () {
 
 PartyGiftGame.prototype.preload = function () {
 	PartyGame.prototype.preload.call(this);
-
 	this.load.atlasJSONHash('partyGift', 'img/partygames/giftGame/atlas.png', 'img/partygames/giftGame/atlas.json');
 };
 
 PartyGiftGame.prototype.create = function () {
-	this.t = new Troll (this.game);
-	this.gameGroup.add(this.t);
-	this.t.visible = false;
-	this.t.scale.set(0.22);
+	PartyGame.prototype.create.call(this);
+	this.afterInvitations();
+	this.afterGarlands();
+	this.afterBalloons();
+
+	this.birthday.x = 400;
+	this.birthday.y = 610;
+	this.birthday.visible = true;
+	this.helper1.x = 350;
+	this.helper1.y = 500;
+	this.helper2.x = 620;
+	this.helper2.y = 510;
+	this.troll.x = 560;
+	this.troll.y = 635;
+	this.troll.visible = true;
+	this.troll.changeShape('troll');
+
+	var xs = [150, 250, 460, 700, 750];
+	var ys = [550, 450,  420, 440, 630];
+	for (var i = 0; i < this.guests.length; i++) {
+		this.guests[i].visible = true;
+		this.guests[i].x = xs[i];
+		this.guests[i].y = ys[i];
+	}
+
+	this.hat = this.gladeIntro.create(this.birthday.x + 12, this.birthday.y - 56, 'glade', 'Partyhat');
+	this.hat.scale.set(0.36);
+	this.hat.anchor.set(0.5, 1);
 
 	this.emitter = this.add.emitter(0, 0, 150);
 	this.emitter.gravity = 0;
 	this.emitter.setAlpha(1, 0, 3000);
-	this.emitter.makeParticles(Troll.prototype.id, 'star');
+	this.emitter.makeParticles(this.troll.id, 'star');
 
 	this.createBg();
 	this.createTrees();
-	this.createAgent();
 	this.createGiftModels();
 
 	this.createMap();
@@ -43,11 +62,7 @@ PartyGiftGame.prototype.create = function () {
 
 	this.pressedTile = -1;
 
-	PartyGame.prototype.create.call(this); // Call this at last to put it "on top" of our graphics.
-	this.afterInvitations();
-	this.afterGarlands();
-	this.afterBalloons();
-	this.afterGifts();
+	this.gladeIntro.parent.bringToTop(this.gladeIntro);
 };
 
 
@@ -110,32 +125,6 @@ PartyGiftGame.prototype.createBg = function () {
 		bg = this.bgGroup.children[i];
 		bg.x = this.bgGroup.children[i - 1].x + 1023;
 	}
-};
-
-PartyGiftGame.prototype.createAgent = function () {
-	if (this.agent instanceof Panda) {
-		this.a = new Panda (this.game);
-		this.otherA = new Hedgehog (this.game);
-		this.otherAA = new Mouse (this.game);
-	} else if (this.agent instanceof Mouse) {
-		this.a = new Mouse (this.game);
-		this.otherA = new Panda (this.game);
-		this.otherAA = new Hedgehog (this.game);
-	} else if (this.agent instanceof Hedgehog) {
-		this.a = new Hedgehog (this.game);
-		this.otherA = new Mouse (this.game);
-		this.otherAA = new Panda (this.game);
-	}
-
-	this.a.scale.set(0.2);
-	this.a.x = 250 + this.gameGroup.x;
-	this.a.y = 450;
-	this.gameGroup.add(this.a);
-	this.gameGroup.add(this.otherA);
-	this.gameGroup.add(this.otherAA);
-
-	this.otherA.visible = false;
-	this.otherAA.visible = false;
 };
 
 PartyGiftGame.prototype.createTiles = function () {
@@ -202,7 +191,7 @@ PartyGiftGame.prototype.createTrees = function () {
 PartyGiftGame.prototype.pressTile = function (origin) {
 	this.pressedTile = this.tiles.indexOf(origin.parent);
 
-	var between = this.tiles[this.pressedTile].position.distance(this.a.position);
+	var between = this.tiles[this.pressedTile].position.distance(this.birthday.position);
 	var dist = Math.abs(between / 130);
 
 	var t = new TimelineMax();
@@ -216,12 +205,12 @@ PartyGiftGame.prototype.pressTile = function (origin) {
 				t.addLabel('appear');
 				t.to(this.gameGroup, 1, {x: '+=' + 300, ease: Power0.easeNone}, 'appear');
 				t.to(this.giftGroup, 1, {x: '-=' + 300, ease: Power0.easeNone}, 'appear');
-				t.add(this.a.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
+				t.add(this.birthday.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
 				t.to(this.glass, dist, {x: origin.parent.x, ease: Power0.easeNone}, 'appear');
 				t.to(this.mapGroup, dist, {x: origin.parent.x + 65, ease: Power0.easeNone}, 'appear');
 			} else {
 				t.addLabel('appear');
-				t.add(this.a.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
+				t.add(this.birthday.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
 				t.to(this.glass, dist, {x: origin.parent.x, ease: Power0.easeNone}, 'appear');
 				t.to(this.mapGroup, dist, {x: origin.parent.x + 65, ease: Power0.easeNone}, 'appear');
 			}
@@ -229,7 +218,7 @@ PartyGiftGame.prototype.pressTile = function (origin) {
 		} else if ((origin.parent.x + this.gameGroup.x) < 800) {
 			if (this.pressedTile !== 0 && this.pressedTile !== this.tiles.length - 1) {
 				t.addLabel('appear');
-				t.add(this.a.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
+				t.add(this.birthday.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
 				t.to(this.glass, dist, {x: origin.parent.x, ease: Power0.easeNone}, 'appear');
 				t.to(this.mapGroup, dist, {x: origin.parent.x + 65, ease: Power0.easeNone}, 'appear');
 				if (dist > 4) {
@@ -246,7 +235,7 @@ PartyGiftGame.prototype.pressTile = function (origin) {
 
 			} else {
 				t.addLabel('appear');
-				t.add(this.a.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
+				t.add(this.birthday.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
 				t.to(this.glass, dist, {x: origin.parent.x, ease: Power0.easeNone}, 'appear');
 				t.to(this.mapGroup, dist, {x: origin.parent.x + 65, ease: Power0.easeNone}, 'appear');
 
@@ -257,7 +246,7 @@ PartyGiftGame.prototype.pressTile = function (origin) {
 				t.addLabel('appear');
 				t.to(this.gameGroup, 1, {x: '-=' + 300, ease: Power0.easeNone}, 'appear');
 				t.to(this.giftGroup, 1, {x: '+=' + 300, ease: Power0.easeNone}, 'appear');
-				t.add(this.a.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
+				t.add(this.birthday.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
 				t.to(this.glass, dist, {x: origin.parent.x, ease: Power0.easeNone}, 'appear');
 				t.to(this.mapGroup, dist, {x: origin.parent.x + 65, ease: Power0.easeNone}, 'appear');
 				if (dist > 3) {
@@ -270,7 +259,7 @@ PartyGiftGame.prototype.pressTile = function (origin) {
 				t.add(new TweenMax(this.tiles[this.pressedTile + 1].tile, 1, {alpha:0.2}), 'appear');
 			} else {
 				t.addLabel('appear');
-				t.add(this.a.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
+				t.add(this.birthday.move({ x: origin.parent.x, ease: Power0.easeNone}, dist), 'appear');
 				t.to(this.glass, dist, {x: origin.parent.x, ease: Power0.easeNone}, 'appear');
 				t.to(this.mapGroup, dist, {x: origin.parent.x + 65, ease: Power0.easeNone}, 'appear');
 				t.add(new TweenMax(this.tiles[this.pressedTile].tile, 1, {alpha:0.2}), 'appear');
@@ -293,8 +282,8 @@ PartyGiftGame.prototype.pressTile = function (origin) {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 PartyGiftGame.prototype.createMap = function () {
 	this.mapGroup = this.add.group(this.gameGroup);
-	this.mapGroup.x = this.a.x + this.gameGroup.x + 68;
-	this.mapGroup.y = this.a.y + 23;
+	this.mapGroup.x = -100;
+	this.mapGroup.y = -100;
 	this.mapGroup.scale.set(0.05);
 
 	this.map = this.mapGroup.create(-50, -50, 'partyGift', 'map');
@@ -305,27 +294,17 @@ PartyGiftGame.prototype.createMap = function () {
 };
 
 PartyGiftGame.prototype.createMapAgent = function () {
-	if (this.agent instanceof Panda) {
-		this.map.a = new Panda (this.game);
-		this.mapGroup.add(this.map.a);
-		this.map.a.scale.set(0.06);
-		this.map.a.x = 120;
-		this.map.a.y = 640;
-	} else if (this.agent instanceof Mouse) {
-		this.map.a = new Mouse (this.game);
-		this.mapGroup.add(this.map.a);
-		this.map.a.scale.set(0.06);
-		this.map.a.x = 120;
-		this.map.a.y = 640;
-	} else if (this.agent instanceof Hedgehog) {
-		this.map.a = new Hedgehog (this.game);
-		this.mapGroup.add(this.map.a);
-		this.map.a.scale.set(0.06);
-		this.map.a.x = 120;
-		this.map.a.y = 640;
+	if (this.birthday === this.agent) {
+		this.map.a = this.game.player.createAgent();
+	} else {
+		this.map.a = new GLOBAL.AGENT[this.birthdayName](this.game);
 	}
 
+	this.map.a.scale.set(0.06);
+	this.map.a.x = 120;
+	this.map.a.y = 640;
 	this.map.a.alpha = 0;
+	this.mapGroup.add(this.map.a);
 };
 
 PartyGiftGame.prototype.createMapMarks = function () {
@@ -472,9 +451,9 @@ PartyGiftGame.prototype.mapAgain = function () {
 		t.to(this.mapGroup, 2, {x: - this.gameGroup.x, y:0, ease: Power1.easeIn}, 'scale');
 
 		if (this.pressedTile < this.correctAmount) {
-			t.addSound(this.map.a.speech, this.map.a, 'moreSteps', '+=0.5');
+			t.addSound(this.birthday.speech, this.birthday, 'moreSteps', '+=0.5');
 		} else if (this.pressedTile > this.correctAmount) {
-			t.addSound(this.map.a.speech, this.map.a, 'tooManySteps', '+=0.5');
+			t.addSound(this.birthday.speech, this.birthday, 'tooManySteps', '+=0.5');
 		}
 
 		t.addCallback(this.disable, '+=0.5', [false], this);
@@ -497,10 +476,10 @@ PartyGiftGame.prototype.mapDown = function () {
 
 		t.addLabel('scaleDown');
 		t.add(new TweenMax(this.mapGroup.scale, 2, {x: 0.05, y: 0.05, ease: Power1.easeIn}), 'scaleDown');
-		t.to(this.mapGroup, 2, {x: this.a.x + 68, y: this.a.y + 23, ease: Power1.easeIn}, 'scaleDown');
+		t.to(this.mapGroup, 2, {x: this.birthday.x + 68, y: this.birthday.y + 23, ease: Power1.easeIn}, 'scaleDown');
 
 		t.addCallback(function () {
-			this.gameGroup.bringToTop(this.a);
+			this.gameGroup.bringToTop(this.birthday);
 			this.gameGroup.bringToTop(this.mapGroup);
 		}, null, null, this);
 
@@ -513,12 +492,12 @@ PartyGiftGame.prototype.mapDown = function () {
 /*                             Troll functions                               */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 PartyGiftGame.prototype.trollStart = function () {
-	this.a.eyesFollowObject(this.glass);
+	this.birthday.eyesFollowObject(this.glass);
 	this.disable(true);
 
 	var t = new TimelineMax();
-	t.addSound(this.a.speech, this.a, 'isItHere');
-	t.add(this.t.appear('top', this.glass.x + this.gameGroup.x, this.glass.y - 36, this.gameGroup.x));
+	t.addSound(this.birthday.speech, this.birthday, 'isItHere');
+	t.add(this.troll.appear('top', this.glass.x + this.gameGroup.x, this.glass.y - 36, this.gameGroup.x));
 
 	if (this.pressedTile < this.correctAmount) {
 		t.addCallback(this.findRandom, null, null, this);
@@ -547,11 +526,11 @@ PartyGiftGame.prototype.findRandom = function () {
 	t.addSound(this.sfx, null, 'pop');
 	t.add(new TweenMax(this.thing, 0.1, {alpha:1}), 'find');
 	t.add(new TweenMax(this.thing.scale, 1, {x: 1.1, y: 1.1, ease: Power1.easeIn}));
-	t.addSound(this.t.speech, this.t, 'oops');
+	t.addSound(this.troll.speech, this.troll, 'oops' + this.rnd.integerInRange(1, 2));
 	t.addCallback(function () {
-		this.a.eyesStopFollow();
+		this.birthday.eyesStopFollow();
 	}, null, null, this);
-	t.addSound(this.a.speech, this.a, 'lookMap', '+=0.3');
+	t.addSound(this.birthday.speech, this.birthday, 'lookMap', '+=0.3');
 	t.addCallback(this.mapAgain, '+=0.6', null, this);
 };
 
@@ -568,10 +547,10 @@ PartyGiftGame.prototype.findGift = function () {
 	t.addSound(this.sfx, null, 'chestUnlock');
 	t.add(new TweenMax(gift, 0.1, {alpha:1}), 'find');
 	t.add(new TweenMax(gift.scale, 1, {x: 1, y: 1, ease: Power1.easeIn}));
-	t.addSound(this.a.speech, this.a, 'yesGift');
+	t.addSound(this.birthday.speech, this.birthday, 'yesGift');
 
 	t.addCallback(function () {
-		this.a.eyesStopFollow();
+		this.birthday.eyesStopFollow();
 	}, null, null, this);
 
 	if (this.finishedRounds === 1) {
@@ -617,10 +596,34 @@ PartyGiftGame.prototype.destroyRound = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 PartyGiftGame.prototype.modeIntro = function () {
 	var t = new TimelineMax();
-	t.add(this.giftIntro());
+	t.add(this.birthday.wave(2, -1));
+	t.addSound(this.birthday.speech, this.birthday, 'hi', 0);
+	t.addSound(this.birthday.speech, this.birthday, 'niceParty', '+=0.3');
+	t.addSound(this.helper1.speech, this.helper1, 'haveGifts', '+=1');
+	t.addSound(this.troll.speech, this.troll, 'laugh');
+	t.addSound(this.birthday.speech, this.birthday, 'helpFindGifts', '+=0.5');
+	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
 
-	t.addSound(this.a.speech, this.a, 'shouldBeHere');
-	t.addSound(this.a.speech, this.a, 'lookMap', '+=0.5');
+	t.addCallback(function () {
+		this.birthday.scale.set(0.2);
+		this.birthday.x = -500;
+		this.birthday.y = 450;
+		this.gameGroup.add(this.birthday);
+
+		this.mapGroup.x = this.birthday.x + 65;
+		this.mapGroup.y = this.birthday.y + 23;
+		this.gameGroup.bringToTop(this.mapGroup);
+
+		this.troll.visible = false;
+		this.troll.scale.set(0.22);
+		this.gameGroup.add(this.troll);
+	}, null, null, this);
+
+	t.addLabel('appear');
+	t.add(this.birthday.move({ x: 250, ease: Power0.easeNone }, 2), 'appear');
+	t.to(this.mapGroup, 2, { x: 250 + 65, ease: Power0.easeNone }, 'appear');
+	t.addSound(this.birthday.speech, this.birthday, 'shouldBeHere');
+	t.addSound(this.birthday.speech, this.birthday, 'lookMap', '+=0.5');
 	t.addCallback(this.nextRound, null, null, this);
 };
 
@@ -635,7 +638,7 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 		this.createGlass();
 
 		if (this.finishedRounds > 0) {
-			t.addSound(this.a.speech, this.a, 'nextGift');
+			t.addSound(this.birthday.speech, this.birthday, 'nextGift');
 
 			this.markGroup.children[this.finishedRounds - 1].frameName = this.gifts[this.finishedRounds - 1];
 			this.map.a.x = this.markGroup.children[this.finishedRounds - 1].x;
@@ -676,7 +679,7 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 			}
 
 			t.addLabel('fade', '+=0.5');
-			t.addSound(this.map.a.speech, this.map.a, 'giftAtCross', 'fade');
+			t.addSound(this.birthday.speech, this.birthday, 'giftAtCross', 'fade');
 			for (i = 0; i < this.markGroup.length; i++) {
 				t.add(new TweenMax(this.markGroup.children[i], 1, {alpha:0.2}), 'fade');
 			}
@@ -688,16 +691,16 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 			t.add(new TweenMax(this.dotGroup.children[i], 0.3, {alpha:1}));
 		}
 
-		t.addSound(this.map.a.speech, this.map.a, 'howManySteps', '+=0.3');
-		t.addSound(this.map.a.speech, this.map.a, 'rememberSteps');
+		t.addSound(this.birthday.speech, this.birthday, 'howManySteps', '+=0.3');
+		t.addSound(this.birthday.speech, this.birthday, 'rememberSteps');
 		t.addCallback(this.disable, '+=0.5', [false], this);
 
 		t.addCallback(function () {
 			this.gameGroup.x = 0;
 			this.mapGroup.x = 0;
 			this.giftGroup.x = 400;
-			this.a.x = 250;
-			this.a.y = 450;
+			this.birthday.x = 250;
+			this.birthday.y = 450;
 		}, null, null, this);
 
 		t.addCallback(this.mapDown,'+=5', null, this);
@@ -713,13 +716,13 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 		t.add(new TweenMax(this.tiles[1].tile, 0.5, {alpha:0.2}));
 
 		if (this.finishedRounds < 2) {
-			t.addSound(this.a.speech, this.a, 'pushButton');
+			t.addSound(this.birthday.speech, this.birthday, 'pushButton');
 		}
 
 		t.add(new TweenMax(this.glass, 1, {alpha:0.3}));
 
 		if (this.finishedRounds < 2) {
-			t.addSound(this.a.speech, this.a, 'pushGlass', '+=1.1');
+			t.addSound(this.birthday.speech, this.birthday, 'pushGlass', '+=1.1');
 		}
 
 		t.addCallback(this.disable, null, [false], this);
@@ -731,21 +734,24 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 
 PartyGiftGame.prototype.modeOutro = function () {
 	var t = new TimelineMax();
-	t.addSound(this.a.speech, this.a, 'wasAll');
+	t.addSound(this.birthday.speech, this.birthday, 'wasAll');
+	t.add(this.birthday.move({ x:-500, ease: Power0.easeNone}, 5));
+	t.add(this.troll.water(300 - this.gameGroup.x, this));
 
-	t.add(this.t.water(300 - this.gameGroup.x, this));
-
-	t.add(this.afterGifts());
-
-	this.t2.visible = true;
-	this.pgifts.alpha = 1;
 	t.addCallback(function () {
 		this.gladeIntro.parent.bringToTop(this.gladeIntro);
-	}, null, null, this);
-	t.add(new TweenMax(this.gladeIntro, 2, {alpha:1}));
+		this.pgifts.visible = true;
 
-	t.addSound(this.a3.speech, this.a3, 'openGifts', '+=0.2');
-	t.addSound(this.a3.speech, this.a3, 'thanksForParty', '+=0.5');
+		this.birthday.x = 400;
+		this.birthday.y = 610;
+		this.birthday.scale.set(0.17);
+		this.gladeIntro.add(this.birthday);
+		this.gladeIntro.bringToTop(this.hat);
+	}, null, null, this);
+	t.add(new TweenMax(this.gladeIntro, 2, { alpha:1 }));
+
+	t.addSound(this.birthday.speech, this.birthday, 'openGifts', '+=0.2');
+	t.addSound(this.birthday.speech, this.birthday, 'thanksForParty', '+=0.5');
 	t.addCallback(this.endGame, '+=3', null, this);
 };
 

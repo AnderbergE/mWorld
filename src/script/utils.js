@@ -146,6 +146,19 @@ exports.createAudioSheet = function (key, markers) {
 };
 
 /**
+ * Easily debug an audio sheet.
+ * @param {Object} sheet - The audio sheet to debug.
+ * @return {Object} A timeline with all markers after one another (1 sec between marker).
+ */
+exports.debugAudioSheet = function (sheet) {
+	var t = new TimelineMax();
+	for (var key in sheet.markers) {
+		t.addSound(sheet, null, key, '+=1');
+	}
+	return t;
+};
+
+/**
 * Creates a new Sound object as background music
 *
 * @method Phaser.GameObjectFactory#music

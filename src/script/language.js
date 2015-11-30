@@ -443,7 +443,8 @@ LANG.swedish.speech = {
 	/* Agents */
 	panda: {
 		speech: [
-			// TODO: Other formats.
+			'audio/agent/panda/swedish.m4a',
+			'audio/agent/panda/swedish.ogg',
 			'audio/agent/panda/swedish.mp3'
 		],
 		markers: {
@@ -497,72 +498,14 @@ LANG.swedish.speech = {
 			balloonIntro:     [110.4, 6.2],
 			// Vehicle
 			vehicleIntro1:    [117.4, 4.5], // Hej Hedvig. Hej Herman. Vad håller ni på med?
-			vehicleIntro2:    [123.0, 4.0], // Jaha. Det låter jättespännande. Får jag också hjälpa till?
-			// Party
-			hi:               [158.2, 1.2],
-			niceYoureHere:    [160.0, 2.0],
-			soonBirthday:     [162.0, 2.2],
-			wereHavingParty:  [166.0, 3.5],
-			thanks:           [268.2, 0.9],
-			niceComeBack:     [239.0, 2.6],
-			helpUsAgain:      [242.4, 2.8],
-			haveGifts:        [282.0, 3.9],
-			// PartyInvitation
-			gottaInvite:      [170.0, 2.3],
-			makeCards:        [173.0, 2.2],
-			allGuestsGet:     [175.8, 3.0],
-			helpMeStickers:   [179.0, 3.8],
-			manyOfThese:      [183.0, 3.9],
-			someOfThese:      [187.0, 3.9],
-			thisManyOfThese:  [191.0, 3.9],
-			imTrying:         [195.0, 3.8],
-			dragStickers:     [199.0, 2.0],
-			dragStickers2:    [203.0, 2.9],
-			looksNice:        [206.0, 3.0],
-			imPutting:        [209.2, 2.0],
-			dragCard:         [212.0, 2.0],
-			dragStickersBack: [215.0, 3.0],
-			rightButMore:     [218.5, 5.0],
-			tryMore:          [224.0, 2.0],
-			ohNo:             [226.4, 5.2],
-			madeNiceCards:    [232.2, 4.2],
-			thanksForHelp:    [237.0, 1.7],
-			// PartyGarlands
-			haveToGarlands:   [246.1, 2.5],
-			letsPutUp:        [249.3, 2.9],
-			goodPlace:        [253.0, 2.8],
-			followMe:         [256.8, 0.8],
-			hereGood:         [259.2, 1.3],
-			whichGarland:     [261.0, 2.6],
-			helpMeFlags:      [264.5, 2.8],
-			wasGood:          [206.0, 3.0],
-			putFlagsBack:     [270.0, 2.4],
-			moreGarlands:     [273.2, 2.4],
-			looksGood:        [276.2, 2.7],
-			finished:         [279.3, 2.0],
-			// PartyGifts
-			niceParty:        [286.1, 2.2],
-			helpFindGifts:    [289.0, 2.9],
-			shouldBeHere:     [292.4, 2.6],
-			lookMap:          [296.0, 1.6],
-			giftAtCross:      [298.3, 2.2],
-			howManySteps:     [301.3, 3.6],
-			rememberSteps:    [306.0, 2.5],
-			pushButton:       [309.2, 2.9],
-			pushGlass:        [313.0, 2.9],
-			isItHere:         [316.6, 1.0],
-			yesGift:          [319.0, 1.9],
-			moreSteps:        [322.0, 2.0],
-			tooManySteps:     [325.0, 2.0],
-			nextGift:         [328.0, 2.9],
-			wasAll:           [331.2, 2.2],
-			openGifts:        [334.2, 2.0],
-			thanksForParty:   [337.0, 3.7]
+			vehicleIntro2:    [123.0, 4.0]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
 	hedgehog: {
 		speech: [
+			'audio/agent/hedgehog/swedish.m4a',
+			'audio/agent/hedgehog/swedish.ogg',
 			'audio/agent/hedgehog/swedish.mp3'
 		],
 		markers: {
@@ -616,74 +559,14 @@ LANG.swedish.speech = {
 			balloonIntro:     [187.7, 5.6],
 			// Vehicle
 			vehicleIntro1:    [158.2, 5.4], // Hej Hedvig. Hej Herman. Vad håller ni på med?
-			vehicleIntro2:    [164.7, 5.3], // Jaha. Det låter jättespännande. Får jag också hjälpa till?
-			// Party
-			hi:               [195.0, 1.0],
-			niceYoureHere:    [197.0, 2.0],
-			soonBirthday:     [200.0, 3.0],
-			wereHavingParty:  [204.0, 5.7],
-			thanks:           [243.6, 1.3],
-			thanksForHelp:    [258.6, 2.0],
-			niceComeBack:     [210.0, 3.2],
-			helpUsAgain:      [214.0, 3.0],
-			haveGifts:        [333.0, 3.8],
-			// PartyGarlands
-			haveToGarlands:   [218.0, 3.0],
-			letsPutUp:        [222.0, 3.0],
-			goodPlace:        [226.1, 3.9],
-			followMe:         [230.3, 1.4],
-			hereGood:         [232.6, 2.3],
-			whichGarland:     [235.4, 3.6],
-			helpMeFlags:      [239.3, 3.5],
-			putFlagsBack:     [245.2, 3.6],
-			moreGarlands:     [249.2, 2.5],
-			looksGood:        [252.6, 3.2],
-			finished:         [256.0, 1.8],
-			// PartyBalloons
-			haveToBalloons:   [261.6, 2.0],
-			makeBalloons:     [264.2, 2.5],
-			herePump:         [267.4, 4.8],
-			helpMePump:       [272.2, 5.4],
-			pushOne:          [278.2, 2.4],
-			pushTwo:          [281.2, 2.8],
-			pushThree:        [285.0, 2.7],
-			pushFour:         [288.2, 2.4],
-			pushFive:         [291.2, 2.8],
-			pushSix:          [294.8, 2.7],
-			pushSeven:        [298.0, 2.8],
-			pushEight:        [301.2, 2.7],
-			pushNine:         [305.0, 2.7],
-			wasGood:          [308.1, 2.0],
-			tooMuchAir:       [311.0, 2.9],
-			newBalloon:       [315.0, 1.6],
-			moreAir:          [317.1, 2.0],
-			dragBalloon:      [319.9, 2.1],
-			anotherBalloon:   [322.8, 2.1],
-			manyNiceBalloons: [326.0, 3.0],
-			goPutThemUp:      [329.4, 2.5],
-			// PartyGifts
-			niceParty:        [337.2, 2.6],
-			helpFindGifts:    [340.0, 3.4],
-			shouldBeHere:     [343.8, 2.8],
-			lookMap:          [347.0, 1.9],
-			giftAtCross:      [349.2, 2.4],
-			howManySteps:     [352.8, 3.8],
-			rememberSteps:    [357.0, 3.0],
-			pushButton:       [361.0, 2.8],
-			pushGlass:        [364.2, 2.8],
-			isItHere:         [368.0, 1.0],
-			yesGift:          [369.2, 2.9],
-			moreSteps:        [373.0, 2.0],
-			tooManySteps:     [376.0, 2.0],
-			nextGift:         [379.0, 2.8],
-			wasAll:           [382.0, 2.0],
-			openGifts:        [385.0, 2.8],
-			thanksForParty:   [388.2, 4.8]
+			vehicleIntro2:    [164.7, 5.3]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
 	mouse: {
 		speech: [
+			'audio/agent/mouse/swedish.m4a',
+			'audio/agent/mouse/swedish.ogg',
 			'audio/agent/mouse/swedish.mp3'
 		],
 		markers: {
@@ -737,93 +620,248 @@ LANG.swedish.speech = {
 			balloonIntro:     [144.9, 7.5],
 			// Vehicle
 			vehicleIntro1:    [122.5, 4.4], // Hej Hedvig. Hej Herman. Vad håller ni på med?
-			vehicleIntro2:    [128.2, 3.9], // Jaha. Det låter jättespännande. Får jag också hjälpa till?
-			// Party
-			hi:               [153.8, 0.9],
-			niceYoureHere:    [155.0, 2.0],
-			soonBirthday:     [158.0, 3.0],
-			wereHavingParty:  [161.0, 4.0],
-			thanks:           [233.0, 1.0],
-			niceComeBack:     [234.0, 2.0],
-			helpUsAgain:      [237.0, 2.0],
-			haveGifts:        [297.0, 3.6],
-			// PartyInvitation
-			gottaInvite:      [165.8, 2.8],
-			makeCards:        [169.0, 2.0],
-			allGuestsGet:     [171.0, 3.0],
-			helpMeStickers:   [175.0, 3.0],
-			manyOfThese:      [178.5, 3.5],
-			someOfThese:      [182.5, 3.5],
-			thisManyOfThese:  [186.5, 3.5],
-			imTrying:         [190.5, 4.0],
-			dragStickers:     [195.0, 3.0],
-			dragStickers2:    [198.0, 3.0],
-			looksNice:        [201.0, 2.2],
-			imPutting:        [204.0, 2.0],
-			dragCard:         [206.0, 2.0],
-			dragStickersBack: [209.0, 3.0],
-			rightButMore:     [213.0, 5.0],
-			tryMore:          [218.0, 2.0],
-			ohNo:             [220.4, 5.0],
-			madeNiceCards:    [226.0, 3.9],
-			thanksForHelp:    [230.2, 1.8],
-			// PartyBalloons
-			haveToBalloons:   [240.0, 1.5],
-			makeBalloons:     [242.0, 2.0],
-			herePump:         [244.3, 3.0],
-			helpMePump:       [248.0, 3.6],
-			pushOne:          [252.2, 1.7],
-			pushTwo:          [254.9, 1.8],
-			pushThree:        [257.0, 2.0],
-			pushFour:         [260.0, 1.9],
-			pushFive:         [262.2, 2.0],
-			pushSix:          [265.4, 1.9],
-			pushSeven:        [268.0, 2.0],
-			pushEight:        [270.8, 1.9],
-			pushNine:         [273.2, 2.2],
-			wasGood:          [276.0, 1.7],
-			tooMuchAir:       [279.0, 2.0],
-			newBalloon:       [281.2, 1.8],
-			moreAir:          [283.2, 2.3],
-			dragBalloon:      [285.8, 2.2],
-			anotherBalloon:   [289.0, 1.8],
-			manyNiceBalloons: [292.0, 2.0],
-			goPutThemUp:      [294.6, 1.8],
-			// PartyGifts
-			niceParty:        [300.8, 2.2],
-			helpFindGifts:    [303.8, 3.3],
-			shouldBeHere:     [307.0, 2.2],
-			lookMap:          [310.1, 2.0],
-			giftAtCross:      [312.2, 2.0],
-			howManySteps:     [315.0, 3.3],
-			rememberSteps:    [318.2, 3.4],
-			pushButton:       [321.6, 3.2],
-			pushGlass:        [325.2, 2.8],
-			isItHere:         [329.0, 0.9],
-			yesGift:          [331.0, 1.9],
-			moreSteps:        [333.2, 2.2],
-			tooManySteps:     [336.0, 1.9],
-			nextGift:         [338.2, 2.7],
-			wasAll:           [341.8, 1.9],
-			openGifts:        [344.0, 2.2],
-			thanksForParty:   [347.0, 3.4]
+			vehicleIntro2:    [128.2, 3.9]  // Jaha. Det låter jättespännande. Får jag också hjälpa till?
 		}
 	},
 
-	troll: {
+	// Party games.
+	party: {
+		panda: {
+			speech: [
+				'audio/partygames/swedishPanda.m4a',
+				'audio/partygames/swedishPanda.ogg',
+				'audio/partygames/swedishPanda.mp3'
+			],
+			markers: {
+				hi:               [  0.0, 0.5], // Hej!
+				niceYoureHere:    [  1.0, 1.4], // Vad roligt att du kom hit.
+				soonBirthday:     [  3.0, 2.1], // Nu är det snart Igis födelsedag.
+				wereHavingParty:  [  5.5, 3.3], // Vi ska ordna ett kalas, men vi behöver någon som hjälper oss.
+				looksNice:        [ 37.0, 2.4], // Ja, det blev jättefint!
+				thanksForHelp:    [ 65.5, 1.2], // Tack för hjälpen!
+				niceComeBack:     [ 67.0, 2.0], // Vad trevligt att du kom tillbaka.
+				helpUsAgain:      [ 69.5, 2.6], // Hjälper du oss att fortsätta ordna kalaset?
+				thanks:           [ 90.0, 0.7], // Tack.
+				// Invitation
+				gottaInvite:      [  9.5, 2.2], // Först måste vi bjuda in alla gäster.
+				makeCards:        [ 12.5, 2.0], // Kom så gör vi inbjudningskort.
+				allGuestsGet:     [ 15.4, 2.8], // Alla gäster ska få varsitt kort som passar just dem.
+				helpMeStickers:   [ 18.5, 3.3], // Hjälper du mig att sätta på klistermärke som gästen tycker om.
+				manyOfThese:      [ 22.5, 2.9], // Den här gästen vill ha många såna här klistermärken.
+				someOfThese:      [ 26.0, 3.0], // Den här gästen vill bara ha några såna här klistermärken.
+				thisManyOfThese:  [ 29.5, 3.2], // Den här gästen vill ha så här många såna gär klistermärken.
+				imTrying:         [ 33.5, 3.0], // Jag provar att sätta dem här klistermärkena på kortet.
+				imPutting:        [ 40.0, 1.8], // Då lägger jag kortet i högen.
+				dragCard:         [ 42.5, 1.5], // Drag kortet till högen.
+				dragStickersBack: [ 44.5, 2.8], // Drag tillbaka klistermärkena och prova igen.
+				rightButMore:     [ 48.0, 4.4], // Ja, det var rätt! Men nu vill gästen ha ännu fler klistermärken på kortet.
+				tryLess:          [148.0, 1.4], // Inte så många kanske.
+				tryMore:          [ 53.0, 1.7], // Vi provar att sätta på fler.
+				ohNo:             [ 55.5, 0.6], // Ojdå.
+				aBitWeird:        [ 56.5, 1.8], // Nu blev det visst lite konstigt.
+				helpMeCorrect:    [ 58.5, 2.1], // Kan du hjälpa mig att se vilken som är rätt?
+				madeNiceCards:    [ 61.5, 3.5], // Nu har vi gjort fina inbjudningskort till alla gösterna!
+				// Garlands
+				haveToGarlands:   [ 72.5, 2.0], // Vi måste dekorera för kalaset.
+				letsPutUp:        [ 75.0, 2.2], // Kom så sätter vi upp girlanger i träden.
+				goodPlace:        [ 78.0, 2.5], // Vi letar upp ett bra ställe att sätta girlanger.
+				followMe:         [ 81.0, 0.7], // Följ med mig.
+				hereGood:         [ 82.5, 1.2], // Ja, här blir bra!
+				whichGarland:     [ 84.5, 2.2], // Vilken girlang passar mellan de här träden.
+				helpMeFlags:      [ 87.0, 2.5], // Vill du hjälpa mig att dra rätt flaggor till mig?
+				putFlagsBack:     [ 91.0, 2.3], // Lägg tillbaka flaggor så det blir rätt.
+				moreGarlands:     [ 93.5, 1.6], // Vi sätter upp fler girlanger.
+				looksGood:        [ 95.5, 2.1], // Nu har vi gjort det jättefint.
+				finished:         [ 98.0, 1.2], // Då var vi klara!
+				// Gifts
+				haveGifts:        [100.0, 3.4], // Igis ska få sina presenter, men någon har gömt dem!
+				niceParty:        [104.0, 1.7], // Vilket fint kalas.
+				helpFindGifts:    [106.5, 2.3], // Kan du hjälpa mig att hitta mina presenter.
+				shouldBeHere:     [109.5, 2.1], // Presenterna borde vara här någonstans.
+				lookMap:          [112.0, 1.2], // Vi tittar på kartan.
+				giftAtCross:      [113.5, 1.7], // Presenten finns vid krysset.
+				howManySteps:     [116.0, 2.9], // Hur många steg behöver jag ta för att komma till presenten.
+				rememberSteps:    [119.5, 2.3], // Kan du komma ihåg hur många steg jag behöver ta?
+				pushButton:       [122.5, 2.6], // Tryck på rutan framför mig för att ta ett steg.
+				pushGlass:        [125.5, 2.6], // Tryck på förstoringsglaset när vi är framme.
+				isItHere:         [128.5, 0.8], // Är det här?
+				yesGift:          [130.0, 2.1], // Ja! Min present!
+				moreSteps:        [132.5, 1.7], // Jag behöver visst ta fler steg.
+				tooManySteps:     [134.5, 1.8], // Det blev visst för många steg.
+				nextGift:         [137.0, 2.4], // Nu letar vi efter nästa present.
+				wasAll:           [140.0, 1.5], // Ja, det var alla!
+				openGifts:        [142.0, 1.8], // Nu ska jag öppna mina presenter.
+				thanksForParty:   [144.5, 3.0]  // Tack för att du hjälpte till att ordna ett sånt fint kalas till mig.
+			}
+		},
+		hedgehog: {
+			speech: [
+				'audio/partygames/swedishHedgehog.m4a',
+				'audio/partygames/swedishHedgehog.ogg',
+				'audio/partygames/swedishHedgehog.mp3'
+			],
+			markers: {
+				hi:               [  0.0, 0.9], // Hej!
+				niceYoureHere:    [  1.5, 2.0], // Vad roligt att du kom hit.
+				soonBirthday:     [  4.0, 3.0], // Nu är det snart Milles födelsedag.
+				wereHavingParty:  [  7.5, 4.3], // Vi ska ordna ett kalas, men vi behöver någon som hjälper oss.
+				looksNice:        [ 91.5, 1.5], // Ja, det blev bra!
+				thanksForHelp:    [ 51.5, 1.6], // Tack för hjälpen!
+				niceComeBack:     [ 12.5, 2.5], // Vad trevligt att du kom tillbaka.
+				helpUsAgain:      [ 15.5, 2.8], // Hjälper du oss att fortsätta ordna kalaset?
+				thanks:           [ 40.5, 0.4], // Tack.
+				// Garlands
+				haveToGarlands:   [ 19.0, 2.5], // Vi måste dekorera för kalaset.
+				letsPutUp:        [ 22.0, 2.9], // Kom så sätter vi upp girlanger i träden.
+				goodPlace:        [ 25.5, 3.4], // Vi letar upp ett bra ställe att sätta girlanger.
+				followMe:         [ 29.5, 0.8], // Följ med mig.
+				hereGood:         [ 31.0, 1.6], // Ja, här blir bra!
+				whichGarland:     [ 33.5, 2.9], // Vilken girlang passar mellan de här träden.
+				helpMeFlags:      [ 37.0, 3.0], // Vill du hjälpa mig att dra rätt flaggor till mig?
+				putFlagsBack:     [ 41.5, 2.7], // Lägg tillbaka flaggor så det blir rätt.
+				moreGarlands:     [ 44.5, 1.7], // Vi sätter upp fler girlanger.
+				looksGood:        [ 47.0, 2.3], // Nu har vi gjort det jättefint.
+				finished:         [ 50.0, 1.0], // Då är vi klara!
+				// Balloons
+				haveToBalloons:   [ 53.5, 1.7], // Ballonger måste vi ha!
+				makeBalloons:     [ 56.0, 2.0], // Kom så blåser vi upp ballonger!
+				herePump:         [ 58.5, 1.1], // Här är pumpen
+				helpMePump:       [ 60.0, 4.7], // Hjälper du mig att trycka på pumpen så många gånger som jag visar.
+				pushOne:          [ 65.5, 2.1], // Tryck en gång på pumpen.
+				pushTwo:          [ 68.0, 2.3], // Tryck två gånger på pumpen.
+				pushThree:        [ 71.0, 2.2], // Tryck tre gånger på pumpen.
+				pushFour:         [ 74.0, 2.2], // Tryck fyra gånger på pumpen.
+				pushFive:         [ 77.0, 2.2], // Tryck fem gånger på pumpen.
+				pushSix:          [ 79.5, 2.2], // Tryck sex gånger på pumpen.
+				pushSeven:        [ 82.5, 2.2], // Tryck sju gånger på pumpen.
+				pushEight:        [ 85.5, 2.3], // Tryck åtta gånger på pumpen.
+				pushNine:         [ 88.5, 2.3], // Tryck nio gånger på pumpen.
+				wasGood:          [ 91.5, 1.5], // Ja, det blev bra!
+				tooMuchAir:       [ 93.5, 2.7], // Oj, det blev visst lite för mycket luft.
+				newBalloon:       [ 96.5, 1.5], // Vi tar en ny ballong.
+				moreAir:          [ 98.5, 1.6], // Det behövs visst mer luft.
+				dragBalloon:      [100.5, 1.9], // Dra ballongen till min kompis
+				anotherBalloon:   [103.0, 1.8], // Vi blåser upp en ballong till.
+				manyNiceBalloons: [105.5, 2.7], // Nu har vi många fina ballonger.
+				goPutThemUp:      [109.0, 2.1], // Vi går och sätter upp ballongerna.
+				// Gifts
+				haveGifts:        [111.5, 3.7], // Mille ska få sina presenter, men någon har gömt dem!
+				niceParty:        [116.0, 1.7], // Vilket fint kalas.
+				helpFindGifts:    [118.0, 3.0], // Kan du hjälpa mig att hitta mina presenter.
+				shouldBeHere:     [121.5, 2.3], // Presenterna borde vara här någonstans.
+				lookMap:          [124.5, 1.4], // Vi tittar på kartan.
+				giftAtCross:      [126.5, 2.1], // Presenten finns vid krysset.
+				howManySteps:     [129.0, 3.7], // Hur många steg behöver jag ta för att komma till presenten.
+				rememberSteps:    [133.5, 2.6], // Kan du komma ihåg hur många steg jag behöver ta?
+				pushButton:       [136.5, 2.7], // Tryck på rutan framför mig för att ta ett steg.
+				pushGlass:        [140.0, 2.5], // Tryck på förstoringsglaset när vi är framme.
+				isItHere:         [143.0, 0.8], // Är det här?
+				yesGift:          [144.5, 2.3], // Ja! Min present!
+				moreSteps:        [147.5, 2.0], // Jag behöver visst ta fler steg.
+				tooManySteps:     [150.0, 1.8], // Det blev visst för många steg.
+				nextGift:         [152.5, 2.4], // Nu letar vi efter nästa present.
+				wasAll:           [155.5, 1.9], // Ja, det var alla!
+				openGifts:        [158.0, 2.5], // Nu ska jag öppna mina presenter.
+				thanksForParty:   [161.0, 4.5]  // Tack för att du hjälpte till att ordna ett sånt fint kalas till mig.
+			}
+		},
+		mouse: {
+			speech: [
+				'audio/partygames/swedishMouse.m4a',
+				'audio/partygames/swedishMouse.ogg',
+				'audio/partygames/swedishMouse.mp3'
+			],
+			markers: {
+				hi:               [  0.0, 0.9], // Hej!
+				niceYoureHere:    [  1.5, 1.8], // Vad roligt att du kom hit.
+				soonBirthday:     [  4.0, 2.5], // Nu är det snart Panders födelsedag.
+				wereHavingParty:  [  7.0, 3.4], // Vi ska ordna ett kalas, men vi behöver någon som hjälper oss.
+				looksNice:        [ 38.0, 2.0], // Ja, det blev jättefint!
+				thanksForHelp:    [ 66.0, 1.0], // Tack för hjälpen!
+				niceComeBack:     [ 68.5, 1.9], // Vad trevligt att du kom tillbaka.
+				helpUsAgain:      [ 71.0, 2.3], // Hjälper du oss att fortsätta ordna kalaset?
+				thanks:           [ 67.5, 0.6], // Tack.
+				// Invitation
+				gottaInvite:      [ 11.0, 2.4], // Först måste vi bjuda in alla gäster.
+				makeCards:        [ 14.0, 1.7], // Kom så gör vi inbjudningskort.
+				allGuestsGet:     [ 16.5, 2.7], // Alla gäster ska få varsitt kort som passar dem.
+				helpMeStickers:   [ 20.0, 3.0], // Hjälper du mig att sätta på klistermärke som gästen tycker om.
+				manyOfThese:      [ 23.5, 3.1], // Den här gästen vill ha många såna här klistermärken.
+				someOfThese:      [ 27.0, 3.0], // Den här gästen vill bara ha några såna här klistermärken.
+				thisManyOfThese:  [ 30.5, 3.3], // Den här gästen vill ha så här många såna gär klistermärken.
+				imTrying:         [ 34.5, 3.0], // Jag provar att sätta dem här klistermärkena på kortet.
+				imPutting:        [ 40.5, 1.5], // Då lägger jag kortet i högen.
+				dragCard:         [ 42.5, 1.4], // Drag kortet till högen.
+				dragStickersBack: [ 44.5, 2.8], // Drag tillbaka klistermärkena och prova igen.
+				rightButMore:     [ 48.0, 4.8], // Ja, det var rätt! Men nu vill gästen ha ännu fler klistermärken på kortet.
+				tryLess:          [172.0, 1.3], // Inte så många kanske.
+				tryMore:          [ 53.5, 1.7], // Vi provar att sätta på fler.
+				ohNo:             [ 56.0, 0.5], // Ojdå.
+				aBitWeird:        [ 57.0, 1.7], // Nu blev det visst lite konstigt.
+				helpMeCorrect:    [ 59.0, 2.2], // Kan du hjälpa mig att se vilken som är rätt?
+				madeNiceCards:    [ 62.0, 3.2], // Nu har vi gjort fina inbjudningskort till alla gösterna!
+				// Balloons
+				haveToBalloons:   [ 74.0, 1.4], // Ballonger måste vi ha!
+				makeBalloons:     [ 76.0, 1.6], // Kom så blåser vi upp ballonger!
+				herePump:         [ 78.0, 1.1], // Här är pumpen
+				helpMePump:       [ 79.5, 3.2], // Hjälper du mig och trycker på pumpen så många gånger som jag visar.
+				pushOne:          [ 83.5, 1.6], // Tryck en gång på pumpen.
+				pushTwo:          [ 85.5, 1.6], // Tryck två gånger på pumpen.
+				pushThree:        [ 87.5, 1.6], // Tryck tre gånger på pumpen.
+				pushFour:         [ 89.5, 1.7], // Tryck fyra gånger på pumpen.
+				pushFive:         [ 92.0, 2.0], // Tryck fem gånger på pumpen.
+				pushSix:          [ 94.5, 1.8], // Tryck sex gånger på pumpen.
+				pushSeven:        [ 97.0, 1.8], // Tryck sju gånger på pumpen.
+				pushEight:        [ 99.5, 1.7], // Tryck åtta gånger på pumpen.
+				pushNine:         [102.0, 1.9], // Tryck nio gånger på pumpen.
+				wasGood:          [104.5, 1.3], // Ja, det blev bra!
+				tooMuchAir:       [106.5, 2.5], // Oj, det blev visst lite för mycket luft.
+				newBalloon:       [109.5, 1.3], // Vi tar en ny ballong.
+				moreAir:          [111.5, 1.7], // Det behövs visst mer luft.
+				dragBalloon:      [114.0, 1.8], // Dra ballongen till min kompis
+				anotherBalloon:   [116.5, 1.6], // Vi blåser upp en ballong till.
+				manyNiceBalloons: [119.0, 1.9], // Nu har vi många fina ballonger.
+				goPutThemUp:      [121.5, 1.5], // Vi går och sätter upp ballongerna.
+				// Gifts
+				haveGifts:        [123.5, 3.2], // Panders ska få sina presenter, men någon har gömt dem!
+				niceParty:        [127.5, 1.5], // Vilket fint kalas.
+				helpFindGifts:    [129.5, 2.5], // Kan du hjälpa mig att hitta mina presenter.
+				shouldBeHere:     [132.5, 2.2], // Presenterna borde vara här någonstans.
+				lookMap:          [135.5, 1.3], // Vi tittar på kartan.
+				giftAtCross:      [137.5, 1.8], // Presenten finns vid krysset.
+				howManySteps:     [140.0, 2.9], // Hur många steg behöver jag ta för att komma till presenten.
+				rememberSteps:    [143.5, 2.4], // Kan du komma ihåg hur många steg jag behöver ta?
+				pushButton:       [146.5, 2.5], // Tryck på rutan framför mig för att ta ett steg.
+				pushGlass:        [149.5, 2.4], // Tryck på förstoringsglaset när vi är framme.
+				isItHere:         [152.5, 0.8], // Är det här?
+				yesGift:          [154.0, 1.9], // Ja! Min present!
+				moreSteps:        [156.5, 1.8], // Jag behöver visst ta fler steg.
+				tooManySteps:     [159.0, 1.6], // Det blev visst för många steg.
+				nextGift:         [161.0, 2.2], // Nu letar vi efter nästa present.
+				wasAll:           [164.0, 1.6], // Ja, det var alla!
+				openGifts:        [166.0, 1.9], // Nu ska jag öppna mina presenter.
+				thanksForParty:   [168.5, 3.3]  // Tack för att du hjälpte till att ordna ett sånt fint kalas till mig.
+			}
+		},
+	},
+
+	troll: { // Note: Troll is coded as an agent, so it needs to have this key!
 		speech: [
-			'audio/agent/troll/swedish.mp3'
+			'audio/partygames/swedish.m4a',
+			'audio/partygames/swedish.ogg',
+			'audio/partygames/swedish.mp3'
 		],
 		markers: {
-			iCanDo:            [ 0.0, 1.6],
-			oops:              [ 9.8, 0.9],
-			iNeedHelp:         [11.5, 3.8],
-			iCanHelp:          [21.0, 1.0],
-			isGood:            [26.9, 1.9],
-			continueWhenBack:  [35.0, 3.7],
-			yesWater:          [41.9, 1.8],
-			haveMap:           [47.0, 2.0],
-			laugh:             [55.8, 1.8]
+			iCanDo:    [ 0.0, 1.3], // Jag kan göra det.
+			oops1:     [ 2.3, 0.5], // Oj då.
+			oops2:     [ 3.4, 0.7], // Oops.
+			iNeedHelp: [ 5.0, 3.7], // Jag behöver nog också lite hjälp. Du kanske vill hjälpa oss.
+			iCanHelp:  [ 9.6, 1.0], // Jag kan hjälpa till!
+			isGood:    [11.5, 1.5], // Vad bra det blev!
+			continue:  [13.9, 3.1], // Vi fortsätter ordna kalaset när du kommer tillbaka.
+			yesWater:  [17.9, 1.9], // Ja! Vatten!
+			haveMap:   [20.5, 1.6], // Men jag har en karta.
+			laugh:     [22.9, 0.7]  // He he he.
 		}
 	}
 };

@@ -1,7 +1,5 @@
 var PartyGame = require('./PartyGame.js');
-var Troll = require('../../agent/Troll.js');
 var Hedgehog = require('../../agent/Hedgehog.js');
-var Mouse = require('../../agent/Mouse.js');
 var Panda = require('../../agent/Panda.js');
 var GLOBAL = require('../../global.js');
 var DiceRepresentation = require('../../objects/representations/DiceRepresentation.js');
@@ -17,11 +15,18 @@ function PartyBalloonGame () {
 
 PartyBalloonGame.prototype.preload = function () {
 	PartyGame.prototype.preload.call(this);
-
 	this.load.atlasJSONHash('partyBalloon', 'img/partygames/balloonGame/atlas.png', 'img/partygames/balloonGame/atlas.json');
 };
 
 PartyBalloonGame.prototype.create = function () {
+	PartyGame.prototype.create.call(this);
+	// The balloon game uses helper1, it should be Mouse or Hedgehog as backup.
+	if (this.birthday instanceof Hedgehog) {
+		this.changeAgents();
+	}
+	this.afterInvitations();
+	this.afterGarlands();
+
 	this.gameGroup.create(0, 0, 'partyBalloon', 'background1');
 	this.bgUnder = this.gameGroup.create(0, 650, 'partyBalloon', 'background2');
 
@@ -36,7 +41,6 @@ PartyBalloonGame.prototype.create = function () {
 	l.ctx.rect(0,0,l.width,l.height);
 	l.ctx.fillStyle = '#bdbdbd';
 	l.ctx.fill();
-
 	this.line = this.add.sprite(this.thoughtBubble.x + 10, this.thoughtBubble.y - 10, l);
 	this.line.anchor.set(0.5);
 	this.line.alpha = 0;
@@ -53,25 +57,17 @@ PartyBalloonGame.prototype.create = function () {
 
 	this.finishedRounds = 0;
 
-	this.t = new Troll (this.game);
-	this.gameGroup.add(this.t);
-	this.t.visible = false;
-	this.t.scale.set(0.22);
-
 	this.emitter = this.add.emitter(0, 0, 150);
 	this.emitter.gravity = 0;
 	this.emitter.setAlpha(1, 0, 3000);
-	this.emitter.makeParticles(Troll.prototype.id, 'star');
+	this.emitter.makeParticles(this.troll.id, 'star');
 
-	this.createAgent();
 	this.createStack();
 	this.generateRound();
 	this.createTube();
 	this.createPump();
 
-	PartyGame.prototype.create.call(this); // Call this at last to put it "on top" of our graphics.
-	this.afterInvitations();
-	this.afterGarlands();
+	this.gladeIntro.parent.bringToTop(this.gladeIntro);
 };
 
 
@@ -271,37 +267,13 @@ PartyBalloonGame.prototype.createRepresentation = function () {
 	}
 
 	var mark = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-	t.addSound(this.a.speech, this.a, 'push' + mark[this.correctAmount - 1]);
+	t.addSound(this.helper1.speech, this.helper1, 'push' + mark[this.correctAmount - 1]);
 
 	if (this.finishedRounds > 0 && this.trollNr > 40 ||( this.finishedRounds === 0 && this.poppedBallons > 0)) {
 		t.addCallback(this.disable, null, [false], this);
 	}
 
 	this.pump.events.onInputDown.add(this.pressPump, this);
-};
-
-PartyBalloonGame.prototype.createAgent = function () {
-	if (this.agent instanceof Mouse) {
-		this.a = new Hedgehog (this.game);
-		this.aa = new Panda (this.game);
-	} else if (this.agent instanceof Hedgehog) {
-		this.a = new Mouse (this.game);
-		this.aa = new Panda (this.game);
-	} else if (this.agent instanceof Panda) {
-		this.a = new Mouse (this.game);
-		this.aa = new Hedgehog (this.game);
-	}
-	this.gameGroup.add(this.a);
-	this.a.scale.set(0.2);
-	this.a.x = -300;
-	this.a.y = 500;
-	this.gameGroup.add(this.aa);
-	this.aa.scale.set(0.18);
-	this.aa.x = 1300;
-	this.aa.y = 480;
-
-	this.a.visible = false;
-	this.aa.visible = false;
 };
 
 PartyBalloonGame.prototype.createPump = function () {
@@ -392,19 +364,15 @@ PartyBalloonGame.prototype.addArrow = function () {
 	t.addLabel('in');
 	t.add(new TweenMax(this.arrow, 1, {alpha:1}));
 	t.add(new TweenMax(this.arrow.scale, 0.6, {x: 0.6, y: 0.6, ease: Power0.easeNone}), 'in+=0.5');
-
-	var times = this.correctAmount - this.inputsBalloon - 1;
-	for (var i = 0; i < times; i++) {
-		t.add(new TweenMax(this.arrow.scale, 0.6, {x: 0.5, y: 0.5, ease: Power0.easeNone}));
-		t.add(new TweenMax(this.arrow.scale, 0.6, {x: 0.6, y: 0.6, ease: Power0.easeNone}));
-	}
+	t.add(new TweenMax(this.arrow.scale, 0.6, {x: 0.5, y: 0.5, ease: Power0.easeNone}));
+	t.add(new TweenMax(this.arrow.scale, 0.6, {x: 0.6, y: 0.6, ease: Power0.easeNone}));
 
 	t.addCallback(this.disable, '+=0.2', [false], this);
 	return t;
 };
 
 PartyBalloonGame.prototype.pressPump = function () {
-	this.a.eyesFollowObject(this.tubeGroup);
+	this.helper1.eyesFollowObject(this.tubeGroup);
 
 	this.inputs = this.inputs + 1;
 	this.inputsTint = this.inputsTint + 1;
@@ -476,7 +444,7 @@ PartyBalloonGame.prototype.pumpUp = function () {
 	t.to(this.handle, 1, {y: this.handlePos, ease: Power1.easeIn}, 0);
 
 	t.addCallback(function () {
-		this.a.eyesStopFollow();
+		this.helper1.eyesStopFollow();
 	}, null, null, this);
 
 	t.addCallback(function () {
@@ -508,19 +476,19 @@ PartyBalloonGame.prototype.checkAnswer = function () {
 			this.disable(false);
 		}
 
-		t.addSound(this.a.speech, this.a, 'wasGood', 0);
+		t.addSound(this.helper1.speech, this.helper1, 'wasGood', 0);
 
 		if (this.finishedRounds === 0) {
 			if (this.agent instanceof Panda) {
-				t.add(this.aa.move({ x:800, ease: Power0.easeNone}, 2.5));
-				t.addSound(this.aa.speech, this.aa, 'hi');
+				t.add(this.helper2.move({ x:800, ease: Power0.easeNone}, 2.5));
+				t.addSound(this.helper2.speech, this.helper2, 'hi');
 			} else {
-				t.add(this.aa.move({ x:790, ease: Power0.easeNone}, 2.5));
-				t.addSound(this.aa.speech, this.aa, 'hi');
+				t.add(this.helper2.move({ x:790, ease: Power0.easeNone}, 2.5));
+				t.addSound(this.helper2.speech, this.helper2, 'hi');
 			}
 		}
 
-		t.addSound(this.a.speech, this.a, 'dragBalloon');
+		t.addSound(this.helper1.speech, this.helper1, 'dragBalloon');
 
 		t.addCallback(function () {
 			this.balloon.inputEnabled = true;
@@ -530,7 +498,7 @@ PartyBalloonGame.prototype.checkAnswer = function () {
 
 	} else if (this.inputsBalloon < this.correctAmount) {
 		t.addCallback(this.disable, null, [false], this);
-		t.addSound(this.a.speech, this.a, 'moreAir');
+		t.addSound(this.helper1.speech, this.helper1, 'moreAir');
 	}
 
 	return t;
@@ -579,8 +547,8 @@ PartyBalloonGame.prototype.popBalloon = function () {
 
 	t.add(new TweenMax(this.col, 0.5, {alpha:0}));
 
-	t.addSound(this.a.speech, this.a, 'tooMuchAir', 'fade');
-	t.addSound(this.a.speech, this.a, 'newBalloon', '+=0.6');
+	t.addSound(this.helper1.speech, this.helper1, 'tooMuchAir', 'fade');
+	t.addSound(this.helper1.speech, this.helper1, 'newBalloon', '+=0.6');
 
 	t.add(this.destroyRound());
 	t.addCallback(this.modePlayerDo, '+=1.5', null, this); // TODO: Not a very pretty solution, but works.
@@ -591,8 +559,8 @@ PartyBalloonGame.prototype.popBalloon = function () {
 PartyBalloonGame.prototype.moveBalloon = function (origin) {
 	origin.events.onInputUp.add(this.dropBalloon, this);
 
-	this.a.eyesFollowObject(this.balloon);
-	this.aa.eyesFollowObject(this.balloon);
+	this.helper1.eyesFollowObject(this.balloon);
+	this.helper2.eyesFollowObject(this.balloon);
 
 	this.balloon.update = function () {
 		this.x = this.game.input.activePointer.x;
@@ -601,13 +569,13 @@ PartyBalloonGame.prototype.moveBalloon = function (origin) {
 
 	var t = new TimelineMax();
 	if (this.finishedRounds === 0) {
-		t.add(new TweenMax(this.aa.leftArm, 0.5, { rotation: 0, ease: Power1.easeIn }));
+		t.add(new TweenMax(this.helper2.leftArm, 0.5, { rotation: 0, ease: Power1.easeIn }));
 	}
 };
 
 PartyBalloonGame.prototype.dropBalloon = function () {
-	this.a.eyesStopFollow();
-	this.aa.eyesStopFollow();
+	this.helper1.eyesStopFollow();
+	this.helper2.eyesStopFollow();
 
 	this.poppedBalloonsLeft = 0;
 
@@ -649,7 +617,7 @@ PartyBalloonGame.prototype.dropBalloon = function () {
 		}
 	}, null, null, this);
 
-	t.addSound(this.aa.speech, this.aa, 'thanks');
+	t.addSound(this.helper2.speech, this.helper2, 'thanks');
 
 	t.addLabel('fade', '+=2');
 	t.to(this.col, 1.5, {height: 1, ease: Power1.easeIn}, 'fade');
@@ -688,11 +656,11 @@ PartyBalloonGame.prototype.trollStart = function () {
 	if (this.finishedRounds > 0 && this.trollNr <= 40) {
 		this.disable(true);
 
-		t.add(this.t.appear('random', this.balloon.x, this.balloon.y));
+		t.add(this.troll.appear('random', this.balloon.x, this.balloon.y));
 		t.add(this.trollTypePercent());
 
-		t.addSound(this.t.speech, this, 'oops', '+=0.5');
-		t.addSound(this.t.speech, this, 'laugh', '+=0.5');
+		t.addSound(this.troll.speech, this, 'oops' + this.rnd.integerInRange(1, 2), '+=0.5');
+		t.addSound(this.troll.speech, this, 'laugh', '+=0.5');
 	}
 };
 
@@ -760,17 +728,31 @@ PartyBalloonGame.prototype.trollSwap = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 PartyBalloonGame.prototype.modeIntro = function () {
 	var t = new TimelineMax();
-
-	t.add(this.balloonIntro());
+	t.add(this.helper2.wave(2, -1));
+	t.addSound(this.helper2.speech, this.helper2, 'hi', 0);
+	t.addSound(this.helper2.speech, this.helper2, 'niceComeBack', '+=0.3');
+	t.addSound(this.helper2.speech, this.helper2, 'helpUsAgain', '+=0.3');
+	t.addSound(this.helper1.speech, this.helper1, 'haveToBalloons', '+=0.8');
+	t.addSound(this.helper1.speech, this.helper1, 'makeBalloons', '+=0.2');
+	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
 
 	t.addCallback(function () {
-		this.a.visible = true;
-		this.aa.visible = true;
+		this.helper1.scale.set(0.2);
+		this.helper1.x = -300;
+		this.helper1.y = 500;
+		this.gameGroup.add(this.helper1);
+
+		this.helper2.scale.set(0.18);
+		this.helper2.x = 1300;
+		this.helper2.y = 480;
+		this.gameGroup.add(this.helper2);
+
+		this.troll.scale.set(0.22);
+		this.gameGroup.add(this.troll);
 	}, null, null, this);
 
-	t.add(this.a.move({ x:200, ease: Power0.easeNone}, 2.5));
-	t.addSound(this.a.speech, this.a, 'herePump', '+=0.5');
-
+	t.add(this.helper1.move({ x:200, ease: Power0.easeNone}, 2.5));
+	t.addSound(this.helper1.speech, this.helper1, 'herePump', '+=0.5');
 	t.addCallback(this.nextRound, '+=1', null, this);
 };
 
@@ -793,10 +775,10 @@ PartyBalloonGame.prototype.modePlayerDo = function () {
 		this.gameGroup.bringToTop(this.balloon);
 
 		if (this.finishedRounds > 0 && this.poppedBalloonsLeft === 0) {
-			t.addSound(this.a.speech, this.a, 'anotherBalloon');
+			t.addSound(this.helper1.speech, this.helper1, 'anotherBalloon');
 		}
 
-		t.addSound(this.a.speech, this.a, 'helpMePump', '+=0.5');
+		t.addSound(this.helper1.speech, this.helper1, 'helpMePump', '+=0.5');
 
 		t.addLabel('fadeIn', '+=1');
 		t.add(new TweenMax(this.thoughtBubble, 2, {alpha:1}), 'fadeIn');
@@ -817,7 +799,7 @@ PartyBalloonGame.prototype.modePlayerDo = function () {
 PartyBalloonGame.prototype.modeOutro = function () {
 	var t = new TimelineMax();
 
-	t.addSound(this.a.speech, this.a, 'manyNiceBalloons');
+	t.addSound(this.helper1.speech, this.helper1, 'manyNiceBalloons');
 
 	t.addLabel('fade');
 	t.add(new TweenMax(this.tubeUp, 1, {alpha:0}), 'fade');
@@ -826,42 +808,38 @@ PartyBalloonGame.prototype.modeOutro = function () {
 	t.add(new TweenMax(this.tubeGroup, 1, {alpha:0}), 'fade');
 
 	t.addLabel('walk');
-	t.add(this.aa.move({ x:'-=270', y:520, ease: Power0.easeNone}, 3), 'walk');
+	t.add(this.helper2.move({ x:'-=270', y:520, ease: Power0.easeNone}, 3), 'walk');
 	t.to(this.stackGroup, 3, {x:430, y:510, ease: Power0.easeNone}, 'walk');
-	t.add(new TweenMax(this.aa.scale, 3, {x: 0.2, y: 0.2, ease: Power1.easeIn}), 'walk');
+	t.add(new TweenMax(this.helper2.scale, 3, {x: 0.2, y: 0.2, ease: Power1.easeIn}), 'walk');
 	t.add(new TweenMax(this.stackGroup.scale, 3, {x: 1.02, y: 1.02, ease: Power1.easeIn}), 'walk');
 
-	t.addSound(this.a.speech, this.a, 'goPutThemUp', '+=0.5');
+	t.addSound(this.helper1.speech, this.helper1, 'goPutThemUp', '+=0.5');
 
 	t.addLabel('leave');
-	t.add(this.a.move({ x:-500, ease: Power0.easeNone}, 3), 'leave');
-	t.add(this.aa.move({ x:'-=900', ease: Power0.easeNone}, 4), 'leave');
+	t.add(this.helper1.move({ x:-500, ease: Power0.easeNone}, 3), 'leave');
+	t.add(this.helper2.move({ x:'-=900', ease: Power0.easeNone}, 4), 'leave');
 	t.to(this.stackGroup, 4, {x:'-=900', ease: Power0.easeNone}, 'leave');
 
-	t.add(this.t.water(800, this));
+	t.add(this.troll.water(800, this));
 
 	t.add(this.afterBalloons());
 
 	t.addCallback(function () {
-		this.gladeIntro.add(this.a);
-		this.gladeIntro.add(this.t);
+		this.helper1.x = 370;
+		this.helper1.y = 540;
+		this.helper1.scale.set(0.15);
+		this.gladeIntro.add(this.helper1);
 
-		this.a.x = 370;
-		this.a.y = 540;
-		this.a.scale.set(0.15);
-
-		this.t.x = 580;
-		this.t.y = 570;
-		this.t.scale.set(0.12);
-
-		this.a1.visible = false;
-		this.a2.visible = false;
+		this.troll.x = 580;
+		this.troll.y = 570;
+		this.troll.scale.set(0.12);
+		this.gladeIntro.add(this.troll);
 	}, null, null, this);
 
 	t.add(new TweenMax(this.gladeIntro, 2, {alpha:1}));
 
-	t.addSound(this.t.speech, this.t, 'isGood', '+=0.3');
-	t.addSound(this.t.speech, this.t, 'continueWhenBack', '+=0.5');
-	t.addSound(this.a.speech, this.a, 'thanksForHelp', '+=0.5');
+	t.addSound(this.troll.speech, this.troll, 'isGood', '+=0.3');
+	t.addSound(this.troll.speech, this.troll, 'continue', '+=0.5');
+	t.addSound(this.helper1.speech, this.helper1, 'thanksForHelp', '+=0.5');
 	t.addCallback(this.endGame, '+=3', null, this);
 };

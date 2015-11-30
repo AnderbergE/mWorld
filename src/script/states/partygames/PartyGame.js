@@ -1,11 +1,11 @@
 var Subgame = require('../Subgame.js');
-var LANG = require('../../language.js');
-var Hedgehog = require('../../agent/Hedgehog.js');
-var Troll = require('../../agent/Troll.js');
-var Panda = require('../../agent/Panda.js');
-var Mouse = require('../../agent/Mouse.js');
 var GLOBAL = require('../../global.js');
+var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var Hedgehog = require('../../agent/Hedgehog.js');
+var Mouse = require('../../agent/Mouse.js');
+var Panda = require('../../agent/Panda.js');
+var Troll = require('../../agent/Troll.js');
 
 module.exports = PartyGame;
 
@@ -27,24 +27,25 @@ PartyGame.prototype.init = function(options) {
 	Subgame.prototype.init.call(this, options);
 
 	this.difficulty = options.difficulty || 0;
+	this.birthdayName = options.birthday;
 };
 
 PartyGame.prototype.preload = function () {
-	// TODO: Only load party audio?
-	this.load.atlasJSONHash(Hedgehog.prototype.id, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');
-	this.load.audio(Hedgehog.prototype.id + 'Speech', LANG.SPEECH.hedgehog.speech);
 	this.load.atlasJSONHash(Troll.prototype.id, 'img/agent/troll/atlas.png', 'img/agent/troll/atlas.json');
 	this.load.audio(Troll.prototype.id + 'Speech', LANG.SPEECH.troll.speech);
 	this.load.atlasJSONHash(Panda.prototype.id, 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
-	this.load.audio(Panda.prototype.id + 'Speech', LANG.SPEECH.panda.speech);
+	this.load.audio('party' + Panda.prototype.id, LANG.SPEECH.party.panda.speech);
+	this.load.atlasJSONHash(Hedgehog.prototype.id, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');
+	this.load.audio('party' + Hedgehog.prototype.id, LANG.SPEECH.party.hedgehog.speech);
 	this.load.atlasJSONHash(Mouse.prototype.id, 'img/agent/mouse/atlas.png', 'img/agent/mouse/atlas.json');
-	this.load.audio(Mouse.prototype.id + 'Speech', LANG.SPEECH.mouse.speech);
+	this.load.audio('party' + Mouse.prototype.id, LANG.SPEECH.party.mouse.speech);
+
 	this.load.atlasJSONHash('balloon', 'img/subgames/balloon/atlas.png', 'img/subgames/balloon/atlas.json');
 	this.load.atlasJSONHash('bee', 'img/subgames/beeflight/atlas.png', 'img/subgames/beeflight/atlas.json');
 	this.load.atlasJSONHash('birdhero', 'img/subgames/birdhero/atlas.png', 'img/subgames/birdhero/atlas.json');
 	this.load.atlasJSONHash('lizard', 'img/subgames/lizardjungle/atlas.png', 'img/subgames/lizardjungle/atlas.json');
 	this.load.atlasJSONHash('glade', 'img/partygames/glade/atlas.png', 'img/partygames/glade/atlas.json');
-	this.load.audio('balloonSfx', ['audio/subgames/balloongame/sfx.m4a', 'audio/subgames/balloongame/sfx.ogg', 'audio/subgames/balloongame/sfx.mp3']); // sound sheet
+	this.load.audio('balloonSfx', ['audio/subgames/balloongame/sfx.m4a', 'audio/subgames/balloongame/sfx.ogg', 'audio/subgames/balloongame/sfx.mp3']);
 };
 
 PartyGame.prototype.create = function () {
@@ -62,20 +63,10 @@ PartyGame.prototype.create = function () {
 	this.gladeIntro.create(680, 520, 'glade', 'treestump');
 	this.gladeIntro.create(0, 0, 'glade', 'trees');
 
-	// Create banner for the birthday agent.
-	this.gladeIntro.create(346, 85, 'glade', 'banner');
-	this.bannerName1 = this.add.text(450, 118, 'Grattis', { font: '25pt ' + GLOBAL.FONT });
-	this.bannerName1.angle = 2;
-	this.gladeIntro.add(this.bannerName1);
-	this.bannerName2 = this.add.text(570, 125, this.agent.agentName + '!', { font: '25pt ' + GLOBAL.FONT });
-	this.bannerName2.angle = -6;
-	this.gladeIntro.add(this.bannerName2);
-	this.gladeIntro.create(320, 80, 'glade', 'branches');
-
 	this.mailbox = this.gladeIntro.create(800, 360, 'glade', 'mailbox');
 
 	this.pgifts = this.add.group(this.gladeIntro);
-	this.pgifts.alpha = 0;
+	this.pgifts.visible = false;
 
 	this.pgift1 = this.pgifts.create(160, 650, 'glade', 'gift1');
 	this.pgift2 = this.pgifts.create(240, 650, 'glade', 'gift3');
@@ -89,220 +80,88 @@ PartyGame.prototype.create = function () {
 
 	this.createGuests();
 
-	// Create agents.
-	if (this.agent instanceof Panda) {
-		this.a1 = new Hedgehog (this.game);
-		this.a2 = new Mouse (this.game);
-		this.a3 = new Panda (this.game);
-	} else if (this.agent instanceof Hedgehog) {
-		this.a1 = new Mouse (this.game);
-		this.a2 = new Panda (this.game);
-		this.a3 = new Hedgehog (this.game);
+	this.createAgents();
+
+	// Create banner for the birthday agent.
+	this.gladeIntro.create(346, 85, 'glade', 'banner');
+	this.bannerName1 = this.add.text(450, 118, 'Grattis', { font: '25pt ' + GLOBAL.FONT });
+	this.bannerName1.angle = 2;
+	this.gladeIntro.add(this.bannerName1);
+	this.bannerName2 = this.add.text(570, 125, this.birthday.agentName + '!', { font: '25pt ' + GLOBAL.FONT });
+	this.bannerName2.angle = -6;
+	this.gladeIntro.add(this.bannerName2);
+	this.gladeIntro.create(320, 80, 'glade', 'branches');
+};
+
+PartyGame.prototype.createAgents = function () {
+	var name = this.birthdayName;
+
+	if (typeof name === 'number' && !(this.agent instanceof GLOBAL.AGENT[name])) {
+		this.birthday = new GLOBAL.AGENT[name](this.game);
 	} else {
-		this.a1 = new Panda (this.game);
-		this.a2 = new Hedgehog (this.game);
-		this.a3 = new Mouse (this.game);
+		this.birthday = this.agent;
 	}
-	this.a1.scale.set(0.15);
-	this.a1.x = 370;
-	this.a1.y = 540;
-	this.gladeIntro.add(this.a1);
-	this.a2.scale.set(0.15);
-	this.a2.x = 580;
-	this.a2.y = 520;
-	this.gladeIntro.add(this.a2);
-	this.a3.scale.set(0.17);
-	this.a3.visible = false;
-	this.gladeIntro.add(this.a3);
+
+	// Create agents. The agents are set up like this (do not change this):
+	// Panda:       Mouse, Hedgehog.
+	// Hedgehog:    Panda,    Mouse.
+	// Mouse:    Hedgehog,    Panda.
+	if (this.birthday instanceof Panda) {
+		this.helper1 = new Mouse (this.game);
+		this.helper2 = new Hedgehog (this.game);
+	} else if (this.birthday instanceof Hedgehog) {
+		this.helper1 = new Panda (this.game);
+		this.helper2 = new Mouse (this.game);
+	} else { // instanceof Mouse
+		this.helper1 = new Hedgehog (this.game);
+		this.helper2 = new Panda (this.game);
+	}
+
+	this.helper1.scale.set(0.15);
+	this.helper1.x = 370;
+	this.helper1.y = 540;
+	this.helper1.speech = util.createAudioSheet('party' + this.helper1.id, LANG.SPEECH.party[this.helper1.id].markers);
+	this.gladeIntro.add(this.helper1);
+
+	this.helper2.scale.set(0.15);
+	this.helper2.x = 580;
+	this.helper2.y = 520;
+	this.helper2.speech = util.createAudioSheet('party' + this.helper2.id, LANG.SPEECH.party[this.helper2.id].markers);
+	this.gladeIntro.add(this.helper2);
+
+	this.birthday.scale.set(0.17);
+	this.birthday.visible = false;
+	this.gladeIntro.add(this.birthday);
+	this.birthday.speech = util.createAudioSheet('party' + this.birthday.id, LANG.SPEECH.party[this.birthday.id].markers);
 
 	// Create troll.
-	this.t2 = new Troll (this.game);
-	this.gladeIntro.add(this.t2);
-	this.t2.x = 480;
-	this.t2.y = 650;
-	this.t2.scale.set(0.12);
-	this.t2.changeShape('stone');
-	this.t2.visible = true;
+	this.troll = new Troll (this.game);
+	this.troll.x = 480;
+	this.troll.y = 650;
+	this.troll.scale.set(0.12);
+	this.troll.visible = false;
+	this.gladeIntro.add(this.troll);
 };
 
 PartyGame.prototype.changeAgents = function () {
-	var temp = this.a1;
-	this.a1 = this.a2;
-	this.a2 = temp;
-};
-
-PartyGame.prototype.introInvitation = function () {
-	if (this.agent instanceof Mouse) {
-		this.changeAgents();
-	}
-
-	this.a1.visible = true;
-	this.a2.visible = true;
-	this.t2.visible = true;
-
-	var t = new TimelineMax();
-	t.add(this.a1.wave(1, -1));
-	t.addSound(this.a1.speech, this.a1, 'hi', 0);
-	t.addSound(this.a1.speech, this.a1, 'niceYoureHere', '+=0.5');
-
-	t.addLabel('a2', '+=1');
-	t.addSound(this.a2.speech, this.a2, 'soonBirthday', 'a2');
-	t.addSound(this.a2.speech, this.a2, 'wereHavingParty', '+=0.5');
-
-	t.add(this.t2.transform('stoneToTroll'), '+=1');
-	t.addSound(this.sfx, null, 'pop', '-=1');
-
-	t.addCallback(function () {
-		this.a1.eyesFollowObject(this.t2);
-		this.a2.eyesFollowObject(this.t2);
-	}, null, null, this);
-
-	t.addSound(this.t2.speech, this.t2, 'laugh');
-	t.addSound(this.t2.speech, this.t2, 'iCanDo', '+=0.6');
-
-	t.addCallback(function () {
-		this.a1.eyesFollowObject(this.t2.emitter);
-		this.a2.eyesFollowObject(this.t2.emitter);
-	}, null, null, this);
-
-	t.add(this.t2.swish(this.mailbox.x + 30, this.mailbox.y + 30));
-
-	t.addLabel('gone');
-	t.addSound(this.sfx, null, 'pop', 'gone');
-	t.add(new TweenMax(this.mailbox, 0.05, { alpha: 0 }), 'gone');
-	t.add(new TweenMax(this.bear, 0.05, { alpha: 1 }), 'gone+=0.04');
-	t.to(this.t2.leftArm, 0.3, { rotation: -1.1, ease: Power4.easeIn });
-
-	t.addCallback(function () {
-		this.a1.eyesStopFollow();
-		this.a2.eyesStopFollow();
-	}, 'gone+=1', null, this);
-
-	t.addSound(this.t2.speech, this.t2, 'oops', 'gone+=0.04');
-	t.addSound(this.t2.speech, this.t2, 'iNeedHelp', '+=0.5');
-
-	t.addSound(this.a2.speech, this.a2, 'gottaInvite', '+=1');
-	t.addLabel('maker');
-	// t.add(this.a2.move({ x: '+=' + 170, y: '+=' + 20, ease: Power0.easeNone }, 2), 'maker');
-	t.addSound(this.a2.speech, this.a2, 'makeCards', 'maker');
-
-	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
-	return t;
-};
-
-PartyGame.prototype.garlandIntro = function () {
-	if (this.agent instanceof Mouse || this.agent instanceof Hedgehog) {
-		this.changeAgents();
-	}
-
-	this.a1.visible = true;
-	this.a2.visible = true;
-	this.t2.visible = false;
-
-	var t = new TimelineMax();
-	t.add(this.a2.wave(1, -1));
-	t.addSound(this.a2.speech, this.a2, 'hi', 0);
-	t.addSound(this.a2.speech, this.a2, 'niceComeBack', '+=0.5');
-	t.addSound(this.a2.speech, this.a2, 'helpUsAgain', '+=0.5');
-	t.addSound(this.a1.speech, this.a1, 'haveToGarlands', '+=1');
-	t.addSound(this.a1.speech, this.a1, 'letsPutUp', '+=0.3');
-
-	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
-	return t;
-};
-
-PartyGame.prototype.balloonIntro = function () {
-	if (this.agent instanceof Mouse || this.agent instanceof Panda) {
-		this.changeAgents();
-	}
-
-	this.a1.visible = true;
-	this.a2.visible = true;
-	this.t2.visible = false;
-
-	var t = new TimelineMax();
-	t.add(this.a2.wave(2, -1));
-	t.addSound(this.a2.speech, this.a2, 'hi', 0);
-	t.addSound(this.a2.speech, this.a2, 'niceComeBack', '+=0.3');
-	t.addSound(this.a2.speech, this.a2, 'helpUsAgain', '+=0.3');
-	t.addSound(this.a1.speech, this.a1, 'haveToBalloons', '+=0.8');
-	t.addSound(this.a1.speech, this.a1, 'makeBalloons', '+=0.2');
-
-	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
-	return t;
-};
-
-PartyGame.prototype.giftIntro = function () {
-	this.t2.visible = false;
-
-	var t = new TimelineMax();
-	t.add(this.a3.wave(2, -1));
-	t.addSound(this.a3.speech, this.a3, 'hi', 0);
-	t.addSound(this.a3.speech, this.a3, 'niceParty', '+=0.3');
-	t.addSound(this.a2.speech, this.a2, 'haveGifts', '+=1');
-	t.addSound(this.t2.speech, this.t2, 'laugh');
-	t.addSound(this.a3.speech, this.a3, 'helpFindGifts', '+=0.5');
-	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
-
-	return t;
+	var temp = this.helper1;
+	this.helper1 = this.helper2;
+	this.helper2 = temp;
 };
 
 PartyGame.prototype.afterInvitations = function () {
-	this.t2.visible = false;
-
-	var t = new TimelineMax();
-	t.addCallback(this.mailbox.destroy, null, null, this.mailbox);
-	return t;
+	this.mailbox.destroy();
 };
 
 PartyGame.prototype.afterGarlands = function () {
-	this.t2.visible = false;
-
 	var t = new TimelineMax();
 	t.addCallback(this.gladeIntro.create, null, [430, 270, 'glade', 'garland'], this.gladeIntro);
 	return t;
 };
 
 PartyGame.prototype.afterBalloons = function () {
-	this.t2.visible = false;
-
 	var t = new TimelineMax();
 	t.addCallback(this.gladeIntro.create, null, [200, 249, 'glade', 'balloons'], this.gladeIntro);
-	return t;
-};
-
-PartyGame.prototype.afterGifts = function () {
-	var t = new TimelineMax();
-	t.addCallback(function () {
-		this.a1.visible = true;
-		this.a2.visible = true;
-		this.a3.visible = true;
-		this.t2.changeShape('troll');
-
-		this.a1.x = 350;
-		this.a1.y = 500;
-		this.a2.x = 620;
-		this.a2.y = 510;
-		this.a3.x = 400;
-		this.a3.y = 610;
-		this.t2.x = 560;
-		this.t2.y = 635;
-
-		var xs = [150, 250, 460, 700, 750];
-		var ys = [550, 450,  420, 440, 630];
-		for (var i = 0; i < this.guests.length; i++) {
-			this.guests[i].visible = true;
-			this.guests[i].x = xs[i];
-			this.guests[i].y = ys[i];
-		}
-
-		if (!this.hat) {
-			this.hat = this.gladeIntro.create(this.a3.x + 12, this.a3.y - 56, 'glade', 'Partyhat');
-		}
-		this.hat.scale.set(0.36);
-		this.hat.anchor.set(0.5, 1);
-	}, null, null, this);
-
 	return t;
 };
 

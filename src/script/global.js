@@ -93,3 +93,5 @@ exports.BUTTON_COLOR = 0xc2a12d;
 
 // Font to use in the game.
 exports.FONT = 'Coming Soon';
+
+// NOTE: GLOBAL.AGENT is added in the game.js. It is an object with all agents.
