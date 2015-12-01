@@ -727,7 +727,7 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 
 		t.addCallback(this.disable, null, [false], this);
 
-	} else if (this.finishedRounds === 5) {
+	} else {
 		t.addCallback(this.modeOutro, null, null, this);
 	}
 };
@@ -735,12 +735,13 @@ PartyGiftGame.prototype.modePlayerDo = function () {
 PartyGiftGame.prototype.modeOutro = function () {
 	var t = new TimelineMax();
 	t.addSound(this.birthday.speech, this.birthday, 'wasAll');
-	t.add(this.birthday.move({ x:-500, ease: Power0.easeNone}, 5));
-	t.add(this.troll.water(300 - this.gameGroup.x, this));
+	t.add(this.birthday.move({ x:-500, ease: Power0.easeNone }, 5));
+	t.to(this.gameGroup, 5, { x: 0 }, '-=5');
+	t.add(this.troll.water(300, this));
 
 	t.addCallback(function () {
-		this.gladeIntro.parent.bringToTop(this.gladeIntro);
 		this.pgifts.visible = true;
+		this.gladeIntro.parent.bringToTop(this.gladeIntro);
 
 		this.birthday.x = 400;
 		this.birthday.y = 610;

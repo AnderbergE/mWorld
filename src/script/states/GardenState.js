@@ -30,7 +30,8 @@ GardenState.prototype.preload = function() {
 		this.gardenData.partyTime = { game: 'partyPicker', difficulty: 0 };
 	}
 
-	if (this.gardenData.freeWater) {
+	if (Math.random() < 0.1) {
+		this.gardenData.freeWater = true;
 		if (Math.random() < 0.5) {
 			this.load.image('elephant', 'img/garden/elephant.png');
 			this.load.json('elephantMesh', 'img/garden/elephant.json');
@@ -400,7 +401,7 @@ GardenState.prototype.addElephant = function () {
 	this.elephant.play(true);
 	this.plantGroup.add(this.elephant);
 
-	setTimeout((function () {
+	this.game.time.events.add(Phaser.Timer.SECOND * this.rnd.integerInRange(5, 10), function () {
 		var target, to, emitter;
 		if (Object.keys(this.gardenData.fields).length) {
 			target = this.getRandomPlant();
@@ -445,7 +446,7 @@ GardenState.prototype.addElephant = function () {
 			t.to(this.elephant, this.math.distance(this.elephant.x, this.elephant.y, x, y) / 40, { x: x, y: y, ease: Power1.easeInOut });
 		}
 		t.addCallback(this.elephant.destroy, null, null, this.elephant);
-	}).bind(this), this.rnd.integerInRange(5000, 10000));
+	}, this);
 };
 
 GardenState.prototype.addRobot = function () {
@@ -457,7 +458,7 @@ GardenState.prototype.addRobot = function () {
 	this.robot.play(true);
 	this.plantGroup.add(this.robot);
 
-	setTimeout((function () {
+	this.game.time.events.add(Phaser.Timer.SECOND * this.rnd.integerInRange(5, 10), function () {
 		var target, to, emitter;
 		if (Object.keys(this.gardenData.fields).length) {
 			target = this.getRandomPlant();
@@ -502,7 +503,7 @@ GardenState.prototype.addRobot = function () {
 			t.to(this.robot, this.math.distance(this.robot.x, this.robot.y, x, y) / 60, { x: x, y: y, ease: Power1.easeInOut });
 		}
 		t.addCallback(this.robot.destroy, null, null, this.robot);
-	}).bind(this), this.rnd.integerInRange(5000, 10000));
+	}, this);
 };
 
 /* When the state starts. */

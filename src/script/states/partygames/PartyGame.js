@@ -198,9 +198,7 @@ PartyGame.prototype.nextRound = function () {
 PartyGame.prototype.endGame = function () {
 	backend.putParty({ done: true });
 	// TODO: This should not be necessary with better logging.
-	setTimeout((function () {
-		Subgame.prototype.endGame.call(this);
-	}).bind(this), 1000);
+	this.game.time.events.add(Phaser.Timer.SECOND * 1, Subgame.prototype.endGame, this);
 };
 
 
