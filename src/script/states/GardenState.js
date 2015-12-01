@@ -20,8 +20,26 @@ GardenState.prototype.constructor = GardenState;
  */
 function GardenState () {}
 
+var maxLevel = 5;
+
 /* Phaser state function */
 GardenState.prototype.preload = function() {
+	this.gardenData = backend.getGarden() || { fields: {} }; // jshint ignore:line
+	// This happens either on local machine or on "trial" version of the game.
+	if (GLOBAL.demo) {
+		this.gardenData.partyTime = { game: GLOBAL.STATE.partyPicker, difficulty: 0 };
+	}
+
+	if (this.gardenData.freeWater) {
+		if (Math.random() < 0.5) {
+			this.load.image('elephant', 'img/garden/elephant.png');
+			this.load.json('elephantMesh', 'img/garden/elephant.json');
+		} else {
+			this.load.image('robot', 'img/garden/robot.png');
+			this.load.json('robotMesh', 'img/garden/robot.json');
+		}
+	}
+
 	if (!this.cache.checkSoundKey(this.game.player.agent.prototype.id + 'Speech')) {
 		this.load.audio(this.game.player.agent.prototype.id + 'Speech', LANG.SPEECH.AGENT.speech);
 	}
@@ -31,8 +49,10 @@ GardenState.prototype.preload = function() {
 	if (!this.cache.checkImageKey('garden')) {
 		this.load.atlasJSONHash('garden', 'img/garden/atlas.png', 'img/garden/atlas.json');
 	}
-
-	this.gardenData = backend.getGarden() || { fields: [] };
+	if (Object.keys(this.gardenData.fields).length) {
+		this.load.image('butterfly', 'img/garden/butterfly.png');
+		this.load.json('butterflyMesh', 'img/garden/butterfly.json');
+	}
 };
 
 /* Phaser state function */
@@ -75,20 +95,17 @@ GardenState.prototype.create = function () {
 		}, null, null, this);
 	}, this);
 
-	// TODO: Randomize party.
-	var callParty = this.game.rnd.between(1, 100);
-	if (callParty <= 100) {
-		var partySign = this.add.sprite(120, 100, 'garden', 'partysign');
-		partySign.visible = true;
+	// If backend thinks it is time for a party, show sign.
+	if (this.gardenData.partyTime && this.gardenData.partyTime.game) {
+		var partySign = this.add.sprite(200, 0, 'garden', 'partysign');
+		partySign.anchor.set(0.5, 1);
+		partySign.scale.set(0.5, 1.2);
+		var t = new TimelineMax();
+		t.to(partySign, 0.5, { y: 333, ease: Power0.easeIn }, 2);
+		t.to(partySign.scale, 0.7, { x: 1, y: 1, ease: Elastic.easeInOut }, '-=0.2');
 		partySign.inputEnabled = true;
 		partySign.events.onInputDown.add(function () {
-			// This happens either on local machine or on "trial" version of the game.
-			if (GLOBAL.demo) {
-				this.game.state.start(GLOBAL.STATE.partyPicker, true, false);
-				return;
-			}
-
-			this.game.state.start(GLOBAL.STATE.partyInvitationGame);
+			this.game.state.start(this.gardenData.partyTime.game, true, false, this.gardenData.partyTime);
 		}, this);
 	}
 
@@ -96,7 +113,6 @@ GardenState.prototype.create = function () {
 	this.plantGroup = this.add.group();
 	this.plantGroup.x = 90;
 	this.plantGroup.y = 350;
-	var maxLevel = 5;
 	var currentPlant;
 
 	var plantArea = new Cover(this.game, null, 0);
@@ -130,7 +146,7 @@ GardenState.prototype.create = function () {
 	for (var key in fields) {
 		var field = fields[key];
 		var plant = new GardenPlant(this.game, field.x, field.y, field.content_type, field.level); // jshint ignore:line
-		plant.id = key;
+		plant.tag = key;
 		this.plantGroup.add(plant);
 	}
 
@@ -140,6 +156,19 @@ GardenState.prototype.create = function () {
 	this.agent.x = -200;
 	this.agent.y = 0;
 	this.plantGroup.add(this.agent);
+
+	if (Object.keys(this.gardenData.fields).length) {
+		this.addButterfly();
+	}
+
+	if (this.gardenData.freeWater) {
+		if (this.cache.checkImageKey('elephant')) {
+			this.addElephant();
+		}
+		if (this.cache.checkImageKey('robot')) {
+			this.addRobot();
+		}
+	}
 
 	/* The interface for plants. */
 	this.actions = this.add.group();
@@ -176,6 +205,7 @@ GardenState.prototype.create = function () {
 	this.actions.moveButton.bg.events.onInputUp.add(function () {
 		moveAgentToPlant.call(this);
 		currentPlant.update = function () {};
+		backend.putMovePlant({ field: { tag: currentPlant.tag, x: currentPlant.x, y: currentPlant.y } }); // jshint ignore:line
 	}, this);
 	this.actions.add(this.actions.moveButton);
 	this.actions.waterButton = new SpriteButton(this.game, 'objects', 'drop', { // The button to push when adding water.
@@ -201,6 +231,7 @@ GardenState.prototype.create = function () {
 
 	/* Add disabler. */
 	this.disabler = new Cover(this.game, '#ffffff', 0);
+	this.disabler.visible = true;
 	this.world.add(this.disabler);
 
 	/* Add the menu */
@@ -235,7 +266,7 @@ GardenState.prototype.create = function () {
 
 		var t = new TimelineMax();
 		if (this.game.player.water > 0) {
-			var side = (plant.x <= this.agent.x) ? -1 : 1; // Side to water towards.
+			var side = (plant.x <= this.agent.x) ? -1 : 1; // Side to water towards. // TODO: this has been wrong in some cases.
 			t.add(this.agent.water(2, side));
 			t.addCallback(function () {
 				this.game.player.water--;
@@ -257,12 +288,12 @@ GardenState.prototype.create = function () {
 					// TODO: Error message?
 					if (!data.success) {
 						plant.level = data.level;
-					} else if (!plant.id) {
-						plant.id = data.field.id;
+					} else if (!plant.tag) {
+						plant.tag = data.field.tag;
 					}
 					EventSystem.unsubscribe(ev);
 				}).bind(this));
-				backend.putUpgradePlant({ field: { id: plant.id, x: plant.x, y: plant.y, level: plant.level, content_type: plant.type }}); // jshint ignore:line
+				backend.putUpgradePlant({ field: { tag: plant.tag, x: plant.x, y: plant.y, level: plant.level, content_type: plant.type }}); // jshint ignore:line
 			}, null, null, this);
 			t.addSound(this.agent.speech, this.agent, 'gardenGrowing');
 
@@ -323,6 +354,157 @@ GardenState.prototype.create = function () {
 	}).bind(this));
 };
 
+GardenState.prototype.getRandomPlant = function () {
+	var target;
+	do {
+		target = this.rnd.pick(this.plantGroup.children);
+	} while (!(target instanceof GardenPlant));
+	return target;
+};
+
+GardenState.prototype.addButterfly = function () {
+	/* In case there are any plants, let's add a butterfly :) */
+	var butterfly = this.add.creature(50, 100, 'butterfly', 'butterflyMesh');
+	var butterflyScale = 2;
+	butterfly.scale.set(butterflyScale);
+	butterfly.play(true);
+	moveButterfly.call(this);
+
+	function moveButterfly () {
+		var pos;
+		if (Math.random() > 1 / Object.keys(this.gardenData.fields).length) {
+			var target = this.getRandomPlant();
+			pos = target.plant.world;
+			pos.y -= target.height / 2;
+		} else {
+			pos = { x: this.rnd.integerInRange(0, this.world.width), y: this.rnd.integerInRange(0, this.world.height) };
+		}
+
+		TweenMax.to(butterfly, this.math.distance(butterfly.x, butterfly.y, pos.x, pos.y) / 50, { x: pos.x, y: pos.y, ease: Power2.easeInOut, onComplete: moveButterfly, onCompleteScope: this });
+		// Turning if necessary.
+		if (pos.x < butterfly.x) {
+			if (butterfly.scale.x < butterflyScale) {
+				TweenMax.to(butterfly.scale, 0.2, { x: butterflyScale, ease: Power2.easeInOut });
+			}
+		} else if (butterfly.scale.x > -butterflyScale) {
+			TweenMax.to(butterfly.scale, 0.2, { x: -butterflyScale, ease: Power2.easeInOut });
+		}
+	}
+};
+
+GardenState.prototype.addElephant = function () {
+	// TODO: Creature does not have any height. So there is some hard coding here that would be nice to get rid of.
+	this.elephant = new Phaser.Creature(this.game, -500, this.rnd.integerInRange(0, this.plantGroup.height), 'elephant', 'elephantMesh', 'walk');
+	this.elephant.manager.CreateAnimation(this.cache.getJSON('elephantMesh'), 'splash');
+	this.elephant.scale.set(-20, 20);
+	this.elephant.play(true);
+	this.plantGroup.add(this.elephant);
+
+	setTimeout((function () {
+		var target, to, emitter;
+		if (Object.keys(this.gardenData.fields).length) {
+			target = this.getRandomPlant();
+			to = { x: target.x - 250, y: target.y - 100 };
+
+			emitter = this.add.emitter(this.plantGroup.x + target.x, this.plantGroup.y + target.y - 90, 200); // Adding plantgroup positions since we want emitter "on top".
+			emitter.width = 5;
+			emitter.makeParticles('objects', 'drop');
+			emitter.setScale(0.1, 0.3, 0.1, 0.3);
+			emitter.setYSpeed(125, 160);
+			emitter.setXSpeed(-25, 25);
+			emitter.setRotation(0, 0);
+			this.world.add(emitter);
+		}
+
+		var x = this.world.width + 100;
+		var y = this.rnd.integerInRange(0, this.plantGroup.height);
+
+		var t = new TimelineMax();
+		if (to) {
+			t.to(this.elephant, this.math.distance(this.elephant.x, this.elephant.y, to.x, to.y) / 40, { x: to.x, y: to.y, ease: Power1.easeInOut });
+
+			t.addCallback(function () {
+				this.elephant.setAnimation('splash');
+				this.elephant.loop = false;
+			}, null, null, this);
+			t.add(new TweenMax(emitter, 2, {
+				onStart: function () { emitter.start(false, 500, 10, 50); },
+				onComplete: function () { emitter.destroy(); }
+			}), '+=1');
+			t.addCallback(function () {
+				target.upgrade();
+				backend.putUpgradePlant({ field: { tag: target.tag, x: target.x, y: target.y, level: target.level, content_type: target.type }, free: true }); // jshint ignore:line
+			});
+
+			t.addCallback(function () {
+				this.elephant.setAnimation('walk');
+				this.elephant.loop = true;
+			}, '+=2', null, this);
+			t.to(this.elephant, this.math.distance(to.x, to.y, x, y) / 40, { x: x, y: y, ease: Power1.easeInOut });
+		} else {
+			t.to(this.elephant, this.math.distance(this.elephant.x, this.elephant.y, x, y) / 40, { x: x, y: y, ease: Power1.easeInOut });
+		}
+		t.addCallback(this.elephant.destroy, null, null, this.elephant);
+	}).bind(this), this.rnd.integerInRange(5000, 10000));
+};
+
+GardenState.prototype.addRobot = function () {
+	// TODO: Creature does not have any height. So there is some hard coding here that would be nice to get rid of.
+	this.robot = new Phaser.Creature(this.game, this.world.width, this.rnd.integerInRange(0, this.plantGroup.height), 'robot', 'robotMesh', 'Roll_loop');
+	// this.robot.manager.CreateAnimation(this.cache.getJSON('robotMesh'), 'Roll');
+	this.robot.manager.CreateAnimation(this.cache.getJSON('robotMesh'), 'default');
+	this.robot.scale.set(20);
+	this.robot.play(true);
+	this.plantGroup.add(this.robot);
+
+	setTimeout((function () {
+		var target, to, emitter;
+		if (Object.keys(this.gardenData.fields).length) {
+			target = this.getRandomPlant();
+			to = { x: target.x + 80, y: target.y - 65 };
+
+			emitter = this.add.emitter(this.plantGroup.x + target.x, this.plantGroup.y + target.y - 40, 200); // Adding plantgroup positions since we want emitter "on top".
+			emitter.width = 5;
+			emitter.makeParticles('objects', 'drop');
+			emitter.setScale(0.1, 0.3, 0.1, 0.3);
+			emitter.setYSpeed(60, 80);
+			emitter.setXSpeed(-25, 25);
+			emitter.setRotation(0, 0);
+			this.world.add(emitter);
+		}
+
+		var x = -200;
+		var y = this.rnd.integerInRange(0, this.plantGroup.height);
+
+		var t = new TimelineMax();
+		if (to) {
+			t.to(this.robot, this.math.distance(this.robot.x, this.robot.y, to.x, to.y) / 60, { x: to.x, y: to.y, ease: Power1.easeInOut });
+
+			t.addCallback(function () {
+				this.robot.setAnimation('default');
+				this.robot.loop = false;
+			}, null, null, this);
+			t.add(new TweenMax(emitter, 2, {
+				onStart: function () { emitter.start(false, 500, 10, 50); },
+				onComplete: function () { emitter.destroy(); }
+			}), '+=1');
+			t.addCallback(function () {
+				target.upgrade();
+				backend.putUpgradePlant({ field: { tag: target.tag, x: target.x, y: target.y, level: target.level, content_type: target.type }, free: true }); // jshint ignore:line
+			});
+
+			t.addCallback(function () {
+				this.robot.setAnimation('Roll_loop');
+				this.robot.loop = true;
+			}, '+=2', null, this);
+			t.to(this.robot, this.math.distance(to.x, to.y, x, y) / 60, { x: x, y: y, ease: Power1.easeInOut });
+		} else {
+			t.to(this.robot, this.math.distance(this.robot.x, this.robot.y, x, y) / 60, { x: x, y: y, ease: Power1.easeInOut });
+		}
+		t.addCallback(this.robot.destroy, null, null, this.robot);
+	}).bind(this), this.rnd.integerInRange(5000, 10000));
+};
+
 /* When the state starts. */
 GardenState.prototype.startGame = function () {
 	var t = new TimelineMax().skippable();
@@ -368,8 +550,22 @@ GardenState.prototype.startGame = function () {
 
 GardenState.prototype.run = function () {
 	this.agent.y += this.agent.height / 2;
+	if (this.elephant) {
+		this.elephant.y += 120; // Have to do this since creature does not have an anchor.
+	}
+	if (this.robot) {
+		this.robot.y += 90; // Have to do this since creature does not have an anchor.
+	}
+
 	this.plantGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+
 	this.agent.y -= this.agent.height / 2;
+	if (this.elephant) {
+		this.elephant.y -= 120;
+	}
+	if (this.robot) {
+		this.robot.y -= 90;
+	}
 };
 
 
@@ -413,6 +609,10 @@ GardenPlant.prototype.newPlant = function () {
 
 // Plant has leveled up by watering.
 GardenPlant.prototype.upgrade = function () {
+	if (this.level === maxLevel) {
+		return;
+	}
+
 	this.level++;
 
 	var plant = this.newPlant();

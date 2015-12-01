@@ -199,6 +199,21 @@ module.exports = {
 		}
 	},
 
+	putMovePlant: function (data) {
+		if (typeof Routes !== 'undefined') {
+			this.post('move_field_api_gardens_path', data, function (data) {
+				EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
+			});
+
+		} else {
+			// If we are missing a route to the server, we temporarily save the garden.
+			this._tempStore = this._tempStore || { fields: {} };
+			var o = data.field;
+			this._tempStore.fields[o.tag].x = o.x;
+			this._tempStore.fields[o.tag].y = o.y;
+		}
+	},
+
 	/**
 	 * POST player session results.
 	 * @param {Object} data - The session results.
@@ -211,11 +226,11 @@ module.exports = {
 		var o = data.field;
 		this._tempStore = this._tempStore || { fields: {} };
 
-		if (!o.id) { // New plant!
-			o.id = Math.random();
+		if (!o.tag) { // New plant!
+			o.tag = Math.random();
 		}
 
-		this._tempStore.fields[o.id] = o;
+		this._tempStore.fields[o.tag] = o;
 		data.success = true;
 		EventSystem.publish(GLOBAL.EVENT.plantUpgrade, [data]);
 	}
