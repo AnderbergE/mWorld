@@ -27,7 +27,7 @@ GardenState.prototype.preload = function() {
 	this.gardenData = backend.getGarden() || { fields: {} }; // jshint ignore:line
 	// This happens either on local machine or on "trial" version of the game.
 	if (GLOBAL.demo) {
-		this.gardenData.partyTime = { game: GLOBAL.STATE.partyPicker, difficulty: 0 };
+		this.gardenData.partyTime = { game: 'partyPicker', difficulty: 0 };
 	}
 
 	if (this.gardenData.freeWater) {
@@ -105,7 +105,7 @@ GardenState.prototype.create = function () {
 		t.to(partySign.scale, 0.7, { x: 1, y: 1, ease: Elastic.easeInOut }, '-=0.2');
 		partySign.inputEnabled = true;
 		partySign.events.onInputDown.add(function () {
-			this.game.state.start(this.gardenData.partyTime.game, true, false, this.gardenData.partyTime);
+			this.game.state.start(GLOBAL.STATE[this.gardenData.partyTime.game], true, false, this.gardenData.partyTime);
 		}, this);
 	}
 

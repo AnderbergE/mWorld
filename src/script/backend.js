@@ -222,6 +222,14 @@ module.exports = {
 		this.post('register_api_player_sessions_path', data);
 	},
 
+	/**
+	 * POST party session results.
+	 * @param {Object} data - The session results.
+	 */
+	putParty: function (data) {
+		this.post('party_api_player_sessions_path', data);
+	},
+
 	localPutPlantUpgrade: function (data) {
 		var o = data.field;
 		this._tempStore = this._tempStore || { fields: {} };

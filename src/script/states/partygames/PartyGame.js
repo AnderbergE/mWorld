@@ -1,4 +1,5 @@
 var Subgame = require('../Subgame.js');
+var backend = require('../../backend.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
@@ -191,6 +192,12 @@ PartyGame.prototype.nextRound = function () {
 		this._counter.value++;
 	}
 	Subgame.prototype.nextRound.call(this);
+};
+
+/** End the game. */
+PartyGame.prototype.endGame = function () {
+	backend.putParty({ done: true });
+	Subgame.prototype.endGame.call(this);
 };
 
 
