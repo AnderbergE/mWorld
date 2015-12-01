@@ -197,7 +197,10 @@ PartyGame.prototype.nextRound = function () {
 /** End the game. */
 PartyGame.prototype.endGame = function () {
 	backend.putParty({ done: true });
-	Subgame.prototype.endGame.call(this);
+	// TODO: This should not be necessary with better logging.
+	setTimeout((function () {
+		Subgame.prototype.endGame.call(this);
+	}).bind(this), 1000);
 };
 
 
