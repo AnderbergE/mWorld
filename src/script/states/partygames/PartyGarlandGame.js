@@ -741,7 +741,7 @@ PartyGarlandGame.prototype.modeIntro = function () {
 	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
 
 	t.addCallback(function () {
-		this.helper2.visible = false
+		this.helper2.visible = false;
 
 		this.helper1.x = -300;
 		this.helper1.y = 326;

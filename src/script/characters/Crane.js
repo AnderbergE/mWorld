@@ -1,4 +1,5 @@
 var Character = require('./Character.js');
+var LANG = require('../language.js');
 
 module.exports = VehicleCrane;
 
@@ -26,12 +27,9 @@ VehicleCrane.prototype.pos = {
  * @param {number} amount - The range of numbers.
  * @return {Object} Itself.
  */
-function VehicleCrane (game, x, y, amount)
-{
-	Character.call(this, game); // Parent constructor.
-	this.turn = true;
-	this.x = x || 0;
-	this.y = y || 0;
+function VehicleCrane (game, x, y, amount) {
+	Character.call(this, game, x, y, true); // Parent constructor.
+	this.name = LANG.TEXT.craneName;
 
 	this.hookPos = this.pos.hookDefaultPos;
 	this.trolleyPos = this.pos.craneTrolleyStart;

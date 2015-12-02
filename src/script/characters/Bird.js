@@ -1,9 +1,10 @@
 var Character = require('./Character.js');
+var LANG = require('../language.js');
 
-module.exports = BirdheroBird;
+module.exports = Bird;
 
-BirdheroBird.prototype = Object.create(Character.prototype);
-BirdheroBird.prototype.constructor = BirdheroBird;
+Bird.prototype = Object.create(Character.prototype);
+Bird.prototype.constructor = Bird;
 
 /**
  * The bird that you are helping home.
@@ -11,9 +12,9 @@ BirdheroBird.prototype.constructor = BirdheroBird;
  * @param {number} tint - The tint of the bird.
  * @return {Object} Itself.
  */
-function BirdheroBird (game, tint) {
-	Character.call(this, game); // Parent constructor.
-	this.turn = true;
+function Bird (game, x, y, tint) {
+	Character.call(this, game, x, y, true); // Parent constructor.
+	this.name = LANG.TEXT.birdName;
 
 	this._number = null;
 
@@ -38,16 +39,21 @@ function BirdheroBird (game, tint) {
 
 	/* Animations */
 	this.talk = TweenMax.to(this.beak, 0.2, {
-		frame: this.beak.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
+		frame: this.beak.frame + 1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
 	this.walk = new TimelineMax({ repeat: -1, paused: true })
 		.fromTo(this.leftLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0)
 		.fromTo(this.rightLeg, 0.1, { angle: 0 }, { angle: -20 , yoyo: true, repeat: 1 }, 0.2);
 
+	this._happy = new TimelineMax({ repeat: -1, paused: true });
+	this._happy.to(this, 0.3, { y:'-=15', ease: Power0.easeInOut, repeat: 1, yoyo: true }, 0);
+	this._happy.to(this.rightLeg, 0.3, { angle: -40, ease: Power0.easeInOut, repeat: 1, yoyo: true }, 0);
+	this._happy.to(this.leftLeg, 0.3, { angle: 40, ease: Power0.easeInOut, repeat: 1, yoyo: true }, 0);
+
 	return this;
 }
 
-Object.defineProperty(BirdheroBird.prototype, 'tint', {
+Object.defineProperty(Bird.prototype, 'tint', {
 	get: function() { return this.body.tint; },
 	set: function(value) {
 		this.body.tint = value;
@@ -57,7 +63,7 @@ Object.defineProperty(BirdheroBird.prototype, 'tint', {
 	}
 });
 
-Object.defineProperty(BirdheroBird.prototype, 'number', {
+Object.defineProperty(Bird.prototype, 'number', {
 	get: function() { return this._number; },
 	set: function(value) {
 		this._number = value;
@@ -66,11 +72,25 @@ Object.defineProperty(BirdheroBird.prototype, 'number', {
 	}
 });
 
+Bird.prototype.setNeutral = function () {
+	this.beak.frameName = 'beak0';
+	this._happy.pause(0);
+};
+
+Bird.prototype.setHappy = function () {
+	this.beak.frameName = 'beak1';
+	this._happy.play();
+};
+
+Bird.prototype.setSurprised = Bird.prototype.setNeutral;
+Bird.prototype.setSad = Bird.prototype.setNeutral;
+
+
 /**
  * The bird will show its wings.
  * @param {boolean} true = show, false = hide  (default is true)
  */
-BirdheroBird.prototype.showWings = function (on) {
+Bird.prototype.showWings = function (on) {
 	on = (typeof on === 'undefined' || on === null) ? true : on;
 	this.rightWing.visible = on;
 	this.wing.visible = !on || this.number <= 5;
@@ -81,7 +101,7 @@ BirdheroBird.prototype.showWings = function (on) {
  * Point at the birds feathers.
  * @return {Object} The animation timeline
  */
-BirdheroBird.prototype.countFeathers = function () {
+Bird.prototype.countFeathers = function () {
 	var number = this.number;
 	var fun = function (i) {
 		this.number = i;

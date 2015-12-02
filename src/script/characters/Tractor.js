@@ -1,4 +1,5 @@
 var Character = require('./Character.js');
+var LANG = require('../language.js');
 
 module.exports = VehicleTractor;
 
@@ -20,10 +21,8 @@ VehicleTractor.prototype.pos = {
  * @return {Object} Itself.
  */
 function VehicleTractor (game, x, y) {
-	Character.call(this, game); // Parent constructor.
-	this.turn = true;
-	this.x = x || 0;
-	this.y = y || 0;
+	Character.call(this, game, x, y, true); // Parent constructor.
+	this.name = LANG.TEXT.tractorName;
 
 	this.body = this.game.add.sprite(0, 0, 'vehicle', 'tractor', this);
 	this.body.anchor.set(0, 1);

@@ -446,7 +446,7 @@ BirdheroGame.prototype.modeIntro = function () {
 		chick.visible = true;
 	};
 	for (var i = 0; i < this.tree.branch.length; i++) {
-		var chick = new Bird(this.game, this.tint[i]);
+		var chick = new Bird(this.game, 0, 0, this.tint[i]);
 		chick.visible = false;
 		for (var j in chick.children) {
 			// Translate sprite positions for rotation effect

@@ -102,7 +102,7 @@ LANG.swedish.text = {
 	title: 'Magical Garden',
 	start: 'Starta',
 	continuePlaying: 'Fortsätt',
-	changeAgent: 'Byt ut ', // Followed by agent name
+	changeAgent: 'Byt kompis',
 	credits: 'Skapat av',
 	anonymous: 'Anonym',
 	logOut: 'Logga ut',
@@ -147,6 +147,8 @@ LANG.swedish.text = {
 	lizardName: 'Kamilla',
 	bumblebeeName: 'Humfrid',
 	birdName: 'Fålia',
+	tractorName: 'Hedvig',
+	craneName: 'Herman',
 
 	/* Subgame names */
 	balloonGameName: 'Skattjakten',

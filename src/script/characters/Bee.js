@@ -1,15 +1,15 @@
 var Character = require('./Character.js');
+var LANG = require('../language.js');
 
-module.exports = BeeFlightBee;
+module.exports = Bee;
 
 /* Humfrid, the bee you are helping. */
-BeeFlightBee.prototype = Object.create(Character.prototype);
-BeeFlightBee.prototype.constructor = BeeFlightBee;
-function BeeFlightBee (game, x, y) {
-	Character.call(this, game); // Parent constructor.
-	this.turn = true;
-	this.x = x || 0;
-	this.y = y || 0;
+Bee.prototype = Object.create(Character.prototype);
+Bee.prototype.constructor = Bee;
+
+function Bee (game, x, y) {
+	Character.call(this, game, x, y, true); // Parent constructor.
+	this.name = LANG.TEXT.bumblebeeName;
 
 	this.body = this.create(0, 0, 'bee', 'body');
 	this.body.anchor.set(0.5);
@@ -19,16 +19,34 @@ function BeeFlightBee (game, x, y) {
 	this.wings.anchor.set(0.5);
 
 	this.talk = TweenMax.to(this.mouth, 0.2, {
-		frame: this.mouth.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
+		frame: this.mouth.frame + 1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
 
 	this._flap = TweenMax.to(this.wings, 0.1, {
-		frame: this.wings.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
+		frame: this.wings.frame + 1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true
 	});
 	this.wings.frameName = 'wings0';
 }
 
-BeeFlightBee.prototype.flap = function (on) {
+Bee.prototype.setNeutral = function () {
+	this.mouth.frameName = 'mouth_happy';
+};
+
+Bee.prototype.setHappy = function () {
+	this.mouth.frameName = 'mouth_happy';
+	this.flap(true);
+};
+
+Bee.prototype.setSad = function () {
+	this.mouth.frameName = 'mouth_sad';
+	this.flap(false);
+};
+
+Bee.prototype.setSurprised = function () {
+	this.mouth.frameName = 'mouth_open';
+};
+
+Bee.prototype.flap = function (on) {
 	if (on) {
 		if (this._flap.paused()) {
 			this.wings.frameName = 'wings1';
@@ -42,7 +60,7 @@ BeeFlightBee.prototype.flap = function (on) {
 	}
 };
 
-BeeFlightBee.prototype.oscillate = function (on) {
+Bee.prototype.oscillate = function (on) {
 	if (on) {
 		// Set update function, not tween (since it might already be tweening)
 		var time = 0;

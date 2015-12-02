@@ -1,5 +1,6 @@
 var PartyGame = require('./PartyGame.js');
 var GLOBAL = require('../../global.js');
+var LANG = require('../../language.js');
 var util = require('../../utils.js');
 var Mouse = require('../../characters/agents/Mouse.js');
 
@@ -227,8 +228,8 @@ PartyInvitationGame.prototype.createCard = function () {
 /** Set up new guest for next round */
 PartyInvitationGame.prototype.setGuest = function () {
 	this.guest = this.guests[this.cardStack.children.length];
-	if (this.guest.name === 'lizard') {
-		this.guest.x = this.game.width / 2 - 60;
+	if (this.guest.name === LANG.TEXT.lizardName) {
+		this.guest.x = this.game.width / 2 - 90;
 		this.guest.y = 55;
 	} else {
 		this.guest.x = this.game.width / 2;
@@ -357,7 +358,7 @@ PartyInvitationGame.prototype.checkDecor = function () {
 			t.addCallback(this.disable, null, [true], this);
 
 			if (finishedCards > 0 && moreDecorNr <= 60 && !this.playCard.moreDecorGroup.length) {
-				t.addCallback(this.guest.setMood, null, ['neutral'], this.guest);
+				t.addCallback(this.guest.setNeutral, null, null, this.guest);
 				t.addSound(this.helper1.speech, this.helper1, 'rightButMore', 0);
 
 				while (this.playCard.decorGroup.children.length) {
@@ -368,7 +369,7 @@ PartyInvitationGame.prototype.checkDecor = function () {
 			} else if (finishedCards > 0 && evenMoreDecorNr <= 60 && this.playCard.moreDecorGroup.children < 25 && this.evenMoreDecor < 2) {
 				this.evenMoreDecor = this.evenMoreDecor + 1;
 
-				t.addCallback(this.guest.setMood, null, ['neutral'], this.guest);
+				t.addCallback(this.guest.setNeutral, null, null, this.guest);
 				t.addSound(this.helper1.speech, this.helper1, 'rightButMore');
 
 				while (this.playCard.decorGroup.children.length) {
@@ -379,19 +380,19 @@ PartyInvitationGame.prototype.checkDecor = function () {
 			} else {
 				this.playCard.handle.events.destroy();
 
-				t.addCallback(this.guest.setMood, null, ['happy'], this.guest);
+				t.addCallback(this.guest.setHappy, null, null, this.guest);
 				t.addSound(this.helper1.speech, this.helper1, 'looksNice');
 				t.addSound(this.helper1.speech, this.helper1, 'dragCard', '+=0.2');
 				t.addCallback(this.dragCard, null, null, this);
 			}
 
 		} else if (this.playCard.decorGroup.children.length > this.correctAmount) { // Incorrect, too many.
-			t.addCallback(this.guest.setMood, null, ['sad'], this.guest);
+			t.addCallback(this.guest.setSad, null, null, this.guest);
 			t.addSound(this.helper1.speech, this.helper1, 'tryLess');
 			t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5'); // TODO: This speech needs to be cut of correctly if moving while it is active.
 
 		} else if (this.playCard.decorGroup.children.length < this.correctAmount) { // Incorrect, too few.
-			t.addCallback(this.guest.setMood, null, ['sad'], this.guest);
+			t.addCallback(this.guest.setSad, null, null, this.guest);
 			t.addSound(this.helper1.speech, this.helper1, 'tryMore');
 			t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5'); // TODO: This speech needs to be cut of correctly if moving while it is active.
 		}
@@ -577,7 +578,7 @@ PartyInvitationGame.prototype.modeIntro = function () {
 		t.to(this.arm, 2, { x: this.playCard.x, y: this.playCard.y, ease: Power1.easeIn });
 		t.addCallback(function () { this.playCard.transferFrom(rightPile); }, null, null, this);
 		t.addCallback(function () { rightPile.follow(); }, null, null, this);
-		t.addCallback(function () { this.guest.setMood('happy'); }, null, null, this);
+		t.addCallback(this.guest.setHappy, null, null, this.guest);
 		t.addSound(this.helper1.speech, this.helper1, 'looksNice');
 		t.addSound(this.helper1.speech, this.helper1, 'imPutting', '+=0.5');
 

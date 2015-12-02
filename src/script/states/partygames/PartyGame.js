@@ -3,6 +3,10 @@ var backend = require('../../backend.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var Bee = require('../../characters/Bee.js');
+var Bird = require('../../characters/Bird.js');
+var Lizard = require('../../characters/Lizard.js');
+var WoodLouse = require('../../characters/WoodLouse.js');
 var Hedgehog = require('../../characters/agents/Hedgehog.js');
 var Mouse = require('../../characters/agents/Mouse.js');
 var Panda = require('../../characters/agents/Panda.js');
@@ -88,7 +92,7 @@ PartyGame.prototype.create = function () {
 	this.bannerName1 = this.add.text(450, 118, 'Grattis', { font: '25pt ' + GLOBAL.FONT });
 	this.bannerName1.angle = 2;
 	this.gladeIntro.add(this.bannerName1);
-	this.bannerName2 = this.add.text(570, 125, this.birthday.agentName + '!', { font: '25pt ' + GLOBAL.FONT });
+	this.bannerName2 = this.add.text(570, 125, this.birthday.name + '!', { font: '25pt ' + GLOBAL.FONT });
 	this.bannerName2.angle = -6;
 	this.gladeIntro.add(this.bannerName2);
 	this.gladeIntro.create(320, 80, 'glade', 'branches');
@@ -167,23 +171,23 @@ PartyGame.prototype.afterBalloons = function () {
 };
 
 PartyGame.prototype.createGuests = function () {
-	var guests = ['bee', 'lizard', 'beetle', 'bird', 'bird', 'bird', 'bird', 'bird', 'bird', 'bird', 'bird', 'bird'];
-	this.rnd.shuffle(guests);
-
+	var guests = [Bee, Lizard, WoodLouse, Bird, Bird];
+	var scales = [0.5, 0.4, 0.7, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2];
 	var tints = [0xff8888, 0x77ee77, 0x8888ff, 0xfaced0, 0xfedcba, 0x11abba, 0xabcdef, 0x333333, 0xed88ba];
 	this.rnd.shuffle(tints);
 
 	this.guests = [];
 	for (var i = 0; i < 5; i++) {
-		this.guests.push(new Guest(this.game, 0, 0, guests[i], tints[i]));
-		this.guests[i].setMood('neutral');
-		this.guests[i].visible = false;
-		this.gladeIntro.add(this.guests[i]);
-
-		if (guests[i] === 'bird') {
-			tints.splice(0, 1);
+		var index = this.rnd.integerInRange(0, guests.length - 1);
+		var guest = new (guests.splice(index, 1)[0])(this.game, 0, 0);
+		guest.scale.set(scales.splice(index, 1)[0]);
+		guest.visible = false;
+		if (guest instanceof Bird) {
+			guest.tint = tints.splice(0, 1)[0];
 		}
-		guests.splice(0, 1);
+
+		this.guests.push(guest);
+		this.gladeIntro.add(guest);
 	}
 };
 
@@ -199,132 +203,4 @@ PartyGame.prototype.endGame = function () {
 	backend.putParty({ done: true });
 	// TODO: This should not be necessary with better logging.
 	this.game.time.events.add(Phaser.Timer.SECOND * 1, Subgame.prototype.endGame, this);
-};
-
-
-/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                             Create guest object                           */
-/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-Guest.prototype = Object.create(Phaser.Group.prototype);
-Guest.prototype.constructor = Guest;
-function Guest (game, x, y, guestName, tint, mood) {
-	// TODO: Use the ones that exist.
-	Phaser.Group.call(this, game, null); // Parent constructor.
-
-	this.x = x;
-	this.y = y;
-	this.name = guestName;
-
-	if (guestName === 'bee') {
-		this.scale.set(0.2);
-		this.body = this.create(0, 0, 'bee', 'body');
-		this.body.anchor.set(0.5);
-		this.mouthHappy = this.create(50, 35, 'bee', 'mouth_happy');
-		this.mouthHappy.anchor.set(0.5);
-		this.mouthHappy.visible = false;
-		this.mouthSad = this.create(50, 35, 'bee', 'mouth_sad');
-		this.mouthSad.anchor.set(0.5);
-		this.mouthSad.visible = false;
-		this.wings = this.create(-25, -43, 'bee', 'wings1');
-		this.wings.anchor.set(0.5);
-	} else if (guestName === 'bird') {
-		this.scale.set(0.12);
-		this.rightLeg = this.game.add.sprite(50, 160, 'birdhero', 'leg', this);
-		this.body = this.game.add.sprite(0, 0, 'birdhero', 'body', this);
-		this.body.anchor.set(0.5);
-		this.leftLeg = this.game.add.sprite(0, 175, 'birdhero', 'leg', this);
-		this.wing = this.game.add.sprite(75, -20, 'birdhero', 'wing', this);
-		this.wing.anchor.set(1, 0);
-		this.game.add.sprite(110, -160, 'birdhero', 'eyes', this);
-		this.game.add.sprite(118, -145, 'birdhero', 'pupils', this);
-		this.mouthHappy = this.game.add.sprite(190, -70, 'birdhero', 'beak1', this);
-		this.mouthHappy.anchor.set(0.5);
-		this.mouthHappy.visible = false;
-		this.mouthSad = this.game.add.sprite(190, -70, 'birdhero', 'beak0', this);
-		this.mouthSad.anchor.set(0.5);
-		this.mouthSad.visible = false;
-		this.body.tint = tint;
-		this.wing.tint = tint;
-	} else if (guestName === 'lizard') {
-		this.scale.set(0.28);
-		this.x = 360;
-		this.body = game.add.sprite(0, 0, 'lizard', 'body', this);
-		this.head = game.add.group(this);
-		this.head.x = 60;
-		this.head.y = 60;
-		this.mouthNeutral = game.add.sprite(20, 23, 'lizard', 'jaw', this.head);
-		this.mouthNeutral.anchor.set(1, 0.4);
-		this.mouthNeutral.angle = -9;
-		this.mouthNeutral.visible = false;
-		this.mouthHappy = game.add.sprite(20, 23, 'lizard', 'jaw', this.head);
-		this.mouthHappy.anchor.set(1, 0.4);
-		this.mouthHappy.angle = -18;
-		this.mouthHappy.visible = false;
-		this.mouthSad = game.add.sprite(20, 23, 'lizard', 'jaw', this.head);
-		this.mouthSad.anchor.set(1, 0.4);
-		this.mouthSad.angle = -3;
-		this.mouthSad.visible = false;
-		this.forehead = game.add.sprite(125, 35, 'lizard', 'head', this.head);
-		this.forehead.anchor.set(1, 1);
-		this.mouthNeutral.tint = 0xaf9ee3;
-		this.mouthHappy.tint = 0xaf9ee3;
-		this.mouthSad.tint = 0xaf9ee3;
-		this.forehead.tint = 0xaf9ee3;
-		this.body.tint = 0xaf9ee3;
-	} else if (guestName === 'beetle') {
-		this.scale.set(0.31);
-		this.beetle = this.create(0, 0, 'balloon', 'beetle');
-		this.beetle.anchor.set(0.5);
-	}
-
-	this.setMood(mood);
-}
-
-
-Guest.prototype.setMood = function (mood) {
-	this.mood = mood;
-
-	if (this.mood === 'neutral') {
-		if (this.mouthNeutral) {
-			this.mouthNeutral.visible = true;
-			this.mouthSad.visible = false;
-			this.mouthHappy.visible = false;
-		} else if (this.mouthSad && this.mouthHappy) {
-			this.mouthSad.visible = false;
-			this.mouthHappy.visible = true;
-		}
-	}
-
-	else if (this.mood === 'happy') {
-		if (this.mouthSad && this.mouthHappy) {
-			this.mouthSad.visible = false;
-			this.mouthHappy.visible = true;
-
-			if (this.mouthNeutral) {
-				this.mouthNeutral.visible = false;
-			}
-		}
-
-		if (this.wings) {
-			this.flap = TweenMax.to(this.wings, 0.1, { frame: this.wings.frame+1, roundProps: 'frame', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: false });
-		}
-
-		if (this.beetle) {
-			this.hop = TweenMax.to(this.beetle, 0.2, { y:'-=15', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: false });
-		}
-
-		if (this.rightLeg && this.leftLeg) {
-			this.jump = new TimelineMax();
-			this.jump.addLabel('jump');
-			this.jump.to(this, 0.3, { y:'-=15', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: false }, 'jump');
-			this.jump.to(this.rightLeg, 0.3, { angle: -40, ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: false }, 'jump');
-			this.jump.to(this.leftLeg, 0.3, { angle: 40, ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: false }, 'jump');
-		}
-
-	} else if (this.mood === 'sad') {
-		if (this.mouthSad && this.mouthHappy) {
-			this.mouthHappy.visible = false;
-			this.mouthSad.visible = true;
-		}
-	}
 };

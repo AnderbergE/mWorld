@@ -7,7 +7,6 @@ Troll.prototype = Object.create(Agent.prototype);
 Troll.prototype.constructor = Troll;
 
 Troll.prototype.id = 'troll'; // Reference for LANG files and asset files
-Troll.prototype.agentName = LANG.TEXT.trollName;
 
 /**
  * The troll agent.
@@ -15,7 +14,7 @@ Troll.prototype.agentName = LANG.TEXT.trollName;
  * @param {Object} game - A reference to the Phaser game.
  * @return Itself
  */
-function Troll (game) {
+function Troll (game, x, y) {
 	this.coords = {
 		arm: {
 			left: { x: -215, y: -260 },
@@ -39,7 +38,8 @@ function Troll (game) {
 		}
 	};
 
-	Agent.call(this, game); // Call parent constructor.
+	Agent.call(this, game, x, y); // Call parent constructor.
+	this.name = LANG.TEXT.trollName;
 
 	this.leftArm.rotation = -1.1;
 	this.rightArm.rotation = 1.1;

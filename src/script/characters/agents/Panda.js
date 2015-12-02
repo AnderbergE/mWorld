@@ -7,7 +7,6 @@ Panda.prototype = Object.create(Agent.prototype);
 Panda.prototype.constructor = Panda;
 
 Panda.prototype.id = 'panda'; // Reference for LANG files and asset files
-Panda.prototype.agentName = LANG.TEXT.pandaName;
 
 /**
  * The panda agent.
@@ -15,7 +14,7 @@ Panda.prototype.agentName = LANG.TEXT.pandaName;
  * @param {Object} game - A reference to the Phaser game.
  * @return Itself
  */
-function Panda (game) {
+function Panda (game, x, y) {
 	this.coords = {
 		arm: {
 			left: { x: -150, y: -20 },
@@ -36,7 +35,8 @@ function Panda (game) {
 		}
 	};
 
-	Agent.call(this, game); // Call parent constructor.
+	Agent.call(this, game, x, y); // Call parent constructor.
+	this.name = LANG.TEXT.pandaName;
 
 	return this;
 }

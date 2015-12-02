@@ -10,10 +10,43 @@ Character.prototype.constructor = Character;
 /**
  * Superclass for characters.
  * @param {Object} game - A reference to the Phaser game.
+ * @param {Number} x - The X position of the character (default 0).
+ * @param {Number} y - The Y position of the character (default 0).
+ * @param {Boolean} turn - If the character should turn when moving in the opposite of current direction.
  */
-function Character (game) {
+function Character (game, x, y, turn) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
+	this.x = x || 0;
+	this.y = y || 0;
+	this.turn = turn;
 }
+
+/** Set the characters expression, aka set this.mouth to frameName if possible. */
+Character.prototype.setExpression = function (frameName) {
+	if (this.mouth && this.game.cache.getFrameByName(this.mouth.key, frameName)) {
+		this.mouth.frameName = frameName;
+	}
+};
+
+/** Set the agent to neutral state. */
+Character.prototype.setNeutral = function () {
+	this.setExpression('mouth0');
+};
+
+ /** Set the agent to surprised state. */
+Character.prototype.setSurprised = function () {
+	this.setExpression('mouth1');
+};
+
+ /** Set the agent to happy state. */
+Character.prototype.setHappy = function () {
+	this.setExpression('mouth2');
+};
+
+ /** Set the agent to sad state. */
+Character.prototype.setSad = function () {
+	this.setExpression('mouth3');
+};
 
 /**
  * When you want a sound to be said by a character.

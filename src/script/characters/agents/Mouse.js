@@ -7,7 +7,6 @@ Mouse.prototype = Object.create(Agent.prototype);
 Mouse.prototype.constructor = Mouse;
 
 Mouse.prototype.id = 'mouse'; // Reference for LANG files and asset files
-Mouse.prototype.agentName = LANG.TEXT.mouseName;
 
 /**
  * The mouse agent.
@@ -15,7 +14,7 @@ Mouse.prototype.agentName = LANG.TEXT.mouseName;
  * @param {Object} game - A reference to the Phaser game.
  * @return Itself
  */
-function Mouse (game) {
+function Mouse (game, x, y) {
 	this.coords = {
 		arm: {
 			left: { x: -110, y: -40 },
@@ -36,7 +35,8 @@ function Mouse (game) {
 		}
 	};
 
-	Agent.call(this, game); // Call parent constructor.
+	Agent.call(this, game, x, y); // Call parent constructor.
+	this.name = LANG.TEXT.mouseName;
 
 	var leftEyeSocket = this.create(this.coords.eye.left.x + 1, this.coords.eye.left.y - 8, this.id, 'socket');
 	leftEyeSocket.anchor.set(0.5);

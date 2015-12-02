@@ -73,7 +73,7 @@ AgentSetupState.prototype.create = function () {
 	}
 
 	function fadeInterface (value) {
-		confirm.text = LANG.TEXT.confirmFriend + a.agentName + '?';
+		confirm.text = LANG.TEXT.confirmFriend + a.name + '?';
 		util.fade(title, !value, value ? 0.2 : 0.5);
 		util.fade(confirm, value, !value ? 0.2 : 0.5);
 		util.fade(noToAgent, value);
@@ -124,7 +124,7 @@ AgentSetupState.prototype.create = function () {
 	var a;
 	for (var key in GLOBAL.AGENT) {
 		a = new GLOBAL.AGENT[key](this.game);
-		this.add.text(0, -(a.body.height/2) - 50, a.agentName, fontStyle, a).anchor.set(0.5);
+		this.add.text(0, -(a.body.height/2) - 50, a.name, fontStyle, a).anchor.set(0.5);
 		a.x = this.world.centerX + spacing * key;
 		a.y = this.world.centerY + 70;
 		a.scale.x = scale.x;

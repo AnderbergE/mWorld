@@ -1,15 +1,16 @@
 var Character = require('./Character.js');
 var GLOBAL = require('../global.js');
+var LANG = require('../language.js');
 
-module.exports = LizardJungleLizard;
+module.exports = Lizard;
 
 /* Camilla Chameleon, the lizard that you are helping. */
-LizardJungleLizard.prototype = Object.create(Character.prototype);
-LizardJungleLizard.prototype.constructor = LizardJungleLizard;
-function LizardJungleLizard (game, x, y) {
-	Character.call(this, game); // Parent constructor.
-	this.x = x || 0;
-	this.y = y || 0;
+Lizard.prototype = Object.create(Character.prototype);
+Lizard.prototype.constructor = Lizard;
+
+function Lizard (game, x, y) {
+	Character.call(this, game, x, y, true); // Parent constructor.
+	this.name = LANG.TEXT.lizardName;
 
 	this.body = game.add.sprite(48, 0, 'lizard', 'body', this);
 	this.head = game.add.group(this);
@@ -42,7 +43,8 @@ function LizardJungleLizard (game, x, y) {
 	}, this);
 	this.snore.alpha = 0; // Maybe this should be visible = false, but whatever.
 }
-Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
+
+Object.defineProperty(Lizard.prototype, 'tint', {
 	get: function() { return this.body.tint; },
 	set: function(value) {
 		this.body.tint = value;
@@ -51,7 +53,21 @@ Object.defineProperty(LizardJungleLizard.prototype, 'tint', {
 	}
 });
 
-LizardJungleLizard.prototype.sleeping = function (duration) {
+Lizard.prototype.setNeutral = function () {
+	this.jaw.angle = -9;
+};
+
+Lizard.prototype.setHappy = function () {
+	this.jaw.angle = -18;
+};
+
+Lizard.prototype.setSad = function () {
+	this.jaw.angle = -3;
+};
+
+Lizard.prototype.setSurprised = Lizard.prototype.setNeutral;
+
+Lizard.prototype.sleeping = function (duration) {
 	duration = duration || 3;
 
 	var t = new TimelineMax({ repeat: TweenMax.prototype.calcYoyo(duration, 1.5) });
@@ -60,7 +76,7 @@ LizardJungleLizard.prototype.sleeping = function (duration) {
 	return t;
 };
 
-LizardJungleLizard.prototype.followPointer = function (on) {
+Lizard.prototype.followPointer = function (on) {
 	if (on && !this.stuck) {
 		var angleOrigin = { x: this.x + this.head.x, y: this.y + this.head.y };
 		var angleTo = { x: 100 };
@@ -74,7 +90,7 @@ LizardJungleLizard.prototype.followPointer = function (on) {
 	}
 };
 
-LizardJungleLizard.prototype.startShoot = function (hit) {
+Lizard.prototype.startShoot = function (hit) {
 	var t = new TimelineMax();
 	if (this.stuck) {
 		t.add(this.shootReturn());
@@ -85,7 +101,7 @@ LizardJungleLizard.prototype.startShoot = function (hit) {
 	return t;
 };
 
-LizardJungleLizard.prototype.shoot = function (hit, stuck) {
+Lizard.prototype.shoot = function (hit, stuck) {
 	var t = this.startShoot(hit);
 	t.to(this.tounge, 0.75, {
 		width: this.game.physics.arcade.distanceBetween(hit, this.tounge.world),
@@ -99,7 +115,7 @@ LizardJungleLizard.prototype.shoot = function (hit, stuck) {
 	return t;
 };
 
-LizardJungleLizard.prototype.shootReturn = function () {
+Lizard.prototype.shootReturn = function () {
 	var t = new TimelineMax();
 	t.to(this.tounge, 0.5, { width: 1, height: 5 });
 	t.to(this.forehead, 0.2, { angle: 0 });
@@ -108,7 +124,7 @@ LizardJungleLizard.prototype.shootReturn = function () {
 	return t;
 };
 
-LizardJungleLizard.prototype.shootMiss = function (aim, hit) {
+Lizard.prototype.shootMiss = function (aim, hit) {
 	var t = this.startShoot(aim);
 	t.to(this.tounge, 1, {
 		width: this.game.physics.arcade.distanceBetween(aim, this.tounge.world)*1.4,
@@ -122,7 +138,7 @@ LizardJungleLizard.prototype.shootMiss = function (aim, hit) {
 	return t;
 };
 
-LizardJungleLizard.prototype.shootObject = function (obj) {
+Lizard.prototype.shootObject = function (obj) {
 	var pos = obj.world || obj;
 	var t = this.shoot(pos);
 	t.add(new TweenMax(obj, 0.5, {

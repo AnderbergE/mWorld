@@ -7,7 +7,6 @@ Hedgehog.prototype = Object.create(Agent.prototype);
 Hedgehog.prototype.constructor = Hedgehog;
 
 Hedgehog.prototype.id = 'hedgehog'; // Reference for LANG files and asset files
-Hedgehog.prototype.agentName = LANG.TEXT.hedgehogName;
 
 /**
  * The hedgehog agent.
@@ -15,7 +14,7 @@ Hedgehog.prototype.agentName = LANG.TEXT.hedgehogName;
  * @param {Object} game - A reference to the Phaser game.
  * @return Itself
  */
-function Hedgehog (game) {
+function Hedgehog (game, x, y) {
 	this.coords = {
 		arm: {
 			left: { x: -100, y: -80 },
@@ -36,7 +35,8 @@ function Hedgehog (game) {
 		}
 	};
 
-	Agent.call(this, game); // Call parent constructor.
+	Agent.call(this, game, x, y); // Call parent constructor.
+	this.name = LANG.TEXT.hedgehogName;
 
 	var leftEyeSocket = this.create(this.coords.eye.left.x + 1, this.coords.eye.left.y - 8, this.id, 'socket');
 	leftEyeSocket.anchor.set(0.5);

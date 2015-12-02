@@ -16,7 +16,7 @@ Agent.prototype.constructor = Agent;
  *
  * In a subclass, set up the following:
  * <SubAgent>.prototype.id = string, for reference in LANG files.
- * <SubAgent>.prototype.agentName = string, name of the agent.
+ * <SubAgent>.name = string, name of the agent.
  * this.coords
  *
  * The subagent's sprite atlas and audio should be loaded in the boot state.
@@ -27,8 +27,8 @@ Agent.prototype.constructor = Agent;
  * @param {Object} game - A reference to the Phaser game.
  * @return {Object} Itself
  */
-function Agent (game) {
-	Character.call(this, game); // Parent constructor.
+function Agent (game, x, y) {
+	Character.call(this, game, x, y); // Parent constructor.
 
 	this.coords = this.coords || {};
 	this.coords.anim = {
@@ -192,28 +192,6 @@ Agent.prototype.guessNumber = function (correct, min, max) {
 	this.lastGuess = this.guessing(correct, min, max);
 	EventSystem.publish(GLOBAL.EVENT.agentGuess, [this.lastGuess, correct]);
 	return this.lastGuess;
-};
-
-
-/**
- * Set the agent to neutral state.
- */
-Agent.prototype.setNeutral = function () {
-	this.mouth.frameName = 'mouth0';
-};
-
-/**
- * Set the agent to happy state.
- */
-Agent.prototype.setHappy = function () {
-	this.mouth.frameName = 'mouth2';
-};
-
-/**
- * Set the agent to sad state.
- */
-Agent.prototype.setSad = function () {
-	this.mouth.frameName = 'mouth3';
 };
 
 /**

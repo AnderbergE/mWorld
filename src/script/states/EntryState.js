@@ -80,7 +80,7 @@ EntryState.prototype.create = function () {
 		// Player has played before, we go to garden directly and show the agent change option.
 		start.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.garden); }, this);
 
-		changeAgent.text = LANG.TEXT.changeAgent + this.game.player.agent.prototype.agentName;
+		changeAgent.text = LANG.TEXT.changeAgent;
 		changeAgent.events.onInputDown.add(function () { this.state.start(GLOBAL.STATE.agentSetup); }, this);
 
 	} else {
