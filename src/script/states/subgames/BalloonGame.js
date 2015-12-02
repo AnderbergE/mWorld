@@ -2,6 +2,7 @@ var NumberGame = require('./NumberGame.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var WoodLouse = require('../../characters/WoodLouse.js');
 var Cover = require('../../objects/Cover.js');
 var NumberButton = require('../../objects/buttons/NumberButton.js');
 var SpriteButton = require('../../objects/buttons/SpriteButton.js');
@@ -21,9 +22,9 @@ function BalloonGame () {
 }
 
 BalloonGame.prototype.pos = {
-	beetle: {
-		start: { x: 10, y: 260 },
-		stop: { x: -120, y: -40 },
+	louse: {
+		start: { x: 60, y: 330 },
+		stop: { x: -70, y: 30 },
 		scale: 0.65
 	},
 	agent: {
@@ -153,17 +154,15 @@ BalloonGame.prototype.create = function () {
 	this.sack.scale.set(0.7);
 	this.sack.anchor.set(0.5);
 
-	// The group where the bucket, beetle and right side balloons go into.
+	// The group where the bucket, louse and right side balloons go into.
 	// Put into the same group to make it easier to animate together.
 	this.actionGroup = this.add.group(this.gameGroup);
 	this.actionGroup.x = this.pos.bucket.x;
 	this.actionGroup.y = this.pos.bucket.y;
 
-	this.beetle = this.actionGroup.create(this.pos.beetle.start.x, this.pos.beetle.start.y, 'balloon', 'beetle');
-	this.pike = this.add.sprite(this.beetle.width - 10, this.beetle.height * 0.7, 'balloon', 'hook');
-	this.pike.width = 0;
-	this.beetle.addChild(this.pike);
-	this.beetle.scale.set(this.pos.beetle.scale);
+	this.louse = new WoodLouse(this.game, this.pos.louse.start.x, this.pos.louse.start.y, 'balloon', 'louse');
+	this.louse.scale.set(this.pos.louse.scale);
+	this.actionGroup.add(this.louse);
 
 	this.actionGroup.create(0, 15, 'balloon', 'bucket');
 	this.bucketBalloons = new BalloonGameStack(this.game, 35, 20, 0);
@@ -379,29 +378,29 @@ BalloonGame.prototype.showYesnos = function () {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BalloonGame.prototype.instructionCount = function () {
 	var t = new TimelineMax();
-	t.addSound(this.speech, this.beetle, 'canYouDrag');
+	t.addSound(this.speech, this.louse, 'canYouDrag');
 	t.add(this.instructionDrag(), 0);
 
 	var label;
 	for (var i = 1; i <= 4; i++){
 		label = 'floor' + i;
 		t.addLabel(label, '+=0.7');
-		t.addSound(this.speech, this.beetle, label);
+		t.addSound(this.speech, this.louse, label);
 		t.add(this.pointAtCave(i), label);
 	}
 
-	t.addSound(this.speech, this.beetle, 'canYouDragRight', '+=0.5');
+	t.addSound(this.speech, this.louse, 'canYouDragRight', '+=0.5');
 	t.addLabel('pushAnchor', '+=0.5');
 	t.add(this.liftoffButton.highlight(1), 'pushAnchor');
-	t.addSound(this.speech, this.beetle, 'pushAnchor', 'pushAnchor');
+	t.addSound(this.speech, this.louse, 'pushAnchor', 'pushAnchor');
 	return t;
 };
 
 BalloonGame.prototype.instructionSteps = function () {
 	var t = new TimelineMax();
-	t.addSound(this.speech, this.beetle, 'canYouDragRight');
+	t.addSound(this.speech, this.louse, 'canYouDragRight');
 	t.add(this.instructionDrag(), 0);
-	t.addSound(this.speech, this.beetle, 'pushAnchor');
+	t.addSound(this.speech, this.louse, 'pushAnchor');
 	return t;
 };
 
@@ -411,25 +410,25 @@ BalloonGame.prototype.instructionAdd = function () {
 
 BalloonGame.prototype.instructionSubtract = function () {
 	var t = this.instructionButtons('guessBalloons', 'buttonSubtract');
-	t.addSound(this.speech, this.beetle, 'sameAsMap', '+=0.6');
-	t.addSound(this.speech, this.beetle, 'whatButton', '+=0.8');
+	t.addSound(this.speech, this.louse, 'sameAsMap', '+=0.6');
+	t.addSound(this.speech, this.louse, 'whatButton', '+=0.8');
 	return t;
 };
 
 BalloonGame.prototype.instructionAddSubtract = function () {
 	var t = this.instructionButtons('guessBalloons', 'buttonAddSub');
-	t.addSound(this.speech, this.beetle, 'sameAsMap', '+=0.6');
-	t.addSound(this.speech, this.beetle, 'whatButton', '+=0.8');
+	t.addSound(this.speech, this.louse, 'sameAsMap', '+=0.6');
+	t.addSound(this.speech, this.louse, 'whatButton', '+=0.8');
 	return t;
 };
 
 BalloonGame.prototype.instructionButtons = function (moveSound, pushSound) {
 	var t = new TimelineMax();
 	t.addCallback(this.updateButtons, null, null, this);
-	t.addSound(this.speech, this.beetle, moveSound);
+	t.addSound(this.speech, this.louse, moveSound);
 	t.addLabel('useButtons', '+=0.3');
 	t.addLabel('flashButtons', '+=0.8');
-	t.addSound(this.speech, this.beetle, pushSound, 'useButtons');
+	t.addSound(this.speech, this.louse, pushSound, 'useButtons');
 	t.add(util.fade(this.buttons, true), 'useButtons');
 	t.addCallback(this.buttons.highlight, 'flashButtons', [1], this.buttons);
 	return t;
@@ -473,8 +472,8 @@ BalloonGame.prototype.pointAtCave = function (number) {
 BalloonGame.prototype.newTreasure = function (silent) {
 	var t = new TimelineMax();
 	if (!silent) {
-		t.addSound(this.speech, this.beetle, 'newTreasure');
-		t.addSound(this.speech, this.beetle, 'yippie1');
+		t.addSound(this.speech, this.louse, 'newTreasure');
+		t.addSound(this.speech, this.louse, 'yippie1');
 	}
 
 
@@ -536,7 +535,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 	var cave = this.caves[sum - 1];
 
 	this.disable(true);
-	this.agent.eyesFollowObject(this.beetle);
+	this.agent.eyesFollowObject(this.louse);
 
 	var t = new TimelineMax();
 	if (GLOBAL.debug) { t.skippable(); }
@@ -545,12 +544,12 @@ BalloonGame.prototype.runNumber = function (amount) {
 		t.add(this.moveBalloons(sum - this.bucketBalloons.amount));
 	}
 
-	if (this.beetle.x !== 0 && this.beetle.y !== 0) {
-		t.add(new TweenMax(this.beetle, 2, { x: 0, y: 0, ease: Power1.easeIn }));
+	if (this._totalTries <= 1) {
+		t.add(new TweenMax(this.louse, 2, { x: this.louse.width / 2, y: this.louse.height / 2, ease: Power1.easeIn }));
 	}
 
 	t.addCallback(function () {
-		TweenMax.to(this.pike, 2, { width: (cave.x + cave.width / 2 - this.pike.world.x) / this.pos.beetle.scale });
+		TweenMax.to(this.louse.pike, 2, { width: (cave.x + cave.width / 2 - this.louse.pike.world.x) / this.pos.louse.scale });
 	}, null, null, this);
 
 	if (this.actionGroup.y !== cave.y + this.pos.cave.bucketOffset) {
@@ -571,8 +570,8 @@ BalloonGame.prototype.runNumber = function (amount) {
 	/* Incorrect :( */
 	} else {
 		t.addCallback(this.agent.setSad, null, null, this.agent);
-		t.addSound(this.speech, this.beetle, 'wrong' + this.rnd.integerInRange(1, 2));
-		t.addSound(this.speech, this.beetle, result > 0 ? 'lower' : 'higher', '+=0.2');
+		t.addSound(this.speech, this.louse, 'wrong' + this.rnd.integerInRange(1, 2));
+		t.addSound(this.speech, this.louse, result > 0 ? 'lower' : 'higher', '+=0.2');
 		this.doReturnFunction(t, sum, result);
 	}
 
@@ -619,7 +618,7 @@ BalloonGame.prototype.playRandomPrize = function () {
 	t.add(util.fade(this.treasure, true), '-=1');
 	t.add(new TweenMax(this.treasure, 1, { y: '+=75', ease: Power1.easeIn }));
 	t.addCallback(function () {
-		TweenMax.to(this.pike, 1, { width: 0 });
+		TweenMax.to(this.louse.pike, 1, { width: 0 });
 		TweenMax.to(this.treasure, 2, { x: this.pos.sack.x, ease: Power0.easeInOut });
 	}, '+=0.5', null, this);
 	t.add(new TweenMax(this.treasure, 2, { y: this.pos.sack.y + 10, ease: Power4.easeIn }), '+=0.5');
@@ -631,9 +630,9 @@ BalloonGame.prototype.playRandomPrize = function () {
 
 /** Pop the balloons and go back down. */
 BalloonGame.prototype.popAndReturn = function (t) {
-	t.to(this.beetle, 0.5, { y: '-=50', ease: Power4.easeIn }, '-=0.5');
+	t.to(this.louse, 0.5, { y: '-=50', ease: Power4.easeIn }, '-=0.5');
 	t.add(this.popBalloons());
-	t.to(this.beetle, 0.5, { y: '+=50', ease: Power4.easeIn });
+	t.to(this.louse, 0.5, { y: '+=50', ease: Power4.easeIn });
 	t.addCallback(this.bucketBalloons.updateBalloons, null, null, this.bucketBalloons);
 	t.to(this.actionGroup, 2, { y: this.pos.bucket.y, ease: Bounce.easeOut });
 };
@@ -673,14 +672,14 @@ BalloonGame.prototype.returnToPreviousIfLower = function (t, number, diff) {
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 BalloonGame.prototype.modeIntro = function () {
 	var t = new TimelineMax().skippable();
-	t.add(new TweenMax(this.beetle, 3, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
-	t.addSound(this.speech, this.beetle, 'loveTreasures');
-	t.addSound(this.speech, this.beetle, 'yippie1');
-	t.addSound(this.speech, this.beetle, 'helpToCave', '+=0.5');
+	t.add(new TweenMax(this.louse, 3, { x: this.pos.louse.stop.x, y: this.pos.louse.stop.y, ease: Power1.easeIn }));
+	t.addSound(this.speech, this.louse, 'loveTreasures');
+	t.addSound(this.speech, this.louse, 'yippie1');
+	t.addSound(this.speech, this.louse, 'helpToCave', '+=0.5');
 	if (this.map) {
 		this.map.target.number = this.currentNumber;
 		t.add(util.fade(this.map, true));
-		t.addSound(this.speech, this.beetle, 'lookAtMap', '-=0.3');
+		t.addSound(this.speech, this.louse, 'lookAtMap', '-=0.3');
 	}
 	t.addCallback(this.nextRound, null, null, this);
 };
@@ -745,8 +744,8 @@ BalloonGame.prototype.modeOutro = function () {
 	if (this.bucketBalloons.amount) {
 		this.popAndReturn(t);
 	}
-	t.add(new TweenMax(this.beetle, 1, { x: this.pos.beetle.stop.x, y: this.pos.beetle.stop.y, ease: Power1.easeIn }));
-	t.addSound(this.speech, this.beetle, 'fullSack');
+	t.add(new TweenMax(this.louse, 1, { x: this.pos.louse.stop.x, y: this.pos.louse.stop.y, ease: Power1.easeIn }));
+	t.addSound(this.speech, this.louse, 'fullSack');
 	t.addLabel('water');
 	t.addLabel('water2', '+=1.5');
 	t.addLabel('water3', '+=3');
@@ -755,7 +754,7 @@ BalloonGame.prototype.modeOutro = function () {
 	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water');
 	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water2');
 	t.add(this.addWater(this.sack.x, this.sack.y - this.sack.height/2), 'water3');
-	t.addSound(this.speech, this.beetle, 'thankYou', 'water3');
+	t.addSound(this.speech, this.louse, 'thankYou', 'water3');
 	t.addCallback(this.nextRound, null, null, this);
 };
 
