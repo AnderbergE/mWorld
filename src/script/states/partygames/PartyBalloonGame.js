@@ -1,7 +1,7 @@
 var PartyGame = require('./PartyGame.js');
-var Hedgehog = require('../../agent/Hedgehog.js');
-var Panda = require('../../agent/Panda.js');
 var GLOBAL = require('../../global.js');
+var Hedgehog = require('../../characters/agents/Hedgehog.js');
+var Panda = require('../../characters/agents/Panda.js');
 var DiceRepresentation = require('../../objects/representations/DiceRepresentation.js');
 
 module.exports = PartyBalloonGame;

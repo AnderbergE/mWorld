@@ -1,5 +1,5 @@
-var Character = require('../../agent/Character.js');
-var GLOBAL = require('../../global.js');
+var Character = require('./Character.js');
+var GLOBAL = require('../global.js');
 
 module.exports = LizardJungleLizard;
 

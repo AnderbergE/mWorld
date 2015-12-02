@@ -2,9 +2,9 @@ var GLOBAL = require('../global.js');
 var LANG = require('../language.js');
 var EventSystem = require('../pubsub.js');
 var Modal = require('../objects/Modal.js');
-var Hedgehog = require('../agent/Hedgehog.js');
-var Mouse = require('../agent/Mouse.js');
-var Panda = require('../agent/Panda.js');
+var Hedgehog = require('../characters/agents/Hedgehog.js');
+var Mouse = require('../characters/agents/Mouse.js');
+var Panda = require('../characters/agents/Panda.js');
 
 module.exports = BootState;
 

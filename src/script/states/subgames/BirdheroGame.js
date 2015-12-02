@@ -1,9 +1,9 @@
-var BirdheroBird = require('./BirdheroBird.js');
 var NumberGame = require('./NumberGame.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var EventSystem = require('../../pubsub.js');
 var util = require('../../utils.js');
+var Bird = require('../../characters/Bird.js');
 var Cover = require('../../objects/Cover.js');
 
 module.exports = BirdheroGame;
@@ -116,7 +116,7 @@ BirdheroGame.prototype.create = function () {
 
 	// Create bird, it is added to the elevator group to move with the elevator when it moves.
 	// Since the bird is in the elevator group, we need to offset for that when moving it.
-	this.bird = new BirdheroBird(this.game);
+	this.bird = new Bird(this.game);
 	this.bird.visible = false;
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bird.addThought(450, -250, this.representation[0], true);
@@ -446,7 +446,7 @@ BirdheroGame.prototype.modeIntro = function () {
 		chick.visible = true;
 	};
 	for (var i = 0; i < this.tree.branch.length; i++) {
-		var chick = new BirdheroBird(this.game, this.tint[i]);
+		var chick = new Bird(this.game, this.tint[i]);
 		chick.visible = false;
 		for (var j in chick.children) {
 			// Translate sprite positions for rotation effect

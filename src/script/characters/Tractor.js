@@ -1,4 +1,4 @@
-var Character = require('../../agent/Character.js');
+var Character = require('./Character.js');
 
 module.exports = VehicleTractor;
 

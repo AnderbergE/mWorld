@@ -1,8 +1,8 @@
-var BeeFlightBee = require('./BeeFlightBee.js');
 var NumberGame = require('./NumberGame.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var Bee = require('../../characters/Bee.js');
 
 module.exports = BeeFlightGame;
 
@@ -95,7 +95,7 @@ BeeFlightGame.prototype.create = function () {
 	}
 
 	// Setup bee
-	this.bee = new BeeFlightBee(this.game, this.pos.home.x, this.pos.home.y);
+	this.bee = new Bee(this.game, this.pos.home.x, this.pos.home.y);
 	this.bee.scale.set(this.pos.bee.homeScale);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.bee.addThought(170, -75, this.representation[0], true);
@@ -306,7 +306,7 @@ BeeFlightGame.prototype.runNumber = function (number, simulate) {
 	}
 
 	t.add(this.bee.moveTo.flower(sum));
-	
+
 	/* Correct :) */
 	if (!result) {
 		t.addCallback(function () {

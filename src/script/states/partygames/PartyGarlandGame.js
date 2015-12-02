@@ -1,6 +1,6 @@
 var PartyGame = require('./PartyGame.js');
-var Panda = require('../../agent/Panda.js');
 var GLOBAL = require('../../global.js');
+var Panda = require('../../characters/agents/Panda.js');
 
 module.exports = PartyGarlandGame;
 

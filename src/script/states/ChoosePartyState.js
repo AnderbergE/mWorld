@@ -1,11 +1,10 @@
 var SuperState = require('./SuperState.js');
 var GLOBAL = require('../global.js');
 var LANG = require('../language.js');
-var Panda = require('../agent/Panda.js');
 var Cover = require('../objects/Cover.js');
 var Menu = require('../objects/Menu.js');
-var TextButton = require('../objects/buttons/TextButton.js');
 var Slider = require('../objects/Slider.js');
+var TextButton = require('../objects/buttons/TextButton.js');
 
 module.exports = ChoosePartyState;
 
@@ -15,15 +14,6 @@ ChoosePartyState.prototype.constructor = ChoosePartyState;
 /* The menu for choosing agent, */
 function ChoosePartyState () {}
 
-/* Phaser state function */
-ChoosePartyState.prototype.preload = function() {
-	if (!this.game.player.agent) {
-		console.log('Setting agent to: ' + Panda.prototype.id);
-		this.game.player.agent = Panda;
-		this.load.audio('pandaSpeech', LANG.SPEECH.AGENT.speech);
-		this.load.atlasJSONHash('panda', 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
-	}
-};
 /* Phaser state function */
 ChoosePartyState.prototype.create = function () {
 	var _this = this;

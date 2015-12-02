@@ -1,9 +1,9 @@
-var VehicleTractor = require('./VehicleTractor.js');
-var VehicleCrane = require('./VehicleCrane.js');
 var NumberGame = require('./NumberGame.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var Crane = require('../../characters/Crane.js');
+var Tractor = require('../../characters/Tractor.js');
 
 module.exports = VehicleGame;
 
@@ -89,7 +89,7 @@ VehicleGame.prototype.create = function () {
 	this.agent.thought.toScale = 3;
 	this.gameGroup.bringToTop(this.agent);
 
-	this.tractor = new VehicleTractor(this.game, this.pos.tractor.pos.x, this.pos.tractor.pos.y);
+	this.tractor = new Tractor(this.game, this.pos.tractor.pos.x, this.pos.tractor.pos.y);
 	this.gameGroup.add(this.tractor);
 
 	this.trailer = this.add.sprite(this.pos.trailer.pos.x, this.pos.trailer.pos.y, 'vehicle', 'trailer', this.gameGroup);
@@ -103,7 +103,7 @@ VehicleGame.prototype.create = function () {
 	this.add.sprite(cargoHeap.x - cargoHeap.width / 2, cargoHeap.y - cargoHeap.height, 'vehicle', 'cargobox', this.gameGroup);
 
 
-	this.crane = new VehicleCrane(this.game, this.pos.crane.start.x, this.pos.crane.start.y, this.amount);
+	this.crane = new Crane(this.game, this.pos.crane.start.x, this.pos.crane.start.y, this.amount);
 	this.gameGroup.add(this.crane);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.crane.addThought(40, -379, this.representation[0], false);

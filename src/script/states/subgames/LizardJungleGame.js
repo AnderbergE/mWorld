@@ -1,8 +1,8 @@
-var LizardJungleLizard = require('./LizardJungleLizard.js');
 var NumberGame = require('./NumberGame.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var Lizard = require('../../characters/Lizard.js');
 
 module.exports = LizardJungleGame;
 
@@ -97,7 +97,7 @@ LizardJungleGame.prototype.create = function () {
 	this.target.visible = false;
 
 	// Setup lizard
-	this.lizard = new LizardJungleLizard(this.game, 575, 500);
+	this.lizard = new Lizard(this.game, 575, 500);
 	if (this.method === GLOBAL.METHOD.additionSubtraction) {
 		this.lizard.addThought(-100, -75, this.representation[0]);
 		this.lizard.thought.guess.setDirection(true);
@@ -206,7 +206,7 @@ LizardJungleGame.prototype.newFood = function (skipStart) {
 	for (var i = 1; i < this.currentNumber; i++) {
 		t.add(new TweenMax(this.target, 0.8, { y: this.getTargetPos(1 + i).y }));
 	}
-	
+
 	if (!skipStart) {
 		this.doStartFunction(t);
 	}

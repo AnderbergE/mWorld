@@ -1,5 +1,5 @@
-var Agent = require('./Agent.js');
-var LANG = require('../language.js');
+var Agent = require('../Agent.js');
+var LANG = require('../../language.js');
 
 module.exports = Hedgehog;
 
@@ -49,7 +49,7 @@ function Hedgehog (game) {
 
 	var nose = this.create(this.coords.mouth.x - 2, this.coords.mouth.y - 15, this.id, 'nose');
 	nose.anchor.set(0.5);
-	
+
 	var back = this.create(0, 0, this.id, 'back');
 	back.anchor.set(0.5);
 	this.sendToBack(back);

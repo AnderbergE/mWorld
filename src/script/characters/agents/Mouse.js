@@ -1,5 +1,5 @@
-var Agent = require('./Agent.js');
-var LANG = require('../language.js');
+var Agent = require('../Agent.js');
+var LANG = require('../../language.js');
 
 module.exports = Mouse;
 

@@ -1,7 +1,7 @@
 var PartyGame = require('./PartyGame.js');
-var Mouse = require('../../agent/Mouse.js');
 var GLOBAL = require('../../global.js');
 var util = require('../../utils.js');
+var Mouse = require('../../characters/agents/Mouse.js');
 
 // TODO: A function to make sure things aren't overlapping would help.
 // TODO: Collect all static positions at top.
