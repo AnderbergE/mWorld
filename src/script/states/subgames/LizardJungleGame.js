@@ -42,7 +42,8 @@ LizardJungleGame.prototype.preload = function () {
 	this.load.audio('lizardSpeech', LANG.SPEECH.lizard.speech); // speech sheet
 	this.load.audio('lizardSnore', ['audio/subgames/lizard/snore.m4a', 'audio/subgames/lizard/snore.ogg', 'audio/subgames/lizard/snore.mp3']);
 	this.load.audio('lizardMusic', ['audio/subgames/lizard/music.m4a', 'audio/subgames/lizard/music.ogg', 'audio/subgames/lizard/music.mp3']);
-	this.load.atlasJSONHash('lizard', 'img/subgames/lizardjungle/atlas.png', 'img/subgames/lizardjungle/atlas.json');
+	this.load.atlasJSONHash('jungle', 'img/subgames/lizardjungle/atlas.png', 'img/subgames/lizardjungle/atlas.json');
+	Lizard.load.call(this);
 };
 
 /* Phaser state function */
@@ -69,7 +70,7 @@ LizardJungleGame.prototype.create = function () {
 	this.speech = util.createAudioSheet('lizardSpeech', LANG.SPEECH.lizard.markers);
 
 	// Add main game
-	this.add.sprite(0, 0, 'lizard', 'bg', this.gameGroup);
+	this.add.sprite(0, 0, 'jungle', 'bg', this.gameGroup);
 	var cloud1 = this.gameGroup.create(-1000, 33, 'objects', 'cloud2');
 	var cloud2 = this.gameGroup.create(-1000, 222, 'objects', 'cloud1');
 	TweenMax.fromTo(cloud1, 300, { x: -cloud1.width }, { x: this.world.width, repeat: -1 });
@@ -80,19 +81,19 @@ LizardJungleGame.prototype.create = function () {
 	this.tree = this.add.group(this.gameGroup);
 	this.tree.x = this.pos.tree.x;
 	this.tree.y = this.pos.tree.y;
-	this.add.sprite(0, 0, 'lizard', 'bole', this.tree).anchor.set(0.5);
+	this.add.sprite(0, 0, 'jungle', 'bole', this.tree).anchor.set(0.5);
 	for (var i = this.amount - 2; i >= 0; i--) {
-		this.add.sprite(0, this.tree.height + this.pos.tree.offset, 'lizard', 'bole', this.tree).anchor.set(0.5);
+		this.add.sprite(0, this.tree.height + this.pos.tree.offset, 'jungle', 'bole', this.tree).anchor.set(0.5);
 	}
 	this.tree.scale.set(this.pos.tree.height/this.tree.height);
 	var crown = this.add.sprite(
 		this.tree.x,
 		this.tree.y - (this.tree.children[0].height*this.tree.scale.y)/2,
-		'lizard', 'crown', this.gameGroup);
+		'jungle', 'crown', this.gameGroup);
 	crown.anchor.set(0.5, 0.6);
 
 	// The target is set up in the newFood function
-	this.target = this.add.sprite(0, 0, 'lizard', 'ant', this.gameGroup);
+	this.target = this.add.sprite(0, 0, 'jungle', 'ant', this.gameGroup);
 	this.target.anchor.set(0.5);
 	this.target.visible = false;
 

@@ -5,8 +5,19 @@ module.exports = Troll;
 
 Troll.prototype = Object.create(Agent.prototype);
 Troll.prototype.constructor = Troll;
-
 Troll.prototype.id = 'troll'; // Reference for LANG files and asset files
+
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ * @param {Boolean} noAudio - Set to true to not load audio.
+ */
+Troll.load = function(noAudio) {
+	this.load.atlasJSONHash(Troll.prototype.id, 'img/characters/troll/atlas.png', 'img/characters/troll/atlas.json');
+	if (!noAudio) {
+		this.game.load.audio(Troll.prototype.id + 'Speech', LANG.SPEECH.troll.speech);
+	}
+};
 
 /**
  * The troll agent.
@@ -39,7 +50,6 @@ function Troll (game, x, y) {
 	};
 
 	Agent.call(this, game, x, y); // Call parent constructor.
-	this.name = LANG.TEXT.trollName;
 
 	this.leftArm.rotation = -1.1;
 	this.rightArm.rotation = 1.1;

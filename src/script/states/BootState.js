@@ -123,15 +123,7 @@ BootState.prototype.preload = function () {
 
 	/* Agent related assets */
 	if (this.game.player.agent) {
-		var name = this.game.player.agent.prototype.id;
-		this.load.audio(name + 'Speech', LANG.SPEECH.AGENT.speech);
-		if (name === Panda.prototype.id) {
-			this.load.atlasJSONHash(name, 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
-		} else if (name === Hedgehog.prototype.id) {
-			this.load.atlasJSONHash(name, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');
-		} else if (name === Mouse.prototype.id) {
-			this.load.atlasJSONHash(name, 'img/agent/mouse/atlas.png', 'img/agent/mouse/atlas.json');
-		}
+		this.game.player.agent.load.call(this);
 	}
 
 	/* Common game assets */

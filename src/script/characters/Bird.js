@@ -1,10 +1,18 @@
 var Character = require('./Character.js');
-var LANG = require('../language.js');
 
 module.exports = Bird;
 
 Bird.prototype = Object.create(Character.prototype);
 Bird.prototype.constructor = Bird;
+Bird.prototype.id = 'bird'; // Reference for LANG files and asset files
+
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+Bird.load = function() {
+	this.game.load.atlasJSONHash(Bird.prototype.id, 'img/characters/bird/atlas.png', 'img/characters/bird/atlas.json');
+};
 
 /**
  * The bird that you are helping home.
@@ -14,25 +22,24 @@ Bird.prototype.constructor = Bird;
  */
 function Bird (game, x, y, tint) {
 	Character.call(this, game, x, y, true); // Parent constructor.
-	this.name = LANG.TEXT.birdName;
 
 	this._number = null;
 
-	this.rightLeg = this.game.add.sprite(50, 160, 'birdhero', 'leg', this);
-	this.rightWing = this.game.add.sprite(160, -90, 'birdhero', 'wing5', this);
+	this.rightLeg = this.game.add.sprite(50, 160, this.id, 'leg', this);
+	this.rightWing = this.game.add.sprite(160, -90, this.id, 'wing5', this);
 	this.rightWing.visible = false;
-	this.body = this.game.add.sprite(0, 0, 'birdhero', 'body', this);
+	this.body = this.game.add.sprite(0, 0, this.id, 'body', this);
 	this.body.anchor.set(0.5);
-	this.leftLeg = this.game.add.sprite(0, 175, 'birdhero', 'leg', this);
-	this.wing = this.game.add.sprite(75, -20, 'birdhero', 'wing', this);
+	this.leftLeg = this.game.add.sprite(0, 175, this.id, 'leg', this);
+	this.wing = this.game.add.sprite(75, -20, this.id, 'wing', this);
 	this.wing.anchor.set(1, 0);
-	this.leftWing = this.game.add.sprite(90, -125, 'birdhero', 'wing5', this);
+	this.leftWing = this.game.add.sprite(90, -125, this.id, 'wing5', this);
 	this.leftWing.angle = 10;
 	this.leftWing.scale.x = -1;
 	this.leftWing.visible = false;
-	this.game.add.sprite(110, -160, 'birdhero', 'eyes', this);
-	this.game.add.sprite(118, -145, 'birdhero', 'pupils', this);
-	this.beak = this.game.add.sprite(190, -70, 'birdhero', 'beak0', this);
+	this.game.add.sprite(110, -160, this.id, 'eyes', this);
+	this.game.add.sprite(118, -145, this.id, 'pupils', this);
+	this.beak = this.game.add.sprite(190, -70, this.id, 'beak0', this);
 	this.beak.anchor.set(0.5);
 
 	this.tint = tint || 0xffffff;

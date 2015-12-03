@@ -54,6 +54,7 @@ BirdheroGame.prototype.preload = function () {
 	this.load.audio('birdheroSfx', ['audio/subgames/birdhero/sfx.m4a', 'audio/subgames/birdhero/sfx.ogg', 'audio/subgames/birdhero/sfx.mp3']); // sound effects audio sheet
 	this.load.audio('birdheroMusic', ['audio/subgames/birdhero/music.m4a', 'audio/subgames/birdhero/music.ogg', 'audio/subgames/birdhero/music.mp3']);
 	this.load.atlasJSONHash('birdhero', 'img/subgames/birdhero/atlas.png', 'img/subgames/birdhero/atlas.json');
+	Bird.load.call(this);
 };
 
 /* Phaser state function */

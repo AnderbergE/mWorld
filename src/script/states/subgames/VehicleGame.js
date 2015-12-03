@@ -54,6 +54,8 @@ VehicleGame.prototype.preload = function () {
 	this.load.audio('vehicleSpeech', LANG.SPEECH.vehicle.speech); // speech sheet
 	this.load.audio('entryMusic', ['audio/music.m4a', 'audio/music.ogg', 'audio/music.mp3']);
 	this.load.atlasJSONHash('vehicle', 'img/subgames/vehicle/atlas.png', 'img/subgames/vehicle/atlas.json');
+	Crane.load.call(this);
+	Tractor.load.call(this);
 };
 
 /* Phaser state function */

@@ -1,12 +1,20 @@
 var Character = require('./Character.js');
-var LANG = require('../language.js');
 
-module.exports = VehicleTractor;
+module.exports = Tractor;
 
-VehicleTractor.prototype = Object.create(Character.prototype);
-VehicleTractor.prototype.constructor = VehicleTractor;
+Tractor.prototype = Object.create(Character.prototype);
+Tractor.prototype.constructor = Tractor;
+Tractor.prototype.id = 'tractor'; // Reference for LANG files and asset files
 
-VehicleTractor.prototype.pos = {
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+Tractor.load = function() {
+	this.game.load.atlasJSONHash(Tractor.prototype.id, 'img/characters/tractor/atlas.png', 'img/characters/tractor/atlas.json');
+};
+
+Tractor.prototype.pos = {
 	eyeNeutralPos: { x: 55, y: -103 },
 	eyeAgentPos: { x: 54, y: -108 },
 	eyeCranePos: { x: 52, y: -105 }
@@ -20,15 +28,14 @@ VehicleTractor.prototype.pos = {
  * @param {number} y - The y position.
  * @return {Object} Itself.
  */
-function VehicleTractor (game, x, y) {
+function Tractor (game, x, y) {
 	Character.call(this, game, x, y, true); // Parent constructor.
-	this.name = LANG.TEXT.tractorName;
 
-	this.body = this.game.add.sprite(0, 0, 'vehicle', 'tractor', this);
+	this.body = this.game.add.sprite(0, 0, this.id, 'tractor', this);
 	this.body.anchor.set(0, 1);
-	this.eyes = this.game.add.sprite(this.pos.eyeNeutralPos.x, this.pos.eyeNeutralPos.y, 'vehicle', 'tractor_eyes', this);
+	this.eyes = this.game.add.sprite(this.pos.eyeNeutralPos.x, this.pos.eyeNeutralPos.y, this.id, 'tractor_eyes', this);
 	this.eyes.anchor.set(0.5, 0.5);
-	this.mouth = this.game.add.sprite(52, -70, 'vehicle', 'tractor_happy', this);
+	this.mouth = this.game.add.sprite(52, -70, this.id, 'tractor_happy', this);
 	this.mouth.anchor.set(0.5, 0);
 
 	this.talk = TweenMax.to(this.mouth, 0.2, {
@@ -42,7 +49,7 @@ function VehicleTractor (game, x, y) {
  * Set the tractors eyes to look at the crane.
  * @return {Object} The animation timeline.
  */
-VehicleTractor.prototype.lookAtCrane = function ()
+Tractor.prototype.lookAtCrane = function ()
 {
 	var t = new TimelineMax();
 
@@ -55,7 +62,7 @@ VehicleTractor.prototype.lookAtCrane = function ()
  * Set the tractors eyes to look at the agent.
  * @return {Object} The animation timeline.
  */
-VehicleTractor.prototype.lookAtAgent = function ()
+Tractor.prototype.lookAtAgent = function ()
 {
 	var t = new TimelineMax();
 
@@ -68,7 +75,7 @@ VehicleTractor.prototype.lookAtAgent = function ()
  * Set the cranes eyes to look at the user.
  * @return {Object} The animation timeline.
  */
-VehicleTractor.prototype.lookAtUser = function ()
+Tractor.prototype.lookAtUser = function ()
 {
 	var t = new TimelineMax();
 

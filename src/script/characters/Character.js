@@ -1,5 +1,6 @@
 var NumberButton = require('../objects/buttons/NumberButton.js');
 var GLOBAL = require('../global.js');
+var LANG = require('../language.js');
 var utils = require('../utils.js');
 
 module.exports = Character;
@@ -19,6 +20,7 @@ function Character (game, x, y, turn) {
 	this.x = x || 0;
 	this.y = y || 0;
 	this.turn = turn;
+	this.name = LANG.TEXT[this.id + 'Name'];
 }
 
 /** Set the characters expression, aka set this.mouth to frameName if possible. */

@@ -24,9 +24,10 @@ function AgentSetupState () {}
 AgentSetupState.prototype.preload = function() {
 	this.load.audio('entryMusic', ['audio/music.m4a', 'audio/music.ogg', 'audio/music.mp3']);
 	this.load.audio('chooseSpeech', LANG.SPEECH.agentIntro.speech);
-	this.load.atlasJSONHash(Panda.prototype.id, 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
-	this.load.atlasJSONHash(Hedgehog.prototype.id, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');
-	this.load.atlasJSONHash(Mouse.prototype.id, 'img/agent/mouse/atlas.png', 'img/agent/mouse/atlas.json');
+	// Load agents, but don't load all the audio.
+	Panda.load.call(this, true);
+	Hedgehog.load.call(this, true);
+	Mouse.load.call(this, true);
 };
 
 /* Phaser state function */
@@ -194,18 +195,9 @@ AgentSetupState.prototype.create = function () {
 
 /* Phaser state function */
 AgentSetupState.prototype.shutdown = function () {
-	if (!this.game.player.agent || this.game.player.agent.prototype.id !== Panda.prototype.id) {
-		this.cache.removeSound(Panda.prototype.id + 'Speech');
-		this.cache.removeImage(Panda.prototype.id);
-	}
-	if (!this.game.player.agent || this.game.player.agent.prototype.id !== Hedgehog.prototype.id) {
-		this.cache.removeSound(Hedgehog.prototype.id + 'Speech');
-		this.cache.removeImage(Hedgehog.prototype.id);
-	}
-	if (!this.game.player.agent || this.game.player.agent.prototype.id !== Mouse.prototype.id) {
-		this.cache.removeSound(Mouse.prototype.id + 'Speech');
-		this.cache.removeImage(Mouse.prototype.id);
-	}
+	Panda.unload.call(this);
+	Hedgehog.unload.call(this);
+	Mouse.unload.call(this);
 
 	SuperState.prototype.shutdown.call(this);
 };

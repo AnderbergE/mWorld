@@ -145,7 +145,7 @@ LANG.swedish.text = {
 	trollName: 'Trolle',
 	woodlouseName: 'Grålle',
 	lizardName: 'Kamilla',
-	bumblebeeName: 'Humfrid',
+	beeName: 'Humfrid',
 	birdName: 'Fålia',
 	tractorName: 'Hedvig',
 	craneName: 'Herman',

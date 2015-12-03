@@ -1,29 +1,36 @@
 var Character = require('./Character.js');
 var GLOBAL = require('../global.js');
-var LANG = require('../language.js');
 
 module.exports = Lizard;
 
 /* Camilla Chameleon, the lizard that you are helping. */
 Lizard.prototype = Object.create(Character.prototype);
 Lizard.prototype.constructor = Lizard;
+Lizard.prototype.id = 'lizard'; // Reference for LANG files and asset files
+
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+Lizard.load = function() {
+	this.game.load.atlasJSONHash(Lizard.prototype.id, 'img/characters/lizard/atlas.png', 'img/characters/lizard/atlas.json');
+};
 
 function Lizard (game, x, y) {
 	Character.call(this, game, x, y, true); // Parent constructor.
-	this.name = LANG.TEXT.lizardName;
 
-	this.body = game.add.sprite(48, 0, 'lizard', 'body', this);
+	this.body = game.add.sprite(48, 0, this.id, 'body', this);
 	this.head = game.add.group(this);
 	this.head.x = 130;
 	this.head.y = 60;
 
-	this.tounge = game.add.sprite(-5, 17, 'lizard', 'tounge', this.head);
+	this.tounge = game.add.sprite(-5, 17, this.id, 'tounge', this.head);
 	this.tounge.anchor.set(1, 0.5);
 	this.tounge.width = 1;
 	this.tounge.height = 5;
-	this.jaw = game.add.sprite(20, 23, 'lizard', 'jaw', this.head);
+	this.jaw = game.add.sprite(20, 23, this.id, 'jaw', this.head);
 	this.jaw.anchor.set(1, 0.4);
-	this.forehead = game.add.sprite(125, 35, 'lizard', 'head', this.head);
+	this.forehead = game.add.sprite(125, 35, this.id, 'head', this.head);
 	this.forehead.anchor.set(1, 1);
 	this.tint = 0x00aa00;
 

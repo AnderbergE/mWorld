@@ -36,19 +36,20 @@ PartyGame.prototype.init = function(options) {
 };
 
 PartyGame.prototype.preload = function () {
-	this.load.atlasJSONHash(Troll.prototype.id, 'img/agent/troll/atlas.png', 'img/agent/troll/atlas.json');
-	this.load.audio(Troll.prototype.id + 'Speech', LANG.SPEECH.troll.speech);
-	this.load.atlasJSONHash(Panda.prototype.id, 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
+	Troll.load.call(this);
+	Hedgehog.load.call(this, true);
+	Panda.load.call(this, true);
+	Mouse.load.call(this, true);
+
 	this.load.audio('party' + Panda.prototype.id, LANG.SPEECH.party.panda.speech);
-	this.load.atlasJSONHash(Hedgehog.prototype.id, 'img/agent/hedgehog/atlas.png', 'img/agent/hedgehog/atlas.json');
 	this.load.audio('party' + Hedgehog.prototype.id, LANG.SPEECH.party.hedgehog.speech);
-	this.load.atlasJSONHash(Mouse.prototype.id, 'img/agent/mouse/atlas.png', 'img/agent/mouse/atlas.json');
 	this.load.audio('party' + Mouse.prototype.id, LANG.SPEECH.party.mouse.speech);
 
-	this.load.atlasJSONHash('balloon', 'img/subgames/balloon/atlas.png', 'img/subgames/balloon/atlas.json');
-	this.load.atlasJSONHash('bee', 'img/subgames/beeflight/atlas.png', 'img/subgames/beeflight/atlas.json');
-	this.load.atlasJSONHash('birdhero', 'img/subgames/birdhero/atlas.png', 'img/subgames/birdhero/atlas.json');
-	this.load.atlasJSONHash('lizard', 'img/subgames/lizardjungle/atlas.png', 'img/subgames/lizardjungle/atlas.json');
+	Bee.load.call(this);
+	Bird.load.call(this);
+	Lizard.load.call(this);
+	WoodLouse.load.call(this);
+
 	this.load.atlasJSONHash('glade', 'img/partygames/glade/atlas.png', 'img/partygames/glade/atlas.json');
 	this.load.audio('balloonSfx', ['audio/subgames/balloongame/sfx.m4a', 'audio/subgames/balloongame/sfx.ogg', 'audio/subgames/balloongame/sfx.mp3']);
 };

@@ -1,12 +1,20 @@
 var Character = require('./Character.js');
-var LANG = require('../language.js');
 
-module.exports = VehicleCrane;
+module.exports = Crane;
 
-VehicleCrane.prototype = Object.create(Character.prototype);
-VehicleCrane.prototype.constructor = VehicleCrane;
+Crane.prototype = Object.create(Character.prototype);
+Crane.prototype.constructor = Crane;
+Crane.prototype.id = 'crane'; // Reference for LANG files and asset files
 
-VehicleCrane.prototype.pos = {
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+Crane.load = function() {
+	this.game.load.atlasJSONHash(Crane.prototype.id, 'img/characters/crane/atlas.png', 'img/characters/crane/atlas.json');
+};
+
+Crane.prototype.pos = {
 	craneArmHeight: 540,
 	craneTrolleyStart: 310,
 	hookDefaultPos: 300,
@@ -27,40 +35,39 @@ VehicleCrane.prototype.pos = {
  * @param {number} amount - The range of numbers.
  * @return {Object} Itself.
  */
-function VehicleCrane (game, x, y, amount) {
+function Crane (game, x, y, amount) {
 	Character.call(this, game, x, y, true); // Parent constructor.
-	this.name = LANG.TEXT.craneName;
 
 	this.hookPos = this.pos.hookDefaultPos;
 	this.trolleyPos = this.pos.craneTrolleyStart;
 	this.numberRange = amount;
 
-	this.body = this.game.add.sprite(0, 0, 'vehicle', 'crane', this);
+	this.body = this.game.add.sprite(0, 0, this.id, 'crane', this);
 	this.body.anchor.set(0, 1);
-	this.eyes = this.game.add.sprite(this.pos.eyeNeutralPos.x, this.pos.eyeNeutralPos.y, 'vehicle', 'crane_eyes', this);
+	this.eyes = this.game.add.sprite(this.pos.eyeNeutralPos.x, this.pos.eyeNeutralPos.y, this.id, 'crane_eyes', this);
 	this.eyes.anchor.set(0.5, 0.5);
-	this.mouth = this.game.add.sprite(180, -310, 'vehicle', 'crane_happy', this);
+	this.mouth = this.game.add.sprite(180, -310, this.id, 'crane_happy', this);
 	this.mouth.anchor.set(0.5, 0);
 
-	this.wire = this.game.add.sprite(this.trolleyPos, (this.pos.craneArmHeight) * -1, 'vehicle', 'crane_wire', this);
+	this.wire = this.game.add.sprite(this.trolleyPos, (this.pos.craneArmHeight) * -1, this.id, 'crane_wire', this);
 	this.wire.height = this.pos.craneArmHeight - this.hookPos - this.pos.hookHeight;
 	this.wire.anchor.set(0.5, 0);
 
-	this.trolley = this.game.add.sprite(this.trolleyPos, -545, 'vehicle', 'crane_trolley', this);
+	this.trolley = this.game.add.sprite(this.trolleyPos, -545, this.id, 'crane_trolley', this);
 	this.trolley.anchor.set(0.5, 0);
 
-	this.hook = this.game.add.sprite(this.trolleyPos, this.hookPos * -1, 'vehicle', 'hook', this);
+	this.hook = this.game.add.sprite(this.trolleyPos, this.hookPos * -1, this.id, 'hook', this);
 	this.hook.anchor.set(0.5, 1);
 
  	this.adjustedCargonetHeight = amount < 9 ? this.pos.cargonetHeight : this.pos.cargonetHeight * 0.66;
 	this.adjustedCargonetHeight -= this.pos.hookThickness;
 
-	this.cargo = this.game.add.sprite(this.trolleyPos, (this.hookPos - this.adjustedCargonetHeight) * -1, 'vehicle', 'cargobox', this);
+	this.cargo = this.game.add.sprite(this.trolleyPos, (this.hookPos - this.adjustedCargonetHeight) * -1, this.id, 'cargobox', this);
 	this.cargo.anchor.set(0.5, 1);
 	this.cargo.scale.set(amount < 9 ? 1 : 0.66);
 	this.cargo.visible = false;
 
-	this.cargonet = this.game.add.sprite(this.trolleyPos, (this.hookPos + this.pos.hookThickness) * -1, 'vehicle', 'cargonet', this);
+	this.cargonet = this.game.add.sprite(this.trolleyPos, (this.hookPos + this.pos.hookThickness) * -1, this.id, 'cargonet', this);
 	this.cargonet.anchor.set(0.5, 0);
 	this.cargonet.scale.set(amount < 9 ? 1 : 0.66);
 	this.cargonet.visible = false;
@@ -89,7 +96,7 @@ function VehicleCrane (game, x, y, amount) {
  * Hides or shows the cargo net.
  * @param {boolean} visibility - True if the net should be visible and false if it should be hidden.
  */
-VehicleCrane.prototype.setCargoNetVisibility = function(visibility) {
+Crane.prototype.setCargoNetVisibility = function(visibility) {
 	this.cargonet.visible = visibility;
 };
 
@@ -97,7 +104,7 @@ VehicleCrane.prototype.setCargoNetVisibility = function(visibility) {
  * Hides or shows the cargo net.
  * @param {boolean} visibility - True if the net should be visible and false if it should be hidden.
  */
-VehicleCrane.prototype.pickUpCargo = function(cargo) {
+Crane.prototype.pickUpCargo = function(cargo) {
 	this.cargo = cargo;
 };
 
@@ -105,12 +112,12 @@ VehicleCrane.prototype.pickUpCargo = function(cargo) {
  * Hides or shows the cargo net.
  * @param {boolean} visibility - True if the net should be visible and false if it should be hidden.
  */
-VehicleCrane.prototype.dropCargo = function() {
+Crane.prototype.dropCargo = function() {
 	this.cargo = null;
 	console.log('drop');
 };
 
-VehicleCrane.prototype.moveCrane = function(newCranePos) {
+Crane.prototype.moveCrane = function(newCranePos) {
 	var t = new TimelineMax();
 	t.addLabel('moving');
 	t.to(this, 2, { x: newCranePos, ease: Power1.easeInOut }, 'moving');
@@ -124,7 +131,7 @@ VehicleCrane.prototype.moveCrane = function(newCranePos) {
  * @param {number} hookPos - The new position to move the hook to.
  * @return {Object} The animation timeline. An empty timeline if the new position is out of bounds.
  */
-VehicleCrane.prototype.moveHook = function (newHookPos) {
+Crane.prototype.moveHook = function (newHookPos) {
 	this.hookPos = this.y - newHookPos;
 
 	var t = new TimelineMax();
@@ -153,7 +160,7 @@ VehicleCrane.prototype.moveHook = function (newHookPos) {
  * @param {number} trolleyPos - The new position to move the trolley to.
  * @return {Object} The animation timeline. An empty timeline if the new position is out of bounds.
  */
-VehicleCrane.prototype.moveTrolley = function (trolleyPos)
+Crane.prototype.moveTrolley = function (trolleyPos)
 {
 	this.trolleyPos = trolleyPos;
 
@@ -174,7 +181,7 @@ VehicleCrane.prototype.moveTrolley = function (trolleyPos)
  * Set the cranes eyes to look at the tractor.
  * @return {Object} The animation timeline.
  */
-VehicleCrane.prototype.lookAtTractor = function ()
+Crane.prototype.lookAtTractor = function ()
 {
 	var t = new TimelineMax();
 
@@ -187,7 +194,7 @@ VehicleCrane.prototype.lookAtTractor = function ()
  * Set the cranes eyes to look at the user.
  * @return {Object} The animation timeline.
  */
-VehicleCrane.prototype.lookAtUser = function ()
+Crane.prototype.lookAtUser = function ()
 {
 	var t = new TimelineMax();
 

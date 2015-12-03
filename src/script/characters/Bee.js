@@ -1,21 +1,28 @@
 var Character = require('./Character.js');
-var LANG = require('../language.js');
 
 module.exports = Bee;
 
 /* Humfrid, the bee you are helping. */
 Bee.prototype = Object.create(Character.prototype);
 Bee.prototype.constructor = Bee;
+Bee.prototype.id = 'bee'; // Reference for LANG files and asset files
+
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+Bee.load = function() {
+	this.game.load.atlasJSONHash(Bee.prototype.id, 'img/characters/bee/atlas.png', 'img/characters/bee/atlas.json');
+};
 
 function Bee (game, x, y) {
 	Character.call(this, game, x, y, true); // Parent constructor.
-	this.name = LANG.TEXT.bumblebeeName;
 
-	this.body = this.create(0, 0, 'bee', 'body');
+	this.body = this.create(0, 0, this.id, 'body');
 	this.body.anchor.set(0.5);
-	this.mouth = this.create(50, 35, 'bee', 'mouth_happy');
+	this.mouth = this.create(50, 35, this.id, 'mouth_happy');
 	this.mouth.anchor.set(0.5);
-	this.wings = this.create(-25, -43, 'bee', 'wings1');
+	this.wings = this.create(-25, -43, this.id, 'wings1');
 	this.wings.anchor.set(0.5);
 
 	this.talk = TweenMax.to(this.mouth, 0.2, {

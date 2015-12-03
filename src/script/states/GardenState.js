@@ -41,9 +41,8 @@ GardenState.prototype.preload = function() {
 		}
 	}
 
-	if (!this.cache.checkSoundKey(this.game.player.agent.prototype.id + 'Speech')) {
-		this.load.audio(this.game.player.agent.prototype.id + 'Speech', LANG.SPEECH.AGENT.speech);
-	}
+	this.game.player.agent.load.call(this);
+
 	if (!this.cache.checkSoundKey('gardenMusic')) {
 		this.load.audio('gardenMusic', ['audio/garden/music.m4a', 'audio/garden/music.ogg', 'audio/garden/music.mp3']);
 	}

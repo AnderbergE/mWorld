@@ -44,7 +44,8 @@ BeeFlightGame.prototype.buttonColor = 0xface3d;
 BeeFlightGame.prototype.preload = function () {
 	this.load.audio('beeSpeech', LANG.SPEECH.beeflight.speech); // speech sheet
 	this.load.audio('beeMusic', ['audio/subgames/beeflight/music.m4a', 'audio/subgames/beeflight/music.ogg', 'audio/subgames/beeflight/music.mp3']);
-	this.load.atlasJSONHash('bee', 'img/subgames/beeflight/atlas.png', 'img/subgames/beeflight/atlas.json');
+	this.load.atlasJSONHash('flight', 'img/subgames/beeflight/atlas.png', 'img/subgames/beeflight/atlas.json');
+	Bee.load.call(this);
 };
 
 /* Phaser state function */
@@ -68,12 +69,12 @@ BeeFlightGame.prototype.create = function () {
 	this.add.music('beeMusic', 0.1, true).play();
 
 	// Add background
-	this.add.sprite(0, 0, 'bee', 'bg', this.gameGroup);
+	this.add.sprite(0, 0, 'flight', 'bg', this.gameGroup);
 	var cloud1 = this.gameGroup.create(-1000, 10, 'objects', 'cloud2');
 	var cloud2 = this.gameGroup.create(-1000, 150, 'objects', 'cloud1');
 	TweenMax.fromTo(cloud1, 380, { x: -cloud1.width }, { x: this.world.width, repeat: -1 });
 	TweenMax.fromTo(cloud2, 290, { x: -cloud2.width }, { x: this.world.width, repeat: -1 });
-	var home = this.add.sprite(this.pos.home.x, this.pos.home.y, 'bee', 'home', this.gameGroup);
+	var home = this.add.sprite(this.pos.home.x, this.pos.home.y, 'flight', 'home', this.gameGroup);
 	home.anchor.set(0.5, 1);
 	this.agent.thought.y += 100;
 	this.gameGroup.bringToTop(this.agent);
@@ -85,7 +86,7 @@ BeeFlightGame.prototype.create = function () {
 	this.flowers = [];
 	var i, v, c;
 	for (i = 0; i < this.amount; i++) {
-		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos, 'bee', 'flower', this.gameGroup));
+		this.flowers.push(this.add.sprite(this.pos.flowers.start + width*i, yPos, 'flight', 'flower', this.gameGroup));
 		this.flowers[i].anchor.set(0.5, 0);
 
 		// Calculate tint

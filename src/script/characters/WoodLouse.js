@@ -1,21 +1,25 @@
 var Character = require('./Character.js');
-var LANG = require('../language.js');
 
 module.exports = WoodLouse;
 
 /* Grålle, the wood louse you are helping. */
 WoodLouse.prototype = Object.create(Character.prototype);
 WoodLouse.prototype.constructor = WoodLouse;
+WoodLouse.prototype.id = 'woodlouse'; // Reference for LANG files and asset files
+
+/**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+WoodLouse.load = function() {
+	this.game.load.image(WoodLouse.prototype.id, 'img/characters/woodlouse/woodlouse.png');
+};
 
 function WoodLouse (game, x, y) {
 	Character.call(this, game, x, y); // Parent constructor.
-	this.name = LANG.TEXT.woodlouseName;
 
-	this.body = this.create(0, 0, 'balloon', 'louse');
+	this.body = this.create(0, 0, this.id);
 	this.body.anchor.set(0.5);
-
-	this.pike = this.create(this.width / 2 - 10, this.height * 0.2, 'balloon', 'hook');
-	this.pike.width = 0;
 
 	this._happy = TweenMax.to(this, 0.2, {
 		y:'-=15', ease: Power0.easeInOut, repeat: -1, yoyo: true, paused: true

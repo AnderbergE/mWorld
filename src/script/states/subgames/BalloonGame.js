@@ -37,7 +37,7 @@ BalloonGame.prototype.pos = {
 	bucket: { x: 720, y: 640 },
 	cave: { left: 820, right: 890, y: 590, height: 500, bucketOffset: -50 },
 	sack: { x: 550, y: 650 },
-	map: { x: 650, y: 610 },
+	map: { x: 550, y: 475 },
 	liftoff: { x: 850, y: 670 }
 };
 
@@ -49,6 +49,7 @@ BalloonGame.prototype.preload = function () {
 	this.load.audio('balloonSpeech', LANG.SPEECH.balloongame.speech); // speech sheet
 	this.load.audio('balloonSfx', ['audio/subgames/balloongame/sfx.m4a', 'audio/subgames/balloongame/sfx.ogg', 'audio/subgames/balloongame/sfx.mp3']); // sound sheet
 	this.load.atlasJSONHash('balloon', 'img/subgames/balloon/atlas.png', 'img/subgames/balloon/atlas.json');
+	WoodLouse.load.call(this);
 };
 
 /* Phaser state function */
@@ -142,6 +143,19 @@ BalloonGame.prototype.create = function () {
 	this.balloonStack.sway(true);
 	this.gameGroup.add(this.balloonStack);
 
+	// Setup how to show the target number.
+	if (this.representation[0] !== GLOBAL.NUMBER_REPRESENTATION.none) {
+		this.map = this.add.group(this.gameGroup);
+		this.map.x = this.pos.map.x;
+		this.map.y = this.pos.map.y;
+		this.map.visible = false;
+		this.map.create(0, 0, 'balloon', 'map'); // Background for map
+		this.map.target = new NumberButton(this.game, 0, this.representation[0], { // Representation on map
+			x: 30, y: 30, size: 70, background: null, disabled: true, max: this.amount
+		});
+		this.map.add(this.map.target);
+	}
+
 	// Reward objects, for when you choose the correct number.
 	this.chest = this.gameGroup.create(0, 0, 'balloon', 'chest_closed');
 	this.chest.anchor.set(0.5, 1);
@@ -160,8 +174,10 @@ BalloonGame.prototype.create = function () {
 	this.actionGroup.x = this.pos.bucket.x;
 	this.actionGroup.y = this.pos.bucket.y;
 
-	this.louse = new WoodLouse(this.game, this.pos.louse.start.x, this.pos.louse.start.y, 'balloon', 'louse');
+	this.louse = new WoodLouse(this.game, this.pos.louse.start.x, this.pos.louse.start.y);
 	this.louse.scale.set(this.pos.louse.scale);
+	this.pike = this.louse.create(this.louse.width / 2 - 10, this.louse.height * 0.2, 'balloon', 'hook');
+	this.pike.width = 0;
 	this.actionGroup.add(this.louse);
 
 	this.actionGroup.create(0, 15, 'balloon', 'bucket');
@@ -169,19 +185,6 @@ BalloonGame.prototype.create = function () {
 	this.bucketBalloons.scale.set(0.9);
 	this.makeDraggable(this.bucketBalloons);
 	this.actionGroup.add(this.bucketBalloons);
-
-	// Setup how to show the target number.
-	if (this.representation[0] !== GLOBAL.NUMBER_REPRESENTATION.none) {
-		this.map = this.add.group(this.gameGroup);
-		this.map.x = this.pos.map.x;
-		this.map.y = this.pos.map.y;
-		this.map.visible = false;
-		this.map.create(0, 0, 'balloon', 'map'); // Background for map
-		this.map.target = new NumberButton(this.game, 0, this.representation[0], { // Representation on map
-			x: 30, y: 30, size: 70, background: null, disabled: true
-		});
-		this.map.add(this.map.target);
-	}
 
 	// The button to push when done with the balloons.
 	var _this = this;
@@ -535,7 +538,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 	var cave = this.caves[sum - 1];
 
 	this.disable(true);
-	this.agent.eyesFollowObject(this.louse);
+	this.agent.eyesFollowObject(this.louse.body);
 
 	var t = new TimelineMax();
 	if (GLOBAL.debug) { t.skippable(); }
@@ -549,7 +552,7 @@ BalloonGame.prototype.runNumber = function (amount) {
 	}
 
 	t.addCallback(function () {
-		TweenMax.to(this.louse.pike, 2, { width: (cave.x + cave.width / 2 - this.louse.pike.world.x) / this.pos.louse.scale });
+		TweenMax.to(this.pike, 2, { width: (cave.x + cave.width / 2 - this.pike.world.x) / this.pos.louse.scale });
 	}, null, null, this);
 
 	if (this.actionGroup.y !== cave.y + this.pos.cave.bucketOffset) {
@@ -618,7 +621,7 @@ BalloonGame.prototype.playRandomPrize = function () {
 	t.add(util.fade(this.treasure, true), '-=1');
 	t.add(new TweenMax(this.treasure, 1, { y: '+=75', ease: Power1.easeIn }));
 	t.addCallback(function () {
-		TweenMax.to(this.louse.pike, 1, { width: 0 });
+		TweenMax.to(this.pike, 1, { width: 0 });
 		TweenMax.to(this.treasure, 2, { x: this.pos.sack.x, ease: Power0.easeInOut });
 	}, '+=0.5', null, this);
 	t.add(new TweenMax(this.treasure, 2, { y: this.pos.sack.y + 10, ease: Power4.easeIn }), '+=0.5');

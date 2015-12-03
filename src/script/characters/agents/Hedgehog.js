@@ -5,12 +5,35 @@ module.exports = Hedgehog;
 
 Hedgehog.prototype = Object.create(Agent.prototype);
 Hedgehog.prototype.constructor = Hedgehog;
-
 Hedgehog.prototype.id = 'hedgehog'; // Reference for LANG files and asset files
 
 /**
+ * Load the assets related to this character.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ * @param {Boolean} noAudio - Set to true to not load audio.
+ */
+Hedgehog.load = function(noAudio) {
+	this.game.load.atlasJSONHash(Hedgehog.prototype.id, 'img/characters/hedgehog/atlas.png', 'img/characters/hedgehog/atlas.json');
+	if (!noAudio) {
+		this.game.load.audio(Hedgehog.prototype.id + 'Speech', LANG.SPEECH.hedgehog.speech);
+	}
+};
+
+/**
+ * Unload the assets related to this character.
+ * NOTE: Assets will not unload if this is the player's chosen agent.
+ * NOTE: You have to call this function with .call(this). (Where this has this.game).
+ */
+Hedgehog.unload = function() {
+	// Do not remove the assets if this is the player's agent.
+	if (!this.game.player.agent || this.game.player.agent.prototype.id !== Hedgehog.prototype.id) {
+		this.game.cache.removeSound(Hedgehog.prototype.id + 'Speech');
+		this.game.cache.removeImage(Hedgehog.prototype.id);
+	}
+};
+
+/**
  * The hedgehog agent.
- * The asset files are loaded in the boot state using key: *.prototype.id.
  * @param {Object} game - A reference to the Phaser game.
  * @return Itself
  */
@@ -36,7 +59,6 @@ function Hedgehog (game, x, y) {
 	};
 
 	Agent.call(this, game, x, y); // Call parent constructor.
-	this.name = LANG.TEXT.hedgehogName;
 
 	var leftEyeSocket = this.create(this.coords.eye.left.x + 1, this.coords.eye.left.y - 8, this.id, 'socket');
 	leftEyeSocket.anchor.set(0.5);
