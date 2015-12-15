@@ -133,15 +133,18 @@ EntryState.prototype.create = function () {
 	var allCredits = this.add.text(this.world.centerX, this.world.height,
 		LANG.TEXT.creditsMade + '\n\n\n' +
 		LANG.TEXT.creditsDeveloped + ':\nErik Anderberg\t \tAgneta Gulz\nMagnus Haake\t \tLayla Husain\n\n' +
-		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nLars Persson\t \tHenrik Söllvander\n\n' +
-		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\nErik Anderberg\n\n' +
+		LANG.TEXT.creditsProgramming + ':\nErik Anderberg\t \tMarcus Malmberg\nCarolina Ekström\t \tLars Persson\nHenrik Söllvander\n\n' +
+		LANG.TEXT.creditsGraphics + ':\nSebastian Gulz Haake\nMagnus Haake\t \tErik Anderberg\n\n' +
 		LANG.TEXT.creditsVoices + ':\n' + LANG.TEXT.pandaName + '\t-\t' + LANG.TEXT.creditsVoicePanda + '\n' +
 			LANG.TEXT.hedgehogName + '\t-\t' + LANG.TEXT.creditsVoiceHedgehog + '\n' +
 			LANG.TEXT.mouseName + '\t-\t' + LANG.TEXT.creditsVoiceMouse + '\n' +
 			LANG.TEXT.woodlouseName + '\t-\t' + LANG.TEXT.creditsVoiceWoodlouse + '\n' +
 			LANG.TEXT.lizardName + '\t-\t' + LANG.TEXT.creditsVoiceLizard + '\n' +
-			LANG.TEXT.bumblebeeName + '\t-\t' + LANG.TEXT.creditsVoiceBumblebee + '\n' +
-			LANG.TEXT.birdName + '\t-\t' + LANG.TEXT.creditsVoiceBird + '\n\n' +
+			LANG.TEXT.beeName + '\t-\t' + LANG.TEXT.creditsVoiceBumblebee + '\n' +
+			LANG.TEXT.birdName + '\t-\t' + LANG.TEXT.creditsVoiceBird + '\n' +
+			LANG.TEXT.tractorName + '\t-\t' + LANG.TEXT.creditsVoiceTractor + '\n' +
+			LANG.TEXT.craneName + '\t-\t' + LANG.TEXT.creditsVoiceCrane + '\n' +
+			LANG.TEXT.trollName + '\t-\t' + LANG.TEXT.creditsVoiceTroll + '\n\n' +
 		LANG.TEXT.creditsMusic + ':\nTorbjörn Gulz\n\n' +
 		LANG.TEXT.creditsSfx + ':\nAnton Axelsson\nhttp://soundbible.com\nhttp://freesfx.co.uk\n\n' +
 		LANG.TEXT.creditsThanks + ':\nSanne Bengtsson\t \tMaja Håkansson\nLisa Lindberg\t \tBjörn Norrliden\nBrunnsparksskolan', {

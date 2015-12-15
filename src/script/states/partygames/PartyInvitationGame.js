@@ -5,9 +5,6 @@ var util = require('../../utils.js');
 var Cover = require('../../objects/Cover.js');
 var Mouse = require('../../characters/agents/Mouse.js');
 
-// TODO: A function to make sure things aren't overlapping would help.
-// TODO: Collect all static positions at top.
-
 module.exports = PartyInvitationGame;
 
 PartyInvitationGame.prototype = Object.create(PartyGame.prototype);
@@ -118,7 +115,6 @@ PartyInvitationGame.prototype.getAmountsMany = function () {
 	var few = this.game.rnd.between(2, 3);
 
 	return this.game.rnd.pick([[many, few, few], [few, many, many]]);
-	// TODO: Does this have two identical values?
 };
 
 /**
@@ -327,20 +323,24 @@ PartyInvitationGame.prototype.dropDecor = function (origin) {
 
 /** Check if dropped decor is correct */
 PartyInvitationGame.prototype.checkDecor = function () {
-	var t = new TimelineMax();
-	if (this.playCard.decorGroup.children.length === this.correctAmount) { // Correct :)
-		t.addCallback(this.disable, null, [true], this);
+	if (this.checking) {
+		this.checking.kill();
+	}
 
-		t.add(util.fade(this.guestThought, false, 0.5), 0);
-		t.add(this.slideChoices(false), 0);
+	this.checking = new TimelineMax();
+	if (this.playCard.decorGroup.children.length === this.correctAmount) { // Correct :)
+		this.checking.addCallback(this.disable, null, [true], this);
+
+		this.checking.add(util.fade(this.guestThought, false, 0.5), 0);
+		this.checking.add(this.slideChoices(false), 0);
 
 		var more = Math.random();
 		if (this.moreDecor < maxCardRounds && more > Math.pow(morePercentage, this.moreDecor)) {
 			// The card will get another round.
 			this.playCard.stashDecor();
 
-			t.addSound(this.helper1.speech, this.helper1, 'rightButMore', 0);
-			t.addCallback(function () {
+			this.checking.addSound(this.helper1.speech, this.helper1, 'rightButMore', 0);
+			this.checking.addCallback(function () {
 				this.guest.setNeutral();
 				var t = this.newRound(true);
 				t.add(this.trolling(trollChanceAnother));
@@ -351,21 +351,21 @@ PartyInvitationGame.prototype.checkDecor = function () {
 			// We are done with this card!
 			this.setupDragCard();
 
-			t.addCallback(this.guest.setHappy, null, null, this.guest);
-			t.addSound(this.helper1.speech, this.helper1, 'looksNice');
-			t.addCallback(this.disable, null, [false], this);
-			t.addSound(this.helper1.speech, this.helper1, 'dragCard');
+			this.checking.addCallback(this.guest.setHappy, null, null, this.guest);
+			this.checking.addSound(this.helper1.speech, this.helper1, 'looksNice');
+			this.checking.addCallback(this.disable, null, [false], this);
+			this.checking.addSound(this.helper1.speech, this.helper1, 'dragCard');
 		}
 
 	} else if (this.playCard.decorGroup.children.length > this.correctAmount) { // Incorrect, too many.
-		t.addCallback(this.guest.setSad, null, null, this.guest);
-		t.addSound(this.helper1.speech, this.helper1, 'tryLess');
-		t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5');
+		this.checking.addCallback(this.guest.setSad, null, null, this.guest);
+		this.checking.addSound(this.helper1.speech, this.helper1, 'tryLess');
+		this.checking.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5');
 
 	} else { // Incorrect, too few.
-		t.addCallback(this.guest.setSad, null, null, this.guest);
-		t.addSound(this.helper1.speech, this.helper1, 'tryMore');
-		t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5');
+		this.checking.addCallback(this.guest.setSad, null, null, this.guest);
+		this.checking.addSound(this.helper1.speech, this.helper1, 'tryMore');
+		this.checking.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5');
 	}
 };
 
@@ -709,7 +709,6 @@ Card.prototype.transferFrom = function (container) {
 		decor.x = this.game.rnd.between(-150, 150);
 		decor.y = this.game.rnd.between(-100, 100);
 
-		// TODO: Could probably improve this.
 		var j;
 		if (this.decorGroup.children.length < 10) {
 			for (j = 0; j < i; j++) {
