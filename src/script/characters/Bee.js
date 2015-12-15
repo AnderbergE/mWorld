@@ -73,7 +73,6 @@ Bee.prototype.oscillate = function (on) {
 		var time = 0;
 		var xRand = (Math.random() + 0.7) * 10;
 		var yRand = (Math.random() + 0.7) * 10;
-		console.log(xRand, yRand);
 		this.update = function () {
 			this.x += Math.sin(time) / xRand;
 			this.y += Math.sin(time) / yRand;

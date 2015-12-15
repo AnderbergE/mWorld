@@ -17,6 +17,8 @@ function SuperState () {}
  * NOTE: Do not overshadow the update function! Use 'run' instead.
  */
 SuperState.prototype.update = function () {
+	this.input.enabled = true;
+
 	this.state.onUpdateCallback = function () {};
 
 	var keys = [], key;
@@ -59,6 +61,8 @@ SuperState.prototype.run = function () {};
  * Publishes stateShutDown event.
  */
 SuperState.prototype.shutdown = function () {
+	this.input.enabled = false;
+
 	TweenMax.killAll();
 	EventSystem.publish(GLOBAL.EVENT.stateShutDown, this);
 	EventSystem.clear();
@@ -91,4 +95,12 @@ SuperState.prototype.shutdown = function () {
 		}
 	}
 	this.world.removeAll(true);
+
+	// Reset world and camera.
+	this.world.width = this.game.width;
+	this.world.height = this.game.height;
+	this.camera.x = 0;
+	this.camera.y = 0;
+
+	// TODO: Something is wrong with decoding. Try quitting a subgame directly.
 };

@@ -55,7 +55,8 @@ function Mouse (game, x, y) {
 		},
 		mouth: {
 			x: 0, y: -150
-		}
+		},
+		hat: { x: 0, y: -330 }
 	};
 
 	Agent.call(this, game, x, y); // Call parent constructor.

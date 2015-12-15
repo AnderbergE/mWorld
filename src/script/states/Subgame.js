@@ -89,6 +89,7 @@ Subgame.prototype.init = function (options) {
 
 	/* Setup menu objects */
 	this._menuGroup = this.add.group();
+	this._menuGroup.fixedToCamera = true;
 	this._menuGroup.visible = false;
 	this._waterCan = new WaterCan(this.game);
 	this._menuGroup.add(this._waterCan);

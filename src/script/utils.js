@@ -2,6 +2,25 @@ var GLOBAL = require('./global.js');
 var EventSystem = require('./pubsub.js');
 
 /**
+ * Create a growing or shrinking array full of integers.
+ * @param {number} from - The number to start from (default: to).
+ * @param {number} to - The number to go to (default: from).
+ * @return {Array} The new array.
+ */
+exports.growingArray = function (from, to) {
+	from = from || 0;
+	to = to || from;
+
+	var step = from < to ? 1 : -1;
+	var array = [];
+	for (var i = from; i !== to; i += step) {
+		array.push(i);
+	}
+	array.push(i); // Push the last one since that is max and where the loop ends.
+	return array;
+};
+
+/**
  * Fade in or out an object.
  * NOTE: The returned tween has both an onStart and onComplete function.
  * @param {Object} what - The object to fade, needs to have an alpha property.

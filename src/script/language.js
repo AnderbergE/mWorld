@@ -98,46 +98,6 @@ LANG.swedish.text = {
 	connectionLost: 'Ingen anslutning',
 	connectionLostMessage: 'Ajdå. Vi tappade anslutningen till servern.',
 
-	/* Entry state */
-	title: 'Magical Garden',
-	start: 'Starta',
-	continuePlaying: 'Fortsätt',
-	changeAgent: 'Byt kompis',
-	credits: 'Skapat av',
-	anonymous: 'Anonym',
-	logOut: 'Logga ut',
-
-	/* Credits */
-	creditsMade: 'Detta spelet är skapat vid Lunds Universitet',
-	creditsDeveloped: 'Idé och utformning',
-	creditsProgramming: 'Programmering',
-	creditsGraphics: 'Grafik',
-	creditsVoices: 'Röster',
-	creditsVoicePanda: 'Igis Gulz-Haake',
-	creditsVoiceHedgehog: 'Agneta Gulz',
-	creditsVoiceMouse: 'Sebastian Gulz-Haake',
-	creditsVoiceWoodlouse: 'Igis Gulz-Haake',
-	creditsVoiceLizard: 'Igis Gulz-Haake',
-	creditsVoiceBumblebee: 'Agneta Gulz',
-	creditsVoiceBird: 'Igis Gulz-Haake',
-	creditsMusic: 'Musik',
-	creditsSfx: 'Ljudeffekter',
-	creditsThanks: 'Tack till',
-
-	/* Garden state */
-	maxLevel: 'MAX!',
-
-	/* Player setup state */
-	pickFriend: 'Vem vill du bli kompis med?',
-	confirmFriend: 'Välj ', // Followed by agent name
-	changeColor: 'Byt färg',
-
-	/* Menu items */
-	menu: 'MENY',
-	resume: 'Fortsätt',
-	gotoGarden: 'Gå till trädgården',
-	quit: 'Avsluta spelet',
-
 	/* Agents and characters */
 	pandaName: 'Panders',
 	hedgehogName: 'Igis',
@@ -149,6 +109,32 @@ LANG.swedish.text = {
 	birdName: 'Fålia',
 	tractorName: 'Hedvig',
 	craneName: 'Herman',
+
+	/* Entry state */
+	title: 'Magical Garden',
+	start: 'Starta',
+	continuePlaying: 'Fortsätt',
+	changeAgent: 'Byt kompis',
+	credits: 'Skapat av',
+	anonymous: 'Anonym',
+	logOut: 'Logga ut',
+
+	/* Player setup state */
+	pickFriend: 'Vem vill du bli kompis med?',
+	confirmFriend: 'Välj ', // Followed by agent name
+	changeColor: 'Byt färg',
+
+	/* Garden state */
+	maxLevel: 'MAX!',
+
+	/* Party games */
+	congratulations: 'Grattis',
+
+	/* Menu items */
+	menu: 'MENY',
+	resume: 'Fortsätt',
+	gotoGarden: 'Gå till trädgården',
+	quit: 'Avsluta spelet',
 
 	/* Subgame names */
 	balloonGameName: 'Skattjakten',
@@ -173,6 +159,23 @@ LANG.swedish.text = {
 	addsubName: 'Add och sub',
 	gameType: 'Speltyp',
 	difficulty: 'Svårghetsgrad',
+
+	/* Credits */
+	creditsMade: 'Detta spelet är skapat vid Lunds Universitet',
+	creditsDeveloped: 'Idé och utformning',
+	creditsProgramming: 'Programmering',
+	creditsGraphics: 'Grafik',
+	creditsVoices: 'Röster',
+	creditsVoicePanda: 'Igis Gulz-Haake',
+	creditsVoiceHedgehog: 'Agneta Gulz',
+	creditsVoiceMouse: 'Sebastian Gulz-Haake',
+	creditsVoiceWoodlouse: 'Igis Gulz-Haake',
+	creditsVoiceLizard: 'Igis Gulz-Haake',
+	creditsVoiceBumblebee: 'Agneta Gulz',
+	creditsVoiceBird: 'Igis Gulz-Haake',
+	creditsMusic: 'Musik',
+	creditsSfx: 'Ljudeffekter',
+	creditsThanks: 'Tack till',
 
 	/* Demo */
 	demo: 'Demo',
@@ -729,15 +732,15 @@ LANG.swedish.speech = {
 				makeBalloons:     [ 56.0, 2.0], // Kom så blåser vi upp ballonger!
 				herePump:         [ 58.5, 1.1], // Här är pumpen
 				helpMePump:       [ 60.0, 4.7], // Hjälper du mig att trycka på pumpen så många gånger som jag visar.
-				pushOne:          [ 65.5, 2.1], // Tryck en gång på pumpen.
-				pushTwo:          [ 68.0, 2.3], // Tryck två gånger på pumpen.
-				pushThree:        [ 71.0, 2.2], // Tryck tre gånger på pumpen.
-				pushFour:         [ 74.0, 2.2], // Tryck fyra gånger på pumpen.
-				pushFive:         [ 77.0, 2.2], // Tryck fem gånger på pumpen.
-				pushSix:          [ 79.5, 2.2], // Tryck sex gånger på pumpen.
-				pushSeven:        [ 82.5, 2.2], // Tryck sju gånger på pumpen.
-				pushEight:        [ 85.5, 2.3], // Tryck åtta gånger på pumpen.
-				pushNine:         [ 88.5, 2.3], // Tryck nio gånger på pumpen.
+				push1:            [ 65.5, 2.1], // Tryck en gång på pumpen.
+				push2:            [ 68.0, 2.3], // Tryck två gånger på pumpen.
+				push3:            [ 71.0, 2.2], // Tryck tre gånger på pumpen.
+				push4:            [ 74.0, 2.2], // Tryck fyra gånger på pumpen.
+				push5:            [ 77.0, 2.2], // Tryck fem gånger på pumpen.
+				push6:            [ 79.5, 2.2], // Tryck sex gånger på pumpen.
+				push7:            [ 82.5, 2.2], // Tryck sju gånger på pumpen.
+				push8:            [ 85.5, 2.3], // Tryck åtta gånger på pumpen.
+				push9:            [ 88.5, 2.3], // Tryck nio gånger på pumpen.
 				wasGood:          [ 91.5, 1.5], // Ja, det blev bra!
 				tooMuchAir:       [ 93.5, 2.7], // Oj, det blev visst lite för mycket luft.
 				newBalloon:       [ 96.5, 1.5], // Vi tar en ny ballong.
@@ -807,15 +810,15 @@ LANG.swedish.speech = {
 				makeBalloons:     [ 76.0, 1.6], // Kom så blåser vi upp ballonger!
 				herePump:         [ 78.0, 1.1], // Här är pumpen
 				helpMePump:       [ 79.5, 3.2], // Hjälper du mig och trycker på pumpen så många gånger som jag visar.
-				pushOne:          [ 83.5, 1.6], // Tryck en gång på pumpen.
-				pushTwo:          [ 85.5, 1.6], // Tryck två gånger på pumpen.
-				pushThree:        [ 87.5, 1.6], // Tryck tre gånger på pumpen.
-				pushFour:         [ 89.5, 1.7], // Tryck fyra gånger på pumpen.
-				pushFive:         [ 92.0, 2.0], // Tryck fem gånger på pumpen.
-				pushSix:          [ 94.5, 1.8], // Tryck sex gånger på pumpen.
-				pushSeven:        [ 97.0, 1.8], // Tryck sju gånger på pumpen.
-				pushEight:        [ 99.5, 1.7], // Tryck åtta gånger på pumpen.
-				pushNine:         [102.0, 1.9], // Tryck nio gånger på pumpen.
+				push1:            [ 83.5, 1.6], // Tryck en gång på pumpen.
+				push2:            [ 85.5, 1.6], // Tryck två gånger på pumpen.
+				push3:            [ 87.5, 1.6], // Tryck tre gånger på pumpen.
+				push4:            [ 89.5, 1.7], // Tryck fyra gånger på pumpen.
+				push5:            [ 92.0, 2.0], // Tryck fem gånger på pumpen.
+				push6:            [ 94.5, 1.8], // Tryck sex gånger på pumpen.
+				push7:            [ 97.0, 1.8], // Tryck sju gånger på pumpen.
+				push8:            [ 99.5, 1.7], // Tryck åtta gånger på pumpen.
+				push9:            [102.0, 1.9], // Tryck nio gånger på pumpen.
 				wasGood:          [104.5, 1.3], // Ja, det blev bra!
 				tooMuchAir:       [106.5, 2.5], // Oj, det blev visst lite för mycket luft.
 				newBalloon:       [109.5, 1.3], // Vi tar en ny ballong.

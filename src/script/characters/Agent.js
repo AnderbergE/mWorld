@@ -36,6 +36,7 @@ function Agent (game, x, y) {
 			origin: -0.8,
 			wave: { from: -0.1, to: 0.2, durUp: 0.3, dur: 0.2 },
 			pump: { angle: 0.5, move: 50, durUp: 0.5, dur: 0.25 },
+			jump: { angle: 0.7, dur: 0.3 },
 			water: { angle: 0, back: -2, canAngle: -0.5, durBack: 0.2, durUp: 0.5, durCan: 0.5 }
 		}
 	};
@@ -284,6 +285,21 @@ Agent.prototype.wave = function (duration, arm) {
 		t.add(new TweenMax(this.rightArm, wave.dur, { rotation: -wave.to, ease: Power0.easeOut, repeat: times, yoyo: true }), upDown);
 		t.add(new TweenMax(this.rightArm, upDown, { rotation: -origin, ease: Power1.easeOut }), wave.dur * times + upDown);
 	}
+	return t;
+};
+
+
+Agent.prototype.jump = function (times) {
+	times = times * 2 - 1;
+	times += (times % 2 === 0) ? 1 : 0; // Even numbers do not loop back to origin.
+	var jump = this.coords.anim.arm.jump;
+
+	var t = new TimelineMax();
+	t.to(this, 0.3, { y: '-=15', ease: Power0.easeInOut, repeat: times, yoyo: true }, 0);
+	t.to(this.rightLeg, jump.dur, { rotation: -jump.angle, ease: Power0.easeInOut, repeat: times, yoyo: true }, 0);
+	t.to(this.leftLeg, jump.dur, { rotation: jump.angle, ease: Power0.easeInOut, repeat: times, yoyo: true }, 0);
+	t.to(this.rightArm, jump.dur, { rotation: jump.angle, ease: Power0.easeInOut, repeat: times, yoyo: true }, 0);
+	t.to(this.leftArm, jump.dur, { rotation: -jump.angle, ease: Power0.easeInOut, repeat: times, yoyo: true }, 0);
 	return t;
 };
 

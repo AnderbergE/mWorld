@@ -55,7 +55,8 @@ function Panda (game, x, y) {
 		},
 		mouth: {
 			x: 0, y: -142
-		}
+		},
+		hat: { x: 0, y: -380 }
 	};
 
 	Agent.call(this, game, x, y); // Call parent constructor.

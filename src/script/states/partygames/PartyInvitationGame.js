@@ -2,6 +2,7 @@ var PartyGame = require('./PartyGame.js');
 var GLOBAL = require('../../global.js');
 var LANG = require('../../language.js');
 var util = require('../../utils.js');
+var Cover = require('../../objects/Cover.js');
 var Mouse = require('../../characters/agents/Mouse.js');
 
 // TODO: A function to make sure things aren't overlapping would help.
@@ -11,10 +12,30 @@ module.exports = PartyInvitationGame;
 
 PartyInvitationGame.prototype = Object.create(PartyGame.prototype);
 PartyInvitationGame.prototype.constructor = PartyInvitationGame;
-
 function PartyInvitationGame () {
 	PartyGame.call(this); // Call parent constructor.
 }
+
+// Right now only two rounds are used, and it is a 50% chance to get more than one.
+// If you raise the max rounds, the percentage will be to the power of rounds (that is extra 1: 0.5, extra 2: 0.5^2, extra 3: 0.5^3...).
+var maxCardRounds = 2;
+var morePercentage = 0.5;
+var difficultySpritePercentages = [[10, 90], [20, 80], [30, 70], [40, 60], [40, 50], [40, 40], [30, 30], [20, 20], [10, 10], [10, 0]];
+var trollChance = 40;
+var trollChanceAnother = 25;
+
+PartyInvitationGame.prototype.pos = {
+	helper1: { x: 580, y: 520 },
+	helper2: { x: 370, y: 540 },
+	troll: { x: 480, y: 650 },
+	stack: { x: -30, y: 490, scale: 0.7 },
+	arm: { x: 840, y: 540, scale: 1.4, angle: 45 },
+	choices: [300, 500, 700], // NOTE: This is actually shuffled in code, do not rely on these positions.
+	choiceY: 685
+};
+
+// Tell the PartyGame to create guests with these scales (see createGuests).
+PartyInvitationGame.prototype.guestScales = [0.5, 0.4, 0.7, 0.2, 0.2];
 
 PartyInvitationGame.prototype.preload = function () {
 	PartyGame.prototype.preload.call(this);
@@ -22,14 +43,18 @@ PartyInvitationGame.prototype.preload = function () {
 };
 
 PartyInvitationGame.prototype.create = function () {
-	PartyGame.prototype.create.call(this);
 	// The invitation game uses helper1, it should be Panda or Mouse as backup.
-	if (this.birthday instanceof Mouse) {
-		this.changeAgents();
+	if (this.birthdayType === Mouse) {
+		this.switchAgents();
 	}
+
+	PartyGame.prototype.create.call(this);
 
 	this.troll.visible = true;
 	this.troll.changeShape('stone');
+
+	this.mailbox = this.gladeIntro.create(800, 360, 'glade', 'mailbox');
+
 
 	this.gameGroup.create(0, 0, 'invitation', 'background');
 
@@ -37,42 +62,37 @@ PartyInvitationGame.prototype.create = function () {
 	this.guestThought.x = 740;
 	this.guestThought.y = 110;
 	this.guestThought.visible = false;
-	var bubble = this.guestThought.create(-10, 5, 'invitation', 'thought_bubble');
+	var bubble = this.guestThought.create(-10, 5, 'objects', 'thought_bubble');
 	bubble.anchor.set(0.5);
 	bubble.scale.set(-1);
 	bubble.angle = -30;
 	this.thoughtGroup = this.add.group(this.guestThought); // This will be filled with the decor.
 
+	this.stackHighlight = new Cover(this.game, 0x0000aa, 0);
+	this.stackHighlight.x = this.pos.stack.x;
+	this.stackHighlight.y = this.pos.stack.y;
+	this.stackHighlight.anchor.set(0.5);
+	this.stackHighlight.scale.set(0.45);
+	this.stackHighlight.flash = TweenMax.to(this.stackHighlight, 0.8, { alpha: 0.3, ease: Power1.easeInOut, repeat: -1, yoyo: true, paused: true });
+	this.gameGroup.add(this.stackHighlight);
+
 	this.cardStack = this.add.group(this.gameGroup);
-	this.cardStack.x = -30;
-	this.cardStack.y = 490;
+	this.cardStack.x = this.pos.stack.x;
+	this.cardStack.y = this.pos.stack.y;
 
 	this.choices = [];
 	for (var i = 0; i < 3; i++) {
-		var choice = new Tray(this.game, 0, 800);
+		var choice = new Tray(this.game, 0, this.world.height);
 		choice.scale.set(0);
 		choice.handle.events.onInputDown.add(this.pickDecor, this);
 		this.gameGroup.add(choice);
 		this.choices.push(choice);
 	}
 
-	this.emitter = this.add.emitter(0, 0, 150);
-	this.emitter.gravity = 0;
-	this.emitter.setAlpha(1, 0, 3000);
-	this.emitter.makeParticles(this.troll.id, 'star');
-
-	if (this.helper1 instanceof Mouse) {
-		this.arm = this.gameGroup.create(0, 0, 'invitation', 'mousearm');
-	} else {
-		this.arm = this.gameGroup.create(0, 0, 'invitation', 'pandaarm');
-	}
-	this.arm.x = 840;
-	this.arm.y = 540;
+	this.arm = this.gameGroup.create(this.pos.arm.x, this.pos.arm.y, 'invitation', this.helper1 instanceof Mouse ? 'mousearm' : 'pandaarm');
 	this.arm.anchor.y = 0.3;
-	this.arm.angle = 45;
-	this.arm.scale.set(1.4);
-
-	this.evenMoreDecor = 0;
+	this.arm.angle = this.pos.arm.angle;
+	this.arm.scale.set(this.pos.arm.scale);
 
 	this.gladeIntro.parent.bringToTop(this.gladeIntro);
 };
@@ -85,10 +105,7 @@ PartyInvitationGame.prototype.create = function () {
  * @returns {Array} An array with 3 specific amounts.
  */
 PartyInvitationGame.prototype.getAmounts = function (max) {
-	var amountsArray = [];
-	for (var i = 1; i < max; i++) {
-		amountsArray.push(i);
-	}
+	var amountsArray = util.growingArray(1, max);
 	this.rnd.shuffle(amountsArray);
 	return amountsArray.splice(0, 3);
 };
@@ -105,111 +122,72 @@ PartyInvitationGame.prototype.getAmountsMany = function () {
 };
 
 /**
- * @param {Number} variants - How many different sprites to use.
+ * Get the decor sprites to use. One sprite variant will be used if none of the percentages are fulfilled.
+ * @param {Number} chanceTwo - The percentage (0-100) of two sprites.
+ * @param {Number} chanceThree - The percentage (0-100) of three sprites.
  * @returns {Array} An array with three sprites.
  */
-PartyInvitationGame.prototype.getSprites = function (variants) {
-	var possibleSprites = this.rnd.shuffle(['decor1', 'decor2', 'decor3', 'decor4', 'decor5']);
+PartyInvitationGame.prototype.getSprites = function (chanceTwo, chanceThree) {
+	chanceTwo += chanceThree;
+	var chance = this.game.rnd.between(1, 100);
+	var variants = chance <= chanceThree ? 3 : (chance <= chanceTwo ? 2 : 1);
 
-	var sprites = [];
-	for (var i = 0; i < variants; i++) {
-		sprites.push(possibleSprites[i]);
-	}
-
+	var sprites = this.rnd.shuffle(['decor1', 'decor2', 'decor3', 'decor4', 'decor5']);
+	sprites.splice(variants);
 	while (sprites.length < 3) {
 		sprites.push(sprites[0]);
 	}
-
 	return sprites;
 };
 
-/**
- * @param {Number} chanceThree - The percentage (0-100) of three sprites.
- * @param {Number} chanceTwo - The percentage (0-100) of two sprites.
- * @returns {Array} How many variants of sprites to use.
- */
-PartyInvitationGame.prototype.spritePercent = function (chanceThree, chanceTwo) {
-	chanceTwo += chanceThree;
-	var chance = this.game.rnd.between(1, 100);
-	return chance <= chanceThree ? 3 : (chance <= chanceTwo ? 2 : 1);
-};
-
 PartyInvitationGame.prototype.generateRound = function () {
-	var amounts;
-	var sprites;
 	var pileType;
-	var xPos = this.rnd.shuffle([300, 500, 700]);
+	if (this.difficulty < 4) {
+		pileType = 'piles';
+	} else if (this.difficulty < 6) {
+		pileType = 'singles';
+	} else if (this.difficulty < 8) {
+		pileType = 'manyNumber';
+	} else  {
+		pileType = 'singleNumber';
+	}
 
-	if (this.difficulty <= 1) {
+	var amounts;
+	if (this.difficulty < 4) {
 		amounts = this.getAmountsMany();
-		sprites = this.getSprites(this.spritePercent(90, 10));
-		pileType = 'piles';
-	} else if (this.difficulty <= 2) {
-		amounts = this.getAmountsMany();
-		sprites = this.getSprites(this.spritePercent(80, 20));
-		pileType = 'piles';
-	} else if (this.difficulty <= 3) {
-		amounts = this.getAmountsMany();
-		sprites = this.getSprites(this.spritePercent(70, 30));
-		pileType = 'piles';
-	} else if (this.difficulty <= 4) {
-		amounts = this.getAmountsMany();
-		sprites = this.getSprites(this.spritePercent(60, 40));
-		pileType = 'piles';
-	} else if (this.difficulty <= 5) {
-		amounts = this.getAmounts(4);
-		sprites = this.getSprites(this.spritePercent(50, 40));
-		pileType = 'singles';
-	} else if (this.difficulty <= 6) {
-		amounts = this.getAmounts(5);
-		sprites = this.getSprites(this.spritePercent(40, 40));
-		pileType = 'singles';
-	} else if (this.difficulty <= 7) {
-		amounts = this.getAmounts(6);
-		sprites = this.getSprites(this.spritePercent(30, 30));
-		pileType = 'manyNumber';
-	} else if (this.difficulty <= 8) {
-		amounts = this.getAmounts(7);
-		sprites = this.getSprites(this.spritePercent(20, 20));
-		pileType = 'manyNumber';
-	} else if (this.difficulty <= 9) {
-		amounts = this.getAmounts(8);
-		sprites = this.getSprites(this.spritePercent(10, 10));
-		pileType = 'singleNumber';
-	} else if (this.difficulty <= 10) {
-		amounts = this.getAmounts(9);
-		sprites = this.getSprites(this.spritePercent(0, 10));
-		pileType = 'singleNumber';
+	} else {
+		// NOTE: Difficulty can go up to ten.
+		amounts = this.getAmounts(this.difficulty | 0); // "|" is a fast way to round down.
+	}
+
+	var sprites = this.getSprites.apply(this, difficultySpritePercentages[this.difficulty | 0]);
+
+	var xPos = this.rnd.shuffle(this.pos.choices);
+
+	for (var i = 0; i < this.choices.length; i++) {
+		this.choices[i].setup(pileType, amounts[i], sprites[i], xPos[i]);
 	}
 
 	this.correctAmount = amounts[0];
 	this.correctSprite = sprites[0];
 
-	for (var i = 0; i < this.choices.length; i++) {
-		this.choices[i].setup(pileType, amounts[i], sprites[i], xPos[i]);
-	}
-};
-
-/** Set up correct decor in thought bubble. */
-PartyInvitationGame.prototype.setGoalDecor = function () {
 	this.thoughtGroup.removeAll();
-
-	for (var i = 0; i < this.correctAmount; i++) {
+	for (i = 0; i < this.correctAmount; i++) {
 		this.thoughtGroup.create(0, 0, 'invitation', this.correctSprite).anchor.set(0.5);
 	}
 
 	// Randomize position of the decor and make sure they do not overlap.
-	for (var a = 0; a < this.correctAmount; a++) {
-		var decor = this.thoughtGroup.children[a];
+	for (i = 0; i < this.correctAmount; i++) {
+		var decor = this.thoughtGroup.children[i];
 
 		var angle = this.game.rnd.angle();
 		decor.x = Math.cos(angle)*Math.random()*50;
 		decor.y = Math.sin(angle)*Math.random()*50;
 
 		if (this.correctAmount < 10) {
-			for (var b = 0; b < a; b++) {
-				if (decor.position.distance(this.thoughtGroup.children[b].position) < 30) {
-					a--;
+			for (var j = 0; j < i; j++) {
+				if (decor.position.distance(this.thoughtGroup.children[j].position) < 30) {
+					i--;
 					break;
 				}
 			}
@@ -218,7 +196,7 @@ PartyInvitationGame.prototype.setGoalDecor = function () {
 };
 
 /** Set up new card for next round */
-PartyInvitationGame.prototype.createCard = function () {
+PartyInvitationGame.prototype.newCard = function () {
 	this.playCard = new Card(this.game, this.game.width / 2, 395);
 	this.playCard.scale.set(0);
 	this.gameGroup.add(this.playCard);
@@ -226,10 +204,10 @@ PartyInvitationGame.prototype.createCard = function () {
 };
 
 /** Set up new guest for next round */
-PartyInvitationGame.prototype.setGuest = function () {
+PartyInvitationGame.prototype.newGuest = function () {
 	this.guest = this.guests[this.cardStack.children.length];
 	if (this.guest.name === LANG.TEXT.lizardName) {
-		this.guest.x = this.game.width / 2 - 90;
+		this.guest.x = this.game.width / 2 - 100;
 		this.guest.y = 55;
 	} else {
 		this.guest.x = this.game.width / 2;
@@ -238,64 +216,74 @@ PartyInvitationGame.prototype.setGuest = function () {
 	this.gameGroup.add(this.guest);
 };
 
+PartyInvitationGame.prototype.newRound = function (add) {
+	this.generateRound();
+
+	var t = new TimelineMax();
+
+	if (!add) {
+		this.moreDecor = 0;
+		this.newCard();
+		this.newGuest();
+
+		var correct = this.choices[0];
+		t.addSound(this.helper1.speech, this.helper1, correct.type === 'piles' ? (correct.decorGroup.length > 5 ? 'manyOfThese' : 'someOfThese') : 'thisManyOfThese', 0.3);
+	}
+	this.moreDecor++;
+
+	t.add(util.fade(this.guest, true, 0.2), 0);
+	t.add(util.fade(this.guestThought, true, 0.5), 0.5);
+	t.add(util.popin(this.playCard, true, 0.5), 1);
+	t.addCallback(this.slideChoices, 1.5, [true], this);
+	return t;
+};
+
 PartyInvitationGame.prototype.slideChoices = function (into) {
 	var t = new TimelineMax();
 	for (var i = 0; i < this.choices.length; i++) {
 		var choice = this.choices[i];
-		t.add(TweenMax.to(choice, 0.5, { y: into ? 685 : 800 }), 0);
+		t.add(TweenMax.to(choice, 0.5, { y: into ? this.pos.choiceY : this.world.height }), 0);
 		t.add(TweenMax.to(choice.scale, 0.5, { x: into ? 1 : 0, y: into ? 1 : 0 }), 0);
 	}
 	return t;
 };
 
-PartyInvitationGame.prototype.newRound = function (silent) {
-	this.setGuest();
-	this.createCard();
-	this.generateRound();
-	this.setGoalDecor();
 
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                             Troll functions                               */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+PartyInvitationGame.prototype.trolling = function (chance) {
+	// Always return a timeline from this function.
 	var t = new TimelineMax();
-	if (!silent) {
-		if (this.difficulty <= 4 && this.correctAmount > 5) { // TODO: Look at correct choice instead.
-			t.addSound(this.helper1.speech, this.helper1, 'manyOfThese', '+=0.5');
-		} else if (this.difficulty <= 4 && this.correctAmount < 5) {
-			t.addSound(this.helper1.speech, this.helper1, 'someOfThese', '+=0.5');
+
+	// Randomize troll appearance.
+	if (this.game.rnd.between(1, 100) <= chance) {
+		var target = this.choices[this.rnd.integerInRange(1, 2)];
+		t.add(this.troll.appear(target.x, this.pos.choiceY));
+
+		if (Math.random() <= 0.5) {
+			// Change places of two piles.
+			var otherPile;
+			do {
+				otherPile = this.game.rnd.pick(this.choices);
+			} while (target === otherPile);
+
+			t.addLabel('changePlace');
+			t.to(target, 1, { x: otherPile.x, ease: Power2.easeOut });
+			t.to(otherPile, 1, { x: target.x, ease: Power2.easeOut }, 'changePlace');
 		} else {
-			t.addSound(this.helper1.speech, this.helper1, 'thisManyOfThese', '+=0.5');
+			// Change decor on one of the piles (not the correct one).
+			t.addCallback(function () {
+				var newName = target.decorGroup.children[0].frameName === 'decor5' ? 'decor3' : 'decor5';
+				for (var i = 0; i < target.decorGroup.length; i++) {
+					target.decorGroup.children[i].frameName = newName;
+				}
+			}, null, null, this);
 		}
+
+		t.addSound(this.helper1.speech, this.helper1, 'ohNo');
+		t.addSound(this.helper1.speech, this.helper1, (Math.random() < 0.5 ? 'aBitWeird' : 'helpMeCorrect'));
 	}
-
-	t.add(util.popin(this.playCard, true, 0.5), 0);
-	t.add(util.fade(this.guest, true, 0.2), 0.5);
-	t.add(util.fade(this.guestThought, true, 0.5), 0.7);
-
-
-	t.add(this.slideChoices(true));
-	return t;
-};
-
-PartyInvitationGame.prototype.anotherRound = function () {
-	var t = new TimelineMax();
-
-	t.addLabel('startFade');
-	t.add(this.slideChoices(false), 'startFade');
-	t.add(util.fade(this.guestThought, false, 0.5), 'startFade');
-
-	// Setup another round.
-	t.addCallback(this.generateRound, null, null, this);
-	t.addCallback(this.setGoalDecor, null, null, this);
-	t.add(util.fade(this.guestThought, true, 0.5));
-	t.addCallback(this.slideChoices, null, [true], this);
-
-	if (this.game.rnd.between(1, 100) <= 70) {
-		// TODO: This is a bit sloppy, but otherwise the choices won't have updated.
-		t.addCallback(function () {
-			this.trollStart().addCallback(this.disable, null, [false], this);
-		}, null, null, this);
-	} else {
-		t.addCallback(this.disable, null, [false], this);
-	}
-
 	return t;
 };
 
@@ -321,19 +309,12 @@ PartyInvitationGame.prototype.dropDecor = function (origin) {
 	choice.follow();
 
 	if (this.game.input.activePointer.y < 550) {
-		if (choice instanceof Card) {
-			choice.decorGroup.x = 0;
-			choice.decorGroup.y = 0;
-		} else {
+		if (choice instanceof Tray) {
 			this.playCard.transferFrom(choice);
 			this.checkDecor();
 		}
-
 	} else {
-		if (choice instanceof Tray) {
-			choice.decorGroup.x = 0;
-			choice.decorGroup.y = 0;
-		} else {
+		if (choice instanceof Card) {
 			for (var i = 0; i < this.choices.length; i++) {
 				if (!this.choices[i].decorGroup.length) {
 					this.choices[i].transferFrom(choice);
@@ -346,158 +327,86 @@ PartyInvitationGame.prototype.dropDecor = function (origin) {
 
 /** Check if dropped decor is correct */
 PartyInvitationGame.prototype.checkDecor = function () {
-	var moreDecorNr = this.game.rnd.between(1, 100);
-	var evenMoreDecorNr = this.game.rnd.between(1, 100);
-	var finishedCards = this.cardStack.children.length - 1;
-
-	// TODO: Reduce code.
-
 	var t = new TimelineMax();
-	if (this.playCard.decorGroup.length) { // TODO: Is this check necessary?
-		if (this.playCard.decorGroup.children.length === this.correctAmount && this.playCard.decorGroup.children[0].frameName === this.correctSprite) { // Correct :)
-			t.addCallback(this.disable, null, [true], this);
+	if (this.playCard.decorGroup.children.length === this.correctAmount) { // Correct :)
+		t.addCallback(this.disable, null, [true], this);
 
-			if (finishedCards > 0 && moreDecorNr <= 60 && !this.playCard.moreDecorGroup.length) {
-				t.addCallback(this.guest.setNeutral, null, null, this.guest);
-				t.addSound(this.helper1.speech, this.helper1, 'rightButMore', 0);
+		t.add(util.fade(this.guestThought, false, 0.5), 0);
+		t.add(this.slideChoices(false), 0);
 
-				while (this.playCard.decorGroup.children.length) {
-					this.playCard.moreDecorGroup.add(this.playCard.decorGroup.children[0]);
-				}
-				t.add(this.anotherRound());
+		var more = Math.random();
+		if (this.moreDecor < maxCardRounds && more > Math.pow(morePercentage, this.moreDecor)) {
+			// The card will get another round.
+			this.playCard.stashDecor();
 
-			} else if (finishedCards > 0 && evenMoreDecorNr <= 60 && this.playCard.moreDecorGroup.children < 25 && this.evenMoreDecor < 2) {
-				this.evenMoreDecor = this.evenMoreDecor + 1;
+			t.addSound(this.helper1.speech, this.helper1, 'rightButMore', 0);
+			t.addCallback(function () {
+				this.guest.setNeutral();
+				var t = this.newRound(true);
+				t.add(this.trolling(trollChanceAnother));
+				t.addCallback(this.disable, null, [false], this);
+			}, null, null, this);
 
-				t.addCallback(this.guest.setNeutral, null, null, this.guest);
-				t.addSound(this.helper1.speech, this.helper1, 'rightButMore');
+		} else {
+			// We are done with this card!
+			this.setupDragCard();
 
-				while (this.playCard.decorGroup.children.length) {
-					this.playCard.moreDecorGroup.add(this.playCard.decorGroup.children[0]);
-				}
-				t.add(this.anotherRound());
-
-			} else {
-				this.playCard.handle.events.destroy();
-
-				t.addCallback(this.guest.setHappy, null, null, this.guest);
-				t.addSound(this.helper1.speech, this.helper1, 'looksNice');
-				t.addSound(this.helper1.speech, this.helper1, 'dragCard', '+=0.2');
-				t.addCallback(this.dragCard, null, null, this);
-			}
-
-		} else if (this.playCard.decorGroup.children.length > this.correctAmount) { // Incorrect, too many.
-			t.addCallback(this.guest.setSad, null, null, this.guest);
-			t.addSound(this.helper1.speech, this.helper1, 'tryLess');
-			t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5'); // TODO: This speech needs to be cut of correctly if moving while it is active.
-
-		} else if (this.playCard.decorGroup.children.length < this.correctAmount) { // Incorrect, too few.
-			t.addCallback(this.guest.setSad, null, null, this.guest);
-			t.addSound(this.helper1.speech, this.helper1, 'tryMore');
-			t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5'); // TODO: This speech needs to be cut of correctly if moving while it is active.
+			t.addCallback(this.guest.setHappy, null, null, this.guest);
+			t.addSound(this.helper1.speech, this.helper1, 'looksNice');
+			t.addCallback(this.disable, null, [false], this);
+			t.addSound(this.helper1.speech, this.helper1, 'dragCard');
 		}
+
+	} else if (this.playCard.decorGroup.children.length > this.correctAmount) { // Incorrect, too many.
+		t.addCallback(this.guest.setSad, null, null, this.guest);
+		t.addSound(this.helper1.speech, this.helper1, 'tryLess');
+		t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5');
+
+	} else { // Incorrect, too few.
+		t.addCallback(this.guest.setSad, null, null, this.guest);
+		t.addSound(this.helper1.speech, this.helper1, 'tryMore');
+		t.addSound(this.helper1.speech, this.helper1, 'dragStickersBack', '+=0.5');
 	}
 };
 
-/** Drag finished card to stack. */
-PartyInvitationGame.prototype.dragCard = function () {
-	this.disable(false);
+/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
+/*                  Card functions after decor is done                       */
+/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
+/** Setup the dragging of the card to the stack. */
+PartyInvitationGame.prototype.setupDragCard = function () {
 	this.playCard.parent.bringToTop(this.playCard);
-
+	this.playCard.handle.events.destroy();
 	this.playCard.handle.events.onInputDown.add(function () {
 		this.playCard.update = function () {
 			this.x = this.game.input.activePointer.x;
 			this.y = this.game.input.activePointer.y;
 		};
 	}, this);
-
 	this.playCard.handle.events.onInputUp.add(function () {
-		this.addCardToStack();
+		this.playCard.update = function () {}; // Overwriting the follow.
+		this.addCardToStack().addCallback(this.nextRound, null, null, this);
 	}, this);
+
+	this.stackHighlight.flash.play();
 };
 
 /** Add the finished card to stack. */
 PartyInvitationGame.prototype.addCardToStack = function () {
-	this.playCard.update = function () {};
 	this.disable(true);
-
-	var t = new TimelineMax();
-	t.to(this.playCard.scale, 1, { x: 0.7, y: 0.7, ease: Power0.easeInOut, delay: 0.1 });
-	t.to(this.playCard, 1, { x: this.cardStack.x + (this.cardStack.length * 5), y: this.cardStack.y + (this.cardStack.length * 5), ease: Power0.easeInOut });
-
-	t.addCallback(function () {
-		this.playCard.x = this.cardStack.length * 5;
-		this.playCard.y = this.cardStack.length * 5;
-		this.cardStack.add(this.playCard);
-	}, null, null, this);
-
-	t.add(this.destroyRound());
-	t.addCallback(this.nextRound, null, null, this);
-};
-
-PartyInvitationGame.prototype.destroyRound = function ()  {
+	this.stackHighlight.flash.pause(0);
 	this.playCard.handle.events.destroy();
-	this.evenMoreDecor = 0;
-
-	// TODO: Is destroy necessary?
-	var t = new TimelineMax();
-	t.add(this.slideChoices(false));
-	t.add(util.fade(this.guest, false, 0.5), 0);
-	t.addCallback(this.guest.destroy, null, null, this.guest);
-	t.add(util.fade(this.guestThought, false, 0.5), 0);
-	return t;
-};
-
-
-/*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                             Troll functions                               */
-/*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
-PartyInvitationGame.prototype.trollStart = function () {
-	// Randomize troll appearance.
-	var t = new TimelineMax();
-	if (this.game.rnd.between(1, 100) <= 40) {
-		this.trollTarget = this.choices[this.rnd.integerInRange(1, 2)];
-		t.add(this.troll.appear('random', this.trollTarget.x, 685)); // TODO: This should be in a pos
-		t.add(this.trollTypePicker());
-	}
-	return t;
-};
-
-PartyInvitationGame.prototype.trollTypePicker = function () {
-	return this.game.rnd.between(1, 100) <= 50 ? this.trollChangeSprite() : this.trollChangePlace();
-};
-
-PartyInvitationGame.prototype.trollChangePlace = function () {
-	var otherPile;
-	do {
-		otherPile = this.game.rnd.pick(this.choices);
-	} while (this.trollTarget === otherPile);
 
 	var t = new TimelineMax();
-	t.addLabel('changePlace');
-	t.to(this.trollTarget, 1, { x: otherPile.x, ease: Power2.easeOut });
-	t.to(otherPile, 1, { x: this.trollTarget.x, ease: Power2.easeOut }, 'changePlace');
-	t.addSound(this.helper1.speech, this.helper1, 'ohNo');
-	t.addSound(this.helper1.speech, this.helper1, (Math.random() < 0.5 ? 'aBitWeird' : 'helpMeCorrect'));
-	return t;
-};
-
-PartyInvitationGame.prototype.trollChangeSprite = function () {
-	var t = new TimelineMax();
+	var offset = this.cardStack.length * 5;
+	t.to(this.playCard, 1, { x: this.cardStack.x + offset, y: this.cardStack.y + offset, ease: Power0.easeInOut }, 0);
+	t.to(this.playCard.scale, 1, { x: this.pos.stack.scale, y: this.pos.stack.scale, ease: Power0.easeInOut }, 0);
 	t.addCallback(function () {
-		var i;
-		if (this.trollTarget.decorGroup.children[0].frameName !== 'decor5') {
-			for (i = 0; i < this.trollTarget.decorGroup.length; i++) {
-				this.trollTarget.decorGroup.children[i].frameName = 'decor5';
-			}
-		} else {
-			for (i = 0; i < this.trollTarget.decorGroup.length; i++) {
-				this.trollTarget.decorGroup.children[i].frameName = 'decor3';
-			}
-		}
+		this.cardStack.add(this.playCard);
+		this.playCard.x = offset;
+		this.playCard.y = offset;
 	}, null, null, this);
-	t.addSound(this.helper1.speech, this.helper1, 'ohNo');
-	t.addSound(this.helper1.speech, this.helper1, (Math.random() < 0.5 ? 'aBitWeird' : 'helpMeCorrect'));
+
+	t.add(util.fade(this.guest, false, 0.5), 0);
 	return t;
 };
 
@@ -512,12 +421,14 @@ PartyInvitationGame.prototype.modeIntro = function () {
 	t.add(this.helper2.wave(1, -1));
 	t.addSound(this.helper2.speech, this.helper2, 'hi', 0);
 	t.addSound(this.helper2.speech, this.helper2, 'niceYoureHere', '+=0.5');
-
-	t.addLabel('a2', '+=1');
-	t.addSound(this.helper1.speech, this.helper1, 'soonBirthday', 'a2');
+	if (this.birthdayType === Mouse) { // Special case for the speech to be correct.
+		t.addSound(this.helper2.speech, this.helper2, 'soonBirthday', '+=1');
+	} else {
+		t.addSound(this.helper1.speech, this.helper1, 'soonBirthday', '+=1');
+	}
 	t.addSound(this.helper1.speech, this.helper1, 'wereHavingParty', '+=0.5');
 
-	t.add(this.troll.transform('stoneToTroll'), '+=1');
+	t.add(this.troll.transform('troll'), '+=1');
 	t.addSound(this.sfx, null, 'pop', '-=1');
 
 	t.addCallback(function () {
@@ -535,11 +446,15 @@ PartyInvitationGame.prototype.modeIntro = function () {
 
 	t.add(this.troll.swish(this.mailbox.x + 30, this.mailbox.y + 30));
 
-	t.addLabel('gone');
-	t.addLabel('gone2', '+=0.5');
+	var bear = this.gladeIntro.create(this.mailbox.x, this.mailbox.y + 60, 'glade', 'decor5');
+	bear.alpha = 0;
+	bear.scale.set(1.5);
+
+	t.addLabel('gone', '-=0.5');
+	t.addLabel('gone2');
 	t.addSound(this.sfx, null, 'pop', 'gone');
 	t.add(new TweenMax(this.mailbox, 0.1, { alpha: 0 }), 'gone');
-	t.add(new TweenMax(this.bear, 0.1, { alpha: 1 }), 'gone');
+	t.add(new TweenMax(bear, 0.1, { alpha: 1 }), 'gone');
 	t.to(this.troll.leftArm, 0.3, { rotation: -1.1, ease: Power4.easeIn });
 	t.addSound(this.troll.speech, this.troll, 'oops1', 'gone2');
 
@@ -551,50 +466,62 @@ PartyInvitationGame.prototype.modeIntro = function () {
 
 	t.addSound(this.helper1.speech, this.helper1, 'gottaInvite', '+=1');
 	t.addLabel('maker');
-	// t.add(this.helper2.move({ x: '+=' + 170, y: '+=' + 20, ease: Power0.easeNone }, 2), 'maker');
+	t.add(this.helper1.move({ x: '+=' + 170, y: '+=' + 20 }, 2), 'maker');
 	t.addSound(this.helper1.speech, this.helper1, 'makeCards', 'maker');
+	t.to(this.gladeIntro, 3.5, { x: -2700, y: -1800, ease: Power2.easeInOut }, 'maker');
+	t.to(this.gladeIntro.scale, 3.5, { x: 4, y: 4, ease: Power2.easeInOut }, 'maker');
 
-	t.add(new TweenMax(this.gladeIntro, 2, { alpha: 0 }), '+=3');
-
-	t.addSound(this.helper1.speech, this.helper1, 'allGuestsGet');
-	t.add(this.newRound());
+	t.add(util.fade(this.gladeIntro, false, 2));
 
 	t.addCallback(function () {
+		bear.destroy();
+
+		this._counter.value++; // We run one card and because this part is in the intro, manually increase counter.
+
+		this.gladeIntro.x = 0;
+		this.gladeIntro.y = 0;
+		this.gladeIntro.scale.set(1);
+
 		this.troll.visible = false;
 		this.troll.scale.set(0.22);
 		this.gameGroup.add(this.troll);
 
-		var rightPile = this.choices[0];
-		var positionX = this.choices[0].x;
-		var positionY = this.choices[0].y;
-		this.gameGroup.bringToTop(rightPile);
-		this.gameGroup.bringToTop(this.arm);
-
 		var t = new TimelineMax();
 		t.skippable();
-		t.to(this.arm, 3, { x: positionX, y: positionY, ease: Power1.easeIn });
-		t.addSound(this.helper1.speech, this.helper1, 'imTrying');
-		t.addCallback(function () { rightPile.follow(this.arm); }, null, null, this);
-		t.to(this.arm, 2, { x: this.playCard.x, y: this.playCard.y, ease: Power1.easeIn });
-		t.addCallback(function () { this.playCard.transferFrom(rightPile); }, null, null, this);
-		t.addCallback(function () { rightPile.follow(); }, null, null, this);
-		t.addCallback(this.guest.setHappy, null, null, this.guest);
-		t.addSound(this.helper1.speech, this.helper1, 'looksNice');
-		t.addSound(this.helper1.speech, this.helper1, 'imPutting', '+=0.5');
+		t.addSound(this.helper1.speech, this.helper1, 'allGuestsGet');
+		t.add(this.newRound(), '+=1');
 
-		t.addLabel('drag');
-		t.to([this.arm, this.playCard], 2, { x: this.cardStack.x, y: this.cardStack.y, ease: Power1.easeIn });
-		t.to(this.playCard.scale, 1, { x: 0.7, y: 0.7, ease: Power0.easeInOut }, 'drag');
+		var correctPile = this.choices[0];
+		this.gameGroup.bringToTop(correctPile);
+		this.gameGroup.bringToTop(this.arm);
+
+		t.to(this.arm, 3, { x: correctPile.x, y: this.pos.choiceY, ease: Power1.easeIn }); // Cannot go to choice y, since it is too low.
+		t.addSound(this.helper1.speech, this.helper1, 'imTrying');
+		t.addCallback(function () { correctPile.follow(this.arm); }, null, null, this);
+		t.to(this.arm, 2, { x: this.playCard.x, y: this.playCard.y, ease: Power1.easeIn });
 		t.addCallback(function () {
-			this.cardStack.add(this.playCard);
+			this.playCard.transferFrom(correctPile);
+			correctPile.follow();
+			this.guest.setHappy();
+		}, null, null, this);
+		t.addSound(this.helper1.speech, this.helper1, 'looksNice');
+
+		t.add(util.fade(this.guestThought, false, 0.5));
+		t.add(this.slideChoices(false));
+
+		t.addSound(this.helper1.speech, this.helper1, 'imPutting');
+		t.addLabel('drag');
+		t.add(this.addCardToStack());
+		t.to(this.arm, 1, { x: this.cardStack.x, y: this.cardStack.y, ease: Power0.easeIn }, 'drag');
+		t.to(this.arm, 2, { x: this.pos.arm.x, y: this.pos.arm.y, ease: Power1.easeIn });
+
+		t.addCallback(function () {
+			// Don't know why this is necessary, but otherwise the card will not go to the correct positions when skipping the instructions.
 			this.playCard.x = 0;
 			this.playCard.y = 0;
 		}, null, null, this);
-		t.to(this.arm, 2, { x: 860, y: 560, ease: Power1.easeIn });
 
-		t.addCallback(this.destroyRound, null, null, this);
-		t.addCallback(this.nextRound, '+=2', null, this);
-		this._counter.value++; // Because this part is in the intro, manually increase counter.
+		t.addCallback(this.nextRound, null, null, this);
 	}, null, null, this);
 };
 
@@ -603,9 +530,9 @@ PartyInvitationGame.prototype.modePlayerDo = function (intro) {
 	t.add(this.newRound());
 
 	if (intro) {
-		t.addSound(this.helper1.speech, this.helper1, 'helpMeStickers');
+		t.addSound(this.helper1.speech, this.helper1, 'helpMeStickers', '+=0.5');
 	} else {
-		t.add(this.trollStart());
+		t.add(this.trolling(trollChance));
 	}
 	t.addCallback(this.disable, null, [false], this);
 };
@@ -613,66 +540,55 @@ PartyInvitationGame.prototype.modePlayerDo = function (intro) {
 PartyInvitationGame.prototype.modeOutro = function () {
 	var t = new TimelineMax();
 	t.addSound(this.helper1.speech, this.helper1, 'madeNiceCards');
-
-	t.addLabel('startFade');
-	t.add(new TweenMax(this.guestThought, 2, { alpha: 0 }), 'startFade');
-	t.to(this.arm, 2, { x: this.cardStack.x, y: this.cardStack.y, ease: Power1.easeIn }, 'startFade');
-
-	t.to([this.arm, this.cardStack], 2, { x: '+=' + 1100, y: '+=' + 500, ease: Power1.easeIn });
+	t.to(this.arm, 2, { x: this.cardStack.x, y: this.cardStack.y, ease: Power1.easeIn });
+	t.to([this.arm, this.cardStack], 1, { x: this.world.width, y: this.world.height + this.cardStack.height, ease: Power1.easeIn });
 	t.add(this.troll.water(400, this));
 
-	t.addLabel('glade', '+=2');
-	this.cards = this.gameGroup.create(610, 570, 'invitation', 'card');
-	this.cards.scale.set(0.08);
-	this.gladeIntro.add(this.cards);
-
 	t.addCallback(function () {
-		this.helper1.x = 370;
-		this.helper1.y = 540;
+		this.gameGroup.bringToTop(this.gladeIntro);
+
+		this.helper1.x = this.pos.helper2.x;
+		this.helper1.y = this.pos.helper2.y;
 		this.helper1.scale.set(0.15);
 		this.gladeIntro.add(this.helper1);
 
-		this.troll.x = 580;
-		this.troll.y = 570;
+		this.troll.x = this.pos.helper1.x;
+		this.troll.y = this.pos.helper1.y;
 		this.troll.scale.set(0.12);
 		this.gladeIntro.add(this.troll);
 
-		this.gladeIntro.bringToTop(this.cards);
+		this.troll.rightArm.add(this.cardStack);
+		this.cardStack.x = this.troll.rightArm.width / 2;
+		this.cardStack.y = 0;
+		this.cardStack.scale.set(1);
 
 		this.helper2.visible = false;
 		this.mailbox.alpha = 1;
-		this.bear.alpha = 0;
-	}, 'glade', null, this);
+	}, null, null, this);
+	t.add(util.fade(this.gladeIntro, true, 2));
 
-	t.add(new TweenMax(this.gladeIntro, 2, { alpha:1 }), 'glade');
 	t.addSound(this.troll.speech, this.troll, 'isGood', '+=0.3');
-
-	t.addLabel('walk');
-	t.add(this.troll.move({ x: '+=' + 170, y: '-=' + 120, ease: Power0.easeNone }, 2), 'walk');
-	t.to(this.cards, 2, { x: '+=' + 170, y: '-=' + 120, ease: Power0.easeNone }, 'walk');
 	t.addCallback(this.troll.eyesFollowObject, null, [this.mailbox], this.troll);
-	t.addLabel('post');
-	t.to(this.troll.rightArm, 0.8,  { rotation: -0.3, ease: Power1.easeIn }, 'post');
-	t.to(this.cards, 0.8, { x: '+=' + 36, y: '-=' + 50, ease: Power0.easeNone }, 'post');
-	t.addLabel('scale');
-	t.to(this.cards, 0.5, { width: 0.6, height: 0, ease: Power0.easeNone }, 'scale');
-	t.to(this.cards, 0.2, { x: '+=' + 10, ease: Power0.easeNone}, 'scale');
-	t.addCallback(function () { this.mailbox.frameName = 'mailbox_open'; }, 'post', null, this);
-	t.addLabel('close', '+=1');
-	t.to(this.troll.rightArm, 1, { rotation: 1.1, ease: Power1.easeIn}, 'close');
-	t.addCallback(function () { this.mailbox.frameName = 'mailbox'; }, 'close', null, this);
-	t.addCallback(this.troll.eyesStopFollow, null, null, this.troll);
+	t.add(this.troll.move({ x: this.mailbox.x - 50, y: this.mailbox.y + 90, ease: Power0.easeNone }, 2));
+	t.to(this.troll.rightArm, 0.8,  { rotation: -0.3, ease: Power1.easeIn });
+	t.addCallback(function () { this.mailbox.frameName = 'mailbox_open'; }, null, null, this);
+	t.to(this.cardStack.scale, 0.5, { x: 0, y: 0, ease: Power0.easeNone });
+	t.to(this.troll.rightArm, 1, { rotation: 1.1, ease: Power1.easeIn});
+	t.addCallback(function () {
+		this.mailbox.frameName = 'mailbox';
+		this.troll.eyesStopFollow();
+	}, null, null, this);
 
-	t.add(this.troll.move({ x: '-=' + 170, y: '+=' + 120, ease: Power0.easeNone }, 2));
+	t.add(this.troll.move({ x: this.pos.helper1.x, y: this.pos.helper1.y, ease: Power0.easeNone }, 2));
 	t.addSound(this.troll.speech, this.troll, 'continue', '-=1');
 	t.addSound(this.helper1.speech, this.helper1, 'thanksForHelp', '+=0.5');
 
-	t.addCallback(this.nextRound, '+=3', null, this); // Ending game.
+	t.addCallback(this.nextRound, null, null, this); // Ending game.
 };
 
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                         Create container object                           */
+/*                            Container object                               */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 Container.prototype = Object.create(Phaser.Group.prototype);
 Container.prototype.constructor = Container;
@@ -685,7 +601,6 @@ function Container (game, x, y, handle, handleDecor) {
 	this.handle.inputEnabled = true;
 	this.handle.anchor.set(0.5);
 
-	this.moreDecorGroup = this.game.add.group(this);
 	this.decorGroup = this.game.add.group(this);
 }
 
@@ -711,7 +626,7 @@ Container.prototype.follow = function (what) {
 
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                            Create tray object                             */
+/*                                Tray object                                */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 Tray.prototype = Object.create(Container.prototype);
 Tray.prototype.constructor = Tray;
@@ -776,12 +691,14 @@ Tray.prototype.decorPositions = function () {
 
 
 /*MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM*/
-/*                            Create card object                             */
+/*                                Card object                                */
 /*WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW*/
 Card.prototype = Object.create(Container.prototype);
 Card.prototype.constructor = Card;
 function Card (game, x, y) {
 	Container.call(this, game, x, y, 'invitation', 'card'); // Parent constructor.
+
+	this.moreDecorGroup = this.game.add.group(this);
 }
 
 Card.prototype.transferFrom = function (container) {
@@ -812,4 +729,8 @@ Card.prototype.transferFrom = function (container) {
 			}
 		}
 	}
+};
+
+Card.prototype.stashDecor = function () {
+	this.decorGroup.moveAll(this.moreDecorGroup);
 };

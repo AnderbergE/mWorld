@@ -55,7 +55,8 @@ function Hedgehog (game, x, y) {
 		},
 		mouth: {
 			x: -6, y: -205
-		}
+		},
+		hat: { x: 0, y: -360 }
 	};
 
 	Agent.call(this, game, x, y); // Call parent constructor.

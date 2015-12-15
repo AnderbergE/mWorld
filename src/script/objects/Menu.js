@@ -19,8 +19,8 @@ Menu.prototype.constructor = Menu;
  */
 function Menu (game) {
 	Phaser.Group.call(this, game, null); // Parent constructor.
-	var centerX = game.world.centerX;
-	var centerY = game.world.centerY;
+	var centerX = game.camera.width / 2;
+	var centerY = game.camera.height / 2;
 
 	/* Add menu button. */
 	var button = new GeneralButton(game, { x: 5, y: 5, size: 56, onClick: function () { showMenu(true); } });
@@ -81,10 +81,10 @@ function Menu (game) {
 	menuGroup.add(new Cover(game, '#056449', 0.7));
 
 	/* Create the background of the menu. */
-	var bmd = game.add.bitmapData(parseInt(game.world.width*0.4), parseInt(game.world.height*0.6));
+	var bmd = game.add.bitmapData(parseInt(game.camera.width*0.4), parseInt(game.camera.height*0.6));
 	bmd.ctx.fillStyle = '#b9d384';
 	bmd.ctx.roundRect(0, 0, bmd.width, bmd.height, 20).fill();
-	menuGroup.create(game.world.width*0.3, centerY*0.6, bmd).alpha = 0.7;
+	menuGroup.create(game.camera.width*0.3, centerY*0.6, bmd).alpha = 0.7;
 
 	/* Create the texts. */
 	var title = game.add.text(centerX, centerY*0.4, LANG.TEXT.title, {

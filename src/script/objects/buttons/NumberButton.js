@@ -32,7 +32,7 @@ NumberButton.prototype.constructor = NumberButton;
  * @returns {Object} Itself.
  */
 function NumberButton (game, number, representations, options) {
-	/* The order here is a bit weird because GeneralButton calls setSize, which this class overshadows. */
+	options = options || {};
 	if (typeof options.keepDown === 'undefined' || options.keepDown === null) {
 		options.keepDown = true;
 	}
@@ -41,6 +41,7 @@ function NumberButton (game, number, representations, options) {
 	this.spriteKey = options.spriteKey;
 	this.spriteFrame = options.spriteFrame;
 
+	// The order here is a bit weird because GeneralButton calls setSize, which this class overshadows.
 	GeneralButton.call(this, game, options); // Parent constructor.
 
 	this.vertical = options.vertical;
@@ -120,6 +121,10 @@ NumberButton.prototype.updateGraphics = function () {
 		}
 		this.setSize();
 		this.reset();
+	}
+	if (this.background === null){
+		// TODO: This fix should not be necessary after a Phaser update later.
+		this.bg.alpha = 0;
 	}
 
 	/* Add new graphics. */

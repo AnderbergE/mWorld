@@ -63,7 +63,9 @@ function Troll (game, x, y) {
 	this.wand.angle = 150;
 	this.leftArm.sendToBack(this.wand);
 
-	this.tip = this.leftArm.create(this.wand.x - 490, this.wand.y + 90, '', '');
+	this.tip = this.leftArm.create(this.wand.x - 490, this.wand.y + 90);
+	// TODO: This fix should not be necessary after a Phaser update later.
+	this.tip.alpha = 0;
 
 	this.bringToTop(this.leftEye);
 	this.bringToTop(this.rightEye);
@@ -82,172 +84,90 @@ function Troll (game, x, y) {
 }
 
 Troll.prototype.changeShape = function (shape) {
+	var value;
 	if (shape === 'stone') {
 		this.stone.alpha = 1;
-
-		this.leftArm.alpha = 0;
-		this.rightArm.alpha = 0;
-		this.leftLeg.alpha = 0;
-		this.rightLeg.alpha = 0;
-		this.body.alpha = 0;
-		this.leftEye.alpha = 0;
-		this.rightEye.alpha = 0;
-		this.mouth.alpha = 0;
-		this.head.alpha = 0;
-		this.wand.alpha = 0;
-
+		value = 0;
 	} else if (shape === 'troll') {
 		this.stone.alpha = 0;
-
-		this.leftArm.alpha = 1;
-		this.rightArm.alpha = 1;
-		this.leftLeg.alpha = 1;
-		this.rightLeg.alpha = 1;
-		this.body.alpha = 1;
-		this.leftEye.alpha = 1;
-		this.rightEye.alpha = 1;
-		this.mouth.alpha = 1;
-		this.head.alpha = 1;
-		this.wand.alpha = 1;
+		value = 1;
 	}
+
+	this.leftArm.alpha = value;
+	this.rightArm.alpha = value;
+	this.leftLeg.alpha = value;
+	this.rightLeg.alpha = value;
+	this.body.alpha = value;
+	this.leftEye.alpha = value;
+	this.rightEye.alpha = value;
+	this.mouth.alpha = value;
+	this.head.alpha = value;
+	this.wand.alpha = value;
 };
 
-Troll.prototype.transform = function (fromTo) {
-
+Troll.prototype.transform = function (type) {
 	var t = new TimelineMax();
+	this.changeShape(type === 'stone' ? 'troll' : 'stone'); // Setup the "anti"-state.
+	var getUp = this.y - this.stone.height / 2 - this.leftLeg.height + 8;
 
-	var getUp;
+	t.addCallback(function () {
+		this.emitter.x = this.x;
+		this.emitter.y = this.y;
+		this.emitter.flow(2000, 10, 1, 120);
+	}, null, null, this);
 
-	if (fromTo === 'stoneToTroll') {
-
-		this.stone.alpha = 1;
-
-		this.leftArm.alpha = 0;
-		this.rightArm.alpha = 0;
-		this.leftLeg.alpha = 0;
-		this.rightLeg.alpha = 0;
-		this.body.alpha = 0;
-		this.leftEye.alpha = 0;
-		this.rightEye.alpha = 0;
-		this.mouth.alpha = 0;
-		this.head.alpha = 0;
-		this.wand.alpha = 0;
-
-		getUp = this.y - this.stone.height / 2 - this.leftLeg.height + 8;
-
-		t.addCallback(function () {
-			this.emitter.x = this.x;
-			this.emitter.y = this.y;
-			this.emitter.flow(2000, 10, 1, 120);
-		}, null, null, this);
-
-		t.addLabel('legs');
-
-		t.add(new TweenMax(this.leftLeg, 0.2, {alpha:1}), 'legs');
-		t.add(new TweenMax(this.rightLeg, 0.2, {alpha:1}), 'legs');
-
-		t.add(new TweenMax.fromTo(this.leftLeg, 0.2, {height: 0}, {height: this.leftLeg.height, ease: Power1.easeIn}), 'legs');
-		t.add(new TweenMax.fromTo(this.rightLeg, 0.2, {height: 0}, {height: this.rightLeg.height, ease: Power1.easeIn}), 'legs');
-
-		t.to(this.stone, 0.2, {y: getUp, ease: Power1.easeIn}, 'legs+=0.2');
+	if (type === 'troll') {
+		t.fromTo(this.leftLeg, 0.2, { alpha: 0, height: 0 }, { alpha: 1, height: this.leftLeg.height, ease: Power1.easeIn }, 0);
+		t.fromTo(this.rightLeg, 0.2, { alpha: 0, height: 0 }, { alpha: 1, height: this.rightLeg.height, ease: Power1.easeIn }, 0);
+		t.to(this.stone, 0.2, { y: getUp, ease: Power1.easeIn }, 0);
 
 		t.addLabel('arms');
-
-		t.add(new TweenMax(this.leftArm, 0.2, {alpha:1}), 'arms');
-		t.add(new TweenMax(this.rightArm, 0.2, {alpha:1}), 'arms');
-		t.add(new TweenMax(this.wand, 0.2, {alpha:1}), 'arms');
-
-		t.add(new TweenMax.fromTo(this.leftArm, 0.2, {height: 0}, {height: this.leftArm.height, ease: Power1.easeIn}), 'arms');
-		t.add(new TweenMax.fromTo(this.rightArm, 0.2, {height: 0}, {height: this.rightArm.height, ease: Power1.easeIn}), 'arms');
-		t.add(new TweenMax.fromTo(this.wand, 0.2, {width: 0}, {width: this.wand.width, ease: Power1.easeIn}), 'arms');
-
-		t.to(this.stone.scale, 0.2, {x: 0.8, y: 0.8, ease: Power1.easeIn}, 'arms+=0.08');
+		t.fromTo(this.leftArm, 0.2, { alpha: 0, height: 0 }, { alpha: 1, height: this.leftArm.height, ease: Power1.easeIn }, 'arms');
+		t.fromTo(this.rightArm, 0.2, { alpha: 0, height: 0 }, { alpha: 1, height: this.rightArm.height, ease: Power1.easeIn }, 'arms');
+		t.fromTo(this.wand, 0.2, { alpha: 0, width: 0 }, { alpha: 1, width: this.wand.width, ease: Power1.easeIn }, 'arms');
+		t.to(this.stone.scale, 0.2, { x: 0.8, y: 0.8, ease: Power1.easeIn }, 'arms');
 
 		t.addLabel('head');
-
-		t.add(new TweenMax(this.head, 0.2, {alpha:1}), 'head');
-		t.add(new TweenMax(this.leftEye, 0.2, {alpha:1}), 'head');
-		t.add(new TweenMax(this.rightEye, 0.2, {alpha:1}), 'head');
-		t.add(new TweenMax(this.mouth, 0.2, {alpha:1}), 'head');
-
-		t.add(new TweenMax.fromTo(this.head, 0.2, {height: 0, width: 0}, {height: this.head.height, width: this.head.width, ease: Power1.easeIn}), 'head');
+		t.fromTo(this.head, 0.2, { alpha: 0, height: 0, width: 0 }, { alpha: 1, height: this.head.height, width: this.head.width, ease: Power1.easeIn }, 'head');
+		t.to(this.leftEye, 0.2, { alpha: 1 }, 'head');
+		t.to(this.rightEye, 0.2, { alpha: 1 }, 'head');
+		t.to(this.mouth, 0.2, { alpha: 1 }, 'head');
 
 		t.addLabel('stone');
-
-		t.to(this.stone.scale, 0.2, {x: 0.7, y: 0.7, ease: Power1.easeIn}, 'stone');
-		t.to(this.stone, 0.2, {y: this.body.y, ease: Power1.easeIn}, 'stone');
-		t.to(this.stone, 0.2, {height: this.stone.height / 2, ease: Power1.easeIn}, 'stone');
+		t.to(this.stone, 0.2, { y: this.body.y, ease: Power1.easeIn }, 'stone');
+		t.to(this.stone, 0.2, { height: this.stone.height / 2, ease: Power1.easeIn }, 'stone');
+		t.to(this.stone.scale, 0.2, { x: 0.7, y: 0.7, ease: Power1.easeIn }, 'stone');
 
 		t.addLabel('body', '+=0.08');
+		t.to(this.body, 0.2, { alpha: 1 }, 'body');
+		t.to(this.stone, 0.2, { alpha: 0 }, 'body');
 
-		t.add(new TweenMax(this.body, 0.2, {alpha:1}), 'body');
-		t.add(new TweenMax(this.stone, 0.2, {alpha:0}), 'body-=0.02');
-
-	} else if (fromTo === 'trollToStone') {
-
-		this.stone.alpha = 0;
-
-		this.leftArm.alpha = 1;
-		this.rightArm.alpha = 1;
-		this.leftLeg.alpha = 1;
-		this.rightLeg.alpha = 1;
-		this.body.alpha = 1;
-		this.leftEye.alpha = 1;
-		this.rightEye.alpha = 1;
-		this.mouth.alpha = 1;
-		this.head.alpha = 1;
-		this.wand.alpha = 1;
-
-		getUp = this.y - this.stone.height / 2 - this.leftLeg.height + 8;
-
-		t.addCallback(function () {
-			this.emitter.x = this.x;
-			this.emitter.y = this.y;
-			this.emitter.flow(2000, 10, 1, 120);
-		}, null, null, this);
-
+	} else { // To stone
 		t.addLabel('body');
-
-		t.add(new TweenMax(this.stone, 0.2, {alpha:1}), 'body');
-		t.add(new TweenMax(this.body, 0.2, {alpha:0}), 'body-=0.02');
+		t.to(this.stone, 0.2, { alpha: 1 }, 'body');
+		t.to(this.body, 0.2, { alpha: 0 }, 'body');
 
 		t.addLabel('stone');
-
-
-		t.to(this.stone, 0.2, {height: this.stone.height * 2, ease: Power1.easeIn}, 'stone');
-		t.to(this.stone.scale, 0.2, {x: 0.8, y: 0.8, ease: Power1.easeIn}, 'stone');
+		t.to(this.stone, 0.2, { height: this.stone.height * 2, ease: Power1.easeIn }, 'stone');
+		t.to(this.stone.scale, 0.2, { x: 0.8, y: 0.8, ease: Power1.easeIn }, 'stone');
 
 		t.addLabel('head');
-
-		t.add(new TweenMax.fromTo(this.head, 0.2, {height: this.head.height, width: this.head.width}, {height: 0, width: 0, ease: Power1.easeIn}), 'head');
-
-		t.add(new TweenMax(this.head, 0.2, {alpha:0}), 'head');
-		t.add(new TweenMax(this.leftEye, 0.2, {alpha:0}), 'head');
-		t.add(new TweenMax(this.rightEye, 0.2, {alpha:0}), 'head');
-		t.add(new TweenMax(this.mouth, 0.2, {alpha:0}), 'head');
+		t.fromTo(this.head, 0.2, { alpha: 1, height: this.head.height, width: this.head.width}, { alpha: 0, height: 0, width: 0, ease: Power1.easeIn }, 'head');
+		t.to(this.leftEye, 0.2, { alpha: 0 }, 'head');
+		t.to(this.rightEye, 0.2, { alpha: 0 }, 'head');
+		t.to(this.mouth, 0.2, { alpha: 0 }, 'head');
 
 		t.addLabel('arms');
+		t.to(this.stone.scale, 0.2, {x: 1, y: 1, ease: Power1.easeIn}, 'arms');
 
-		t.to(this.stone.scale, 0.2, {x: 1, y: 1, ease: Power1.easeIn}, 'arms+=0.08');
-
-		t.add(new TweenMax.fromTo(this.leftArm, 0.2, {height: this.leftArm.height}, {height: 0, ease: Power1.easeIn}), 'arms');
-		t.add(new TweenMax.fromTo(this.rightArm, 0.2, {height: this.rightArm.height}, {height: 0, ease: Power1.easeIn}), 'arms');
-		t.add(new TweenMax.fromTo(this.wand, 0.2, {width: this.wand.width}, {width: 0, ease: Power1.easeIn}), 'arms');
-
-		t.add(new TweenMax(this.leftArm, 0.2, {alpha:0}), 'arms');
-		t.add(new TweenMax(this.rightArm, 0.2, {alpha:0}), 'arms');
-		t.add(new TweenMax(this.wand, 0.2, {alpha:0}), 'arms');
-
+		t.fromTo(this.leftArm, 0.2, { alpha: 1, height: this.leftArm.height }, { alpha: 0, height: 0, ease: Power1.easeIn }, 'arms');
+		t.fromTo(this.rightArm, 0.2, { alpha: 1, height: this.rightArm.height }, { alpha: 0, height: 0, ease: Power1.easeIn }, 'arms');
+		t.fromTo(this.wand, 0.2, { alpha: 1, width: this.wand.width }, { alpha: 0, width: 0, ease: Power1.easeIn }, 'arms');
 
 		t.addLabel('legs');
-
-		t.to(this.stone, 0.2, {y: -getUp, ease: Power1.easeIn}, 'legs-=0.2');
-
-		t.add(new TweenMax.fromTo(this.leftLeg, 0.2, {height: this.leftLeg.height}, {height: 0, ease: Power1.easeIn}), 'legs');
-		t.add(new TweenMax.fromTo(this.rightLeg, 0.2, {height: this.rightLeg.height}, {height: 0, ease: Power1.easeIn}), 'legs');
-
-		t.add(new TweenMax(this.leftLeg, 0.2, {alpha:0}), 'legs');
-		t.add(new TweenMax(this.rightLeg, 0.2, {alpha:0}), 'legs');
+		t.to(this.stone, 0.2, { y: -getUp, ease: Power1.easeIn }, 'legs');
+		t.fromTo(this.leftLeg, 0.2, { alpha: 1, height: this.leftLeg.height}, {  alpha: 0, height: 0, ease: Power1.easeIn}, 'legs');
+		t.fromTo(this.rightLeg, 0.2, { alpha: 1, height: this.rightLeg.height}, {  alpha: 0, height: 0, ease: Power1.easeIn}, 'legs');
 	}
 
 	return t;
@@ -259,91 +179,73 @@ Troll.prototype.water = function (posX, state) {
 	this.angle = 0;
 
 	var t = new TimelineMax();
-	t.addLabel('arm');
-	t.fromTo(this, 1.5, {x:posX, y:1300}, {x:posX, y:740, ease: Power3.easeIn});
-	t.to(this.leftArm, 1, {rotation: 0.7, ease: Power4.easeIn, delay: 0.3}, 'arm+=0.5');
-	t.addSound(this.speech, this, 'yesWater', 'arm+=1.5');
+	t.fromTo(this, 1.5, { x: posX, y: 1300 }, { x: posX, y: 740, ease: Power3.easeIn }, 0);
+	t.to(this.leftArm, 1, { rotation: 0.7, ease: Power4.easeIn }, 1);
+	t.addSound(this.speech, this, 'yesWater', 1);
 
-	t.addLabel('waterDone', '+=8');
 	t.addCallback(function () {
+		// Doing this in a callback to make sure that tip position is correct.
 		state.addWater(this.tip.world.x, this.tip.world.y)
 			.add(state.addWater(this.tip.world.x, this.tip.world.y), '-=2')
 			.add(state.addWater(this.tip.world.x, this.tip.world.y), '-=2');
-	}, null, null, this);
+	}, 2, null, this);
 
-	t.to(this, 0.5, {x:posX, y:1300, ease: Power3.easeOut}, 'waterDone');
-	t.to(this.leftArm, 0.3, {rotation: -1.1, ease: Power4.easeIn});
-
+	t.to(this, 0.5, { x: posX, y: 1300, ease: Power3.easeOut }, 10);
+	t.to(this.leftArm, 0.3, { rotation: -1.1, ease: Power4.easeIn });
 	return t;
 };
 
-Troll.prototype.appear = function (randomPos, targetX, targetY, topX) {
-	var horizontalX = this.game.rnd.between(200, 800);
-	var verticalY = this.game.rnd.between(200, 550);
+Troll.prototype.appear = function (targetX, targetY, side, offsetX) {
+	side = side || this.game.rnd.pick(['top', 'left', 'right']);
+	offsetX = offsetX || 0;
 
-	var pos;
-	if (randomPos === 'random') {
-		pos = this.game.rnd.pick(['posTop', 'posLeft', 'posRight']);
-	} else if (randomPos === 'top') {
-		pos = 'posTop';
-		horizontalX = horizontalX - topX;
+	var fromX = this.game.camera.x + this.game.rnd.between(this.width, this.game.camera.width - this.width);
+	var fromY = this.game.rnd.between(this.width, this.game.world.height - this.width);
+	var toX = fromX;
+	var toY = fromY;
+	if (side === 'top') {
+		this.angle = 180;
+		fromY = -500;
+		toY = 30;
+	} else if (side === 'left') {
+		this.angle = 90;
+		fromX = this.game.camera.x - 500;
+		toX = this.game.camera.x + 30;
+	} else { // right
+		this.angle = 270;
+		fromX = this.game.camera.x + this.game.camera.width + 500;
+		toX = this.game.camera.x +this.game.camera.width - 30;
 	}
-
-	this.parent.bringToTop(this);
-	this.visible = true;
+	fromX += offsetX;
+	toX += offsetX;
 
 	var t = new TimelineMax();
 	t.addCallback(function () {
+		this.visible = true;
+		this.parent.bringToTop(this);
 		this.eyesFollowObject(this.emitter);
 	}, null, null, this);
 
-	if (pos === 'posTop') {
-		this.angle = 180;
-
-		t.addLabel('arm');
-		t.fromTo(this, 3, {x:horizontalX, y:-500}, {x:horizontalX, y:30, ease: Power3.easeIn});
-		t.to(this.leftArm, 1.2, {rotation: 1, ease: Power4.easeIn, delay: 0.3}, 'arm+=0.5');
-		t.addSound(this.speech, this, 'iCanHelp', 'arm+=1.5');
-		t.add(this.swish(targetX, targetY));
-		t.to(this, 1.5, {x:horizontalX, y:-500, ease: Power3.easeOut}, '-=1.5');
-		t.to(this.leftArm, 0.3, {rotation: -1.1, ease: Power4.easeIn});
-
-	} else if (pos === 'posLeft') {
-		this.angle = 90;
-
-		t.addLabel('arm');
-		t.fromTo(this, 3, {x:-500, y:verticalY}, {x:30, y:verticalY, ease: Power3.easeIn});
-		t.to(this.leftArm, 1.2, {rotation: 1, ease: Power4.easeIn, delay: 0.3}, 'arm+=0.5');
-		t.addSound(this.speech, this, 'iCanHelp', 'arm+=1.5');
-		t.add(this.swish(targetX, targetY));
-		t.to(this, 1.5, {x:-500, y:verticalY, ease: Power3.easeOut}, '-=1.5');
-		t.to(this.leftArm, 0.3, {rotation: -1.1, ease: Power4.easeIn});
-
-	} else if (pos === 'posRight') {
-		this.angle = 270;
-
-		t.addLabel('arm');
-		t.fromTo(this, 3, {x:1600, y:verticalY}, {x:990, y:verticalY, ease: Power3.easeIn});
-		t.to(this.leftArm, 1.2, {rotation: 1, ease: Power4.easeIn, delay: 0.3}, 'arm+=0.5');
-		t.addSound(this.speech, this, 'iCanHelp', 'arm+=1.5');
-		t.add(this.swish(targetX, targetY));
-		t.to(this, 1.5, {x:1600, y:verticalY, ease: Power3.easeOut}, '-=1.5');
-		t.to(this.leftArm, 0.3, {rotation: -1.1, ease: Power4.easeIn});
-	}
+	t.fromTo(this, 1, { x: fromX, y: fromY }, { x: toX, y: toY, ease: Power3.easeIn }, 0);
+	t.addSound(this.speech, this, 'iCanHelp', 0);
+	t.to(this.leftArm, 0.5, { rotation: 1, ease: Power4.easeIn });
+	t.add(this.swish(targetX, targetY));
+	t.to(this, 1, { x: fromX, y: fromY, ease: Power3.easeOut }, '-=2' );
+	t.to(this.leftArm, 0.3, { rotation: -1.1, ease: Power4.easeIn });
 
 	t.addCallback(this.eyesStopFollow, null, null, this);
-
 	return t;
 };
 
 Troll.prototype.swish = function (targetX, targetY) {
 	var t = new TimelineMax();
-	t.to(this.leftArm, 0.05, {rotation: 0.4, ease: Power4.easeIn});
+	t.to(this.leftArm, 0.1, { rotation: 0.4, ease: Power4.easeIn });
 	t.addCallback(function () {
 		this.emitter.x = this.tip.world.x;
 		this.emitter.y = this.tip.world.y;
-		this.emitter.flow(2000, 10, 1, 120);
-	}, '+=0.4', null, this);
-	t.to(this.emitter, 2.6, {x:targetX, y:targetY, ease: Power2.easeOut});
+		this.emitter.flow(2000, 10, 1, 120); // Lasts totally 3.2s.
+	}, null, null, this);
+	t.to(this.emitter, 2.6, { x: targetX, y: targetY, ease: Power2.easeOut });
+	t.addCallback(this.emitter.kill, '+=0.6', null, this.emitter);
 	return t;
 };
