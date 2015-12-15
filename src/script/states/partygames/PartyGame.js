@@ -55,7 +55,7 @@ PartyGame.prototype.init = function(options) {
 		GLOBAL.MODE.playerDo,
 		GLOBAL.MODE.outro
 	];
-	options.roundsPerMode = options.roundsPerMode || 1;
+	options.roundsPerMode = options.roundsPerMode || 5;
 
 	Subgame.prototype.init.call(this, options);
 
