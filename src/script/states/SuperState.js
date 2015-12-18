@@ -68,19 +68,10 @@ SuperState.prototype.shutdown = function () {
 	EventSystem.clear();
 	GeneralButton.prototype.buttonColor = GLOBAL.BUTTON_COLOR;
 
-	// Purge sound
-	var key = this.sound._sounds.length;
-	while (key--) {
-		this.sound._sounds[key].destroy(true);
-	}
-	// Purge sound from cache as well
-	for (key in this.cache._cache.sound) {
-		if (this.sound._doNotDelete.indexOf(key) < 0) {
-			this.cache.removeSound(key);
-		}
-	}
+	clearBitmaps(this.world);
+
 	// Purge all "this" variables.
-	for (key in this) {
+	for (var key in this) {
 		if (GLOBAL.STATE_KEYS.indexOf(key) < 0) {
 			if (this[key] && this[key].destroy) {
 				try {
@@ -96,11 +87,51 @@ SuperState.prototype.shutdown = function () {
 	}
 	this.world.removeAll(true);
 
+	clearCache.call(this);
+
+	this.state._clearCache = true;
+
 	// Reset world and camera.
 	this.world.width = this.game.width;
 	this.world.height = this.game.height;
 	this.camera.x = 0;
 	this.camera.y = 0;
-
-	// TODO: Something is wrong with decoding. Try quitting a subgame directly.
 };
+
+function clearBitmaps (group) {
+	// TODO: This will hopefully be unnecessary when this is fixed:
+	// https://github.com/photonstorm/phaser/issues/2261
+	for (var i = 0; i < group.children.length; i++) {
+		var child = group.children[i];
+		if (child.children) {
+			clearBitmaps(child);
+		}
+
+		if (child.key && child.key instanceof Phaser.BitmapData) {
+			child.key.destroy();
+		}
+	}
+}
+
+// Purge cache.
+// NOTE: Do not use built in cache clear since there is a need to keep some of them.
+function clearCache () {
+	// Purge sound
+	var key = this.sound._sounds.length;
+	while (key--) {
+		this.sound._sounds[key].destroy(true);
+	}
+
+	for (var i = 0; i < this.cache._cacheMap.length; i++) {
+		var cache = this.cache._cacheMap[i];
+		for (key in cache) {
+			if (key !== '__default' && key !== '__missing' && this.cache._doNotDelete.indexOf(key) < 0) {
+				if (cache[key].destroy) {
+					cache[key].destroy();
+				}
+
+				delete cache[key];
+			}
+		}
+	}
+}

@@ -129,11 +129,14 @@ BootState.prototype.preload = function () {
 	/* Common game assets */
 	this.load.audio('click', ['audio/click.m4a', 'audio/click.ogg', 'audio/click.mp3']);
 	this.load.atlasJSONHash('objects', 'img/objects/objects.png', 'img/objects/objects.json');
-	/* All sounds are purged from cache when switching state (memory issues), set this to not delete a sound. */
-	this.sound._doNotDelete = ['click', Panda.prototype.id + 'Speech', Hedgehog.prototype.id + 'Speech', Mouse.prototype.id + 'Speech'];
+	this.load.image('entryBg', 'img/jungle.png'); // For entry state, to not have two loads.
 
-	/* Load the entry state assets as well, no need to do two loaders. */
-	this.load.image('entryBg', 'img/jungle.png');
+ 	// The cache is purged when switching state due to memory issues with mainly sound. (see SuperState).
+	// If you want something not the be removed, add it here.
+	this.cache._doNotDelete = [
+		'objects', 'entryBg', Panda.prototype.id, Hedgehog.prototype.id, Mouse.prototype.id, // images
+		'click', Panda.prototype.id + 'Speech', Hedgehog.prototype.id + 'Speech', Mouse.prototype.id + 'Speech' // sound
+	];
 };
 
 /* Phaser state function */

@@ -64,8 +64,6 @@ function Troll (game, x, y) {
 	this.leftArm.sendToBack(this.wand);
 
 	this.tip = this.leftArm.create(this.wand.x - 490, this.wand.y + 90);
-	// TODO: This fix should not be necessary after a Phaser update later.
-	this.tip.alpha = 0;
 
 	this.bringToTop(this.leftEye);
 	this.bringToTop(this.rightEye);

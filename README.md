@@ -15,7 +15,7 @@ As long as gulp is running the server will be active. If you make changes in the
 ## Documentation
 UPDATED: 2015-01-26
 
-The game is built with the game engine [Phaser](http://phaser.io/). It is custom built using the string: ```grunt custom --exclude p2,video```.
+The game is built with the game engine [Phaser](http://phaser.io/). It is custom built using the string: ```grunt custom --exclude bitmaptext,retrofont,ninja,p2,video```.
 
 Animations are created using [GSAP/TweenMax](http://greensock.com/gsap).
 

@@ -122,10 +122,6 @@ NumberButton.prototype.updateGraphics = function () {
 		this.setSize();
 		this.reset();
 	}
-	if (this.background === null){
-		// TODO: This fix should not be necessary after a Phaser update later.
-		this.bg.alpha = 0;
-	}
 
 	/* Add new graphics. */
 	var x = 0;
