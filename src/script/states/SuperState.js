@@ -85,11 +85,10 @@ SuperState.prototype.shutdown = function () {
 			delete this[key];
 		}
 	}
+
 	this.world.removeAll(true);
 
 	clearCache.call(this);
-
-	this.state._clearCache = true;
 
 	// Reset world and camera.
 	this.world.width = this.game.width;
