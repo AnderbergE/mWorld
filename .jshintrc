@@ -8,6 +8,7 @@
 	"predef" : [
 		"Routes",
 		"Phaser",
+		"PIXI",
 
 		"TweenMax",
 		"TimelineMax",

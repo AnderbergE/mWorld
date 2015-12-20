@@ -97,17 +97,20 @@ SuperState.prototype.shutdown = function () {
 	this.camera.y = 0;
 };
 
-function clearBitmaps (group) {
+function clearBitmaps () {
 	// TODO: This will hopefully be unnecessary when this is fixed:
 	// https://github.com/photonstorm/phaser/issues/2261
-	for (var i = 0; i < group.children.length; i++) {
-		var child = group.children[i];
-		if (child.children) {
-			clearBitmaps(child);
-		}
+	for (var i = 0; i < PIXI.CanvasPool.pool.length; i++) {
+		var obj = PIXI.CanvasPool.pool[i];
+		var item = obj.parent;
+		if (!item) {
+			PIXI.CanvasPool.removeByCanvas(obj.canvas);
+		} else if (item instanceof Phaser.BitmapData) {
+			PIXI.CanvasPool.remove(item);
 
-		if (child.key && child.key instanceof Phaser.BitmapData) {
-			child.key.destroy();
+			if (item.destroy) {
+				item.destroy();
+			}
 		}
 	}
 }
