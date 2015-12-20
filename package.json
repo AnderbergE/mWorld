@@ -1,28 +1,31 @@
 {
   "name": "Magical_Garden",
-  "version": "2.0.1",
+  "version": "2.0.2",
+  "description": "Lund University Cognitive Science research - Learning by teaching using games",
   "author": {
     "name": "Erik Anderberg",
     "email": "Anderberg.E@gmail.com"
   },
-  "description": "Lund University Cognitive Science research - Learning by teaching using games",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
   "repository": {
     "type": "git",
     "url": "https://github.com/AnderbergE/mWorld"
   },
   "devDependencies": {
-    "browserify": "^10.2.4",
-    "del": "^1.2.0",
+    "browserify": "^12.0.1",
+    "del": "^2.2.0",
+    "jshint": "^2.8.0",
     "gulp": "^3.9.0",
-    "gulp-autoprefixer": "^2.3.1",
-    "gulp-connect": "^2.2.0",
-    "gulp-imagemin": "^2.2.1",
-    "gulp-jshint": "^1.11.0",
-    "gulp-less": "^3.0.3",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-connect": "^2.3.1",
+    "gulp-imagemin": "^2.4.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-less": "^3.0.5",
     "gulp-rename": "^1.2.2",
-    "gulp-replace": "^0.5.3",
-    "gulp-sourcemaps": "^1.5.2",
-    "gulp-util": "^3.0.5",
+    "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7",
     "vinyl-source-stream": "^1.1.0",
     "vinyl-buffer": "^1.0.0"
   }

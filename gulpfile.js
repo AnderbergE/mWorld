@@ -56,7 +56,7 @@ gulp.task('assets', function () {
 		value = value.pipe(imagemin({ optimizationLevel: 2 })); // Minimize image sizes
 	}
 
-	return value.pipe(gulp.dest(destination));		
+	return value.pipe(gulp.dest(destination));
 });
 
 gulp.task('html', function () {
@@ -113,13 +113,13 @@ gulp.task('watch', function() {
 		IMAGE + ALL + '.*',
 		AUDIO + ALL + '.*',
 		SRC + '*.js'
-	], ['assets']);
+	], { interval: 1000 }, ['assets']);
 
-	gulp.watch(SRC + ALL + '.html', ['html']);
+	gulp.watch(SRC + ALL + '.html', { interval: 5000 }, ['html']);
 
-	gulp.watch(SCRIPT + ALL + '.js', ['scripts']);
+	gulp.watch(SCRIPT + ALL + '.js', { interval: 500 }, ['scripts']);
 
-	gulp.watch(STYLE + ALL + '.less', ['styles']);
+	gulp.watch(STYLE + ALL + '.less', { interval: 5000 }, ['styles']);
 });
 
 // Start server at: http://localhost:9000/index.html
