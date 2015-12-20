@@ -21,7 +21,7 @@ ChooseScenarioState.prototype.preload = function() {
 		console.log('Setting agent to: ' + Panda.prototype.id);
 		this.game.player.agent = Panda;
 		this.load.audio('pandaSpeech', LANG.SPEECH.AGENT.speech);
-		this.load.atlasJSONHash('panda', 'img/agent/panda/atlas.png', 'img/agent/panda/atlas.json');
+		this.load.atlasJSONHash('panda', 'img/characters/panda/atlas.png', 'img/characters/panda/atlas.json');
 	}
 };
 
