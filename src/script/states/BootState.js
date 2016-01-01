@@ -71,11 +71,9 @@ BootState.prototype.preload = function () {
 	this.scale.pageAlignVertically = true;
 
 	/* Setup sound manager */
-	// Array to hold music objects, needed to change bg-volume
-	this.sound._music = [];
+	this.sound._music = []; // Array to hold music objects, needed to change bg-volume
 
-	/* Use stored volumes, if any. */
-	this.sound._fgVolume = 1;
+	this.sound._fgVolume = 1; // Divided sound channels.
 	if (typeof localStorage.fgVolume !== 'undefined') {
 		this.sound.fgVolume = localStorage.fgVolume;
 	}
@@ -96,6 +94,8 @@ BootState.prototype.preload = function () {
 	// To make sure that object is removed from music array.
 	this.sound.remove = function (sound) {
 		var success = Phaser.SoundManager.prototype.remove.call(this, sound);
+		sound.onFadeComplete.dispose(); // TODO: This should not be necessary, check Phaser source Sound.destroy.
+
 		if (this._music.indexOf(sound) >= 0) {
 			this._music.splice(this._music.indexOf(sound), 1);
 		}

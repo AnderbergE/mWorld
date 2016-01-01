@@ -69,7 +69,8 @@ PartyInvitationGame.prototype.create = function () {
 	this.stackHighlight.x = this.pos.stack.x;
 	this.stackHighlight.y = this.pos.stack.y;
 	this.stackHighlight.anchor.set(0.5);
-	this.stackHighlight.scale.set(0.45);
+	this.stackHighlight.scale.x *= 0.45;
+	this.stackHighlight.scale.y *= 0.45;
 	this.stackHighlight.flash = TweenMax.to(this.stackHighlight, 0.8, { alpha: 0.3, ease: Power1.easeInOut, repeat: -1, yoyo: true, paused: true });
 	this.gameGroup.add(this.stackHighlight);
 

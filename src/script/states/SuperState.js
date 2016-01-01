@@ -88,6 +88,8 @@ SuperState.prototype.shutdown = function () {
 
 	this.world.removeAll(true);
 
+	this.sound.onSoundDecode.dispose();
+
 	clearCache.call(this);
 
 	// Reset world and camera.
