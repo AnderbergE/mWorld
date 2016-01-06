@@ -41,18 +41,15 @@ GardenState.prototype.preload = function() {
 		}
 	}
 
-	this.game.player.agent.load.call(this);
-
-	if (!this.cache.checkSoundKey('gardenMusic')) {
-		this.load.audio('gardenMusic', ['audio/garden/music.m4a', 'audio/garden/music.ogg', 'audio/garden/music.mp3']);
-	}
-	if (!this.cache.checkImageKey('garden')) {
-		this.load.atlasJSONHash('garden', 'img/garden/atlas.png', 'img/garden/atlas.json');
-	}
 	if (Object.keys(this.gardenData.fields).length) {
 		this.load.image('butterfly', 'img/garden/butterfly.png');
 		this.load.json('butterflyMesh', 'img/garden/butterfly.json');
 	}
+
+	this.load.audio('gardenMusic', ['audio/garden/music.m4a', 'audio/garden/music.ogg', 'audio/garden/music.mp3']);
+	this.load.atlasJSONHash('garden', 'img/garden/atlas.png', 'img/garden/atlas.json');
+
+	this.game.player.agent.load.call(this);
 };
 
 /* Phaser state function */

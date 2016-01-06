@@ -19,7 +19,7 @@ var PartyGiftGame = require('./states/partygames/PartyGiftGame.js');
 var ChooseScenarioState = require('./states/ChooseScenarioState.js');
 var ChoosePartyState = require('./states/ChoosePartyState.js');
 
-
+require('./phaserFixes.js');
 
 require('./logger.js'); // Start logger
 require('./utils.js'); // Setup prototype functions.
