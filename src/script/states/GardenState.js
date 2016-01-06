@@ -27,6 +27,7 @@ GardenState.prototype.preload = function() {
 	this.gardenData = backend.getGarden() || { fields: {} }; // jshint ignore:line
 	// This happens either on local machine or on "trial" version of the game.
 	if (GLOBAL.demo) {
+		// this.gardenData.fields = { 0: { x: 100, y: 100, content_type: 4, level: 5 } }; // Uncomment this to test garden plant.
 		this.gardenData.partyTime = { game: 'partyPicker', difficulty: 0 };
 	}
 
@@ -428,10 +429,12 @@ GardenState.prototype.addElephant = function () {
 				onStart: function () { emitter.start(false, 500, 10, 50); },
 				onComplete: function () { emitter.destroy(); }
 			}), '+=1');
-			t.addCallback(function () {
-				target.upgrade();
-				backend.putUpgradePlant({ field: { tag: target.tag, x: target.x, y: target.y, level: target.level, content_type: target.type }, free: true }); // jshint ignore:line
-			});
+			if (target.level < maxLevel) {
+				t.addCallback(function () {
+					target.upgrade();
+					backend.putUpgradePlant({ field: { tag: target.tag, x: target.x, y: target.y, level: target.level, content_type: target.type }, free: true }); // jshint ignore:line
+				});
+			}
 
 			t.addCallback(function () {
 				this.elephant.setAnimation('walk');
@@ -485,10 +488,12 @@ GardenState.prototype.addRobot = function () {
 				onStart: function () { emitter.start(false, 500, 10, 50); },
 				onComplete: function () { emitter.destroy(); }
 			}), '+=1');
-			t.addCallback(function () {
-				target.upgrade();
-				backend.putUpgradePlant({ field: { tag: target.tag, x: target.x, y: target.y, level: target.level, content_type: target.type }, free: true }); // jshint ignore:line
-			});
+			if (target.level < maxLevel) {
+				t.addCallback(function () {
+					target.upgrade();
+					backend.putUpgradePlant({ field: { tag: target.tag, x: target.x, y: target.y, level: target.level, content_type: target.type }, free: true }); // jshint ignore:line
+				});
+			}
 
 			t.addCallback(function () {
 				this.robot.setAnimation('Roll_loop');
@@ -588,6 +593,9 @@ function GardenPlant (game, x, y, type, level) {
 	this.y = y;
 	this.type = type;
 	this.level = level;
+	if (this.level > maxLevel) {
+		this.level = maxLevel;
+	}
 
 	this.plant = this.newPlant();
 	TweenMax.fromTo(this.plant.scale, 2, { x: 0, y: 0 }, { x: this.plant.scale.x, y: this.plant.scale.y, ease: Elastic.easeOut });
